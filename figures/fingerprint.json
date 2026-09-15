@@ -1,0 +1,722 @@
+{
+  "n_patients": 20,
+  "label_mapping": {
+    "0": "background",
+    "1": "aorta",
+    "2": "heart",
+    "3": "trachea",
+    "4": "esophagus"
+  },
+  "label_mapping_note": "Verified against the raw NIfTI data: label 1 is the AORTA (aortic arch + descending aorta visible on sagittal reformats), not the esophagus. The esophagus (class 4) has no voxels in this release -- an annotation gap, not a structural absence. This differs from the class order in the course readme.",
+  "split": {
+    "val_patients": [
+      "Patient_01",
+      "Patient_11",
+      "Patient_15",
+      "Patient_17",
+      "Patient_19"
+    ],
+    "train_patients": [
+      "Patient_02",
+      "Patient_03",
+      "Patient_04",
+      "Patient_05",
+      "Patient_06",
+      "Patient_07",
+      "Patient_08",
+      "Patient_09",
+      "Patient_10",
+      "Patient_12",
+      "Patient_13",
+      "Patient_14",
+      "Patient_16",
+      "Patient_18",
+      "Patient_20"
+    ],
+    "note": "Statistics below are pooled over ALL patients, including the held-out validation patients. Any preprocessing derived from them (normalization percentiles, target spacing) is therefore fitted on validation data too."
+  },
+  "shape_voxels": {
+    "median": [
+      512,
+      512,
+      175
+    ],
+    "min": [
+      512,
+      512,
+      147
+    ],
+    "max": [
+      512,
+      512,
+      284
+    ]
+  },
+  "spacing_mm": {
+    "inplane_median": [
+      0.9765620231628418,
+      0.9765620231628418
+    ],
+    "inplane_min": [
+      0.8964840173721313,
+      0.8964840173721313
+    ],
+    "inplane_max": [
+      1.3671879768371582,
+      1.3671879768371582
+    ],
+    "slice_median": 2.5,
+    "slice_min": 2.0,
+    "slice_max": 2.5
+  },
+  "acquisition_protocol_groups": {
+    "0.9766 x 0.9766 x 2.00": [
+      "Patient_01",
+      "Patient_05",
+      "Patient_07",
+      "Patient_10",
+      "Patient_12",
+      "Patient_13"
+    ],
+    "0.9766 x 0.9766 x 2.50": [
+      "Patient_02",
+      "Patient_03",
+      "Patient_04",
+      "Patient_06",
+      "Patient_08",
+      "Patient_09",
+      "Patient_14",
+      "Patient_16",
+      "Patient_17",
+      "Patient_18",
+      "Patient_19"
+    ],
+    "1.2695 x 1.2695 x 2.50": [
+      "Patient_11"
+    ],
+    "0.8965 x 0.8965 x 2.50": [
+      "Patient_15"
+    ],
+    "1.3672 x 1.3672 x 2.50": [
+      "Patient_20"
+    ]
+  },
+  "stored_dtype_groups": {
+    "int16": [
+      "Patient_01",
+      "Patient_05",
+      "Patient_13"
+    ],
+    "int32": [
+      "Patient_02",
+      "Patient_03",
+      "Patient_04",
+      "Patient_06",
+      "Patient_07",
+      "Patient_08",
+      "Patient_09",
+      "Patient_10",
+      "Patient_11",
+      "Patient_12",
+      "Patient_14",
+      "Patient_15",
+      "Patient_16",
+      "Patient_17",
+      "Patient_18",
+      "Patient_19",
+      "Patient_20"
+    ]
+  },
+  "class_balance": {
+    "background": {
+      "pct_voxels": 98.95538348476987,
+      "pct_slices_present": 100.0
+    },
+    "aorta": {
+      "pct_voxels": 0.2410161916849314,
+      "pct_slices_present": 63.531618435155416
+    },
+    "heart": {
+      "pct_voxels": 0.7662125083539008,
+      "pct_slices_present": 22.45444801714898
+    },
+    "trachea": {
+      "pct_voxels": 0.03738781519130367,
+      "pct_slices_present": 27.974276527331188
+    },
+    "esophagus": {
+      "pct_voxels": 0.0,
+      "pct_slices_present": 0.0
+    }
+  },
+  "hu_global": {
+    "percentiles_from_subsample_stride": 37,
+    "p0_5": -1000.0,
+    "p50": -981.0,
+    "p99_5": 487.0,
+    "min": -1000.0,
+    "max": 31743.0,
+    "min_max_note": "exact, computed over every voxel (not the subsample)"
+  },
+  "hu_foreground_nnunet_normalization": {
+    "note": "nnU-Net's CTNormalization clips to the [0.5, 99.5] percentiles of the FOREGROUND voxels pooled across the dataset, then z-scores with the foreground mean/std. These are those numbers.",
+    "p0_5": -992.0,
+    "p99_5": 250.0,
+    "mean": 12.381811403538814,
+    "std": 183.23395060469295
+  },
+  "hu_by_organ_foreground_only": {
+    "aorta": {
+      "p0_5": -642.0499999999997,
+      "mean": 52.27666982618413,
+      "p99_5": 243.0
+    },
+    "heart": {
+      "p0_5": -158.0,
+      "mean": 39.899018351628484,
+      "p99_5": 257.0
+    },
+    "trachea": {
+      "p0_5": -1000.0,
+      "mean": -811.4611557596633,
+      "p99_5": 54.0
+    },
+    "esophagus": null
+  },
+  "organ_bbox_extent_mm_dx_dy_dz": {
+    "aorta": {
+      "median": [
+        75.19529724121094,
+        111.03514099121094,
+        274.5
+      ],
+      "n_patients_present": 20
+    },
+    "heart": {
+      "median": [
+        139.16012573242188,
+        120.11712646484375,
+        96.25
+      ],
+      "n_patients_present": 20
+    },
+    "trachea": {
+      "median": [
+        86.42578125,
+        64.41989135742188,
+        122.5
+      ],
+      "n_patients_present": 20
+    },
+    "esophagus": {
+      "median": null,
+      "n_patients_present": 0
+    }
+  },
+  "organ_volume_cm3": {
+    "aorta": {
+      "median": 255.72357177734375,
+      "min": 126.9673080444336,
+      "max": 522.251708984375,
+      "max_over_min": 4.113276958465576,
+      "cv_pct": 31.891136280751287
+    },
+    "heart": {
+      "median": 862.0498657226562,
+      "min": 437.9864196777344,
+      "max": 1829.2552490234375,
+      "max_over_min": 4.176511287689209,
+      "cv_pct": 33.44979285891209
+    },
+    "trachea": {
+      "median": 38.77113342285156,
+      "min": 27.589771270751953,
+      "max": 72.92021942138672,
+      "max_over_min": 2.6430163383483887,
+      "cv_pct": 27.711641322800098
+    },
+    "esophagus": {
+      "median": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "max_over_min": null,
+      "cv_pct": null
+    }
+  },
+  "nonzero_ct_fraction": {
+    "median": 0.9993915813062814,
+    "min": 0.9989231788307611,
+    "max": 0.9996166878006085
+  },
+  "hu_artifacts": {
+    "ceiling_HU": 3071.0,
+    "note": "Voxels AT 3071 HU are censored by the 12-bit reconstruction ceiling (ordinary dense bone hitting the clamp). Voxels ABOVE it cannot come from a 12-bit reconstruction and indicate metal + beam hardening.",
+    "patients_at_ceiling": {
+      "Patient_01": 158,
+      "Patient_05": 1773,
+      "Patient_06": 3871,
+      "Patient_08": 2837,
+      "Patient_09": 3705,
+      "Patient_10": 391,
+      "Patient_12": 162,
+      "Patient_13": 607,
+      "Patient_16": 1,
+      "Patient_19": 1,
+      "Patient_20": 334
+    },
+    "patients_above_ceiling": {
+      "Patient_02": 4931,
+      "Patient_03": 1031,
+      "Patient_04": 6,
+      "Patient_11": 407,
+      "Patient_15": 854,
+      "Patient_16": 442,
+      "Patient_17": 852,
+      "Patient_18": 2946,
+      "Patient_19": 2542
+    },
+    "most_extreme_voxel_per_patient_top5": [
+      {
+        "patient": "Patient_19",
+        "hu": 31743.0,
+        "x": 138,
+        "y": 186,
+        "z": 177
+      },
+      {
+        "patient": "Patient_02",
+        "hu": 26613.0,
+        "x": 228,
+        "y": 160,
+        "z": 238
+      },
+      {
+        "patient": "Patient_03",
+        "hu": 25292.0,
+        "x": 240,
+        "y": 207,
+        "z": 145
+      },
+      {
+        "patient": "Patient_15",
+        "hu": 17762.0,
+        "x": 256,
+        "y": 123,
+        "z": 74
+      },
+      {
+        "patient": "Patient_18",
+        "hu": 15566.0,
+        "x": 312,
+        "y": 222,
+        "z": 145
+      }
+    ]
+  },
+  "patient_outliers": {
+    "pca_variance_explained_pc1_pc2_pct": 52.03418308152282,
+    "pca_distance_threshold": 3.989896300401955,
+    "flagged_by_pca_projection": [
+      "Patient_15"
+    ],
+    "flagged_by_feature_modified_z": {
+      "Patient_05": {
+        "z_shape": 4.6
+      },
+      "Patient_15": {
+        "vol_aorta": 3.94,
+        "vol_trachea": 3.57
+      },
+      "Patient_18": {
+        "vol_heart": 6.68
+      }
+    },
+    "flagged_any": [
+      "Patient_05",
+      "Patient_15",
+      "Patient_18"
+    ]
+  },
+  "per_patient": [
+    {
+      "patient": "Patient_01",
+      "split": "val",
+      "shape": [
+        512,
+        512,
+        229
+      ],
+      "spacing_xyz_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "stored_dtype": "int16",
+      "hu_max": 3071.0,
+      "nonzero_ct_fraction": 0.9992675947830667,
+      "hu_voxels_at_12bit_ceiling": 158,
+      "hu_voxels_above_12bit_ceiling": 0
+    },
+    {
+      "patient": "Patient_02",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        246
+      ],
+      "spacing_xyz_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 26613.0,
+      "nonzero_ct_fraction": 0.9993859422885305,
+      "hu_voxels_at_12bit_ceiling": 0,
+      "hu_voxels_above_12bit_ceiling": 4931
+    },
+    {
+      "patient": "Patient_03",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        147
+      ],
+      "spacing_xyz_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 25292.0,
+      "nonzero_ct_fraction": 0.9996166878006085,
+      "hu_voxels_at_12bit_ceiling": 0,
+      "hu_voxels_above_12bit_ceiling": 1031
+    },
+    {
+      "patient": "Patient_04",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        158
+      ],
+      "spacing_xyz_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 4551.0,
+      "nonzero_ct_fraction": 0.9994196348552462,
+      "hu_voxels_at_12bit_ceiling": 0,
+      "hu_voxels_above_12bit_ceiling": 6
+    },
+    {
+      "patient": "Patient_05",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        284
+      ],
+      "spacing_xyz_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "stored_dtype": "int16",
+      "hu_max": 3071.0,
+      "nonzero_ct_fraction": 0.9994891932312872,
+      "hu_voxels_at_12bit_ceiling": 1773,
+      "hu_voxels_above_12bit_ceiling": 0
+    },
+    {
+      "patient": "Patient_06",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        199
+      ],
+      "spacing_xyz_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 3071.0,
+      "nonzero_ct_fraction": 0.9993972203240322,
+      "hu_voxels_at_12bit_ceiling": 3871,
+      "hu_voxels_above_12bit_ceiling": 0
+    },
+    {
+      "patient": "Patient_07",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        179
+      ],
+      "spacing_xyz_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 3059.0,
+      "nonzero_ct_fraction": 0.9993169560778741,
+      "hu_voxels_at_12bit_ceiling": 0,
+      "hu_voxels_above_12bit_ceiling": 0
+    },
+    {
+      "patient": "Patient_08",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        171
+      ],
+      "spacing_xyz_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 3071.0,
+      "nonzero_ct_fraction": 0.9994167974817822,
+      "hu_voxels_at_12bit_ceiling": 2837,
+      "hu_voxels_above_12bit_ceiling": 0
+    },
+    {
+      "patient": "Patient_09",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        154
+      ],
+      "spacing_xyz_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 3071.0,
+      "nonzero_ct_fraction": 0.9995036434817623,
+      "hu_voxels_at_12bit_ceiling": 3705,
+      "hu_voxels_above_12bit_ceiling": 0
+    },
+    {
+      "patient": "Patient_10",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        163
+      ],
+      "spacing_xyz_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 3071.0,
+      "nonzero_ct_fraction": 0.9989231788307611,
+      "hu_voxels_at_12bit_ceiling": 391,
+      "hu_voxels_above_12bit_ceiling": 0
+    },
+    {
+      "patient": "Patient_11",
+      "split": "val",
+      "shape": [
+        512,
+        512,
+        180
+      ],
+      "spacing_xyz_mm": [
+        1.269531011581421,
+        1.269531011581421,
+        2.5
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 8834.0,
+      "nonzero_ct_fraction": 0.9993985070122613,
+      "hu_voxels_at_12bit_ceiling": 0,
+      "hu_voxels_above_12bit_ceiling": 407
+    },
+    {
+      "patient": "Patient_12",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        171
+      ],
+      "spacing_xyz_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 3071.0,
+      "nonzero_ct_fraction": 0.9992520293297126,
+      "hu_voxels_at_12bit_ceiling": 162,
+      "hu_voxels_above_12bit_ceiling": 0
+    },
+    {
+      "patient": "Patient_13",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        228
+      ],
+      "spacing_xyz_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "stored_dtype": "int16",
+      "hu_max": 3071.0,
+      "nonzero_ct_fraction": 0.99905848921391,
+      "hu_voxels_at_12bit_ceiling": 607,
+      "hu_voxels_above_12bit_ceiling": 0
+    },
+    {
+      "patient": "Patient_14",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        162
+      ],
+      "spacing_xyz_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 1892.0,
+      "nonzero_ct_fraction": 0.9994047894889926,
+      "hu_voxels_at_12bit_ceiling": 0,
+      "hu_voxels_above_12bit_ceiling": 0
+    },
+    {
+      "patient": "Patient_15",
+      "split": "val",
+      "shape": [
+        512,
+        512,
+        150
+      ],
+      "spacing_xyz_mm": [
+        0.8964840173721313,
+        0.8964840173721313,
+        2.5
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 17762.0,
+      "nonzero_ct_fraction": 0.9992008463541666,
+      "hu_voxels_at_12bit_ceiling": 0,
+      "hu_voxels_above_12bit_ceiling": 854
+    },
+    {
+      "patient": "Patient_16",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        166
+      ],
+      "spacing_xyz_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 11362.0,
+      "nonzero_ct_fraction": 0.9992055088640696,
+      "hu_voxels_at_12bit_ceiling": 1,
+      "hu_voxels_above_12bit_ceiling": 442
+    },
+    {
+      "patient": "Patient_17",
+      "split": "val",
+      "shape": [
+        512,
+        512,
+        166
+      ],
+      "spacing_xyz_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 14614.0,
+      "nonzero_ct_fraction": 0.9995572193559393,
+      "hu_voxels_at_12bit_ceiling": 0,
+      "hu_voxels_above_12bit_ceiling": 852
+    },
+    {
+      "patient": "Patient_18",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        183
+      ],
+      "spacing_xyz_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 15566.0,
+      "nonzero_ct_fraction": 0.9992702671738921,
+      "hu_voxels_at_12bit_ceiling": 0,
+      "hu_voxels_above_12bit_ceiling": 2946
+    },
+    {
+      "patient": "Patient_19",
+      "split": "val",
+      "shape": [
+        512,
+        512,
+        190
+      ],
+      "spacing_xyz_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 31743.0,
+      "nonzero_ct_fraction": 0.9995418749357524,
+      "hu_voxels_at_12bit_ceiling": 1,
+      "hu_voxels_above_12bit_ceiling": 2542
+    },
+    {
+      "patient": "Patient_20",
+      "split": "train",
+      "shape": [
+        512,
+        512,
+        206
+      ],
+      "spacing_xyz_mm": [
+        1.3671879768371582,
+        1.3671879768371582,
+        2.5
+      ],
+      "stored_dtype": "int32",
+      "hu_max": 3071.0,
+      "nonzero_ct_fraction": 0.9993846485915693,
+      "hu_voxels_at_12bit_ceiling": 334,
+      "hu_voxels_above_12bit_ceiling": 0
+    }
+  ]
+}
