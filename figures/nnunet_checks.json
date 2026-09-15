@@ -1,0 +1,1879 @@
+{
+  "integrity": [
+    {
+      "pid": "Patient_01",
+      "shape_image": [
+        512,
+        512,
+        229
+      ],
+      "shape_seg": [
+        512,
+        512,
+        229
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "spacing_seg": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765625,
+        -0.9765625,
+        2.0
+      ],
+      "affine_diag_seg": [
+        -0.9765625,
+        -0.9765625,
+        2.0
+      ],
+      "affine_translation_image": [
+        249.51171875,
+        442.51171875,
+        -610.5999755859375
+      ],
+      "affine_translation_seg": [
+        249.51171875,
+        442.51171875,
+        -610.5999755859375
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_02",
+      "shape_image": [
+        512,
+        512,
+        246
+      ],
+      "shape_seg": [
+        512,
+        512,
+        246
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_seg": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_diag_seg": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_translation_image": [
+        250.0,
+        250.0,
+        -398.25
+      ],
+      "affine_translation_seg": [
+        250.0,
+        250.0,
+        -398.25
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_03",
+      "shape_image": [
+        512,
+        512,
+        147
+      ],
+      "shape_seg": [
+        512,
+        512,
+        147
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_seg": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_diag_seg": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_translation_image": [
+        250.0,
+        250.0,
+        -147.5
+      ],
+      "affine_translation_seg": [
+        250.0,
+        250.0,
+        -147.5
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_04",
+      "shape_image": [
+        512,
+        512,
+        158
+      ],
+      "shape_seg": [
+        512,
+        512,
+        158
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_seg": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_diag_seg": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_translation_image": [
+        250.0,
+        250.0,
+        -187.5
+      ],
+      "affine_translation_seg": [
+        250.0,
+        250.0,
+        -187.5
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_05",
+      "shape_image": [
+        512,
+        512,
+        284
+      ],
+      "shape_seg": [
+        512,
+        512,
+        284
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "spacing_seg": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765625,
+        -0.9765625,
+        2.0
+      ],
+      "affine_diag_seg": [
+        -0.9765625,
+        -0.9765625,
+        2.0
+      ],
+      "affine_translation_image": [
+        249.51171875,
+        466.51171875,
+        -632.0999755859375
+      ],
+      "affine_translation_seg": [
+        249.51171875,
+        466.51171875,
+        -632.0999755859375
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_06",
+      "shape_image": [
+        512,
+        512,
+        199
+      ],
+      "shape_seg": [
+        512,
+        512,
+        199
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_seg": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_diag_seg": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_translation_image": [
+        250.0,
+        250.0,
+        -264.9599914550781
+      ],
+      "affine_translation_seg": [
+        250.0,
+        250.0,
+        -264.9599914550781
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_07",
+      "shape_image": [
+        512,
+        512,
+        179
+      ],
+      "shape_seg": [
+        512,
+        512,
+        179
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "spacing_seg": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765625,
+        -0.9765625,
+        2.0
+      ],
+      "affine_diag_seg": [
+        -0.9765625,
+        -0.9765625,
+        2.0
+      ],
+      "affine_translation_image": [
+        249.51171875,
+        427.51171875,
+        -621.0
+      ],
+      "affine_translation_seg": [
+        249.51171875,
+        427.51171875,
+        -621.0
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_08",
+      "shape_image": [
+        512,
+        512,
+        171
+      ],
+      "shape_seg": [
+        512,
+        512,
+        171
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_seg": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_diag_seg": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_translation_image": [
+        250.0,
+        250.0,
+        -45.810001373291016
+      ],
+      "affine_translation_seg": [
+        250.0,
+        250.0,
+        -45.810001373291016
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_09",
+      "shape_image": [
+        512,
+        512,
+        154
+      ],
+      "shape_seg": [
+        512,
+        512,
+        154
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_seg": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_diag_seg": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_translation_image": [
+        250.0,
+        250.0,
+        -170.07000732421875
+      ],
+      "affine_translation_seg": [
+        250.0,
+        250.0,
+        -170.07000732421875
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_10",
+      "shape_image": [
+        512,
+        512,
+        163
+      ],
+      "shape_seg": [
+        512,
+        512,
+        163
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "spacing_seg": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765625,
+        -0.9765625,
+        2.0
+      ],
+      "affine_diag_seg": [
+        -0.9765625,
+        -0.9765625,
+        2.0
+      ],
+      "affine_translation_image": [
+        249.51171875,
+        437.51171875,
+        -490.1000061035156
+      ],
+      "affine_translation_seg": [
+        249.51171875,
+        437.51171875,
+        -490.1000061035156
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_11",
+      "shape_image": [
+        512,
+        512,
+        180
+      ],
+      "shape_seg": [
+        512,
+        512,
+        180
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        1.269531011581421,
+        1.269531011581421,
+        2.5
+      ],
+      "spacing_seg": [
+        1.269531011581421,
+        1.269531011581421,
+        2.5
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -1.269531011581421,
+        -1.269531011581421,
+        2.5
+      ],
+      "affine_diag_seg": [
+        -1.269531011581421,
+        -1.269531011581421,
+        2.5
+      ],
+      "affine_translation_image": [
+        325.0,
+        325.0,
+        -245.25
+      ],
+      "affine_translation_seg": [
+        325.0,
+        325.0,
+        -245.25
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_12",
+      "shape_image": [
+        512,
+        512,
+        171
+      ],
+      "shape_seg": [
+        512,
+        512,
+        171
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "spacing_seg": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765625,
+        -0.9765625,
+        2.0
+      ],
+      "affine_diag_seg": [
+        -0.9765625,
+        -0.9765625,
+        2.0
+      ],
+      "affine_translation_image": [
+        249.51171875,
+        450.51171875,
+        -540.0999755859375
+      ],
+      "affine_translation_seg": [
+        249.51171875,
+        450.51171875,
+        -540.0999755859375
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_13",
+      "shape_image": [
+        512,
+        512,
+        228
+      ],
+      "shape_seg": [
+        512,
+        512,
+        228
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "spacing_seg": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765625,
+        -0.9765625,
+        2.0
+      ],
+      "affine_diag_seg": [
+        -0.9765625,
+        -0.9765625,
+        2.0
+      ],
+      "affine_translation_image": [
+        249.51171875,
+        437.51171875,
+        -533.7000122070312
+      ],
+      "affine_translation_seg": [
+        249.51171875,
+        437.51171875,
+        -533.7000122070312
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_14",
+      "shape_image": [
+        512,
+        512,
+        162
+      ],
+      "shape_seg": [
+        512,
+        512,
+        162
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_seg": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_diag_seg": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_translation_image": [
+        250.0,
+        250.0,
+        -142.5
+      ],
+      "affine_translation_seg": [
+        250.0,
+        250.0,
+        -142.5
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_15",
+      "shape_image": [
+        512,
+        512,
+        150
+      ],
+      "shape_seg": [
+        512,
+        512,
+        150
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.8964840173721313,
+        0.8964840173721313,
+        2.5
+      ],
+      "spacing_seg": [
+        0.8964840173721313,
+        0.8964840173721313,
+        2.5
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.8964840173721313,
+        -0.8964840173721313,
+        2.5
+      ],
+      "affine_diag_seg": [
+        -0.8964840173721313,
+        -0.8964840173721313,
+        2.5
+      ],
+      "affine_translation_image": [
+        229.5,
+        229.5,
+        -182.75
+      ],
+      "affine_translation_seg": [
+        229.5,
+        229.5,
+        -182.75
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_16",
+      "shape_image": [
+        512,
+        512,
+        166
+      ],
+      "shape_seg": [
+        512,
+        512,
+        166
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_seg": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_diag_seg": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_translation_image": [
+        250.0,
+        250.0,
+        -167.5
+      ],
+      "affine_translation_seg": [
+        250.0,
+        250.0,
+        -167.5
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_17",
+      "shape_image": [
+        512,
+        512,
+        166
+      ],
+      "shape_seg": [
+        512,
+        512,
+        166
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_seg": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_diag_seg": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_translation_image": [
+        250.0,
+        250.0,
+        -192.5
+      ],
+      "affine_translation_seg": [
+        250.0,
+        250.0,
+        -192.5
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_18",
+      "shape_image": [
+        512,
+        512,
+        183
+      ],
+      "shape_seg": [
+        512,
+        512,
+        183
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_seg": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_diag_seg": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_translation_image": [
+        250.0,
+        250.0,
+        -220.0
+      ],
+      "affine_translation_seg": [
+        250.0,
+        250.0,
+        -220.0
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_19",
+      "shape_image": [
+        512,
+        512,
+        190
+      ],
+      "shape_seg": [
+        512,
+        512,
+        190
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_seg": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_diag_seg": [
+        -0.9765620231628418,
+        -0.9765620231628418,
+        2.5
+      ],
+      "affine_translation_image": [
+        250.0,
+        250.0,
+        -220.5
+      ],
+      "affine_translation_seg": [
+        250.0,
+        250.0,
+        -220.5
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    },
+    {
+      "pid": "Patient_20",
+      "shape_image": [
+        512,
+        512,
+        206
+      ],
+      "shape_seg": [
+        512,
+        512,
+        206
+      ],
+      "shape_match": true,
+      "spacing_image": [
+        1.3671879768371582,
+        1.3671879768371582,
+        2.5
+      ],
+      "spacing_seg": [
+        1.3671879768371582,
+        1.3671879768371582,
+        2.5
+      ],
+      "spacing_match": true,
+      "affine_match": true,
+      "affine_diag_image": [
+        -1.3671879768371582,
+        -1.3671879768371582,
+        2.5
+      ],
+      "affine_diag_seg": [
+        -1.3671879768371582,
+        -1.3671879768371582,
+        2.5
+      ],
+      "affine_translation_image": [
+        350.0,
+        350.0,
+        -592.7899780273438
+      ],
+      "affine_translation_seg": [
+        350.0,
+        350.0,
+        -592.7899780273438
+      ],
+      "found_labels": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "unexpected_labels": [],
+      "missing_labels": [
+        4
+      ]
+    }
+  ],
+  "integrity_summary": {
+    "all_shape_match": true,
+    "all_spacing_match": true,
+    "all_affine_match": true,
+    "any_unexpected_labels": false,
+    "labels_missing_in_every_patient": [
+      4
+    ],
+    "max_affine_abs_diff_per_patient": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "crop_to_nonzero": [
+    {
+      "pid": "Patient_01",
+      "shape_before_crop": [
+        512,
+        512,
+        229
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        229
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_02",
+      "shape_before_crop": [
+        512,
+        512,
+        246
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        246
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_03",
+      "shape_before_crop": [
+        512,
+        512,
+        147
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        147
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_04",
+      "shape_before_crop": [
+        512,
+        512,
+        158
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        158
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_05",
+      "shape_before_crop": [
+        512,
+        512,
+        284
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        284
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_06",
+      "shape_before_crop": [
+        512,
+        512,
+        199
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        199
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_07",
+      "shape_before_crop": [
+        512,
+        512,
+        179
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        179
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_08",
+      "shape_before_crop": [
+        512,
+        512,
+        171
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        171
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_09",
+      "shape_before_crop": [
+        512,
+        512,
+        154
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        154
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_10",
+      "shape_before_crop": [
+        512,
+        512,
+        163
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        163
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_11",
+      "shape_before_crop": [
+        512,
+        512,
+        180
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        180
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_12",
+      "shape_before_crop": [
+        512,
+        512,
+        171
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        171
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_13",
+      "shape_before_crop": [
+        512,
+        512,
+        228
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        228
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_14",
+      "shape_before_crop": [
+        512,
+        512,
+        162
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        162
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_15",
+      "shape_before_crop": [
+        512,
+        512,
+        150
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        150
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_16",
+      "shape_before_crop": [
+        512,
+        512,
+        166
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        166
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_17",
+      "shape_before_crop": [
+        512,
+        512,
+        166
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        166
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_18",
+      "shape_before_crop": [
+        512,
+        512,
+        183
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        183
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_19",
+      "shape_before_crop": [
+        512,
+        512,
+        190
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        190
+      ],
+      "relative_size_after_cropping": 1.0
+    },
+    {
+      "pid": "Patient_20",
+      "shape_before_crop": [
+        512,
+        512,
+        206
+      ],
+      "shape_after_crop": [
+        512,
+        512,
+        206
+      ],
+      "relative_size_after_cropping": 1.0
+    }
+  ],
+  "median_relative_size_after_cropping": 1.0,
+  "mask_restricted_normalization_would_trigger": false,
+  "anisotropy": {
+    "median_spacing": [
+      0.9765620231628418,
+      0.9765620231628418,
+      2.5
+    ],
+    "median_shape": [
+      512.0,
+      512.0,
+      175.0
+    ],
+    "worst_spacing_axis": 2,
+    "has_aniso_spacing": false,
+    "has_aniso_voxels": false,
+    "cascade_override_applied": false,
+    "final_target_spacing": [
+      0.9765620231628418,
+      0.9765620231628418,
+      2.5
+    ]
+  },
+  "connected_components": [
+    {
+      "pid": "Patient_01",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_02",
+      "1": {
+        "n6": 2,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_03",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_04",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_05",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_06",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_07",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_08",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_09",
+      "1": {
+        "n6": 2,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_10",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_11",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_12",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_13",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_14",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_15",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_16",
+      "1": {
+        "n6": 2,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_17",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_18",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_19",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    },
+    {
+      "pid": "Patient_20",
+      "1": {
+        "n6": 1,
+        "n26": 1
+      },
+      "2": {
+        "n6": 1,
+        "n26": 1
+      },
+      "3": {
+        "n6": 1,
+        "n26": 1
+      },
+      "4": {
+        "n6": 0,
+        "n26": 0
+      }
+    }
+  ],
+  "connected_components_summary": {
+    "1": {
+      "n_patients_present": 20,
+      "always_single_component_6conn": false,
+      "always_single_component_26conn": true,
+      "max_components_seen_6conn": 2,
+      "max_components_seen_26conn": 1
+    },
+    "2": {
+      "n_patients_present": 20,
+      "always_single_component_6conn": true,
+      "always_single_component_26conn": true,
+      "max_components_seen_6conn": 1,
+      "max_components_seen_26conn": 1
+    },
+    "3": {
+      "n_patients_present": 20,
+      "always_single_component_6conn": true,
+      "always_single_component_26conn": true,
+      "max_components_seen_6conn": 1,
+      "max_components_seen_26conn": 1
+    },
+    "4": {
+      "n_patients_present": 0,
+      "always_single_component_6conn": null,
+      "always_single_component_26conn": null,
+      "max_components_seen_6conn": 0,
+      "max_components_seen_26conn": 0
+    }
+  },
+  "ct_normalization": {
+    "clip_lower_p0_5": -992.0,
+    "clip_upper_p99_5": 250.0,
+    "mean": 12.315764427185059,
+    "std": 183.4780731201172,
+    "n_foreground_voxels_pooled": 10219707
+  }
+}
