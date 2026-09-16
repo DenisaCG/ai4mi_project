@@ -27,6 +27,7 @@ from __future__ import annotations
 import textwrap
 
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Pastel qualitative palette (dusty blue, peach, seafoam, sage, lavender, rose,
 # honey, terracotta). Kept mid-tone rather than pale so white text on a
@@ -42,6 +43,9 @@ PALETTE = [
     "#E8C27E",  # honey
     "#D99B8C",  # terracotta
 ]
+
+# Fixed color per segmentation label number, shared by every figure.
+LABEL_COLORS = {1: PALETTE[0], 2: PALETTE[1], 3: PALETTE[2], 4: "#8C8C8C"}
 
 GRID_COLOR = "#D9D9D9"
 FOOTNOTE_COLOR = "#6B6B6B"
@@ -83,6 +87,11 @@ def apply_style() -> None:
             "savefig.facecolor": "white",
         }
     )
+
+
+def apply_ticks_style() -> None:
+    """Seaborn "ticks" theme (white background, axis ticks, no grid) for dot-histogram overviews."""
+    sns.set_theme(style="ticks", font_scale=1.15)
 
 
 def style_axis_horizontal_bars(ax) -> None:

@@ -10,3 +10,4 @@ tqdm>=4.60
 pillow>=9.0
 scikit-image>=0.20
 matplotlib>=3.9
+seaborn>=0.13
