@@ -108,8 +108,10 @@ def main():
         ha="left",
     )
     fig.tight_layout(rect=(0, 0.04, 1, 0.92))
-    fig.savefig(args.profile_dir / "scan_geometry.png", dpi=160)
-    print(f"wrote {args.profile_dir / 'scan_geometry.png'}")
+    out = args.profile_dir / "01-03_scan_geometry" / "scan_geometry.png"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out, dpi=160)
+    print(f"wrote {out}")
 
 
 if __name__ == "__main__":
