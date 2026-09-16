@@ -14,7 +14,8 @@ from analyze_baseline import bin_index, class_summary
 from utils import extent, load_png, normalized_z, overlap
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-from dataset_profile import hist_stats, identical_neighbour_slices, label_row, occupied_box, pair_row, slice_rows
+from nnunet_planner_checks import (PROFILE_DISTANCES_MM, boundary_hu_profile, interior_hu_stats, intensity_stats,
+                                   slice_profiles, trachea_inferior_end_mm)
 from profile_figures.f01_03_scan_geometry import dot_stacks
 from profile_figures.f05_label_intensity import binned_counts
 from profile_figures.f06_07_label_size_intensity import resample_mask, shades
@@ -23,6 +24,7 @@ from profile_figures.f12_connected_components import piece_counts, piece_shares
 from profile_figures.f13_label_pairs import label_grids
 from profile_figures.f09_label_bounding_box import box_edges, label_boxes
 from profile_figures.f07_label_shapes_and_sizes import label_boxes as shape_boxes
+from dataset_profile import hist_stats, identical_neighbour_slices, label_row, occupied_box, pair_row, slice_rows
 from profile_figures.f04_scan_intensity.common import nnunet_ct_normalisation, normalise, pool_histograms, range_percent, slice_regions
 
 
@@ -92,6 +94,55 @@ class MeasurementTests(unittest.TestCase):
         self.assertEqual(bin_index(1, edges), 2)
 
 
+class PlannerCheckTests(unittest.TestCase):
+    def test_slice_profiles_width_and_area(self):
+        seg = np.zeros((21, 21, 3), dtype=np.int16)
+        seg[7:14, 7:14, 1] = 2
+        seg[10, 3:8, 2] = 2
+        prof = slice_profiles(seg, [2, 4], np.array([0.5, 2.0, 3.0]))
+        self.assertIsNone(prof[4])
+        self.assertEqual(prof[2]["width_vox"], [0, 7, 1])
+        self.assertEqual(prof[2]["area_mm2"][2], 5)
+        self.assertEqual(prof[2]["area_mm2"][0], 0)
+
+    def test_boundary_profile_sign_convention(self):
+        mask = np.zeros((40, 40, 40), dtype=bool)
+        mask[10:30, 10:30, 10:30] = True
+        ct = np.where(mask, 100.0, -100.0)
+        prof = np.array(boundary_hu_profile(ct, mask, np.ones(3)))
+        inside = PROFILE_DISTANCES_MM < 0
+        self.assertTrue(np.all(prof[inside] == 100))
+        self.assertTrue(np.all(prof[~inside] == -100))
+        self.assertIsNone(boundary_hu_profile(ct, np.zeros_like(mask), np.ones(3)))
+
+    def test_interior_stats_skip_the_edge(self):
+        seg = np.zeros((20, 20, 20), dtype=np.int16)
+        seg[2:18, 2:18, 2:18] = 2
+        ct = np.full(seg.shape, 500.0)
+        ct[5:15, 5:15, 5:15] = 40.0
+        stats = interior_hu_stats(ct, seg)
+        self.assertEqual(stats["heart_median"], 40)
+        self.assertTrue(np.isnan(stats["trachea_lumen_std"]))
+
+    def test_intensity_stats_per_group(self):
+        seg = np.array([0, 0, 1, 1, 2, 2, 2, 2]).reshape(2, 2, 2)
+        ct = np.array([-1000, -900, 10, 30, 0, 100, 200, 300], dtype=float).reshape(2, 2, 2)
+        stats = intensity_stats(ct, seg)
+        self.assertEqual(stats["label 1"]["median"], 20)
+        self.assertEqual(stats["label 1"]["n"], 2)
+        self.assertEqual(stats["label 2"]["mean"], 150)
+        self.assertEqual(stats["all labels"]["n"], 6)
+        self.assertIsNone(stats["label 3"])
+        self.assertAlmostEqual(stats["background"]["std"], 50)
+
+    def test_trachea_end_is_lowest_slice(self):
+        seg = np.zeros((5, 5, 6), dtype=np.int16)
+        seg[1, 1:4, 2] = 3
+        seg[2, 2, 4] = 3
+        self.assertEqual(trachea_inferior_end_mm(seg, np.array([1.0, 1.0, 2.5])), [1.0, 2.0, 5.0])
+        self.assertIsNone(trachea_inferior_end_mm(np.zeros_like(seg), np.ones(3)))
+
+
 class DatasetProfileTests(unittest.TestCase):
     def test_hist_stats_match_numpy(self):
         vals = np.random.RandomState(0).randint(-1000, 3000, size=5001)
@@ -153,6 +204,7 @@ class DatasetProfileTests(unittest.TestCase):
         self.assertEqual((apart["closest_voxel_centers_mm"], apart["shared_face_area_mm2"]), (8.0, 0.0))
         self.assertTrue(np.isnan(pair_row(a, np.zeros_like(a), zooms)["closest_voxel_centers_mm"]))
 
+
     def test_dot_stacks_one_dot_per_value(self):
         x, y = dot_stacks(pd.Series([0.98, 0.976, 1.37, 2.0]), 0.01)
         self.assertEqual(len(x), 4)
@@ -186,19 +238,6 @@ class DatasetProfileTests(unittest.TestCase):
         lengths = sorted(float(np.abs(b - a).sum()) for a, b in edges)
         self.assertEqual(lengths, [4.0] * 4 + [5.0] * 4 + [6.0] * 4)
         self.assertTrue(all(np.count_nonzero(b != a) == 1 for a, b in edges))
-
-    def test_shades_light_to_full_colour(self):
-        out = shades("#000000", 3)
-        self.assertEqual(len(out), 3)
-        self.assertTrue(np.allclose(out[-1], 0))
-        self.assertTrue(out[0][0] > out[1][0] > out[2][0])
-
-    def test_resample_mask_crops_and_rescales(self):
-        mask = np.zeros((10, 10, 10), dtype=bool)
-        mask[2:6, 3:5, 4:5] = True
-        out = resample_mask(mask, np.array([1.0, 1.0, 2.0]), 1.0)
-        self.assertEqual(out.shape, (4, 2, 2))
-        self.assertTrue(out.all())
 
 
     def test_label_boxes_span_all_present_labels(self):
@@ -250,6 +289,19 @@ class ScanIntensityTests(unittest.TestCase):
         self.assertEqual(regions[20, 20], 3)
         self.assertEqual(set(np.unique(regions[5:36, 5:36])), {1, 2, 3})
         self.assertFalse(slice_regions(np.full((4, 4), -1000), (1.0, 1.0)).any())
+
+    def test_shades_light_to_full_colour(self):
+        out = shades("#000000", 3)
+        self.assertEqual(len(out), 3)
+        self.assertTrue(np.allclose(out[-1], 0))
+        self.assertTrue(out[0][0] > out[1][0] > out[2][0])
+
+    def test_resample_mask_crops_and_rescales(self):
+        mask = np.zeros((10, 10, 10), dtype=bool)
+        mask[2:6, 3:5, 4:5] = True
+        out = resample_mask(mask, np.array([1.0, 1.0, 2.0]), 1.0)
+        self.assertEqual(out.shape, (4, 2, 2))
+        self.assertTrue(out.all())
 
     def test_slice_changes_position_area_and_change(self):
         slices = pd.DataFrame({"patient": "P", "label": 1, "slice": [7, 5, 6], "area_mm2": [50.0, 100.0, 200.0]})
