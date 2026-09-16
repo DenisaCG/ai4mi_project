@@ -16,6 +16,7 @@ from utils import extent, load_png, normalized_z, overlap
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 from dataset_profile import hist_stats, identical_neighbour_slices, label_row, occupied_box, pair_row, slice_rows
 from scan_geometry_figure import dot_stacks
+from label_intensity_figure import binned_counts
 
 
 class MeasurementTests(unittest.TestCase):
@@ -149,6 +150,12 @@ class DatasetProfileTests(unittest.TestCase):
         x, y = dot_stacks(pd.Series([0.98, 0.976, 1.37, 2.0]), 0.01)
         self.assertEqual(len(x), 4)
         self.assertEqual(sorted(zip(np.round(x, 2), y)), [(0.98, 0.5), (0.98, 1.5), (1.37, 0.5), (2.0, 0.5)])
+
+    def test_binned_counts_crops_and_sums(self):
+        x, c = binned_counts(np.array([1, 2, 3, 4, 5]), start=-2, lo=0, hi=4, width=2)
+        self.assertEqual(x.tolist(), [1.0, 3.0])
+        self.assertEqual(c.tolist(), [7.0, 5.0])
+        self.assertEqual(binned_counts(np.array([9]), start=50, lo=0, hi=4, width=2)[1].tolist(), [0.0, 0.0])
 
 
 if __name__ == "__main__":
