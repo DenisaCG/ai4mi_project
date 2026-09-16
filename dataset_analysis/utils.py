@@ -17,7 +17,6 @@ import numpy as np
 from PIL import Image
 
 CLASSES = {1: "esophagus", 2: "heart", 3: "trachea"}
-COLORS = {1: "#277da8", 2: "#d95f02", 3: "#32965a"}
 REPO = Path(__file__).resolve().parents[1]
 
 
@@ -37,9 +36,9 @@ def paths(args):
     original = (args.original_data or root / "data/segthor_part1/train").resolve()
     processed = (args.processed_data or root / "data/SEGTHOR").resolve()
     output = (args.output_dir or root / "dataset_analysis/results").resolve()
-    analysis = root / "dataset_analysis"
-    if not output.is_relative_to(analysis) or output == analysis:
-        raise ValueError("--output-dir must be a subdirectory of dataset_analysis")
+    analysis = root / "dataset_analysis/results"
+    if not output.is_relative_to(analysis):
+        raise ValueError("--output-dir must be inside dataset_analysis/results")
     for source in (original, processed):
         if not source.is_dir():
             raise FileNotFoundError(source)
@@ -48,17 +47,6 @@ def paths(args):
     for sub in ("tables", "plots", "examples"):
         (output / sub).mkdir(parents=True, exist_ok=True)
     return root, original, processed, output
-
-
-def pyplot(output: Path):
-    """Use a headless backend and keep Matplotlib's cache with analysis outputs."""
-    os.environ.setdefault("MPLCONFIGDIR", str(output / ".matplotlib"))
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    plt.rcParams.update({"font.size": 10, "axes.spines.top": False,
-                         "axes.spines.right": False, "figure.dpi": 120})
-    return plt
 
 
 def write_csv(path: Path, rows: list[dict]) -> None:

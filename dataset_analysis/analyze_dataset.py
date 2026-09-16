@@ -5,8 +5,12 @@ import numpy as np
 import nibabel as nib
 from PIL import Image
 
-from utils import (CLASSES, COLORS, discover, distribution, extent, load_original,
-                   load_png, normalized_z, parser, paths, provenance, pyplot, write_csv)
+from utils import (CLASSES, discover, distribution, extent, load_original,
+                   load_png, normalized_z, parser, paths, provenance, write_csv)
+
+from shape import shape_descriptor
+from figures import dataset_figures, shape_examples
+from style import remove_superseded
 
 
 def original_stats(patient, split, nii, data):
@@ -43,7 +47,8 @@ def original_stats(patient, split, nii, data):
                      "normalized_first_z": normalized_z(first, shape[2]) if positive else np.nan,
                      "normalized_last_z": normalized_z(last, shape[2]) if positive else np.nan,
                      **{f"bbox_extent_{axis}_mm": (a[-1] - a[0] + 1) * s if len(a) else np.nan
-                        for axis, a, s in zip("xyz", axes, spacing)}})
+                        for axis, a, s in zip("xyz", axes, spacing)},
+                     **shape_descriptor(mask, nii.affine)})
     return inventory, rows
 
 
@@ -132,86 +137,6 @@ def area_trends(slices):
     return per_patient, aggregate
 
 
-def plots(output, frequency, patients, slices, trends):
-    """Generate a compact set of figures with source grid and weighting in titles."""
-    plt = pyplot(output)
-    def save(fig, name):
-        fig.savefig(output / "plots" / name, bbox_inches="tight")
-        plt.close(fig)
-
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4), layout="constrained")
-    for ax, ks, field, title in zip(axes, ([0, 1, 2, 3], [1, 2, 3]),
-            ("fraction_all_voxels", "fraction_foreground_voxels"),
-            ("All labeled voxels (including background)", "Annotated foreground only")):
-        for j, split in enumerate(("train", "val", "all")):
-            rows = [r for r in frequency if r["split"] == split and r["class_id"] in ks]
-            ax.bar(np.arange(len(ks)) + (j - 1) * .25,
-                   [100 * r[field] for r in rows], width=.25, label=split)
-        ax.set_xticks(range(len(ks)), [{0: "background", **CLASSES}[k] for k in ks], rotation=15)
-        ax.set(ylabel="Pooled voxel fraction (%)", title=title)
-        ax.legend()
-    fig.suptitle("Original NIfTI: class frequency")
-    save(fig, "original_class_frequency.png")
-
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4), layout="constrained")
-    for ax, field, title in zip(axes, ("volume_ml", "occupied_slice_count"),
-                               ("Annotated volume (mL)", "Occupied slices")):
-        for k in CLASSES:
-            rs = [r for r in patients if r["class_id"] == k]
-            ax.boxplot([[r[field] for r in rs]], positions=[k], widths=.5, showfliers=False)
-            for j, r in enumerate(rs):
-                ax.scatter(k + .3 * (j / max(len(rs) - 1, 1) - .5), r[field],
-                           marker="^" if r["split"] == "val" else "o", s=23,
-                           c=COLORS[k], alpha=.7)
-        ax.set_xticks(list(CLASSES), list(CLASSES.values()))
-        ax.set(ylabel=title, title=title)
-    axes[0].set_yscale("log")
-    fig.suptitle("Original NIfTI: patient variation (triangles = validation)")
-    save(fig, "original_patient_volume_extent.png")
-
-    fig, axes = plt.subplots(1, 3, figsize=(12, 5), sharey=True, layout="constrained")
-    ids = sorted({r["patient_id"] for r in patients})
-    for ax, k in zip(axes, CLASSES):
-        for r in patients:
-            if r["class_id"] == k and r["present"]:
-                y = ids.index(r["patient_id"])
-                ax.plot([r["normalized_first_z"], r["normalized_last_z"]], [y, y],
-                        color=COLORS[k], marker="|", linewidth=2)
-        ax.set(title=CLASSES[k], xlabel="Scan-relative z", xlim=(0, 1))
-    axes[0].set_yticks(range(len(ids)), ids, fontsize=8)
-    fig.suptitle("Original NIfTI: first–last labeled slice (gaps, if any, are not shown)")
-    save(fig, "original_normalized_extent.png")
-
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4), layout="constrained")
-    for ax, field, label in zip(axes, ("pixel_area", "relative_area"),
-                               ("Positive target area (pixels, log scale)", "Positive target fraction (log scale)")):
-        for j, split in enumerate(("train", "val")):
-            values = [[r[field] for r in slices if r["class_id"] == k and r["present"]
-                       and r["split"] == split] for k in CLASSES]
-            boxes = ax.boxplot(values, positions=np.arange(1, 4) + (j - .5) * .3,
-                               widths=.25, showfliers=False, patch_artist=True)
-            for patch in boxes["boxes"]:
-                patch.set_facecolor(("#9ecae1", "#fdae6b")[j])
-            ax.plot([], [], color=("#9ecae1", "#fdae6b")[j], linewidth=8, label=split)
-        ax.set_xticks(list(CLASSES), list(CLASSES.values()))
-        ax.set(yscale="log", ylabel=label)
-        ax.legend()
-    fig.suptitle("Processed PNG: GT-positive slices; zeros excluded; whiskers = 1.5 IQR")
-    save(fig, "processed_positive_area_distribution.png")
-
-    fig, axes = plt.subplots(1, 3, figsize=(12, 4), layout="constrained")
-    for ax, k in zip(axes, CLASSES):
-        for split, style in (("train", "-"), ("val", "--")):
-            rs = [r for r in trends if r["class_id"] == k and r["split"] == split]
-            x = [r["z_midpoint"] for r in rs]
-            ax.plot(x, [r["median"] for r in rs], style, label=split)
-            ax.fill_between(x, [r["p25"] for r in rs], [r["p75"] for r in rs], alpha=.15)
-        ax.set(title=CLASSES[k], xlabel="Scan-relative z", ylabel="Relative area (zeros included)")
-        ax.legend()
-    fig.suptitle("Processed PNG: median/IQR of patient-bin mean area; patients equally weighted")
-    save(fig, "processed_area_vs_z.png")
-
-
 def main():
     p = parser(__doc__)
     p.add_argument("--max-patients", type=int, help="Deterministic smoke-test subset; use a separate output directory")
@@ -239,11 +164,23 @@ def main():
                        ("slice_presence_summary", presence), ("processed_patient_z_bins", patient_bins),
                        ("processed_area_z_summary", trends)):
         write_csv(output / "tables" / f"{name}.csv", rows)
-    plots(output, frequency, organs, slices, trends)
+    shape_fields = ("patient_id", "split", "class_id", "class_name", "source_grid",
+                    "voxel_count", "volume_mm3", "volume_ml", "centroid_i", "centroid_j", "centroid_k",
+                    "centroid_world_x_mm", "centroid_world_y_mm", "centroid_world_z_mm",
+                    "normalized_si_centroid", "si_extent_mm", "axis_codes", "voxel_volume_mm3",
+                    "scan_inferior_center_z_mm", "scan_superior_center_z_mm")
+    shapes = [{key: row[key] for key in shape_fields} for row in organs]
+    write_csv(output / "tables/shape_descriptors_3d.csv", shapes)
+    dataset_figures(output, frequency, shapes, trends, inventory)
+    remove_superseded(output)
+    shape_examples(output, original)
     provenance(output, "dataset", args, inputs, {"patient_ids": list(patients),
                "subset": bool(args.max_patients), "num_slice_class_rows": len(slices),
                "annotated_classes": CLASSES, "normalized_z": "index / (Z-1); Z=1 -> 0",
-               "single_slice_organ_relative_z": 0.5})
+               "single_slice_organ_relative_z": 0.5,
+               "shape_descriptors": "original voxel cells, world SI projection in mm",
+               "normalized_si_centroid": "(world centroid z - inferior scan centre z) / scan centre SI span",
+               "orientation_codes": sorted({r["axis_codes"] for r in inventory})})
     print(f"Dataset complete: {len(inventory)} patients, {len(slices)} slice-class rows -> {output}", flush=True)
 
 

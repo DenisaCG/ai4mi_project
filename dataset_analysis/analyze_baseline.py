@@ -6,10 +6,11 @@ from pathlib import Path
 
 import nibabel as nib
 import numpy as np
-from PIL import Image
 
-from utils import (CLASSES, COLORS, discover, distribution, identity, load_original,
-                   load_png, overlap, parser, paths, provenance, pyplot, read_csv, write_csv)
+from utils import (CLASSES, discover, distribution, identity, load_original,
+                   load_png, overlap, parser, paths, provenance, read_csv, write_csv)
+
+from figures import baseline_figures
 
 
 def class_summary(rows):
@@ -127,124 +128,6 @@ def patient_metrics(rows, original, volumes, processed_predictions):
     return results, inputs
 
 
-def plots(output, rows, bins, patients):
-    """Show conditional slice quality and patient-level variability without conflating grids."""
-    plt = pyplot(output)
-    from matplotlib.ticker import NullFormatter
-    def save(fig, name):
-        fig.savefig(output / "plots" / name, bbox_inches="tight")
-        plt.close(fig)
-
-    fig, ax = plt.subplots(figsize=(7, 4), layout="constrained")
-    ax.boxplot([[r["dice"] for r in rows if r["class_id"] == k and r["gt_present"]] for k in CLASSES],
-               tick_labels=list(CLASSES.values()), showfliers=True)
-    ax.set(ylabel="Slice Dice", ylim=(-.03, 1.03), title="Processed PNG validation: GT-positive slices only")
-    save(fig, "baseline_positive_dice_distribution.png")
-
-    fig, axes = plt.subplots(1, 3, figsize=(13, 4), sharey=True, layout="constrained")
-    ids = sorted({r["patient_id"] for r in rows})
-    for ax, k in zip(axes, CLASSES):
-        for patient in ids:
-            rs = [r for r in rows if r["class_id"] == k and r["gt_present"] and r["patient_id"] == patient]
-            ax.scatter([r["gt_area"] for r in rs], [r["dice"] for r in rs], s=7, alpha=.35, label=patient)
-        ax.set(xscale="log", title=CLASSES[k], xlabel="GT area (processed pixels)", ylim=(-.03, 1.03))
-    axes[0].set_ylabel("Slice Dice")
-    axes[-1].legend(fontsize=7)
-    fig.suptitle("Processed PNG validation: GT-positive slices (adjacent slices are correlated)")
-    save(fig, "baseline_dice_vs_area_scatter.png")
-
-    for kind, filename, xlabel in (("area_quantile", "baseline_dice_vs_area_binned.png", "Median GT area (pixels)"),
-                                   ("scan_z", "baseline_dice_vs_scan_z.png", "Scan-relative z"),
-                                   ("organ_z", "baseline_dice_vs_organ_z.png", "Position in processed class extent")):
-        fig, axes = plt.subplots(1, 3, figsize=(13, 4), sharey=True, layout="constrained")
-        for ax, k in zip(axes, CLASSES):
-            rs = [r for r in bins if r["class_id"] == k and r["bin_type"] == kind]
-            x = [r["median_gt_area"] if kind == "area_quantile" else (r["lower"] + r["upper"]) / 2 for r in rs]
-            ax.plot(x, [r["patient_mean_dice_median"] for r in rs], "o-", color=COLORS[k],
-                    label="Median patient mean")
-            ax.fill_between(x, [r["patient_mean_dice_p25"] for r in rs],
-                            [r["patient_mean_dice_p75"] for r in rs], color=COLORS[k], alpha=.18)
-            ax.plot(x, [r["slice_dice_median"] for r in rs], "x--", color=".4", label="Pooled slice median")
-            for xx, r in zip(x, rs):
-                ax.annotate(f"{r['num_patients']}p", (xx, r["patient_mean_dice_median"]),
-                            xytext=(0, 7), textcoords="offset points", fontsize=7, ha="center")
-            ax.set(title=CLASSES[k], xlabel=xlabel, ylim=(-.03, 1.12))
-            if kind == "area_quantile":
-                ax.set_xscale("log")
-                ax.set_xticks(x, [f"{v:g}" for v in x], rotation=35, ha="right")
-                ax.xaxis.set_minor_formatter(NullFormatter())
-            if kind == "organ_z":
-                ax.set_xticks([.1, .5, .9], ["First 20%", "Middle 60%", "Last 20%"])
-        axes[0].set_ylabel("GT-positive slice Dice")
-        handles, labels = axes[-1].get_legend_handles_labels()
-        fig.legend(handles, labels, fontsize=8, loc="outside lower center", ncols=2)
-        fig.suptitle("Processed PNG validation: equal-patient summaries; shading = patient IQR, p = patients")
-        save(fig, filename)
-
-    fig, axes = plt.subplots(1, 3, figsize=(13, 4), sharey=True, layout="constrained")
-    for ax, k in zip(axes, CLASSES):
-        rs = [r for r in patients if r["class_id"] == k]
-        x = np.arange(len(rs))
-        ax.plot(x, [r["mean_positive_slice_dice"] for r in rs], "o--", label="Mean positive slice Dice (PNG)")
-        ax.plot(x, [r["dice_3d"] for r in rs], "s-", label="3D Dice (original grid)")
-        ax.set_xticks(x, [r["patient_id"] for r in rs], rotation=35, ha="right", fontsize=8)
-        ax.set(title=CLASSES[k], ylim=(-.03, 1.03))
-    axes[0].set_ylabel("Dice (distinct definitions)")
-    handles, labels = axes[-1].get_legend_handles_labels()
-    fig.legend(handles, labels, fontsize=8, loc="outside lower center", ncols=2)
-    fig.suptitle("Validation patient performance: slice mean and reconstructed 3D overlap")
-    save(fig, "baseline_patient_performance.png")
-
-
-def examples(output, rows, processed, predictions):
-    """Six deterministic cases per class; contours and crop retain PNG coordinates."""
-    plt = pyplot(output)
-    from matplotlib.lines import Line2D
-    selected, inputs = [], []
-    for k, name in CLASSES.items():
-        rs = sorted([r for r in rows if r["class_id"] == k and r["gt_present"]],
-                    key=lambda r: (r["patient_id"], r["slice_index"]))
-        if not rs:
-            continue
-        median = np.median([r["gt_area"] for r in rs])
-        choices = [("small", min(rs, key=lambda r: r["gt_area"])),
-                   ("typical", min(rs, key=lambda r: abs(r["gt_area"] - median))),
-                   ("large", max(rs, key=lambda r: r["gt_area"])),
-                   ("low Dice", min(rs, key=lambda r: r["dice"])),
-                   ("high Dice", max(rs, key=lambda r: r["dice"])),
-                   ("extremity", min(rs, key=lambda r: (min(r["distance_from_first"], r["distance_from_last"]), r["dice"])))]
-        fig, axes = plt.subplots(2, 3, figsize=(12, 8), layout="constrained")
-        for ax, (reason, row) in zip(axes.flat, choices):
-            stem = row["stem"]
-            image_path = processed / "val/img" / f"{stem}.png"
-            with Image.open(image_path) as image_file:
-                image = np.asarray(image_file)
-            gt = load_png(processed / "val/gt" / f"{stem}.png") == k
-            pred = load_png(predictions / f"{stem}.png", prediction=True) == k
-            ax.imshow(image, cmap="gray", vmin=0, vmax=255)
-            for a, color in ((gt, "#00e5ff"), (pred, "#ff8c00")):
-                if a.any() and not a.all():
-                    ax.contour(a, levels=[.5], colors=[color], linewidths=1)
-            yy, xx = np.nonzero(gt | pred)
-            cy, cx = (yy.min() + yy.max()) / 2, (xx.min() + xx.max()) / 2
-            half = max(32, (max(np.ptp(yy), np.ptp(xx)) + 24) / 2)
-            ax.set_xlim(max(-.5, cx - half), min(image.shape[1] - .5, cx + half))
-            ax.set_ylim(min(image.shape[0] - .5, cy + half), max(-.5, cy - half))
-            ax.set_title(f"{reason}: {stem}\narea={row['gt_area']} px, Dice={row['dice']:.3f}", fontsize=9)
-            selected.append({"class_id": k, "class_name": name, "selection": reason,
-                             "stem": stem, "patient_id": row["patient_id"], "slice_index": row["slice_index"],
-                             "gt_area": row["gt_area"], "dice": row["dice"],
-                             "source_grid": "processed_png", "figure": f"{name}_examples.png"})
-            inputs.append(image_path)
-        fig.legend([Line2D([], [], color="#00e5ff"), Line2D([], [], color="#ff8c00")],
-                   ["GT contour", "Prediction contour"], loc="outside lower center", ncols=2)
-        fig.suptitle(f"{name}: processed validation examples; crops in original PNG pixel coordinates")
-        fig.savefig(output / "examples" / f"{name}_examples.png", bbox_inches="tight")
-        plt.close(fig)
-    write_csv(output / "tables/baseline_examples.csv", selected)
-    return inputs
-
-
 def main():
     p = parser(__doc__)
     p.add_argument("--predictions", type=Path)
@@ -301,8 +184,7 @@ def main():
                           ("baseline_binned_summary", bins), ("baseline_patient_bins", patient_bins),
                           ("baseline_patient_metrics", patient_rows)):
         write_csv(output / "tables" / f"{name}.csv", records)
-    plots(output, rows, bins, patient_rows)
-    inputs.extend(examples(output, rows, processed, predictions))
+    baseline_figures(output, bins, patient_rows)
     checkpoint_note = predictions.parent.parent / "best_epoch.txt"
     if checkpoint_note.exists():
         inputs.append(checkpoint_note)
