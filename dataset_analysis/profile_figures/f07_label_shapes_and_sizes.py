@@ -178,8 +178,8 @@ def draw_sizes(labels: pd.DataFrame, out_dir: Path) -> None:
     header(
         fig,
         "Label Size per Patient",
-        "Voxels, volume and share of the scan for labels 1–3; the row below the dashed line is the median of all "
-        "patients.",
+        "One dot per patient for each label (1–3), across voxels, volume and % of the scan; row below the "
+        "dashed line is the median across patients.",
         subtitle_y=0.935,
     )
     fig.tight_layout(rect=(0, 0.04, 1, 0.92))

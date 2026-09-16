@@ -127,9 +127,8 @@ def _fig_bands(df: pd.DataFrame, labels: pd.DataFrame, out_dir: Path) -> None:
     header(
         fig,
         "Slices per Label and Slice-to-Slice Change",
-        f"All {labels['patient'].nunique()} patients. No label has an empty slice inside its range."
-        if labels["empty_slices_inside_range"].sum() == 0
-        else f"All {labels['patient'].nunique()} patients.",
+        "Median line with middle 50%/90% patient bands per label (1–3); position runs lowest (0%) to highest "
+        "(100%) slice; left: patients by slice count.",
         0.95,
     )
     fig.subplots_adjust(top=0.9, bottom=0.07, left=0.06, right=0.98)
@@ -175,8 +174,8 @@ def _fig_joint(df: pd.DataFrame, labels: pd.DataFrame, out_dir: Path) -> None:
     header(
         fig,
         "Slices per Label and Slice-to-Slice Change",
-        "Top: slice counts per patient. Bottom: every neighbouring slice pair; darker = more pairs. "
-        f"Changes beyond ±{CHANGE_LIMIT_PCT}% sit on the edge.",
+        "Top: patients by slice count, labels 1–3 stacked. Bottom: every neighbouring slice pair per label, "
+        f"all patients pooled; darker = more pairs; changes beyond ±{CHANGE_LIMIT_PCT}% sit on the edge.",
         0.95,
     )
     fig.subplots_adjust(top=0.9, bottom=0.07, left=0.06, right=0.98)

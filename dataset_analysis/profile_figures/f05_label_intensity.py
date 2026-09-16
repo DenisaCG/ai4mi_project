@@ -107,8 +107,9 @@ def main():
     fig.legend(handles=handles, loc="lower center", ncol=5, frameon=False, fontsize=12)
     header(
         fig,
-        "Label Intensity: HU Histograms per Patient",
-        f"{BIN_HU} HU bins, each histogram scaled to its own peak. Top row pools all {len(patients)} patients.",
+        "Label Intensity per Patient",
+        f"One curve per label (1–3) per patient, scaled to its own peak, in {BIN_HU} HU bins; dashed black = "
+        "nnU-Net's sample, dashed red = its clip; top row pools all patients.",
         subtitle_y=0.955,
     )
     fig.tight_layout(rect=(0.06, 0.03, 1, 0.945))

@@ -158,8 +158,8 @@ def main():
     header(
         fig,
         "Label Size and Intensity",
-        "Top: every patient's label at the same physical scale, sorted left to right from smallest to largest volume "
-        f"(light to dark). Bottom: {BIN_HU} HU histograms as % of each group's voxels, one band per patient.",
+        "Top: each patient's label 1–3 shape at the same physical scale, sorted smallest (light) to largest "
+        f"(dark) by volume. Bottom: {BIN_HU} HU-wide bins as % of each group's voxels, one band per patient.",
         subtitle_y=0.95,
     )
     out = out_subdir(args.profile_dir, "06-07_label_size_intensity") / "label_size_intensity.png"
