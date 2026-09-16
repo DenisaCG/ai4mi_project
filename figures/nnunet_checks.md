@@ -6,12 +6,15 @@
 - All image/label spacings match: **True**
 - All image/label affines match: **True**
 - Any unexpected label values found (outside {0..4}): **False**
-- Label(s) missing in EVERY patient: **[4]** (= esophagus; note this is only detectable because we know 5 classes were expected -- nnU-Net's own verify_labels() does not check for missing expected labels, only unexpected ones)
+- Label(s) missing in EVERY patient: **[4]** (= aorta; verify_labels() only reports unexpected labels, so this is checked separately against the 5 expected classes)
+- Coordinate orientation consistent across all patients: **True** (axis codes seen: ['LPS'])
+- Any voxel above the 12-bit ceiling (>3071 HU): **True**
 
 ## 2. crop_to_nonzero (cropping.py)
 
-- Dataset median relative size after crop: **1.0000**
-- Triggers mask-restricted normalization (< 0.75)? **False**
+- Relative size after crop, per patient: min **1.0000**, max **1.0000**
+- Triggers mask-restricted normalization (median < 0.75)? **False**
+- CT air is about -1000 HU, not 0, so the nonzero mask covers the whole volume; see tissue_footprint.png and z_coverage.png for where tissue and organs actually are.
 
 ## 3. Anisotropy / target spacing (default_experiment_planner.py)
 
@@ -24,20 +27,27 @@
 
 ## 4. Connected components per class (paper Sec. 2.5 rule)
 
-| class | n patients present | always single (6-conn) | always single (26-conn) | max seen (6-conn) | max seen (26-conn) |
-|---|---|---|---|---|---|
-| aorta | 20 | False | True | 2 | 1 |
-| heart | 20 | True | True | 1 | 1 |
-| trachea | 20 | True | True | 1 | 1 |
-| esophagus | 0 | None | None | 0 | 0 |
-
-Aorta's 6-conn≠26-conn mismatch is a connectivity-definition artifact (arch curvature), not a real split -- see `aorta_component_case_study_Patient_02.png`.
+| class | n patients present | always single (6-conn) | always single (18-conn) | always single (26-conn) | max seen (6-conn) | max seen (18-conn) | max seen (26-conn) |
+|---|---|---|---|---|---|---|---|
+| label 1 | 20 | False | True | True | 2 | 1 | 1 |
+| label 2 | 20 | True | True | True | 1 | 1 | 1 |
+| label 3 | 20 | True | True | True | 1 | 1 | 1 |
+| label 4 | 0 | None | None | None | 0 | 0 | 0 |
 
 ## 5. Affine consistency, per patient
 
 - Max |image_affine - seg_affine| across all 20 patients: **0.000000**
 
-## 6. CT normalization parameters (CTNormalization.run(), pooled foreground)
+## 6. Organ-pair adjacency (fraction of patients where organ A touches organ B)
+
+| touches -> | label 1 | label 2 | label 3 | label 4 |
+|---|---|---|---|---|
+| esophagus | - | 100% | 100% | 0% |
+| heart | 100% | - | 20% | 0% |
+| trachea | 100% | 20% | - | 0% |
+| aorta | 0% | 0% | 0% | - |
+
+## 7. CT normalization parameters (CTNormalization.run(), pooled foreground)
 
 - clip lower (p0.5): **-992.0 HU**
 - clip upper (p99.5): **250.0 HU**
