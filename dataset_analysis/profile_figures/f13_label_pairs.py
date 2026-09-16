@@ -12,7 +12,7 @@ Reads label_pairs.csv written by tools/dataset_profile.py and the label masks
 from the data directory.
 
 Usage:
-    python tools/profile_figures/f13_label_pairs.py --profile-dir figures/profile \
+    python dataset_analysis/profile_figures/f13_label_pairs.py --profile-dir figures/profile \
         --data-dir data/segthor_part1/train
 """
 
@@ -34,8 +34,7 @@ from scipy.ndimage import distance_transform_edt, zoom
 from skimage.measure import marching_cubes
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from plot_style import apply_ticks_style  # noqa: E402
-from profile_figures.common import LABEL_COLORS, build_arg_parser, header, out_subdir  # noqa: E402
+from profile_figures.common import LABEL_COLORS, apply_ticks_style, build_arg_parser, header, out_subdir  # noqa: E402
 
 LABELS = list(LABEL_COLORS)
 PAIRS = [(1, 2), (1, 3), (2, 3)]

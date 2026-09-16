@@ -16,7 +16,7 @@ into its first/last bin, so the right panel's end bins are exactly the mass
 normalise() itself clips.
 
 Usage:
-    python tools/profile_figures/f04_scan_intensity/nnunet_normalisation.py --profile-dir figures/profile
+    python dataset_analysis/profile_figures/f04_scan_intensity/nnunet_normalisation.py --profile-dir figures/profile
 """
 
 from __future__ import annotations
@@ -36,8 +36,9 @@ from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "tools"))
 from dataset_profile import load_tables  # noqa: E402
-from plot_style import apply_ticks_style, title_block  # noqa: E402
+from profile_figures.common import apply_ticks_style, title_block  # noqa: E402
 from profile_figures.f04_scan_intensity.common import (
     output_path,  # noqa: E402
     DATA_DIR,

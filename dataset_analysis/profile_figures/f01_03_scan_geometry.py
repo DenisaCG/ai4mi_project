@@ -10,7 +10,7 @@ Writes two figures into figures/profile/01-03_scan_geometry/:
 Reads patients.csv written by tools/dataset_profile.py.
 
 Usage:
-    python tools/profile_figures/f01_03_scan_geometry.py --profile-dir figures/profile
+    python dataset_analysis/profile_figures/f01_03_scan_geometry.py --profile-dir figures/profile
 """
 
 from __future__ import annotations
@@ -28,8 +28,7 @@ import seaborn as sns
 from matplotlib.ticker import MaxNLocator
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from plot_style import apply_ticks_style  # noqa: E402
-from profile_figures.common import build_arg_parser, header, out_subdir  # noqa: E402
+from profile_figures.common import apply_ticks_style, build_arg_parser, header, out_subdir  # noqa: E402
 
 MEDIAN_COLOR = "#D1495B"
 # (column, panel title, x-axis label, bin width); bins are centred on multiples of the width

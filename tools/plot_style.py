@@ -27,7 +27,6 @@ from __future__ import annotations
 import textwrap
 
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 # Pastel qualitative palette (dusty blue, peach, seafoam, sage, lavender, rose,
 # honey, terracotta). Kept mid-tone rather than pale so white text on a
@@ -87,26 +86,6 @@ def apply_style() -> None:
             "savefig.facecolor": "white",
         }
     )
-
-
-def apply_ticks_style() -> None:
-    """Seaborn "ticks" theme (white background, axis ticks, no grid) for dot-histogram overviews."""
-    sns.set_theme(style="ticks", font_scale=1.15)
-
-
-def title_block(fig, title: str, subtitle: str) -> None:
-    """Big bold left-aligned figure title with one grey subtitle line underneath.
-
-    Leave room for it with fig.subplots_adjust(top=...) or tight_layout(rect=(..., 0.92)).
-
-    Args:
-        fig: Figure to decorate.
-        title: Title text.
-        subtitle: One-line subtitle text.
-    """
-    height = fig.get_size_inches()[1]
-    fig.suptitle(title, fontsize=22, fontweight="bold", x=0.02, ha="left", y=1 - 0.15 / height, va="top")
-    fig.text(0.02, 1 - 0.62 / height, subtitle, fontsize=13.5, color="#444444", ha="left", va="top")
 
 
 def style_axis_horizontal_bars(ax) -> None:

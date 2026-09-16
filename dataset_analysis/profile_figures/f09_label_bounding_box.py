@@ -15,7 +15,7 @@ Axes follow the image (LPS): +x patient left, +y posterior, +z superior.
 Reads labels.csv written by tools/dataset_profile.py.
 
 Usage:
-    python tools/profile_figures/f09_label_bounding_box.py --profile-dir figures/profile
+    python dataset_analysis/profile_figures/f09_label_bounding_box.py --profile-dir figures/profile
 """
 
 from __future__ import annotations
@@ -33,8 +33,7 @@ import pandas as pd
 from mpl_toolkits.mplot3d.art3d import Line3DCollection, Poly3DCollection
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from plot_style import apply_ticks_style  # noqa: E402
-from profile_figures.common import LABEL_COLORS, build_arg_parser, header, out_subdir  # noqa: E402
+from profile_figures.common import LABEL_COLORS, apply_ticks_style, build_arg_parser, header, out_subdir  # noqa: E402
 
 LABELS = list(LABEL_COLORS)
 COLORS = LABEL_COLORS

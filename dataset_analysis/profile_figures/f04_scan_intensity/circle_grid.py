@@ -10,7 +10,7 @@ everything from 1600 up is one final column. nnU-Net's clip values are placed
 inside the column that contains them.
 
 Usage:
-    python tools/profile_figures/f04_scan_intensity/circle_grid.py --profile-dir figures/profile
+    python dataset_analysis/profile_figures/f04_scan_intensity/circle_grid.py --profile-dir figures/profile
 """
 
 from __future__ import annotations
@@ -28,8 +28,9 @@ import seaborn as sns
 from matplotlib.colors import LogNorm
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "tools"))
 from dataset_profile import load_tables  # noqa: E402
-from plot_style import apply_ticks_style, title_block  # noqa: E402
+from profile_figures.common import apply_ticks_style, title_block  # noqa: E402
 from profile_figures.f04_scan_intensity.common import (
     output_path,  # noqa: E402
     PROFILE_DIR,

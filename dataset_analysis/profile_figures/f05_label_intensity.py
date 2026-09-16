@@ -7,7 +7,7 @@ foreground intensity sample and its clip values overlaid.
 Reads intensity_histograms.npz written by tools/dataset_profile.py.
 
 Usage:
-    python tools/profile_figures/f05_label_intensity.py --profile-dir figures/profile
+    python dataset_analysis/profile_figures/f05_label_intensity.py --profile-dir figures/profile
 """
 
 from __future__ import annotations
@@ -23,9 +23,9 @@ import numpy as np
 import seaborn as sns
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools"))
 from dataset_profile import HU_OFFSET, hist_stats, load_tables  # noqa: E402
-from plot_style import apply_ticks_style  # noqa: E402
-from profile_figures.common import LABEL_COLORS, build_arg_parser, header, out_subdir  # noqa: E402
+from profile_figures.common import LABEL_COLORS, apply_ticks_style, build_arg_parser, header, out_subdir  # noqa: E402
 
 GROUPS = [f"label {n}" for n in LABEL_COLORS]
 COLORS = {f"label {n}": color for n, color in LABEL_COLORS.items()}

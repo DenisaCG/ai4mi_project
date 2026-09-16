@@ -15,7 +15,7 @@ every patient counts once. Each heatmap cell is the share of slices or patients
 in which the label has that many pieces.
 
 Usage:
-    python tools/profile_figures/f12_connected_components.py \
+    python dataset_analysis/profile_figures/f12_connected_components.py \
         --data-dir data/segthor_part1/train --profile-dir figures/profile
 """
 

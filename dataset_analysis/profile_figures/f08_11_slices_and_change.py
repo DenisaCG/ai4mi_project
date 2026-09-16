@@ -18,7 +18,7 @@ so patients with different slice counts line up. Area change is
 Reads labels.csv and label_slices.csv written by tools/dataset_profile.py.
 
 Usage:
-    python tools/profile_figures/f08_11_slices_and_change.py --profile-dir figures/profile
+    python dataset_analysis/profile_figures/f08_11_slices_and_change.py --profile-dir figures/profile
 """
 
 from __future__ import annotations
@@ -36,8 +36,7 @@ import seaborn as sns
 from matplotlib.ticker import MaxNLocator
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from plot_style import apply_ticks_style  # noqa: E402
-from profile_figures.common import LABEL_COLORS, build_arg_parser, header, out_subdir  # noqa: E402
+from profile_figures.common import LABEL_COLORS, apply_ticks_style, build_arg_parser, header, out_subdir  # noqa: E402
 
 LABELS = list(LABEL_COLORS)
 PALETTE = {f"label {k}": v for k, v in LABEL_COLORS.items()}

@@ -11,7 +11,7 @@ are nearly transparent and opacity rises to full at -900 HU, so the stack
 behind each slice stays visible.
 
 Usage:
-    python tools/profile_figures/f04_scan_intensity/slices_3d.py --patient Patient_01
+    python dataset_analysis/profile_figures/f04_scan_intensity/slices_3d.py --patient Patient_01
 """
 
 from __future__ import annotations
@@ -29,7 +29,7 @@ import seaborn as sns
 from matplotlib.colors import Normalize
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from plot_style import apply_ticks_style, title_block
+from profile_figures.common import apply_ticks_style, title_block
 from profile_figures.f04_scan_intensity.common import (
     output_path,
     DATA_DIR,

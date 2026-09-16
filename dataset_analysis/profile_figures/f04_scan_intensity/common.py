@@ -20,6 +20,7 @@ import numpy as np
 from scipy.ndimage import binary_fill_holes, distance_transform_edt, label
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "tools"))
 from dataset_profile import binned_pcts, hist_stats  # noqa: E402
 from profile_figures.common import out_subdir  # noqa: E402
 
