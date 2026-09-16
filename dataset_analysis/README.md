@@ -1,93 +1,129 @@
-# SegTHOR exploratory analysis
+# Dataset Analysis
 
-This analysis uses annotated classes 1 (esophagus), 2 (heart), and 3 (trachea).
-The professor intentionally omitted the aorta annotation (class 4). Its absence
-is not corruption, and it is not included in quality summaries. Background means
-the supplied label 0, not necessarily anatomically empty space.
+A guide to SegTHOR anatomy, the targets seen by the 2D ENet, and the saved
+original baseline's performance. Seven quantitative figures are complemented by
+nine original-CT/ground-truth examples explaining the physical shape descriptors.
 
-Run from any directory with the existing `ai4mi` environment. Paths default to
-the checkout containing these scripts; use `--help` for path overrides:
+## Data
 
-```bash
-python -B dataset_analysis/analyze_dataset.py
-python -B dataset_analysis/analyze_baseline.py
-python -B dataset_analysis/validate_results.py
-```
+- **20 patients:** 15 training and five validation.
+- **Annotated organs:** esophagus (1), heart (2), trachea (3).
+- **Aorta/class 4 is missing**; background is label 0.
+- Original NIfTI GT supplies physical 3D descriptors; original CT supplies example backgrounds.
+- Processed 256×256 masks supply slice size/location measurements.
+- Saved original ENet validation predictions supply baseline metrics; no training is run.
 
-From the repository root, submit the CPU-only combined SLURM job:
+## Main Figures
+
+The seven PNGs in `results/plots/` use consistent colors: esophagus purple, heart
+blue, trachea teal, and background gray. Each figure labels its source and cohort.
+
+### `class_distribution.png`
+
+Shows original-GT voxel imbalance, separating overall background/foreground from foreground composition.
+
+**Main observation:** 98.96% is background; foreground is 73.35% heart, 23.07% esophagus, and 3.58% trachea.
+
+### `shape_descriptors_3d.png`
+
+Shows 60 patient–organ points by volume (mL), SI extent (mm), and normalized SI centroid.
+
+**Main observation:** Heart occupies the larger-volume region, esophagus has longer SI spans, and trachea is smaller and relatively superior.
+
+### `shape_descriptors_summary.png`
+
+Shows coordinated distributions of the three descriptors, including every patient.
+
+**Main observation:** Median volumes are 255.72/862.05/38.77 mL and SI extents 274.50/96.25/122.50 mm for esophagus/heart/trachea, with substantial patient variation.
+
+### `target_area_through_scan.png`
+
+Shows processed target-area percentage through normalized scan position, including absent-target slices, using patient-bin medians and IQRs.
+
+**Main observation:** Heart cross-sections are larger and concentrated earlier; trachea appears farther superiorly, while esophagus spans more of the scan.
+
+### `baseline_3d_dice_by_class.png`
+
+Shows each validation patient's original-grid volumetric Dice and the equal-patient organ mean.
+
+**Main observation:** Mean Dice is 0.695 for heart, 0.468 for esophagus, and 0.257 for trachea; Patient_19 has zero trachea Dice.
+
+### `baseline_dice_vs_target_size.png`
+
+Shows GT-positive slice Dice by processed target-area bin, averaging within patients before averaging patients equally.
+
+**Main observation:** Heart has a strong positive area association, esophagus a weaker increase, and trachea no clean monotonic trend; contributor counts vary by bin.
+
+### `baseline_dice_by_organ_position.png`
+
+Shows patient-grouped GT-positive slice Dice at the beginning (20%), middle (60%), and end (20%) of each organ's annotated extent.
+
+**Main observation:** Heart and esophagus perform better in the middle; trachea does not show the same decline at both ends.
+
+## Shape Descriptors
+
+- **Volume:** original GT voxel count × absolute spatial-affine determinant, converted from mm³ to mL.
+- **Centroid:** mean foreground voxel indices, also stored in world coordinates through the NIfTI affine.
+- **SI extent:** inferior-to-superior occupied-cell span in mm, including gaps and voxel thickness; not centreline length.
+- **Normalized SI centroid:** world SI centroid scaled between inferior/superior scan voxel-centre limits (0–1); not anatomical registration.
+
+## Qualitative Examples
+
+`results/examples/` contains exactly nine GT figures, named
+`<organ>_<small|typical|large>_volume.png`.
+
+Selection uses `shape_descriptors_3d.csv`: minimum volume, closest to the class
+median, and maximum volume. Ties resolve by patient ID (median distances compared
+to 9 decimal places). These are descriptive examples, not clinical categories.
+
+Each figure shows axial, coronal, and sagittal original CT views at the nearest
+voxel plane to the organ centroid, with only that organ's GT overlaid in its
+standard color. White crosses mark the projected centroid. The colored coronal
+bracket marks the **whole 3D mask's SI span**, which can exceed its span in that plane.
+
+Titles report volume (all occupied voxels), SI extent (full physical span), and
+normalized SI centroid (relative scan location), directly from the descriptor CSV.
+The selection and displayed values are recorded in `tables/shape_example_selection.csv`.
+
+All examples use **−160 to 240 HU** (level 40, width 400), a consistent soft-tissue
+window that also leaves the air-filled trachea distinct. Windowing only affects
+display. Physical aspect ratios are preserved; transverse crops add 45 mm of
+context and coronal/sagittal views retain full scan SI coverage.
+
+CT/GT shapes and affines are checked before rendering. The verified axial L/P/S
+orientation supports the direction labels: R/L = right/left, A/P = anterior/posterior,
+and I/S = inferior/superior. These views use index-order orientation, as labeled.
+
+## Important Tables
+
+CSV files are in `results/tables/`:
+
+- `shape_descriptors_3d.csv`: 60 patient–organ rows with physical shape descriptors.
+- `patient_inventory.csv`: one row per patient with split, scan geometry, and label counts.
+- `patient_class_stats.csv`: patient–organ counts, physical measurements, and slice coverage.
+- `slice_class_stats.csv`: processed slice–organ target sizes and relative positions.
+- `baseline_patient_metrics.csv`: validation patient–organ 3D Dice and slice summaries.
+- `baseline_slice_metrics.csv`: validation slice–organ Dice, overlap, and empty-case indicators.
+
+## Run and Validation
+
+Submit the existing CPU-only workflow from the repository root:
 
 ```bash
 sbatch jobsAndOutputs/baseline/jobs/dataset_analysis.job
 ```
 
-It follows the existing genoa/module/conda setup. Logs go to the existing
-`jobsAndOutputs/baseline/outputs`; CSVs, plots and examples go exclusively to
-`dataset_analysis/results`. Scripts overwrite their own named outputs but never
-write to data, predictions, checkpoints, or existing training logs. Run manifests
-record arguments, library versions, code hashes, Git commit, and source size/mtime.
-Results and caches are ignored by Git. A dataset run must precede a baseline run.
+Logs go to `jobsAndOutputs/baseline/outputs/dataset_analysis_<jobid>.out`.
+The job runs numerical tests, both analyses, example generation, and the results
+audit. `results/validation.json` reports coverage, geometry/metric checks, and
+example selection/alignment checks. Input manifests and run JSONs retain provenance.
 
-For numerical checks and a deterministic small end-to-end run:
+## Caveats
 
-```bash
-python -B dataset_analysis/test_analysis.py
-python -B dataset_analysis/analyze_dataset.py --max-patients 2 --output-dir dataset_analysis/results/smoke
-python -B dataset_analysis/analyze_baseline.py --output-dir dataset_analysis/results/smoke
-python -B dataset_analysis/validate_results.py --output-dir dataset_analysis/results/smoke
-```
-
-## Measurement conventions
-
-- `patient_inventory.csv`, `patient_class_stats.csv`, and
-  `class_frequency_original.csv` use ORIGINAL NIfTI labels. Physical volume is
-  voxel count times the absolute determinant of the affine's spatial matrix;
-  mm units and CT/GT geometry are checked. mL = mm³ / 1000. Bounding-box extent
-  includes the full occupied voxel cells. Occupied-slice count can differ from
-  first-to-last span when labels contain gaps. Background's fraction of
-  foreground is undefined, recorded as blank.
-- `slice_class_stats.csv` uses PROCESSED 256×256 PNGs, retaining every slice for
-  each annotated class. Areas are pixels or fractions of image pixels, not mm².
-  `slice_presence_summary.csv` gives pooled slice summaries by train/val/all.
-- Scan-relative z is `index / (Z - 1)`; for Z=1 it is 0. This is not anatomical
-  registration. Processed class-relative z is measured between its own first
-  and last nonempty processed slices. It is undefined on GT-empty slices;
-  a one-slice class gets 0.5 (middle). First/last distances are in slice indices.
-- Area-versus-z plots include zeros. Slices are first averaged within each
-  patient/bin; the line and IQR summarize those patient means. Tables retain
-  both patient-bin values and train/val/all aggregates. IQR is descriptive,
-  not a confidence interval. Five validation patients are not hundreds of
-  independent observations despite their many correlated slices.
-- `baseline_slice_metrics.csv` pairs GT and predictions by exact stem. Dice is
-  `2*intersection/(GT area + predicted area)`, with no smoothing. Joint-empty
-  Dice is undefined (blank), not 1. FP-only and complete-miss Dice are 0.
-  Main Dice summaries use GT-positive slices; FP-only and joint-empty counts
-  are reported separately. Predictions may contain class 4, but it has no
-  metric row; predicting it on classes 1–3 still creates false negatives.
-- Area bins use within-class quintiles with duplicate edges collapsed. Z bins
-  use 10 equal scan intervals; class-extent bins use [0,.2), [.2,.8), [.8,1].
-  Final bin endpoints are inclusive. Both pooled-slice and equal-patient
-  summaries are saved in `baseline_binned_summary.csv`; detailed patient/bin
-  summaries are in `baseline_patient_bins.csv`. Plotted shading is the IQR
-  of patient mean Dice within the bin, not a slice-level confidence interval.
-- `baseline_patient_metrics.csv` separates GT-positive mean/median slice Dice
-  (processed grid) from full-mask 3D Dice (original grid). Existing reconstructed
-  labels must have matching geometry and match the current prediction PNGs
-  after the repository's exact 2× nearest-neighbor expansion. No reconstruction
-  or inference is launched. Missing reconstructed files leave 3D cells blank.
-- Example selections are deterministic (ties follow patient/slice order).
-  Each class has six panels: smallest, nearest median, largest, lowest Dice,
-  highest Dice and lowest-Dice extremity. The same slice can satisfy multiple
-  criteria. Cyan is GT, orange is prediction. Crops retain PNG coordinates.
-
-## Scope and limitations
-
-Original anatomy and processed appearance are deliberately separate. Resizing
-can alter small targets, extent and boundaries; expanding predictions to 512²
-cannot recover lost detail. Frequency summaries pool voxels, whereas physical
-volumes account for varying spacing. Validation slice distributions pool slices,
-while explicitly named patient summaries give patients equal weight. These are
-exploratory measurements, not a finalized course metric suite or a new method.
-
-No dependency installation, GPU, training, complex morphology, clustering or
-model modification is required. NumPy and standard-library CSV avoid adding
-Pandas to the current environment.
+- Only five validation patients; adjacent slices are correlated.
+- Class 4/aorta is intentionally omitted; background includes unannotated anatomy.
+- Normalized SI position depends on scan coverage, not anatomical registration.
+- SI extent is not centreline length; a centroid plane need not contain every part of an organ.
+- IQR bands show descriptive spread, not confidence intervals; size bins can contain different patients.
+- Exploratory associations do not establish causality or clinical normal ranges.
+- Joint-empty Dice is undefined; slice-quality trends use GT-positive slices.
