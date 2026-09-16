@@ -2,7 +2,7 @@
 """
 Label shapes and sizes per patient for labels 1, 2 and 3.
 
-Writes two figures into figures/profile/06-07_label_size_intensity/:
+Writes two figures into figures/profile/07_label_size/:
   label_shapes_3d.png        one 3D panel per patient with its label surfaces, at the
                              same physical scale and camera angle in every panel.
   label_size_per_patient.png one row per patient: voxels, volume (mL) and % of the
@@ -38,7 +38,7 @@ from plot_style import apply_ticks_style  # noqa: E402
 from profile_figures.common import LABEL_COLORS, build_arg_parser, header, out_subdir  # noqa: E402
 
 LABELS = [1, 2, 3]
-OUT_NAME = "06-07_label_size_intensity"
+OUT_NAME = "07_label_size"
 MESH_STEP = 2  # marching-cubes step in voxels
 PAD_MM = 5  # margin around the largest label box in the shared 3D box
 MEDIAN_ROW = "median of all patients"
