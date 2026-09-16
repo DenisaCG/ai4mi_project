@@ -19,6 +19,7 @@ from profile_figures.f01_03_scan_geometry import dot_stacks
 from profile_figures.f05_label_intensity import binned_counts
 from profile_figures.f06_07_label_size_intensity import resample_mask, shades
 from profile_figures.f08_11_slices_and_change import slice_changes
+from profile_figures.f12_connected_components import piece_counts, piece_shares
 from profile_figures.f13_label_pairs import label_grids
 from profile_figures.f09_label_bounding_box import box_edges, label_boxes
 from profile_figures.f07_label_shapes_and_sizes import label_boxes as shape_boxes
@@ -267,6 +268,26 @@ class ScanIntensityTests(unittest.TestCase):
         self.assertEqual({g.shape for g in grids.values()}, {(8, 4, 6)})
         self.assertEqual((int(grids[1].sum()), int(grids[2].sum()), int(grids[3].sum())), (16, 32, 0))
         self.assertFalse(grids[1][0].any() or grids[2][-1].any())
+
+
+class ConnectedComponentTests(unittest.TestCase):
+    def test_piece_counts_differ_by_connectivity(self):
+        mask = np.zeros((6, 6, 4), dtype=bool)
+        mask[1, 1, 0] = mask[2, 2, 0] = True  # corner-touching pixels in one slice
+        mask[4, 4, 1] = True  # touches mask[3, 3, 2] only through a 3D corner
+        mask[3, 3, 2] = True
+        counts = piece_counts(mask)
+        self.assertEqual(counts["2D · 4"].tolist(), [2, 1, 1])
+        self.assertEqual(counts["2D · 8"].tolist(), [1, 1, 1])
+        self.assertEqual(counts["3D · 6"].tolist(), [4])
+        self.assertEqual(counts["3D · 18"].tolist(), [3])
+        self.assertEqual(counts["3D · 26"].tolist(), [2])
+        self.assertEqual(piece_counts(np.zeros_like(mask))["3D · 6"].size, 0)
+
+    def test_piece_shares_caps_and_normalises(self):
+        counts = pd.DataFrame({"label": [1, 1, 1, 1], "rule": ["r"] * 4, "pieces": [1, 1, 2, 5]})
+        row = piece_shares(counts).loc[(1, "r")]
+        self.assertEqual(row.tolist(), [50.0, 25.0, 25.0])
 
 
 if __name__ == "__main__":
