@@ -2,7 +2,7 @@
 """
 Label pairs: where labels 1, 2 and 3 meet, drawn in 3D for every patient.
 
-Each patient's three labels are drawn faintly at the same physical scale; the
+Each patient's three labels are drawn see-through at the same physical scale; the
 part of a label's surface that lies within one voxel of another label is
 painted in that pair's colour. Patients are sorted by total shared border area.
 
@@ -37,9 +37,10 @@ from profile_figures.common import LABEL_COLORS, build_arg_parser, header, out_s
 
 LABELS = list(LABEL_COLORS)
 PAIRS = [(1, 2), (1, 3), (2, 3)]
-PAIR_COLORS = {(1, 2): "#6A4C93", (1, 3): "#C44E7A", (2, 3): "#8AA05B"}
+PAIR_COLORS = {(1, 2): "#6A3D9A", (1, 3): "#1F5FA8", (2, 3): "#2E8B2E"}
 MESH_MM = 2.0
 HALF_WIDTH_MM, HALF_HEIGHT_MM = 90, 170  # shared 3D box for every patient
+LABEL_TINT, LABEL_ALPHA = 0.25, 0.2  # labels are drawn see-through so the contact patches stay visible
 LIGHT = np.array([-0.4, -0.6, 0.7]) / np.linalg.norm([-0.4, -0.6, 0.7])
 
 
@@ -71,7 +72,7 @@ def _draw_patient(ax, grids: dict[int, np.ndarray]) -> None:
         verts, faces, _, _ = marching_cubes(grid.astype(np.float32), 0.5, spacing=(MESH_MM,) * 3)
         tri = verts[faces]
         base = np.array(to_rgb(LABEL_COLORS[lab]))
-        rgba = np.tile(np.r_[base + (1 - base) * 0.55, 0.07], (len(faces), 1))
+        rgba = np.tile(np.r_[base + (1 - base) * LABEL_TINT, LABEL_ALPHA], (len(faces), 1))
         cell = np.clip((tri.mean(axis=1) / MESH_MM).astype(int), 0, np.array(grid.shape) - 1)
         for pair in PAIRS:
             if lab in pair:
@@ -115,14 +116,21 @@ def main():
         fig.text((col + 0.5) * col_w, top - row_h + 0.07, patient[-2:], ha="center", fontsize=11, color="#555555")
 
     handles = [
-        plt.Rectangle((0, 0), 1, 1, color=np.array(to_rgb(LABEL_COLORS[lab])) * 0.45 + 0.55, label=f"label {lab}")
+        plt.Rectangle(
+            (0, 0),
+            1,
+            1,
+            color=np.array(to_rgb(LABEL_COLORS[lab])) * (1 - LABEL_TINT) + LABEL_TINT,
+            alpha=LABEL_ALPHA * 3,
+            label=f"label {lab}",
+        )
         for lab in LABELS
     ] + [plt.Rectangle((0, 0), 1, 1, color=PAIR_COLORS[p], label=f"where labels {p[0]} & {p[1]} meet") for p in PAIRS]
     fig.legend(handles=handles, loc="lower center", ncol=6, frameon=False, fontsize=13)
     header(
         fig,
         "Label Pairs: Where the Labels Meet",
-        "Front view, each patient's three labels drawn faintly at the same scale; surface within one voxel of another "
+        "Front view, each patient's three labels drawn see-through at the same scale; surface within one voxel of another "
         "label is coloured by the pair. Sorted left to right, top to bottom, by total shared border.",
         0.945,
     )
