@@ -18,6 +18,7 @@ from dataset_profile import hist_stats, identical_neighbour_slices, label_row, o
 from profile_figures.f01_03_scan_geometry import dot_stacks
 from profile_figures.f05_label_intensity import binned_counts
 from profile_figures.f06_07_label_size_intensity import resample_mask, shades
+from profile_figures.f08_11_slices_and_change import slice_changes
 from profile_figures.f09_label_bounding_box import box_edges, label_boxes
 from profile_figures.f04_scan_intensity.common import nnunet_ct_normalisation, normalise, pool_histograms, range_percent, slice_regions
 
@@ -233,6 +234,15 @@ class ScanIntensityTests(unittest.TestCase):
         self.assertEqual(regions[20, 20], 3)
         self.assertEqual(set(np.unique(regions[5:36, 5:36])), {1, 2, 3})
         self.assertFalse(slice_regions(np.full((4, 4), -1000), (1.0, 1.0)).any())
+
+    def test_slice_changes_position_area_and_change(self):
+        slices = pd.DataFrame({"patient": "P", "label": 1, "slice": [7, 5, 6], "area_mm2": [50.0, 100.0, 200.0]})
+        out = slice_changes(slices)
+        self.assertEqual(out["slice"].tolist(), [5, 6, 7])
+        self.assertEqual(out["pos_pct"].tolist(), [0.0, 50.0, 100.0])
+        self.assertEqual(out["area_pct_max"].tolist(), [50.0, 100.0, 25.0])
+        self.assertTrue(np.isnan(out["change_pct"].iloc[0]))
+        self.assertEqual(out["change_pct"].iloc[1:].tolist(), [100.0, -75.0])
 
 
 if __name__ == "__main__":
