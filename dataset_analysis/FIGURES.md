@@ -31,9 +31,9 @@ Verified against `patients.csv` / `labels.csv`:
   every patient, every slice between that label's first and last slice
   contains at least one voxel of it (0 empty slices, all patients).
 - Crop to nonzero (the box around every voxel above the scan's minimum
-  value) does **not** keep 100% for every patient: it keeps 97.5-100% of
-  the image's voxels per patient (mean 99.2%), reaching exactly 100% for
-  only 3 of the 20.
+  value) keeps 100% of label voxels in every patient: no voxel of labels
+  1-3 lies outside the box. The box itself covers 97.5-100% of the image
+  (mean 99.2%), so cropping removes at most 2.5% of voxels.
 
 ## 01-03 Scan geometry
 
@@ -262,9 +262,9 @@ component) and checking whether 2D or 3D processing changes how fragmented
 a label looks. Key number: 3 of 20 patients have label 1 split into 2 pieces
 under 3D 6-connectivity (face-adjacency only); all 20 are a single piece
 once diagonal adjacency is allowed (18- or 26-connectivity). Labels 2 and 3
-are a single 3D piece in all 20 patients under every 3D rule; both still
-show slices with 2 (and, for label 3, occasionally 3) pieces under the 2D
-rules.
+are a single 3D piece in all 20 patients under every 3D rule. In axial
+slices label 2 is always one piece; label 1 has up to 3 pieces and label 3
+up to 3 pieces (2 in about 16% of its slices) under both 2D rules.
 
 ## 13 Label pairs
 
