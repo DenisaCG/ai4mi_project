@@ -12,7 +12,7 @@ import argparse
 from pathlib import Path
 
 # Fixed color per organ label, shared by every figure in this package.
-LABEL_COLORS = {1: "#2A9D8F", 2: "#264653", 3: "#E9A23B"}
+LABEL_COLORS = {1: "#2A9D8F", 2: "#E76F51", 3: "#E9A23B"}
 
 
 def build_arg_parser(description: str) -> argparse.ArgumentParser:
