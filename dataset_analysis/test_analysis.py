@@ -9,10 +9,28 @@ from PIL import Image
 
 from analyze_dataset import original_stats
 from analyze_baseline import bin_index, class_summary
+from shape import shape_descriptor
+from figures import select_shape_examples, orthogonal_plane
 from utils import extent, load_png, normalized_z, overlap
 
 
 class MeasurementTests(unittest.TestCase):
+    def test_example_selection_extremes_median_ties_and_input_order(self):
+        rows = [dict(class_id=k, patient_id=f'Patient_{p:02d}', volume_ml=v)
+                for k in (1, 2, 3) for p, v in ((4, 90), (3, 30), (2, 20), (1, 10))]
+        selected = select_shape_examples(rows)
+        self.assertEqual(selected, select_shape_examples(rows[::-1]))
+        self.assertEqual(len(selected), 9)
+        for k in (1, 2, 3):
+            self.assertEqual([r['patient_id'] for r in selected if r['class_id'] == k],
+                             ['Patient_01', 'Patient_02', 'Patient_04'])
+
+    def test_orthogonal_plane_preserves_lps_index_mapping(self):
+        array = np.arange(4 * 5 * 6).reshape(4, 5, 6)
+        self.assertEqual(orthogonal_plane(array, 2, 3)[2, 1], array[1, 2, 3])
+        self.assertEqual(orthogonal_plane(array, 1, 2)[3, 1], array[1, 2, 3])
+        self.assertEqual(orthogonal_plane(array, 0, 1)[3, 2], array[1, 2, 3])
+
     def test_overlap_empty_false_positive_and_miss(self):
         zero = np.zeros((2, 3), dtype=bool)
         one = zero.copy()
@@ -76,6 +94,67 @@ class MeasurementTests(unittest.TestCase):
         self.assertEqual(bin_index(.2, edges), 1)
         self.assertEqual(bin_index(.8, edges), 2)
         self.assertEqual(bin_index(1, edges), 2)
+
+
+class PhysicalShapeTests(unittest.TestCase):
+    def setUp(self):
+        self.mask = np.zeros((4, 5, 6), dtype=bool)
+        self.mask[1:3, 1:4, 2:5] = True
+        self.affine = np.diag([-2., -3., 4., 1.])
+        self.affine[:3, 3] = [100, 200, -40]
+
+    def test_anisotropic_volume_centroid_and_full_cell_extent(self):
+        r = shape_descriptor(self.mask, self.affine)
+        self.assertEqual(r['voxel_count'], 18)
+        self.assertAlmostEqual(r['volume_mm3'], 432)
+        np.testing.assert_allclose([r['centroid_i'], r['centroid_j'], r['centroid_k']], [1.5, 2, 3])
+        np.testing.assert_allclose([r['centroid_world_x_mm'], r['centroid_world_y_mm'],
+                                   r['centroid_world_z_mm']], [97, 194, -28])
+        self.assertAlmostEqual(r['normalized_si_centroid'], .6)
+        self.assertEqual(r['si_extent_mm'], 12)
+        self.assertEqual(r['axis_codes'], 'LPS')
+
+    def test_inferior_pointing_axis_preserves_world_descriptors(self):
+        affine = self.affine.copy()
+        affine[:3, 3] += affine[:3, 2] * (self.mask.shape[2] - 1)
+        affine[:3, 2] *= -1
+        a, b = shape_descriptor(self.mask, self.affine), shape_descriptor(self.mask[:, :, ::-1], affine)
+        for field in ('volume_mm3', 'centroid_world_z_mm', 'normalized_si_centroid', 'si_extent_mm'):
+            self.assertAlmostEqual(a[field], b[field])
+
+    def test_permuted_axes_preserve_physical_measurements(self):
+        a = shape_descriptor(self.mask, self.affine)
+        b = shape_descriptor(self.mask.transpose(2, 0, 1), self.affine[:, [2, 0, 1, 3]])
+        for field in ('volume_mm3', 'centroid_world_x_mm', 'centroid_world_y_mm',
+                      'centroid_world_z_mm', 'normalized_si_centroid', 'si_extent_mm'):
+            self.assertAlmostEqual(a[field], b[field])
+
+    def test_oblique_extent_projects_complete_voxel_cells(self):
+        c = 2 ** -.5
+        affine = np.array([[2, 0, 0, 0], [0, 3*c, -4*c, 0],
+                           [0, 3*c, 4*c, 0], [0, 0, 0, 1.]])
+        r = shape_descriptor(self.mask, affine)
+        self.assertAlmostEqual(r['volume_mm3'], 432)
+        self.assertAlmostEqual(r['si_extent_mm'], (3*3 + 3*4)*c)
+
+    def test_empty_single_voxel_and_single_slice(self):
+        r = shape_descriptor(np.zeros((1, 1, 1), bool), self.affine)
+        self.assertEqual(r['volume_mm3'], 0)
+        self.assertTrue(np.isnan(r['centroid_i']))
+        self.assertTrue(np.isnan(r['si_extent_mm']))
+        r = shape_descriptor(np.ones((1, 1, 1), bool), self.affine)
+        self.assertEqual(r['si_extent_mm'], 4)
+        self.assertEqual(r['normalized_si_centroid'], .5)
+        single = np.zeros((4, 5, 1), bool)
+        single[1, 2, 0] = True
+        self.assertEqual(shape_descriptor(single, self.affine)['normalized_si_centroid'], .5)
+
+    def test_gaps_are_included_in_span(self):
+        mask = np.zeros((1, 1, 5), bool)
+        mask[0, 0, [0, 4]] = True
+        r = shape_descriptor(mask, self.affine)
+        self.assertEqual(r['voxel_count'], 2)
+        self.assertEqual(r['si_extent_mm'], 20)
 
 
 if __name__ == "__main__":
