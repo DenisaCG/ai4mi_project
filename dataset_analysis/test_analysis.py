@@ -17,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 from dataset_profile import hist_stats, identical_neighbour_slices, label_row, occupied_box, pair_row, slice_rows
 from scan_geometry_figure import dot_stacks
 from label_intensity_figure import binned_counts
+from label_bbox_3d_figure import box_edges, label_boxes
 
 
 class MeasurementTests(unittest.TestCase):
@@ -156,6 +157,29 @@ class DatasetProfileTests(unittest.TestCase):
         self.assertEqual(x.tolist(), [1.0, 3.0])
         self.assertEqual(c.tolist(), [7.0, 5.0])
         self.assertEqual(binned_counts(np.array([9]), start=50, lo=0, hi=4, width=2)[1].tolist(), [0.0, 0.0])
+
+    def test_label_boxes_outer_faces_and_reference_shift(self):
+        rows = []
+        for patient, (lo, hi, centre) in {"P2": (4.0, 10.0, 7.0), "P1": (2.0, 6.0, 4.0)}.items():
+            for label, shift in ((1, 0.0), (2, 1.0)):
+                row = {"patient": patient, "label": label}
+                for a in "xyz":
+                    row |= {f"{a}_min_mm": lo + shift, f"{a}_max_mm": hi + shift, f"{a}_center_mm": centre + shift}
+                    row[f"{a}_size_mm"] = hi - lo + 2.0
+                rows.append(row)
+        labels = pd.DataFrame(rows)
+        start, size = label_boxes(labels, 1)
+        self.assertEqual(start[:, 0].tolist(), [1.0, 3.0])
+        self.assertEqual(size[:, 0].tolist(), [6.0, 8.0])
+        shifted, _ = label_boxes(labels, 1, reference=2)
+        self.assertEqual(shifted[:, 2].tolist(), [-4.0, -5.0])
+
+    def test_box_edges_twelve_axis_aligned(self):
+        edges = box_edges(np.array([1.0, 2.0, 3.0]), np.array([4.0, 5.0, 6.0]))
+        self.assertEqual(len(edges), 12)
+        lengths = sorted(float(np.abs(b - a).sum()) for a, b in edges)
+        self.assertEqual(lengths, [4.0] * 4 + [5.0] * 4 + [6.0] * 4)
+        self.assertTrue(all(np.count_nonzero(b != a) == 1 for a, b in edges))
 
 
 if __name__ == "__main__":
