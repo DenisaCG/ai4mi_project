@@ -93,7 +93,7 @@ def main():
 
     title_block(
         fig,
-        f"Scan Intensity: Axial Slices of {patient_name(args.patient)}",
+        f"Scan Intensity: Axial Slices of {patient_name(args.patient).capitalize()}",
         "Eight evenly spaced slices from the lowest to the highest, at their height in mm; "
         "values near −1000 are see-through, fully shown from −900 HU up.",
     )

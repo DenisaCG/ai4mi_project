@@ -212,8 +212,8 @@ def main():
     title_block(
         fig,
         "Scan Intensity: Centre, Edge and Outside the Scanned Area",
-        "Per slice, the scanned area (largest patch of values above −1000, holes filled) is split by "
-        "distance from its edge.",
+        f"Per slice, split by distance from the scanned area's edge. Left: {patient_name(PLOT_PATIENT)}'s "
+        "slices by region; right: one line per patient, black = pooled.",
     )
     fig.subplots_adjust(top=0.88)
 

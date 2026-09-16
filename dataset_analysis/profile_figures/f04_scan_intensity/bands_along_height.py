@@ -116,8 +116,8 @@ def main():
     title_block(
         fig,
         "Scan Intensity: Percentile Bands Along Height",
-        "Per slice, all pixels: median, middle 50% (25th–75th percentile) and middle 90% (5th–95th) "
-        "of intensity, from the lowest to the highest slice.",
+        "One panel per patient. Per slice, all pixels: median, middle 50% and middle 90% of intensity, "
+        "lowest to highest slice.",
     )
     fig.subplots_adjust(top=0.88)
 
