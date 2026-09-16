@@ -144,9 +144,9 @@ def size_figure(labels: pd.DataFrame, out: Path) -> None:
     fig.legend(handles=handles, loc="lower center", ncol=2, frameon=False, bbox_to_anchor=(0.5, -0.01))
     header(
         fig,
-        "Label Bounding Boxes in 3D, Drawn Around One Centre",
-        f"Each wireframe is one of {labels.patient.nunique()} patients; all boxes share a centre, so only size and "
-        "shape differ. Same scale in all panels.",
+        "Bounding Box Size per Label",
+        f"One wireframe per patient (n={labels.patient.nunique()}); boxes share a centre so size and shape differ; "
+        "bold = median box.",
         subtitle_y=0.945,
     )
     fig.subplots_adjust(left=0.02, right=0.98, top=0.9, bottom=0.1, wspace=0.05)
@@ -174,8 +174,8 @@ def position_figure(labels: pd.DataFrame, out: Path) -> None:
     fig.legend(handles=handles, loc="lower center", ncol=5, frameon=False)
     header(
         fig,
-        "Label Bounding Boxes in 3D, Placed Around the Label 2 Centre",
-        "Each wireframe is one patient's bounding box, shifted so that patient's label 2 centre sits at (0, 0, 0).",
+        "Bounding Box Position Relative to Label 2",
+        "One wireframe per patient; colour = label; boxes shifted so each patient's label 2 centre sits at (0,0,0).",
         subtitle_y=0.945,
     )
     fig.subplots_adjust(left=0.0, right=1.0, top=0.92, bottom=0.08)

@@ -146,8 +146,8 @@ def main():
     header(
         fig,
         "Contact Between Label Pairs",
-        "Coloured surface: within one voxel of the other label (front view, common scale). "
-        "Strips: shared border area per pair (mm²). Patients ordered by total shared border area.",
+        f"One 3D render per patient (n={pairs.patient.nunique()}), sorted by total shared border area; "
+        "colour = surface within 1 voxel of the other label; strip = shared border area per pair (mm²).",
         0.95,
     )
     out = out_subdir(args.profile_dir, "13_label_pairs") / "label_pairs_contact_3d.png"

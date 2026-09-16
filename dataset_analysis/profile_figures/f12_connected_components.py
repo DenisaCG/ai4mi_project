@@ -122,8 +122,8 @@ def main():
     header(
         fig,
         "Connected Components per Label",
-        f"All {len(patients)} patients pooled. Darker = more axial slices (2D rules) or patients (3D rules) with that "
-        "many pieces.",
+        f"All {len(patients)} patients pooled; each cell = % of axial slices (2D rows) or patients (3D rows) with "
+        "that many pieces.",
         subtitle_y=0.9,
     )
     fig.subplots_adjust(left=0.07, right=0.97, top=0.78, bottom=0.14, wspace=0.08)
