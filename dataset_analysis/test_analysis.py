@@ -15,9 +15,9 @@ from utils import extent, load_png, normalized_z, overlap
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 from dataset_profile import hist_stats, identical_neighbour_slices, label_row, occupied_box, pair_row, slice_rows
-from scan_geometry_figure import dot_stacks
-from label_intensity_figure import binned_counts
-from label_bbox_3d_figure import box_edges, label_boxes
+from profile_figures.f01_03_scan_geometry import dot_stacks
+from profile_figures.f05_label_intensity import binned_counts
+from profile_figures.f09_label_bounding_box import box_edges, label_boxes
 
 
 class MeasurementTests(unittest.TestCase):

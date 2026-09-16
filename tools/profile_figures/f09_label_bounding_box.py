@@ -15,12 +15,11 @@ Axes follow the image (LPS): +x patient left, +y posterior, +z superior.
 Reads labels.csv written by tools/dataset_profile.py.
 
 Usage:
-    python tools/label_bbox_3d_figure.py --profile-dir figures/profile
+    python tools/profile_figures/f09_label_bounding_box.py --profile-dir figures/profile
 """
 
 from __future__ import annotations
 
-import argparse
 import itertools
 import sys
 from pathlib import Path
@@ -33,11 +32,12 @@ import numpy as np
 import pandas as pd
 from mpl_toolkits.mplot3d.art3d import Line3DCollection, Poly3DCollection
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from plot_style import apply_ticks_style
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from plot_style import apply_ticks_style  # noqa: E402
+from profile_figures.common import LABEL_COLORS, build_arg_parser, header, out_subdir  # noqa: E402
 
-LABELS = [1, 2, 3]
-COLORS = {1: "#2A9D8F", 2: "#264653", 3: "#E9A23B"}
+LABELS = list(LABEL_COLORS)
+COLORS = LABEL_COLORS
 AXIS_NAMES = ("left–right, x (mm)", "anterior–posterior, y (mm)", "superior–inferior, z (mm)")
 REFERENCE_LABEL = 2
 SIZE_LIMITS = [(-100, 100), (-85, 85), (-165, 165)]
@@ -120,12 +120,6 @@ def style_axes(ax, limits: list[tuple[float, float]], elev: float, azim: float) 
     ax.view_init(elev=elev, azim=azim)
 
 
-def header(fig, title: str, subtitle: str) -> None:
-    """Big left-aligned title with a one-line subtitle."""
-    fig.suptitle(title, fontsize=22, fontweight="bold", x=0.02, ha="left", y=0.995)
-    fig.text(0.02, 0.945, subtitle, fontsize=13.5, color="#444444", ha="left")
-
-
 def line_handles(extra: list[tuple[str, dict]]) -> list:
     return [plt.Line2D([], [], label=name, **style) for name, style in extra]
 
@@ -154,6 +148,7 @@ def size_figure(labels: pd.DataFrame, out: Path) -> None:
         "Label Bounding Boxes in 3D, Drawn Around One Centre",
         f"Each wireframe is one of {labels.patient.nunique()} patients; all boxes share a centre, so only size and "
         "shape differ. Same scale in all panels.",
+        subtitle_y=0.945,
     )
     fig.subplots_adjust(left=0.02, right=0.98, top=0.9, bottom=0.1, wspace=0.05)
     fig.savefig(out, dpi=150)
@@ -182,6 +177,7 @@ def position_figure(labels: pd.DataFrame, out: Path) -> None:
         fig,
         "Label Bounding Boxes in 3D, Placed Around the Label 2 Centre",
         "Each wireframe is one patient's bounding box, shifted so that patient's label 2 centre sits at (0, 0, 0).",
+        subtitle_y=0.945,
     )
     fig.subplots_adjust(left=0.0, right=1.0, top=0.92, bottom=0.08)
     fig.savefig(out, dpi=150)
@@ -190,15 +186,13 @@ def position_figure(labels: pd.DataFrame, out: Path) -> None:
 
 def main():
     """Draw both 3D bounding-box figures from labels.csv."""
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--profile-dir", type=Path, default=Path("figures/profile"))
+    ap = build_arg_parser(__doc__)
     args = ap.parse_args()
 
     labels = pd.read_csv(args.profile_dir / "labels.csv")
     labels = labels[labels.label.isin(LABELS) & (labels.voxels > 0)]
     apply_ticks_style()
-    out_dir = args.profile_dir / "09_label_bounding_box"
-    out_dir.mkdir(parents=True, exist_ok=True)
+    out_dir = out_subdir(args.profile_dir, "09_label_bounding_box")
     size_figure(labels, out_dir / "label_bbox_size_3d.png")
     position_figure(labels, out_dir / "label_bbox_position_3d.png")
     print(f"wrote {out_dir}")

@@ -7,12 +7,11 @@ foreground intensity sample and its clip values overlaid.
 Reads intensity_histograms.npz written by tools/dataset_profile.py.
 
 Usage:
-    python tools/label_intensity_figure.py --profile-dir figures/profile
+    python tools/profile_figures/f05_label_intensity.py --profile-dir figures/profile
 """
 
 from __future__ import annotations
 
-import argparse
 import sys
 from pathlib import Path
 
@@ -23,12 +22,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from dataset_profile import HU_OFFSET, hist_stats, load_tables
-from plot_style import apply_ticks_style
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from dataset_profile import HU_OFFSET, hist_stats, load_tables  # noqa: E402
+from plot_style import apply_ticks_style  # noqa: E402
+from profile_figures.common import LABEL_COLORS, build_arg_parser, header, out_subdir  # noqa: E402
 
-GROUPS = ["label 1", "label 2", "label 3"]
-COLORS = {"label 1": "#2A9D8F", "label 2": "#264653", "label 3": "#E9A23B"}
+GROUPS = [f"label {n}" for n in LABEL_COLORS]
+COLORS = {f"label {n}": color for n, color in LABEL_COLORS.items()}
 SAMPLE = "nnunet sample"
 CLIP_COLOR = "#D1495B"
 HU_RANGE = (-1050, 550)
@@ -68,8 +68,7 @@ def draw_row(ax, base: float, x: np.ndarray, counts: np.ndarray, **style) -> Non
 
 def main():
     """Draw the label intensity ridge figure from intensity_histograms.npz."""
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--profile-dir", type=Path, default=Path("figures/profile"))
+    ap = build_arg_parser(__doc__)
     args = ap.parse_args()
 
     hists = load_tables(args.profile_dir)["histograms"]
@@ -106,19 +105,14 @@ def main():
         plt.Line2D([], [], color=CLIP_COLOR, ls=(0, (4, 3)), label=f"nnU-Net clip ({clip[0]:.0f}, {clip[1]:.0f} HU)"),
     ]
     fig.legend(handles=handles, loc="lower center", ncol=5, frameon=False, fontsize=12)
-    fig.suptitle(
-        "Label Intensity: HU Histograms per Patient", fontsize=22, fontweight="bold", x=0.02, ha="left", y=0.995
-    )
-    fig.text(
-        0.02,
-        0.955,
+    header(
+        fig,
+        "Label Intensity: HU Histograms per Patient",
         f"{BIN_HU} HU bins, each histogram scaled to its own peak. Top row pools all {len(patients)} patients.",
-        fontsize=13.5,
-        color="#444444",
-        ha="left",
+        subtitle_y=0.955,
     )
     fig.tight_layout(rect=(0.06, 0.03, 1, 0.945))
-    out = args.profile_dir / "label_intensity.png"
+    out = out_subdir(args.profile_dir, "05_label_intensity") / "label_intensity.png"
     fig.savefig(out, dpi=140)
     print(f"wrote {out}")
 

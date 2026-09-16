@@ -6,12 +6,11 @@ every CT scan, drawn as dot histograms (one dot per scan).
 Reads patients.csv written by tools/dataset_profile.py.
 
 Usage:
-    python tools/scan_geometry_figure.py --profile-dir figures/profile
+    python tools/profile_figures/f01_03_scan_geometry.py --profile-dir figures/profile
 """
 
 from __future__ import annotations
 
-import argparse
 import sys
 from pathlib import Path
 
@@ -24,8 +23,9 @@ import pandas as pd
 import seaborn as sns
 from matplotlib.ticker import MaxNLocator
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from plot_style import apply_ticks_style
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from plot_style import apply_ticks_style  # noqa: E402
+from profile_figures.common import build_arg_parser, header, out_subdir  # noqa: E402
 
 MEDIAN_COLOR = "#D1495B"
 # (column, panel title, x-axis label, bin width); bins are centred on multiples of the width
@@ -60,8 +60,7 @@ def dot_stacks(values: pd.Series, width: float) -> tuple[np.ndarray, np.ndarray]
 
 def main():
     """Draw the scan geometry overview from patients.csv."""
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--profile-dir", type=Path, default=Path("figures/profile"))
+    ap = build_arg_parser(__doc__)
     args = ap.parse_args()
 
     scans = pd.read_csv(args.profile_dir / "patients.csv")
@@ -95,21 +94,15 @@ def main():
         loc="lower center",
         frameon=False,
     )
-    fig.suptitle(
-        "Scan Geometry: Voxel Spacing, Slices and Size", fontsize=22, fontweight="bold", x=0.02, ha="left", y=0.995
-    )
-    fig.text(
-        0.02,
-        0.935,
+    header(
+        fig,
+        "Scan Geometry: Voxel Spacing, Slices and Size",
         f"Voxel spacing, number of slices and physical size of the CT scan of each of the {len(scans)} patients. "
         "Each dot is one patient.",
-        fontsize=13.5,
-        color="#444444",
-        ha="left",
+        subtitle_y=0.935,
     )
     fig.tight_layout(rect=(0, 0.04, 1, 0.92))
-    out = args.profile_dir / "01-03_scan_geometry" / "scan_geometry.png"
-    out.parent.mkdir(parents=True, exist_ok=True)
+    out = out_subdir(args.profile_dir, "01-03_scan_geometry") / "scan_geometry.png"
     fig.savefig(out, dpi=160)
     print(f"wrote {out}")
 
