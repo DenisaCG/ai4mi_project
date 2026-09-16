@@ -17,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 from dataset_profile import hist_stats, identical_neighbour_slices, label_row, occupied_box, pair_row, slice_rows
 from profile_figures.f01_03_scan_geometry import dot_stacks
 from profile_figures.f05_label_intensity import binned_counts
+from profile_figures.f06_07_label_size_intensity import resample_mask, shades
 from profile_figures.f09_label_bounding_box import box_edges, label_boxes
 
 
@@ -180,6 +181,19 @@ class DatasetProfileTests(unittest.TestCase):
         lengths = sorted(float(np.abs(b - a).sum()) for a, b in edges)
         self.assertEqual(lengths, [4.0] * 4 + [5.0] * 4 + [6.0] * 4)
         self.assertTrue(all(np.count_nonzero(b != a) == 1 for a, b in edges))
+
+    def test_shades_light_to_full_colour(self):
+        out = shades("#000000", 3)
+        self.assertEqual(len(out), 3)
+        self.assertTrue(np.allclose(out[-1], 0))
+        self.assertTrue(out[0][0] > out[1][0] > out[2][0])
+
+    def test_resample_mask_crops_and_rescales(self):
+        mask = np.zeros((10, 10, 10), dtype=bool)
+        mask[2:6, 3:5, 4:5] = True
+        out = resample_mask(mask, np.array([1.0, 1.0, 2.0]), 1.0)
+        self.assertEqual(out.shape, (4, 2, 2))
+        self.assertTrue(out.all())
 
 
 if __name__ == "__main__":
