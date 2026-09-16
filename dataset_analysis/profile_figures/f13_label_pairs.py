@@ -38,7 +38,7 @@ from profile_figures.common import LABEL_COLORS, apply_ticks_style, build_arg_pa
 
 LABELS = list(LABEL_COLORS)
 PAIRS = [(1, 2), (1, 3), (2, 3)]
-PAIR_COLORS = {(1, 2): "#6A3D9A", (1, 3): "#1F5FA8", (2, 3): "#2E8B2E"}
+PAIR_COLORS = {(1, 2): "#E4572E", (1, 3): "#2878D6", (2, 3): "#17B890"}
 MESH_MM = 2.0
 HALF_WIDTH_MM, HALF_HEIGHT_MM = 90, 170  # shared 3D box for every patient
 SURFACE_RGBA = (0.6, 0.6, 0.6, 0.06)  # faint grey so only the contact patches stand out
@@ -145,9 +145,9 @@ def main():
     fig.legend(handles=handles, loc="lower left", bbox_to_anchor=(0.06, 0.02), ncol=3, frameon=False, fontsize=13)
     header(
         fig,
-        "Label Pairs: Where the Labels Meet and How Much",
-        "Front view, same scale for every patient; label surfaces in faint grey, surface within one voxel of another "
-        "label coloured by the pair. Strips: shared border area per pair. Sorted by total shared border.",
+        "Contact Between Label Pairs",
+        "Coloured surface: within one voxel of the other label (front view, common scale). "
+        "Strips: shared border area per pair (mm²). Patients ordered by total shared border area.",
         0.95,
     )
     out = out_subdir(args.profile_dir, "13_label_pairs") / "label_pairs_contact_3d.png"
