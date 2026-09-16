@@ -20,6 +20,7 @@ from profile_figures.f05_label_intensity import binned_counts
 from profile_figures.f06_07_label_size_intensity import resample_mask, shades
 from profile_figures.f08_11_slices_and_change import slice_changes
 from profile_figures.f09_label_bounding_box import box_edges, label_boxes
+from profile_figures.f07_label_shapes_and_sizes import label_boxes as shape_boxes
 from profile_figures.f04_scan_intensity.common import nnunet_ct_normalisation, normalise, pool_histograms, range_percent, slice_regions
 
 
@@ -197,6 +198,19 @@ class DatasetProfileTests(unittest.TestCase):
         self.assertEqual(out.shape, (4, 2, 2))
         self.assertTrue(out.all())
 
+
+    def test_label_boxes_span_all_present_labels(self):
+        labels = pd.DataFrame(
+            {
+                "patient": ["P1", "P1", "P1"],
+                "label": [1, 2, 4],
+                "voxels": [5, 7, 0],
+                **{f"{a}_min_mm": [0.0, -3.0, -99.0] for a in "xyz"},
+                **{f"{a}_max_mm": [4.0, 2.0, 99.0] for a in "xyz"},
+            }
+        )
+        box = shape_boxes(labels).loc["P1"]
+        self.assertEqual((box["x_min_mm"], box["x_max_mm"]), (-3.0, 4.0))
 
 class ScanIntensityTests(unittest.TestCase):
     def test_pool_histograms_aligns_starts(self):
