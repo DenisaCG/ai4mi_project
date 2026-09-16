@@ -19,6 +19,7 @@ from profile_figures.f01_03_scan_geometry import dot_stacks
 from profile_figures.f05_label_intensity import binned_counts
 from profile_figures.f06_07_label_size_intensity import resample_mask, shades
 from profile_figures.f08_11_slices_and_change import slice_changes
+from profile_figures.f13_label_pairs import label_grids
 from profile_figures.f09_label_bounding_box import box_edges, label_boxes
 from profile_figures.f07_label_shapes_and_sizes import label_boxes as shape_boxes
 from profile_figures.f04_scan_intensity.common import nnunet_ct_normalisation, normalise, pool_histograms, range_percent, slice_regions
@@ -257,6 +258,15 @@ class ScanIntensityTests(unittest.TestCase):
         self.assertEqual(out["area_pct_max"].tolist(), [50.0, 100.0, 25.0])
         self.assertTrue(np.isnan(out["change_pct"].iloc[0]))
         self.assertEqual(out["change_pct"].iloc[1:].tolist(), [100.0, -75.0])
+
+    def test_label_grids_share_one_grid(self):
+        seg = np.zeros((12, 12, 6), dtype=np.int16)
+        seg[2:4, 2:4, 1:3] = 1
+        seg[4:8, 2:4, 1:3] = 2
+        grids = label_grids(seg, np.array([1.0, 1.0, 2.0]), [1, 2, 3], 1.0)
+        self.assertEqual({g.shape for g in grids.values()}, {(8, 4, 6)})
+        self.assertEqual((int(grids[1].sum()), int(grids[2].sum()), int(grids[3].sum())), (16, 32, 0))
+        self.assertFalse(grids[1][0].any() or grids[2][-1].any())
 
 
 if __name__ == "__main__":
