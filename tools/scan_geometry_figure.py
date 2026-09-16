@@ -30,12 +30,12 @@ from plot_style import apply_ticks_style
 MEDIAN_COLOR = "#D1495B"
 # (column, panel title, x-axis label, bin width); bins are centred on multiples of the width
 PANELS = [
-    ("x_spacing_mm", "Scans per pixel size", "pixel size, x = y (mm)", 0.01),
-    ("z_spacing_mm", "Scans per slice spacing", "slice spacing, z (mm)", 0.01),
-    ("spacing_ratio", "Scans per spacing ratio", "slice spacing ÷ pixel size", 0.05),
-    ("z_voxels", "Scans per number of slices", "slices per scan", 15),
-    ("x_extent_mm", "Scans per image width", "image width (mm)", 25),
-    ("z_extent_mm", "Scans per scan length", "scan length (mm)", 40),
+    ("x_spacing_mm", "Patients by pixel size", "pixel size, x = y (mm)", 0.01),
+    ("z_spacing_mm", "Patients by slice spacing", "slice spacing, z (mm)", 0.01),
+    ("spacing_ratio", "Patients by spacing ratio", "slice spacing ÷ pixel size", 0.05),
+    ("z_voxels", "Patients by number of slices", "number of slices", 15),
+    ("x_extent_mm", "Patients by image width", "image width (mm)", 25),
+    ("z_extent_mm", "Patients by scan length", "scan length (mm)", 40),
 ]
 
 
@@ -89,7 +89,7 @@ def main():
         ax.set_xlabel(xlabel, fontsize=13)
         sns.despine(ax=ax)
     for ax in axes[:, 0]:
-        ax.set_ylabel("scans")
+        ax.set_ylabel("patients")
     fig.legend(
         handles=[plt.Line2D([], [], marker="^", ls="", color=MEDIAN_COLOR, markersize=12, label="median")],
         loc="lower center",
@@ -101,8 +101,8 @@ def main():
     fig.text(
         0.02,
         0.935,
-        f"Voxel spacing, number of slices and physical size of each of the {len(scans)} CT scans. "
-        "Each dot is one scan.",
+        f"Voxel spacing, number of slices and physical size of the CT scan of each of the {len(scans)} patients. "
+        "Each dot is one patient.",
         fontsize=13.5,
         color="#444444",
         ha="left",
