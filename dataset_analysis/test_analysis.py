@@ -19,6 +19,7 @@ from profile_figures.f01_03_scan_geometry import dot_stacks
 from profile_figures.f05_label_intensity import binned_counts
 from profile_figures.f06_07_label_size_intensity import resample_mask, shades
 from profile_figures.f09_label_bounding_box import box_edges, label_boxes
+from profile_figures.f04_scan_intensity.common import nnunet_ct_normalisation, normalise, pool_histograms, range_percent, slice_regions
 
 
 class MeasurementTests(unittest.TestCase):
@@ -194,6 +195,44 @@ class DatasetProfileTests(unittest.TestCase):
         out = resample_mask(mask, np.array([1.0, 1.0, 2.0]), 1.0)
         self.assertEqual(out.shape, (4, 2, 2))
         self.assertTrue(out.all())
+
+
+class ScanIntensityTests(unittest.TestCase):
+    def test_pool_histograms_aligns_starts(self):
+        counts, start = pool_histograms([(np.array([1, 2]), -3), (np.array([5]), -2), (np.array([7]), 1)])
+        self.assertEqual(start, -3)
+        self.assertEqual(counts.tolist(), [1, 7, 0, 0, 7])
+
+    def test_range_percent_folds_values_outside_edges(self):
+        vals = np.array([-1005, -1000, -990, -981, -980, 800, 900])
+        counts = np.bincount(vals - vals.min())
+        pct = range_percent(counts, int(vals.min()), np.array([-1000, -980, 800]))
+        self.assertAlmostEqual(pct.sum(), 100)
+        self.assertEqual((pct * 7 / 100).round().tolist(), [4, 3])
+
+    def test_nnunet_normalisation_from_sample(self):
+        vals = np.random.RandomState(1).randint(-900, 400, size=4001)
+        counts = np.bincount(vals - vals.min())
+        hists = {("P1", "nnunet sample"): (counts, int(vals.min())), ("P1", "scan"): (np.array([99]), 5000)}
+        norm = nnunet_ct_normalisation(hists)
+        self.assertAlmostEqual(norm["clip_low"], np.percentile(vals, 0.5))
+        self.assertAlmostEqual(norm["clip_high"], np.percentile(vals, 99.5))
+        self.assertAlmostEqual(norm["mean"], vals.mean())
+        out = normalise(np.array([-5000.0, norm["mean"], 5000.0]), norm)
+        self.assertAlmostEqual(out[1], 0)
+        self.assertAlmostEqual(out[2], (norm["clip_high"] - norm["mean"]) / norm["std"])
+
+    def test_slice_regions_thirds_and_largest_patch(self):
+        ct = np.full((40, 40), -1000)
+        ct[5:36, 5:36] = 0
+        ct[18:23, 18:23] = -1000
+        ct[0, 0] = 50
+        regions = slice_regions(ct, (1.0, 1.0))
+        self.assertEqual(regions[0, 0], 0)
+        self.assertEqual(regions[5, 20], 1)
+        self.assertEqual(regions[20, 20], 3)
+        self.assertEqual(set(np.unique(regions[5:36, 5:36])), {1, 2, 3})
+        self.assertFalse(slice_regions(np.full((4, 4), -1000), (1.0, 1.0)).any())
 
 
 if __name__ == "__main__":

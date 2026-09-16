@@ -72,6 +72,28 @@ def hist_stats(counts: np.ndarray, start: int) -> dict | None:
     }
 
 
+def binned_pcts(counts: np.ndarray, start: int, edges: np.ndarray) -> np.ndarray:
+    """Percentage of voxels in each of len(edges)-1 HU bins, plus below/above-range columns.
+
+    Args:
+        counts: 1 HU histogram counts.
+        start: HU value of the first bin in counts.
+        edges: Bin edges spanning the in-range portion (edges[0]..edges[-1]).
+
+    Returns:
+        Array of length len(edges)+1: [below edges[0], one per bin, above edges[-1]], in percent.
+    """
+    n = counts.sum()
+    if n == 0:
+        return np.full(len(edges) + 1, np.nan)
+    values = start + np.arange(len(counts))
+    bin_idx = np.digitize(values, edges)  # 0 = below edges[0], len(edges) = at/above edges[-1]
+    out = np.zeros(len(edges) + 1)
+    for i in range(len(edges) + 1):
+        out[i] = counts[bin_idx == i].sum()
+    return 100 * out / n
+
+
 def _trimmed_hist(vals: np.ndarray) -> tuple[np.ndarray, int]:
     if vals.size == 0:
         return np.zeros(0, dtype=np.int64), 0
