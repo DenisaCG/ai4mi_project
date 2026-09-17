@@ -126,6 +126,7 @@ predictions/val/*.png  2D predictions of the best model (grey = class * label_sc
 volumes/val/*.nii.gz   predictions stitched back onto the original CT grid
 eval/metrics_3d.csv    per patient and class: Dice, HD95, ASSD, voxel counts
 eval/val/{dice,hd95,assd}.npz   submission format: patient -> (K,) array
+eval/.done             marker: evaluation finished (written even when nothing could be scored)
 wandb/                 local W&B files
 .done                  marker: training finished
 ```
@@ -139,7 +140,9 @@ What happens when you (re)submit the same config:
 | same config, unfinished (crash, timeout, `scancel`) | **resumes automatically** from `last.pt`: same RNG stream, result identical to an uninterrupted run |
 | different config | refuses: rename `experiment`, or pass `--force` (moves the old dir to `seed0.old-<timestamp>`, never deletes) |
 
-"Same config" means the same hash of the resolved config (`notes` and `wandb` settings excluded).
+"Same config" means the same hash of the resolved config. Settings that cannot change results are
+excluded, so a run stays resumable across them: `notes`, `wandb`, `paths`, `device` and
+`data.num_workers` (i.e. resubmitting with a different `--cpus-per-task`, or on CPU, still resumes).
 Changing code without changing the config does **not** create a new run, so use `--force` or a new
 experiment name when you re-run after a code change. `manifest.json` records the git commit either way.
 

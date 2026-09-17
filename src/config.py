@@ -10,6 +10,7 @@ import yaml
 REPO = Path(__file__).resolve().parents[1]  # relative paths in configs resolve against this
 BASE_CONFIG = REPO / "configs" / "base.yaml"
 FREE_FORM = "kwargs"  # keys below a `kwargs` block are component-specific, not validated
+IGNORED_BY_HASH = ("notes", "wandb", "paths", "device")
 
 # --smoke: a few slices, two epochs, separate run dir, no W&B. Applied before --set overrides.
 SMOKE = {"train": {"epochs": 2, "debug_samples": 16}, "wandb": {"mode": "disabled"}}
@@ -29,6 +30,8 @@ def read_yaml(text: str):
 
 def merge(base: dict, override: dict, path: str = "") -> dict:
     out = copy.deepcopy(base)
+    if "name" in override and override["name"] != out.get("name") and isinstance(out.get(FREE_FORM), dict):
+        out[FREE_FORM] = {}
     for key, value in override.items():
         where = f"{path}{key}"
         if key not in out and FREE_FORM not in where.split("."):
@@ -75,11 +78,30 @@ def validate(cfg: dict) -> None:
     bad = [k for k in cfg["eval"]["classes"] if not 0 < k < cfg["data"]["num_classes"]]
     if bad:
         raise ValueError(f"eval.classes {bad} outside 1..num_classes-1")
+    if cfg["train"]["epochs"] < 1:
+        raise ValueError(f"train.epochs must be >= 1, got {cfg['train']['epochs']}")
     if cfg["train"]["select_metric"] not in ("val_dice_fg", "val_dice_legacy_fg"):
         raise ValueError(f"unknown train.select_metric {cfg['train']['select_metric']}")
+    validate_component_names(cfg)
+
+
+def validate_component_names(cfg: dict) -> None:
+    import src.data  # noqa: F401
+    import src.losses  # noqa: F401
+    import src.models  # noqa: F401
+    import src.optim  # noqa: F401
+    from src.registry import available
+
+    selected = [(kind, cfg[kind]["name"]) for kind in ("model", "loss", "optim", "scheduler")]
+    selected += [("augment", a["name"]) for a in cfg["data"]["augment"]]
+    for kind, name in selected:
+        if name not in available(kind):
+            raise ValueError(f"unknown {kind} '{name}', available: {available(kind)}")
 
 
 def config_hash(cfg: dict) -> str:
-    """Identity of a run's settings. `notes` and `wandb` don't change results, so they're excluded."""
-    relevant = {k: v for k, v in cfg.items() if k not in ("notes", "wandb")}
+    """Identity of a run's settings. `notes`, `wandb`, `paths`, `device` and `data.num_workers`
+    don't change results, so they're excluded and a run stays resumable when they differ."""
+    relevant = {k: v for k, v in cfg.items() if k not in IGNORED_BY_HASH}
+    relevant["data"] = {k: v for k, v in cfg["data"].items() if k != "num_workers"}
     return hashlib.sha256(json.dumps(relevant, sort_keys=True).encode()).hexdigest()[:12]

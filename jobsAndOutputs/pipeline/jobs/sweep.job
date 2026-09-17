@@ -24,5 +24,5 @@ echo "task $SLURM_ARRAY_TASK_ID: $CONFIG ${SET:-}"
 
 python -O -m src.train --config "$CONFIG" --set ${SET:-}
 RUN_DIR=$(python -m src.run --config "$CONFIG" --set ${SET:-})
-[ -f "$RUN_DIR/eval/metrics_3d.csv" ] || python -O -m src.evaluate --run "$RUN_DIR"
+[ -f "$RUN_DIR/eval/.done" ] || python -O -m src.evaluate --run "$RUN_DIR"
 echo "[$(date -Is)] done: $RUN_DIR"
