@@ -56,6 +56,8 @@ def run_epoch(split: str, net: nn.Module, loader, loss_fn, optimizer, device, cf
             losses.append(loss.item())
             counts.append(slice_counts(probs.argmax(dim=1), gt))
             stems.extend(batch["stems"])
+    if not counts:
+        raise RuntimeError(f"no {split} batches completed: {len(loader.dataset)} slices, {failed} failed")
     return float(np.mean(losses)), np.concatenate(counts), stems
 
 
@@ -134,7 +136,7 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
         if scheduler:
             scheduler.step()
 
-        improved = row[select] > best or best_epoch < 0  # NaN never improves; epoch 0 always saved
+        improved = best_epoch < 0 or math.isnan(best) or row[select] > best
         if improved:
             best, best_epoch = row[select], epoch
             save_checkpoint(ckpt_dir / "best.pt", {"epoch": epoch, "model": net.state_dict(), "config": cfg})
