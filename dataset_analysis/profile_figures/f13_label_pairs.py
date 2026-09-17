@@ -5,9 +5,8 @@ a strip under each row of shapes giving each pair's shared border area.
 
 Each patient's labels are drawn as faint grey outlines at the same physical
 scale; the part of a label's surface that lies within one voxel of another
-label is painted in that pair's colour, light where the surface faces sideways
-(contact within a slice) and dark where it faces up or down (contact between
-neighbouring slices). The strips split the exact shared face area the same way:
+label is painted in a colour for that pair and direction: within a slice where the
+surface faces sideways, between slices where it faces up or down. The strips split the exact shared face area the same way:
 faces between left-right or front-back neighbours are within a slice, faces
 between voxels on neighbouring slices are between slices. Patients are sorted
 by total shared border area.
@@ -42,11 +41,20 @@ from profile_figures.common import LABEL_COLORS, apply_ticks_style, build_arg_pa
 
 LABELS = list(LABEL_COLORS)
 PAIRS = [(1, 2), (1, 3), (2, 3)]
-PAIR_COLORS = {(1, 2): "#E4572E", (1, 3): "#2878D6", (2, 3): "#17B890"}
 MESH_MM = 2.0
 HALF_WIDTH_MM, HALF_HEIGHT_MM = 90, 170  # shared 3D box for every patient
 DIRECTIONS = ("within a slice", "between slices")
-BETWEEN_SHADE = 0.55  # between-slice contact is drawn as the pair colour darkened by this factor
+# Colour-blind-safe (Okabe-Ito) colours. Contact types that share a surface get opposite hues:
+# labels 1 & 2 (most shared border) blue between slices vs orange within a slice,
+# labels 1 & 3 green within a slice vs reddish purple between slices.
+CONTACT_COLORS = {
+    ((1, 2), "between slices"): "#0072B2",
+    ((1, 2), "within a slice"): "#E69F00",
+    ((1, 3), "within a slice"): "#009E73",
+    ((1, 3), "between slices"): "#CC79A7",
+    ((2, 3), "within a slice"): "#56B4E9",
+    ((2, 3), "between slices"): "#000000",
+}
 FACING_UP = 0.7  # |normal z| above this counts a surface patch as facing the neighbouring slice
 SURFACE_RGBA = (0.6, 0.6, 0.6, 0.06)  # faint grey so only the contact patches stand out
 LIGHT = np.array([-0.4, -0.6, 0.7]) / np.linalg.norm([-0.4, -0.6, 0.7])
@@ -94,8 +102,7 @@ def shared_area_by_direction(a: np.ndarray, b: np.ndarray, zooms: np.ndarray) ->
 
 
 def _shade(pair: tuple[int, int], direction: str) -> np.ndarray:
-    base = np.array(to_rgb(PAIR_COLORS[pair]))
-    return base * BETWEEN_SHADE if direction == DIRECTIONS[1] else base
+    return np.array(to_rgb(CONTACT_COLORS[(pair, direction)]))
 
 
 def _draw_patient(ax, grids: dict[int, np.ndarray]) -> None:
@@ -192,7 +199,7 @@ def main():
         fig,
         "Contact Between Label Pairs",
         f"One 3D render per patient (n={pairs.patient.nunique()}), sorted by total shared border area; "
-        "colour = surface within 1 voxel of the other label (light: within a slice, dark: between slices); "
+        "colour = surface within 1 voxel of the other label (colour per pair and direction); "
         "strip = shared border area per pair and direction (mm²).",
         0.95,
     )
