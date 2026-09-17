@@ -40,7 +40,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from profile_figures.common import LABEL_COLORS, apply_ticks_style, build_arg_parser, header, out_subdir  # noqa: E402
 
 LABELS = list(LABEL_COLORS)
-PAIRS = [(1, 2), (1, 3), (2, 3)]
+PAIRS = [(1, 2), (1, 3)]
+OMITTED_PAIR = (2, 3)  # shares almost no border; reported in a note instead of drawn
 MESH_MM = 2.0
 HALF_WIDTH_MM, HALF_HEIGHT_MM = 90, 170  # shared 3D box for every patient
 DIRECTIONS = ("within a slice", "between slices")
@@ -52,8 +53,6 @@ CONTACT_COLORS = {
     ((1, 2), "within a slice"): "#E69F00",
     ((1, 3), "within a slice"): "#009E73",
     ((1, 3), "between slices"): "#E8000B",
-    ((2, 3), "within a slice"): "#56B4E9",
-    ((2, 3), "between slices"): "#000000",
 }
 FACING_UP = 0.7  # |normal z| above this counts a surface patch as facing the neighbouring slice
 SURFACE_RGBA = (0.6, 0.6, 0.6, 0.06)  # faint grey so only the contact patches stand out
@@ -194,7 +193,17 @@ def main():
         for p in PAIRS
         for d in DIRECTIONS
     ]
-    fig.legend(handles=handles, loc="lower left", bbox_to_anchor=(0.06, 0.005), ncol=3, frameon=False, fontsize=12)
+    fig.legend(handles=handles, loc="lower left", bbox_to_anchor=(0.06, 0.005), ncol=2, frameon=False, fontsize=12)
+    omitted = pairs[(pairs["label_a"] == OMITTED_PAIR[0]) & (pairs["label_b"] == OMITTED_PAIR[1])]
+    touching = omitted[omitted["shared_face_area_mm2"] > 0]
+    fig.text(
+        0.07,
+        0.075,
+        f"Labels {OMITTED_PAIR[0]} & {OMITTED_PAIR[1]} are not shown: they share a border in {len(touching)} of "
+        f"{len(omitted)} patients, {touching['shared_face_area_mm2'].sum():.0f} mm² in total.",
+        fontsize=12,
+        color="#555555",
+    )
     header(
         fig,
         "Contact Between Label Pairs",
