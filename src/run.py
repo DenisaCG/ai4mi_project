@@ -9,6 +9,7 @@ Different config in an existing dir -> refuse; rename `experiment` or pass --for
 import getpass
 import json
 import logging
+import math
 import os
 import platform
 import shutil
@@ -93,13 +94,32 @@ def environment(device: torch.device) -> dict:
             "command": " ".join(sys.argv)}
 
 
+def resolve_device(name: str) -> torch.device:
+    """`cuda` falls back to cpu when no GPU is visible, so a job never dies on the wrong partition."""
+    if name == "cuda" and not torch.cuda.is_available():
+        LOG.warning("device 'cuda' requested but no GPU is visible; falling back to cpu")
+        return torch.device("cpu")
+    return torch.device(name)
+
+
 def read_json(path: Path) -> dict:
     return json.loads(path.read_text()) if path.exists() else {}
 
 
+def json_safe(value):
+    """NaN/inf are not JSON; undefined metrics (a class absent from both GT and prediction) become null."""
+    if isinstance(value, float) and not math.isfinite(value):
+        return None
+    if isinstance(value, dict):
+        return {k: json_safe(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [json_safe(v) for v in value]
+    return value
+
+
 def write_json(path: Path, data: dict) -> None:
     tmp = path.with_name(path.name + ".tmp")
-    tmp.write_text(json.dumps(data, indent=2, default=str) + "\n")
+    tmp.write_text(json.dumps(json_safe(data), indent=2, default=str, allow_nan=False) + "\n")
     os.replace(tmp, path)
 
 
