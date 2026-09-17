@@ -2,21 +2,16 @@
   "n_patients": 20,
   "label_mapping": {
     "0": "background",
-    "1": "aorta",
+    "1": "esophagus",
     "2": "heart",
     "3": "trachea",
-    "4": "esophagus"
+    "4": "aorta"
   },
-  "label_mapping_note": "Verified against the raw NIfTI data: label 1 is the AORTA (aortic arch + descending aorta visible on sagittal reformats), not the esophagus. The esophagus (class 4) has no voxels in this release -- an annotation gap, not a structural absence. This differs from the class order in the course readme.",
+  "label_mapping_note": "Matches the course readme's class order. Label 4 (aorta) has no voxels in this release; the professor confirmed this is an intentional omission for the course dataset, not an annotation error.",
   "split": {
-    "val_patients": [
-      "Patient_01",
-      "Patient_11",
-      "Patient_15",
-      "Patient_17",
-      "Patient_19"
-    ],
+    "val_patients": [],
     "train_patients": [
+      "Patient_01",
       "Patient_02",
       "Patient_03",
       "Patient_04",
@@ -26,11 +21,15 @@
       "Patient_08",
       "Patient_09",
       "Patient_10",
+      "Patient_11",
       "Patient_12",
       "Patient_13",
       "Patient_14",
+      "Patient_15",
       "Patient_16",
+      "Patient_17",
       "Patient_18",
+      "Patient_19",
       "Patient_20"
     ],
     "note": "Statistics below are pooled over ALL patients, including the held-out validation patients. Any preprocessing derived from them (normalization percentiles, target spacing) is therefore fitted on validation data too."
@@ -132,7 +131,7 @@
       "pct_voxels": 98.95538348476987,
       "pct_slices_present": 100.0
     },
-    "aorta": {
+    "esophagus": {
       "pct_voxels": 0.2410161916849314,
       "pct_slices_present": 63.531618435155416
     },
@@ -144,7 +143,7 @@
       "pct_voxels": 0.03738781519130367,
       "pct_slices_present": 27.974276527331188
     },
-    "esophagus": {
+    "aorta": {
       "pct_voxels": 0.0,
       "pct_slices_present": 0.0
     }
@@ -166,7 +165,7 @@
     "std": 183.23395060469295
   },
   "hu_by_organ_foreground_only": {
-    "aorta": {
+    "esophagus": {
       "p0_5": -642.0499999999997,
       "mean": 52.27666982618413,
       "p99_5": 243.0
@@ -181,10 +180,10 @@
       "mean": -811.4611557596633,
       "p99_5": 54.0
     },
-    "esophagus": null
+    "aorta": null
   },
   "organ_bbox_extent_mm_dx_dy_dz": {
-    "aorta": {
+    "esophagus": {
       "median": [
         75.19529724121094,
         111.03514099121094,
@@ -208,13 +207,13 @@
       ],
       "n_patients_present": 20
     },
-    "esophagus": {
+    "aorta": {
       "median": null,
       "n_patients_present": 0
     }
   },
   "organ_volume_cm3": {
-    "aorta": {
+    "esophagus": {
       "median": 255.72357177734375,
       "min": 126.9673080444336,
       "max": 522.251708984375,
@@ -235,7 +234,7 @@
       "max_over_min": 2.6430163383483887,
       "cv_pct": 27.711641322800098
     },
-    "esophagus": {
+    "aorta": {
       "median": 0.0,
       "min": 0.0,
       "max": 0.0,
@@ -324,7 +323,7 @@
         "z_shape": 4.6
       },
       "Patient_15": {
-        "vol_aorta": 3.94,
+        "vol_esophagus": 3.94,
         "vol_trachea": 3.57
       },
       "Patient_18": {
@@ -340,7 +339,7 @@
   "per_patient": [
     {
       "patient": "Patient_01",
-      "split": "val",
+      "split": "train",
       "shape": [
         512,
         512,
@@ -530,7 +529,7 @@
     },
     {
       "patient": "Patient_11",
-      "split": "val",
+      "split": "train",
       "shape": [
         512,
         512,
@@ -606,7 +605,7 @@
     },
     {
       "patient": "Patient_15",
-      "split": "val",
+      "split": "train",
       "shape": [
         512,
         512,
@@ -644,7 +643,7 @@
     },
     {
       "patient": "Patient_17",
-      "split": "val",
+      "split": "train",
       "shape": [
         512,
         512,
@@ -682,7 +681,7 @@
     },
     {
       "patient": "Patient_19",
-      "split": "val",
+      "split": "train",
       "shape": [
         512,
         512,

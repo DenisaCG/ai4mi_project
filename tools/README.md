@@ -32,12 +32,11 @@ Runs in about a minute over the 20 part1 patients and needs only
 (default `data/SEGTHOR/val/gt`) is used only to label which patients are
 held out — it is skipped silently if that directory does not exist.
 
-**Label mapping.** In `data/segthor_part1`, GT label **1 is the aorta**, and the
-**esophagus** is the class with no voxels — the opposite of the class order in
-the top-level readme (`background esophagus heart trachea aorta`). This was
-verified against the raw volumes (the aortic arch is unmistakable on a sagittal
-reformat). `explore_data.py` uses the corrected mapping; anything else reading
-these GT files needs the same correction.
+**Label mapping.** In `data/segthor_part1`, GT labels are `1=esophagus,
+2=heart, 3=trachea, 4=aorta` — matching the top-level readme's class order.
+**Aorta (4)** is the class with no voxels: the professor confirmed this is an
+intentional omission for the course dataset. See
+`dataset_analysis/utils.py:CLASSES` for the canonical mapping.
 
 Requires matplotlib >= 3.9 (`tick_labels=` boxplot kwarg).
 

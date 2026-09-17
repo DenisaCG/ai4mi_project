@@ -1,5 +1,5 @@
-patient,split,aorta_cm3,heart_cm3,trachea_cm3,esophagus_cm3
-Patient_01,val,264.98,697.4,61.05,0.0
+patient,split,esophagus_cm3,heart_cm3,trachea_cm3,aorta_cm3
+Patient_01,train,264.98,697.4,61.05,0.0
 Patient_02,train,251.18,857.38,33.95,0.0
 Patient_03,train,126.97,437.99,30.1,0.0
 Patient_04,train,401.39,787.99,51.97,0.0
@@ -9,13 +9,13 @@ Patient_07,train,219.78,697.82,28.18,0.0
 Patient_08,train,237.4,607.22,41.17,0.0
 Patient_09,train,180.25,872.91,56.03,0.0
 Patient_10,train,259.34,931.38,38.01,0.0
-Patient_11,val,268.18,848.83,40.08,0.0
+Patient_11,train,268.18,848.83,40.08,0.0
 Patient_12,train,331.91,878.36,32.56,0.0
 Patient_13,train,299.19,905.02,32.09,0.0
 Patient_14,train,210.87,536.9,27.59,0.0
-Patient_15,val,522.25,1097.96,72.92,0.0
+Patient_15,train,522.25,1097.96,72.92,0.0
 Patient_16,train,205.53,983.39,37.98,0.0
-Patient_17,val,170.75,532.62,35.16,0.0
+Patient_17,train,170.75,532.62,35.16,0.0
 Patient_18,train,289.07,1829.26,39.53,0.0
-Patient_19,val,209.33,856.94,48.01,0.0
+Patient_19,train,209.33,856.94,48.01,0.0
 Patient_20,train,252.11,1260.99,33.69,0.0

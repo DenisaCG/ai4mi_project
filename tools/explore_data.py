@@ -13,23 +13,13 @@ incomplete annotations), intensity/HU artifact detection split by the 12-bit
 reconstruction ceiling, acquisition-protocol grouping, a per-patient outlier
 scan, and a raw-vs-GT slice montage for visual sanity checking.
 
-LABEL MAPPING -- IMPORTANT
---------------------------
-The course readme lists the SegTHOR class order as
-``background esophagus heart trachea aorta``. That order does NOT match the
-GT volumes shipped in ``data/segthor_part1``. Verified directly from the data
-(sagittal/coronal reformats, per-class cross-sectional geometry and HU):
-
-    label 1 -> AORTA     (candy-cane arch + descending aorta on the vertebral
-                          column; median cross-section ~31 mm equivalent
-                          diameter; HU ~40-50)
-    label 2 -> heart
-    label 3 -> trachea
-    label 4 -> (absent)  -- the ESOPHAGUS is the organ that is not labeled here
-
-The GT files contain labels {0, 1, 2, 3} only. The missing organ is therefore
-the esophagus, not the aorta, and its absence is an *annotation gap* (every
-patient has an esophagus), not a structural absence.
+LABEL MAPPING
+-------------
+``background esophagus heart trachea aorta`` (0-4), matching the course
+readme and dataset_analysis/utils.py:CLASSES. The GT files contain labels
+{0, 1, 2, 3} only: label 4 (aorta) has zero voxels in every patient. The
+professor confirmed this is an intentional omission for the course dataset,
+not an annotation error.
 
 Usage:
     python tools/explore_data.py \
@@ -71,9 +61,9 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from plot_style import PALETTE, apply_style, decorate, legend_below
 
-# See the LABEL MAPPING note in the module docstring: label 1 is the aorta, and
-# class 4 (esophagus) is the one with no voxels in this release.
-CLASS_NAMES = {0: "background", 1: "aorta", 2: "heart", 3: "trachea", 4: "esophagus"}
+# See the LABEL MAPPING note in the module docstring: class 4 (aorta) is the
+# one with no voxels in this release.
+CLASS_NAMES = {0: "background", 1: "esophagus", 2: "heart", 3: "trachea", 4: "aorta"}
 NUM_CLASSES = 5
 ORGAN_COLORS = {1: PALETTE[1], 2: PALETTE[5], 3: PALETTE[2], 4: PALETTE[4]}
 
@@ -88,8 +78,8 @@ CT_12BIT_CEILING = 3071.0
 # Features used for the per-patient morphometric outlier scan. Spacing is handled
 # separately as a categorical acquisition-protocol grouping: it takes 3-4 discrete
 # values, so a MAD-based outlier score on it is meaningless.
-MORPHOMETRIC_FEATURES = ["z_shape", "vol_aorta", "vol_heart", "vol_trachea", "nonzero_fraction"]
-PCA_FEATURES = ["z_shape", "spacing_z", "spacing_xy", "vol_aorta", "vol_heart", "vol_trachea", "nonzero_fraction"]
+MORPHOMETRIC_FEATURES = ["z_shape", "vol_esophagus", "vol_heart", "vol_trachea", "nonzero_fraction"]
+PCA_FEATURES = ["z_shape", "spacing_z", "spacing_xy", "vol_esophagus", "vol_heart", "vol_trachea", "nonzero_fraction"]
 MODIFIED_Z_THRESHOLD = 3.5  # Iglewicz & Hoaglin's recommended cutoff
 
 
@@ -254,7 +244,7 @@ def main():
                 "z_shape": ct.shape[-1],
                 "spacing_z": float(zooms[2]),
                 "spacing_xy": float(zooms[0]),
-                "vol_aorta": organ_vols_this_patient.get(1, 0.0),
+                "vol_esophagus": organ_vols_this_patient.get(1, 0.0),
                 "vol_heart": organ_vols_this_patient.get(2, 0.0),
                 "vol_trachea": organ_vols_this_patient.get(3, 0.0),
                 "nonzero_fraction": fg_fraction_per_patient[-1],
@@ -322,10 +312,9 @@ def main():
         "n_patients": len(patients),
         "label_mapping": {str(c): CLASS_NAMES[c] for c in range(NUM_CLASSES)},
         "label_mapping_note": (
-            "Verified against the raw NIfTI data: label 1 is the AORTA (aortic arch + "
-            "descending aorta visible on sagittal reformats), not the esophagus. The "
-            "esophagus (class 4) has no voxels in this release -- an annotation gap, not "
-            "a structural absence. This differs from the class order in the course readme."
+            "Matches the course readme's class order. Label 4 (aorta) has no voxels in "
+            "this release; the professor confirmed this is an intentional omission for "
+            "the course dataset, not an annotation error."
         ),
         "split": {
             "val_patients": sorted(val_pids),
@@ -463,18 +452,15 @@ def main():
 
     md = []
     md.append(f"# SegTHOR part1 dataset fingerprint (n={len(patients)} patients)\n")
-    md.append("## Label mapping (verified against the raw data)\n")
+    md.append("## Label mapping\n")
     md.append("| label | organ |")
     md.append("|---|---|")
     for c in range(NUM_CLASSES):
         md.append(f"| {c} | {CLASS_NAMES[c]} |")
     md.append(
-        "\n**Label 1 is the aorta, not the esophagus.** Confirmed from sagittal/coronal "
-        "reformats (aortic arch + descending aorta on the vertebral column) and from "
-        "cross-sectional geometry (~31 mm median equivalent diameter, HU ~40-50). The "
-        "course readme's class order (`esophagus heart trachea aorta`) does not match "
-        "these GT files. The **esophagus** is the organ with no voxels here, and since "
-        "every patient has one, that is an annotation gap -- not a structural absence.\n"
+        "\n**Label 4 (aorta) has no voxels in this release.** The professor confirmed "
+        "this is an intentional omission for the course dataset, not an annotation "
+        "error.\n"
     )
     if val_pids:
         md.append("## Train / validation split\n")
@@ -720,8 +706,8 @@ def main():
         subtitle=f"Background is {bg_pct:.2f}% of voxels (off-chart); the {len(positive)} labeled "
         f"classes span {span_orders:.1f} orders of magnitude",
         footnote_text=(
-            f"Class 4 ({', '.join(absent_names)}) has zero voxels in this part1 release. Every patient has "
-            f"an esophagus, so this is an annotation gap, not a structural absence -- the class cannot be "
+            f"Class 4 ({', '.join(absent_names)}) has zero voxels in this part1 release. The professor "
+            f"confirmed this is an intentional omission for the course dataset -- the class cannot be "
             f"learned or scored here."
         ),
     )
@@ -748,8 +734,8 @@ def main():
     legend_below(ax, ncol=4)
     pct_over = 100.0 * n_voxels_over_500 / total_voxels
     # Quote the interquartile band, not p0.5/p99.5: the soft-tissue masks have
-    # thin air-contaminated tails at their edges (aorta p0.5 is -642 HU), which
-    # would describe a far wider overlap than the histograms actually show.
+    # thin air-contaminated tails at their edges, which would describe a far
+    # wider overlap than the histograms actually show.
     soft_classes = [c for c in present_classes if np.mean(np.concatenate(hu_by_class[c])) > -200]
     soft_pooled = np.concatenate([np.concatenate(hu_by_class[c]) for c in soft_classes])
     soft_lo, soft_hi = np.percentile(soft_pooled, 25), np.percentile(soft_pooled, 75)
@@ -892,8 +878,8 @@ def main():
         "Annotation Completeness Check, Per Patient Per Class",
         subtitle="Black = organ labeled and present; white = no voxels for that patient",
         footnote_text=(
-            f"The {absent_str} column is empty for all {len(pids)} patients. Every patient has an "
-            f"esophagus, so this is a missing annotation, not missing anatomy. The other "
+            f"The {absent_str} column is empty for all {len(pids)} patients -- an intentional omission "
+            f"for the course dataset, confirmed by the professor. The other "
             f"{len(present_classes)} classes are labeled in all {len(pids)} patients."
         ),
     )
@@ -1000,10 +986,7 @@ def main():
         fig,
         "Visual QC: Raw CT vs. Ground-Truth Overlay",
         subtitle=f"Anterior up, standard axial orientation. Columns: {montage_reasons}",
-        footnote_text=(
-            f"Class 1 is rendered here as the aorta: on these slices it is the contrast-filled "
-            f"vessel adjacent to the spine and heart, not a collapsed esophageal lumen."
-        ),
+        footnote_text=f"Colors follow {CLASS_NAMES[1]}/{CLASS_NAMES[2]}/{CLASS_NAMES[3]} per the legend above.",
     )
     fig.savefig(args.out_dir / "slice_montage_qc.png")
     plt.close(fig)
