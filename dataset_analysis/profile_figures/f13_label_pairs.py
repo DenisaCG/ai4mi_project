@@ -5,8 +5,12 @@ a strip under each row of shapes giving each pair's shared border area.
 
 Each patient's labels are drawn as faint grey outlines at the same physical
 scale; the part of a label's surface that lies within one voxel of another
-label is painted in that pair's colour. Patients are sorted by total shared
-border area.
+label is painted in that pair's colour, light where the surface faces sideways
+(contact within a slice) and dark where it faces up or down (contact between
+neighbouring slices). The strips split the exact shared face area the same way:
+faces between left-right or front-back neighbours are within a slice, faces
+between voxels on neighbouring slices are between slices. Patients are sorted
+by total shared border area.
 
 Reads label_pairs.csv written by tools/dataset_profile.py and the label masks
 from the data directory.
@@ -41,6 +45,9 @@ PAIRS = [(1, 2), (1, 3), (2, 3)]
 PAIR_COLORS = {(1, 2): "#E4572E", (1, 3): "#2878D6", (2, 3): "#17B890"}
 MESH_MM = 2.0
 HALF_WIDTH_MM, HALF_HEIGHT_MM = 90, 170  # shared 3D box for every patient
+DIRECTIONS = ("within a slice", "between slices")
+BETWEEN_SHADE = 0.55  # between-slice contact is drawn as the pair colour darkened by this factor
+FACING_UP = 0.7  # |normal z| above this counts a surface patch as facing the neighbouring slice
 SURFACE_RGBA = (0.6, 0.6, 0.6, 0.06)  # faint grey so only the contact patches stand out
 LIGHT = np.array([-0.4, -0.6, 0.7]) / np.linalg.norm([-0.4, -0.6, 0.7])
 
@@ -64,6 +71,33 @@ def label_grids(seg: np.ndarray, zooms: np.ndarray, labels: list[int], step_mm: 
     return {lab: np.pad(zoom((crop == lab).astype(np.float32), factors, order=1) > 0.5, 1) for lab in labels}
 
 
+def shared_area_by_direction(a: np.ndarray, b: np.ndarray, zooms: np.ndarray) -> dict[str, float]:
+    """Shared face area between two label masks, split into within-slice and between-slice faces.
+
+    Args:
+        a: Boolean mask of the first label, shape (x, y, z).
+        b: Boolean mask of the second label, same shape.
+        zooms: Voxel spacing (x, y, z) in mm.
+
+    Returns:
+        {"within a slice": area of faces between x or y neighbours (mm²),
+         "between slices": area of faces between z neighbours (mm²)}.
+    """
+    face_area = [zooms[1] * zooms[2], zooms[0] * zooms[2], zooms[0] * zooms[1]]
+    per_axis = []
+    for axis in range(3):
+        head, tail = [slice(None)] * 3, [slice(None)] * 3
+        head[axis], tail[axis] = slice(None, -1), slice(1, None)
+        head, tail = tuple(head), tuple(tail)
+        per_axis.append(face_area[axis] * int((a[head] & b[tail]).sum() + (b[head] & a[tail]).sum()))
+    return {DIRECTIONS[0]: per_axis[0] + per_axis[1], DIRECTIONS[1]: per_axis[2]}
+
+
+def _shade(pair: tuple[int, int], direction: str) -> np.ndarray:
+    base = np.array(to_rgb(PAIR_COLORS[pair]))
+    return base * BETWEEN_SHADE if direction == DIRECTIONS[1] else base
+
+
 def _draw_patient(ax, grids: dict[int, np.ndarray]) -> None:
     near_other = {lab: distance_transform_edt(~g, sampling=MESH_MM) for lab, g in grids.items()}
     centre = np.array(next(iter(grids.values())).shape) * MESH_MM / 2
@@ -74,15 +108,17 @@ def _draw_patient(ax, grids: dict[int, np.ndarray]) -> None:
         tri = verts[faces]
         rgba = np.tile(SURFACE_RGBA, (len(faces), 1))
         cell = np.clip((tri.mean(axis=1) / MESH_MM).astype(int), 0, np.array(grid.shape) - 1)
-        for pair in PAIRS:
-            if lab in pair:
-                other = pair[1] if lab == pair[0] else pair[0]
-                touching = near_other[other][cell[:, 0], cell[:, 1], cell[:, 2]] <= 1.5 * MESH_MM
-                rgba[touching] = np.r_[to_rgb(PAIR_COLORS[pair]), 1.0]
         tri = tri - centre
         tri[..., 0] *= -1  # array x runs towards patient left; flip so patient left is on the viewer's right
         normals = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
         normals /= np.linalg.norm(normals, axis=1, keepdims=True) + 1e-9
+        facing_up = np.abs(normals[:, 2]) > FACING_UP
+        for pair in PAIRS:
+            if lab in pair:
+                other = pair[1] if lab == pair[0] else pair[0]
+                touching = near_other[other][cell[:, 0], cell[:, 1], cell[:, 2]] <= 1.5 * MESH_MM
+                for direction, mask in zip(DIRECTIONS, (~facing_up, facing_up)):
+                    rgba[touching & mask] = np.r_[_shade(pair, direction), 1.0]
         rgba[:, :3] *= (0.5 + 0.5 * np.abs(normals @ LIGHT))[:, None]
         ax.add_collection3d(Poly3DCollection(tri, facecolors=rgba, linewidths=0))
     ax.set_xlim(-HALF_WIDTH_MM, HALF_WIDTH_MM)
@@ -103,13 +139,14 @@ def main():
     pairs = pairs[pairs["label_a"].isin(LABELS) & pairs["label_b"].isin(LABELS)]
     order = pairs.groupby("patient")["shared_face_area_mm2"].sum().sort_values().index
 
-    area = pairs.pivot_table(index="patient", columns=["label_a", "label_b"], values="shared_face_area_mm2")
-    area_max = float(area.to_numpy().max())
+    rows = [(pair, direction) for pair in PAIRS for direction in DIRECTIONS]
+    area = {}
 
     apply_ticks_style()
     fig = plt.figure(figsize=(20, 12.5))
     col_w, row_h, left = 0.09, 0.4, 0.07
-    strip_h = 0.075
+    strip_h = 0.11
+    strips = []
     for r in range(2):
         top = 1.0 - r * 0.44
         row_patients = order[r * 10 : (r + 1) * 10]
@@ -118,18 +155,24 @@ def main():
             seg, zooms = np.asarray(img.dataobj), np.array(img.header.get_zooms()[:3], dtype=float)
             ax = fig.add_axes([left + c * col_w, top - row_h, col_w, row_h], projection="3d")
             _draw_patient(ax, label_grids(seg, zooms, LABELS, MESH_MM))
+            for a, b in PAIRS:
+                split = shared_area_by_direction(seg == a, seg == b, zooms)
+                for direction in DIRECTIONS:
+                    area[(patient, (a, b), direction)] = split[direction]
+        strips.append((top, row_patients))
+    area_max = max(area.values())
+    for top, row_patients in strips:
         strip = fig.add_axes([left, top - row_h - strip_h + 0.095, col_w * len(row_patients), strip_h])
-        cells = np.ones((len(PAIRS), len(row_patients), 3))
-        for i, pair in enumerate(PAIRS):
-            base = np.array(to_rgb(PAIR_COLORS[pair]))
-            share = area.loc[row_patients, pair].to_numpy() / area_max
-            cells[i] = 1 - share[:, None] * (1 - base)
-        strip.imshow(cells, aspect="auto", extent=(0, len(row_patients), len(PAIRS), 0))
+        cells = np.ones((len(rows), len(row_patients), 3))
+        for i, (pair, direction) in enumerate(rows):
+            share = np.array([area[(p, pair, direction)] for p in row_patients]) / area_max
+            cells[i] = 1 - share[:, None] * (1 - _shade(pair, direction))
+        strip.imshow(cells, aspect="auto", extent=(0, len(row_patients), len(rows), 0))
         strip.set_xticks(np.arange(len(row_patients)) + 0.5, [f"patient {p[-2:]}" for p in row_patients])
-        strip.set_yticks(np.arange(len(PAIRS)) + 0.5, [f"labels {a} & {b}" for a, b in PAIRS])
+        strip.set_yticks(np.arange(len(rows)) + 0.5, [f"{a} & {b}, {d}" for (a, b), d in rows], fontsize=10)
         strip.tick_params(length=0)
-        strip.hlines(range(1, len(PAIRS)), 0, len(row_patients), color="white", lw=2)
-        strip.vlines(range(1, len(row_patients)), 0, len(PAIRS), color="white", lw=2)
+        strip.hlines(range(1, len(rows)), 0, len(row_patients), color="white", lw=1.5)
+        strip.vlines(range(1, len(row_patients)), 0, len(rows), color="white", lw=2)
         for spine in strip.spines.values():
             spine.set_visible(False)
 
@@ -140,14 +183,17 @@ def main():
     for spine in key.spines.values():
         spine.set_visible(False)
     handles = [
-        plt.Rectangle((0, 0), 1, 1, color=PAIR_COLORS[p], label=f"where labels {p[0]} & {p[1]} meet") for p in PAIRS
+        plt.Rectangle((0, 0), 1, 1, color=_shade(p, d), label=f"labels {p[0]} & {p[1]}, {d}")
+        for p in PAIRS
+        for d in DIRECTIONS
     ]
-    fig.legend(handles=handles, loc="lower left", bbox_to_anchor=(0.06, 0.02), ncol=3, frameon=False, fontsize=13)
+    fig.legend(handles=handles, loc="lower left", bbox_to_anchor=(0.06, 0.005), ncol=3, frameon=False, fontsize=12)
     header(
         fig,
         "Contact Between Label Pairs",
         f"One 3D render per patient (n={pairs.patient.nunique()}), sorted by total shared border area; "
-        "colour = surface within 1 voxel of the other label; strip = shared border area per pair (mm²).",
+        "colour = surface within 1 voxel of the other label (light: within a slice, dark: between slices); "
+        "strip = shared border area per pair and direction (mm²).",
         0.95,
     )
     out = out_subdir(args.profile_dir, "13_label_pairs") / "label_pairs_contact_3d.png"

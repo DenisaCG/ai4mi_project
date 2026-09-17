@@ -21,7 +21,7 @@ from profile_figures.f05_label_intensity import binned_counts
 from profile_figures.f06_07_label_size_intensity import resample_mask, shades
 from profile_figures.f08_11_slices_and_change import slice_changes
 from profile_figures.f12_connected_components import piece_counts, piece_shares
-from profile_figures.f13_label_pairs import label_grids
+from profile_figures.f13_label_pairs import label_grids, shared_area_by_direction
 from profile_figures.f09_label_bounding_box import box_edges, label_boxes
 from profile_figures.f07_label_shapes_and_sizes import label_boxes as shape_boxes
 from dataset_profile import hist_stats, identical_neighbour_slices, label_row, occupied_box, pair_row, slice_rows
@@ -340,6 +340,17 @@ class ConnectedComponentTests(unittest.TestCase):
         counts = pd.DataFrame({"label": [1, 1, 1, 1], "rule": ["r"] * 4, "pieces": [1, 1, 2, 5]})
         row = piece_shares(counts).loc[(1, "r")]
         self.assertEqual(row.tolist(), [50.0, 25.0, 25.0])
+
+    def test_shared_area_by_direction_matches_pair_row(self):
+        zooms = np.array([1.0, 2.0, 3.0])
+        a = np.zeros((4, 4, 4), dtype=bool)
+        b = np.zeros_like(a)
+        a[1, 1, 1] = True
+        b[2, 1, 1] = True  # x neighbour: face area 2 * 3
+        b[1, 1, 2] = True  # z neighbour: face area 1 * 2
+        split = shared_area_by_direction(a, b, zooms)
+        self.assertEqual(split, {"within a slice": 6.0, "between slices": 2.0})
+        self.assertEqual(sum(split.values()), pair_row(a, b, zooms)["shared_face_area_mm2"])
 
 
 if __name__ == "__main__":
