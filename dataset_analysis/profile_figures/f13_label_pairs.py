@@ -52,11 +52,12 @@ CONTACT_COLORS = {
     ((1, 2), "within a slice"): "#E69F00",
     ((1, 3), "within a slice"): "#009E73",
     ((1, 3), "between slices"): "#E8000B",
-    ((2, 3), "within a slice"): "#7B2CBF",
+    ((2, 3), "within a slice"): "#5A189A",
     ((2, 3), "between slices"): "#000000",
 }
 FACING_UP = 0.7  # |normal z| above this counts a surface patch as facing the neighbouring slice
 SURFACE_RGBA = (0.6, 0.6, 0.6, 0.06)  # faint grey so only the contact patches stand out
+MIN_BAR = 0.02  # any non-zero contact gets at least this bar length (fraction of a patient cell)
 LIGHT = np.array([-0.4, -0.6, 0.7]) / np.linalg.norm([-0.4, -0.6, 0.7])
 
 
@@ -170,25 +171,31 @@ def main():
     area_max = max(area.values())
     for top, row_patients in strips:
         strip = fig.add_axes([left, top - row_h - strip_h + 0.095, col_w * len(row_patients), strip_h])
-        cells = np.ones((len(rows), len(row_patients), 3))
         for i, (pair, direction) in enumerate(rows):
-            share = np.array([area[(p, pair, direction)] for p in row_patients]) / area_max
-            cells[i] = 1 - share[:, None] * (1 - _shade(pair, direction))
-        strip.imshow(cells, aspect="auto", extent=(0, len(row_patients), len(rows), 0))
-        strip.set_xticks(np.arange(len(row_patients)) + 0.5, [f"patient {p[-2:]}" for p in row_patients])
+            vals = np.array([area[(p, pair, direction)] for p in row_patients])
+            width = np.where(vals > 0, np.maximum(0.92 * vals / area_max, MIN_BAR), 0)
+            strip.barh(
+                np.full(len(vals), i + 0.5),
+                width,
+                left=np.arange(len(row_patients)) + 0.04,
+                height=0.75,
+                color=_shade(pair, direction),
+            )
+        strip.set_ylim(len(rows), 0)
         strip.set_yticks(np.arange(len(rows)) + 0.5, [f"{a} & {b}, {d}" for (a, b), d in rows], fontsize=10)
+        strip.vlines(range(len(row_patients) + 1), 0, len(rows), color="#cccccc", lw=1)
+        strip.set_xlim(0, len(row_patients))
+        strip.set_xticks(np.arange(len(row_patients)) + 0.5, [f"patient {p[-2:]}" for p in row_patients])
         strip.tick_params(length=0)
-        strip.hlines(range(1, len(rows)), 0, len(row_patients), color="white", lw=1.5)
-        strip.vlines(range(1, len(row_patients)), 0, len(rows), color="white", lw=2)
         for spine in strip.spines.values():
             spine.set_visible(False)
 
-    key = fig.add_axes([0.6, 0.04, 0.3, 0.016])
-    key.imshow(np.linspace(1, 0.25, 256)[None, :, None].repeat(3, axis=2), aspect="auto", extent=(0, area_max, 0, 1))
+    key = fig.add_axes([0.62, 0.04, 0.3, 0.02])
+    key.set_xlim(0, area_max)
     key.set_yticks([])
-    key.set_title("shared border area (mm²), white = none", fontsize=12)
-    for spine in key.spines.values():
-        spine.set_visible(False)
+    key.set_xlabel("bar length = shared border area (mm²); any contact is drawn at least a short tick", fontsize=11)
+    for sp in ("left", "right", "top"):
+        key.spines[sp].set_visible(False)
     handles = [
         plt.Rectangle((0, 0), 1, 1, color=_shade(p, d), label=f"labels {p[0]} & {p[1]}, {d}")
         for p in PAIRS
@@ -200,7 +207,7 @@ def main():
         "Contact Between Label Pairs",
         f"One 3D render per patient (n={pairs.patient.nunique()}), sorted by total shared border area; "
         "colour = surface within 1 voxel of the other label (colour per pair and direction); "
-        "strip = shared border area per pair and direction (mm²).",
+        "bars = shared border area per pair and direction (mm²).",
         0.95,
     )
     out = out_subdir(args.profile_dir, "13_label_pairs") / "label_pairs_contact_3d.png"
