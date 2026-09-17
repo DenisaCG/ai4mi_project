@@ -46,12 +46,12 @@ HALF_WIDTH_MM, HALF_HEIGHT_MM = 90, 170  # shared 3D box for every patient
 DIRECTIONS = ("within a slice", "between slices")
 # Colour-blind-safe (Okabe-Ito) colours. Contact types that share a surface get opposite hues:
 # labels 1 & 2 (most shared border) blue between slices vs orange within a slice,
-# labels 1 & 3 green within a slice vs reddish purple between slices.
+# labels 1 & 3 green within a slice vs bright red between slices.
 CONTACT_COLORS = {
     ((1, 2), "between slices"): "#0072B2",
     ((1, 2), "within a slice"): "#E69F00",
     ((1, 3), "within a slice"): "#009E73",
-    ((1, 3), "between slices"): "#CC79A7",
+    ((1, 3), "between slices"): "#E8000B",
     ((2, 3), "within a slice"): "#56B4E9",
     ((2, 3), "between slices"): "#000000",
 }
