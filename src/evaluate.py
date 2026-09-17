@@ -29,7 +29,7 @@ from src.config import REPO, read_yaml
 from src.data import build_dataset, patient_of
 from src.engine import build_model
 from src.metrics_3d import METRICS, volume_metrics
-from src.run import copy_back, read_json, setup_logging, write_json
+from src.run import copy_back, read_json, resolve_device, setup_logging, write_json
 from src.wandb_logger import WandbLogger
 
 
@@ -136,7 +136,8 @@ def evaluate(run_dir: Path, device: torch.device) -> dict:
     block |= {"best_epoch": best["epoch"]}
     summary = read_json(run_dir / "summary.json")
     write_json(run_dir / "summary.json", summary | {"eval": block})
-    log.info("3D %s", " | ".join(f"{k} {v:.4f}" for k, v in block.items() if k.endswith("_fg")))
+    scores = " | ".join(f"{k} {v:.4f}" for k, v in block.items() if k.endswith("_fg"))
+    log.info("3D %s", scores or "no scored split (data.source_pattern is null): predictions only")
 
     manifest = read_json(run_dir / "manifest.json")
     if manifest.get("wandb_id"):
@@ -147,15 +148,18 @@ def evaluate(run_dir: Path, device: torch.device) -> dict:
     dest = copy_back(run_dir, cfg)
     if dest:
         log.info("copied results to %s", dest)
+    (run_dir / "eval").mkdir(parents=True, exist_ok=True)
+    (run_dir / "eval" / ".done").touch()
     return block
 
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--run", type=Path, required=True, help="run directory, e.g. runs/<experiment>/seed0")
-    parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
+    parser.add_argument("--device", choices=("cuda", "cpu"), default="cuda",
+                        help="falls back to cpu when no GPU is visible")
     args = parser.parse_args(argv)
-    evaluate(args.run.resolve(), torch.device(args.device))
+    evaluate(args.run.resolve(), resolve_device(args.device))
 
 
 if __name__ == "__main__":
