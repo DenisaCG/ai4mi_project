@@ -16,10 +16,13 @@ scan, and a raw-vs-GT slice montage for visual sanity checking.
 LABEL MAPPING
 -------------
 ``background esophagus heart trachea aorta`` (0-4), matching the course
-readme and dataset_analysis/utils.py:CLASSES. The GT files contain labels
-{0, 1, 2, 3} only: label 4 (aorta) has zero voxels in every patient. The
-professor confirmed this is an intentional omission for the course dataset,
-not an annotation error.
+readme and dataset_analysis/utils.py:CLASSES. Which of labels 1-4 actually
+have voxels depends on the --data-dir passed in: the original course release
+omits the aorta annotation (label 4 has zero voxels in every patient), while
+a full 4-class release has voxels for all of them. This script detects
+presence from the data rather than assuming either case, so the same command
+works for both -- absent classes are reported and excluded from per-organ
+summaries, not silently included as zero.
 
 Usage:
     python tools/explore_data.py \
@@ -61,8 +64,8 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from plot_style import PALETTE, apply_style, decorate, legend_below
 
-# See the LABEL MAPPING note in the module docstring: class 4 (aorta) is the
-# one with no voxels in this release.
+# See the LABEL MAPPING note in the module docstring: whether class 4 (aorta)
+# has voxels depends on the dataset passed via --data-dir.
 CLASS_NAMES = {0: "background", 1: "esophagus", 2: "heart", 3: "trachea", 4: "aorta"}
 NUM_CLASSES = 5
 ORGAN_COLORS = {1: PALETTE[1], 2: PALETTE[5], 3: PALETTE[2], 4: PALETTE[4]}
@@ -307,15 +310,25 @@ def main():
     outlier_pids = pca_flagged | set(feature_flags)
     outlier_mask = np.array([pid in outlier_pids for pid in pids])
 
+    # Which organ labels actually have voxels in THIS data-dir -- computed from
+    # the data, not assumed, so the same script reports correctly whether the
+    # aorta annotation is present (full 4-class release) or absent (the
+    # original 3-class course release).
+    absent_classes = [c for c in range(1, NUM_CLASSES) if not any(v > 0 for v in organ_volume_cm3[c])]
+    present_classes = [c for c in range(1, NUM_CLASSES) if c not in absent_classes]
+    if absent_classes:
+        absent_note = (
+            f"Label(s) {', '.join(f'{c} ({CLASS_NAMES[c]})' for c in absent_classes)} have no "
+            "voxels in this data-dir and are excluded from per-organ summaries below."
+        )
+    else:
+        absent_note = "All labeled organs have voxels in this data-dir."
+
     # ---------------------------------------------------------------- JSON
     fingerprint = {
         "n_patients": len(patients),
         "label_mapping": {str(c): CLASS_NAMES[c] for c in range(NUM_CLASSES)},
-        "label_mapping_note": (
-            "Matches the course readme's class order. Label 4 (aorta) has no voxels in "
-            "this release; the professor confirmed this is an intentional omission for "
-            "the course dataset, not an annotation error."
-        ),
+        "label_mapping_note": f"Matches the course readme's class order. {absent_note}",
         "split": {
             "val_patients": sorted(val_pids),
             "train_patients": sorted(set(pids) - val_pids),
@@ -447,9 +460,6 @@ def main():
             w.writerow([pid, split] + [round(organ_volume_cm3[c][i], 2) for c in range(1, NUM_CLASSES)])
 
     # ---------------------------------------------------------------- Markdown
-    absent_classes = [c for c in range(1, NUM_CLASSES) if not any(v > 0 for v in organ_volume_cm3[c])]
-    present_classes = [c for c in range(1, NUM_CLASSES) if c not in absent_classes]
-
     md = []
     md.append(f"# SegTHOR part1 dataset fingerprint (n={len(patients)} patients)\n")
     md.append("## Label mapping\n")
@@ -457,11 +467,7 @@ def main():
     md.append("|---|---|")
     for c in range(NUM_CLASSES):
         md.append(f"| {c} | {CLASS_NAMES[c]} |")
-    md.append(
-        "\n**Label 4 (aorta) has no voxels in this release.** The professor confirmed "
-        "this is an intentional omission for the course dataset, not an annotation "
-        "error.\n"
-    )
+    md.append(f"\n**{absent_note}**\n")
     if val_pids:
         md.append("## Train / validation split\n")
         md.append(f"- Validation patients ({len(val_pids)}): {', '.join(sorted(val_pids))}")
@@ -706,9 +712,8 @@ def main():
         subtitle=f"Background is {bg_pct:.2f}% of voxels (off-chart); the {len(positive)} labeled "
         f"classes span {span_orders:.1f} orders of magnitude",
         footnote_text=(
-            f"Class 4 ({', '.join(absent_names)}) has zero voxels in this part1 release. The professor "
-            f"confirmed this is an intentional omission for the course dataset -- the class cannot be "
-            f"learned or scored here."
+            f"Class 4 ({', '.join(absent_names)}) has zero voxels under this label id in this release -- "
+            f"whether it's genuinely absent or mislabeled elsewhere is an open question worth tracking down."
         ),
     )
     fig.savefig(args.out_dir / "class_balance.png")
@@ -844,7 +849,7 @@ def main():
     # 7. Class presence heatmap (annotation completeness QC)
     presence_arr = np.array(class_present_matrix, dtype=float)  # (n_patients, 4)
     fig, ax = plt.subplots(figsize=(6, 7))
-    im = ax.imshow(presence_arr, cmap="Greys", aspect="auto", vmin=0, vmax=1)
+    ax.imshow(presence_arr, cmap="Greys", aspect="auto", vmin=0, vmax=1)
     ax.set_xticks(range(4))
     ax.set_xticklabels([CLASS_NAMES[c] for c in range(1, NUM_CLASSES)])
     ax.set_yticks(range(len(pids)))

@@ -17,6 +17,7 @@ Example (from the repo root):
         --out figures
 """
 import argparse
+import sys
 from pathlib import Path
 
 import matplotlib
@@ -31,8 +32,12 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection  # noqa: E402
 from scipy.ndimage import zoom as ndzoom  # noqa: E402
 from skimage.measure import marching_cubes  # noqa: E402
 
-# Colour per label index. Index 0 is background and is never drawn.
-PALETTE = ["#00000000", "#2f8fd8", "#1fd6a0", "#8fd44f", "#f08a3c"]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from plot_style import LABEL_COLORS  # noqa: E402
+
+# Colour per label index, from tools/plot_style.py so every figure in the repo
+# colors organs the same way. Index 0 is background and is never drawn.
+PALETTE = ["#00000000"] + [LABEL_COLORS[i] for i in range(1, 5)]
 DEFAULT_NAMES = ["background", "class 1", "class 2", "class 3", "class 4"]
 
 
@@ -114,7 +119,9 @@ def render_surface(gt, pred, zooms, names, labels, out: Path, title: str,
             mesh.set_edgecolor("none")
             ax.add_collection3d(mesh)
         extent = [d * s for d, s in zip(ndzoom(vol.astype(np.float32), scale, order=0).shape, spacing)]
-        ax.set_xlim(0, extent[0]); ax.set_ylim(0, extent[1]); ax.set_zlim(0, extent[2])
+        ax.set_xlim(0, extent[0])
+        ax.set_ylim(0, extent[1])
+        ax.set_zlim(0, extent[2])
         ax.set_box_aspect(tuple(extent))
         ax.view_init(elev=8, azim=-70)
         ax.set_axis_off()

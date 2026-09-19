@@ -74,10 +74,14 @@ from skimage.measure import marching_cubes
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from plot_style import PALETTE, apply_style, decorate, legend_below
 
-# label 4 (aorta) has no voxels in this release; class 1 is the esophagus.
+# Whether label 4 (aorta) has voxels depends on --data-dir: the original
+# course release omits it, a full 4-class release doesn't. class 1 is the
+# esophagus.
 CLASS_NAMES = {0: "background", 1: "esophagus", 2: "heart", 3: "trachea", 4: "aorta"}
 CLASSES = [1, 2, 3, 4]
-ORGANS_WITH_VOXELS = [1, 2, 3]  # figures skip aorta, which has no voxels
+# Set from the actual data in main(), before any figure is drawn: figures
+# skip whichever classes have no voxels in this run rather than assuming.
+ORGANS_WITH_VOXELS = [1, 2, 3]
 EXPECTED_LABELS = [0, 1, 2, 3, 4]  # what a SegTHOR dataset.json would declare
 ANISO_THRESHOLD = 3  # nnunetv2/configuration.py: ANISO_THRESHOLD = 3
 MASK_NORM_RELATIVE_SIZE_THRESHOLD = 3 / 4.0  # default_experiment_planner.py:205
@@ -508,7 +512,7 @@ def interior_hu_stats(ct: np.ndarray, seg: np.ndarray) -> dict:
     return out
 
 
-INTENSITY_GROUPS = {"background": [0], "label 1": [1], "label 2": [2], "label 3": [3], "all labels": [1, 2, 3, 4]}
+INTENSITY_GROUPS = {"background": [0], "label 1": [1], "label 2": [2], "label 3": [3], "label 4": [4], "all labels": [1, 2, 3, 4]}
 
 
 def summary_stats(vals: np.ndarray) -> dict | None:
@@ -851,7 +855,6 @@ FIGURES = {
     "hu_ridge": lambda d, o, dd: _fig_hu_ridge(d["hist_rows"], o),
     "boundary_profile": lambda d, o, dd: _fig_boundary_profile(d["boundary_rows"], o),
     "heart_hu_vs_noise": lambda d, o, dd: _fig_heart_hu_vs_noise(d["interior_rows"], d["spacings"], o),
-    "organ_contact": lambda d, o, dd: _fig_organ_contact(d["adjacency_rows"], d["distance_rows"], o),
     "connected_components": lambda d, o, dd: _fig_connected_components(d["cc_rows"], dd, o),
     "centroids_3d": lambda d, o, dd: _fig_centroids_3d(d["centroid_rows"], o),
     "occupancy": lambda d, o, dd: _fig_occupancy(d["occupancy"], o),
@@ -886,6 +889,10 @@ def main():
         data = compute(args.data_dir)
         save_cache(data, args.out_dir)
 
+    global ORGANS_WITH_VOXELS
+    missing = set(data["results"]["integrity_summary"]["labels_missing_in_every_patient"])
+    ORGANS_WITH_VOXELS = [c for c in CLASSES if c not in missing]
+
     with open(args.out_dir / "nnunet_checks.json", "w") as f:
         json.dump(data["results"], f, indent=2, default=str)
 
@@ -906,18 +913,6 @@ def main():
 # ---------------------------------------------------------------------------
 def _present(rows, c):
     return [r for r in rows if r.get(c) is not None]
-
-
-def _strip(ax, position, vals, color, rng, width=0.12):
-    ax.scatter(
-        position + rng.uniform(-width, width, size=len(vals)),
-        vals,
-        color=color,
-        s=45,
-        alpha=0.85,
-        edgecolor="white",
-        zorder=3,
-    )
 
 
 def _equal_aspect_3d(ax, pts):
@@ -1169,14 +1164,11 @@ def _fig_ct_normalization(all_fg, all_bg, p00_5, p99_5, mean, std, out_dir):
 
 
 def _fig_intensity_stats(intensity_rows, pooled, out_dir):
-    groups = list(INTENSITY_GROUPS)
-    colors = {
-        "background": "#8C8C8C",
-        "label 1": PALETTE[0],
-        "label 2": PALETTE[1],
-        "label 3": PALETTE[2],
-        "all labels": "#333333",
-    }
+    # Only organs with voxels in this dataset get their own panel; "background"
+    # and "all labels" always do.
+    groups = ["background"] + [f"label {c}" for c in ORGANS_WITH_VOXELS] + ["all labels"]
+    colors = {"background": "#8C8C8C", "all labels": "#333333"}
+    colors |= {f"label {c}": PALETTE[i % len(PALETTE)] for i, c in enumerate(ORGANS_WITH_VOXELS)}
     rows = [(_pid_num(r["pid"]), r) for r in intensity_rows] + [("pooled", pooled)]
     fig, axes = plt.subplots(1, len(groups), figsize=(18, 9), sharey=True)
     for ax, g in zip(axes, groups):
@@ -1285,40 +1277,6 @@ def _fig_heart_hu_vs_noise(interior_rows, spacings, out_dir):
         subtitle="Label 2 eroded 3 voxels to skip its edge; label 3 eroded 2 voxels in-plane to keep only its core.",
     )
     fig.savefig(out_dir / "heart_hu_vs_noise.png")
-    plt.close(fig)
-
-
-def _fig_organ_contact(adjacency_rows, distance_rows, out_dir):
-    pairs = [(1, 2), (1, 3), (2, 3)]
-    names = [f"{_organ_label(a)}\n& {_organ_label(b)}" for a, b in pairs]
-    fig, axes = plt.subplots(1, 2, figsize=(15, 6.5))
-    rng = np.random.RandomState(0)
-    for k, (a, b) in enumerate(pairs):
-        border = np.array([r[f"{a}_{b}"] for r in adjacency_rows])
-        _strip(axes[0], k, border, PALETTE[k], rng)
-        apart = [(r["pid"], r[f"{a}_{b}"]) for r, n in zip(distance_rows, border) if n == 0]
-        if not apart:
-            axes[1].text(k, 0, f"touching in all {len(border)}", ha="center", va="bottom", fontsize=10, color="#555555")
-            continue
-        xs = k + rng.uniform(-0.15, 0.15, size=len(apart))
-        axes[1].scatter(xs, [d for _, d in apart], color=PALETTE[k], s=45, edgecolor="white", zorder=3)
-        for x, (pid, d) in zip(xs, apart):
-            axes[1].annotate(_pid_num(pid), (x, d), xytext=(5, 0), textcoords="offset points", fontsize=8, va="center")
-    axes[0].set_title("Do the labels touch, and along how long a border?", fontsize=12)
-    axes[0].set_ylabel("border voxels (0 = not touching)")
-    axes[1].set_title("Patients where they don't touch: how far apart?", fontsize=12)
-    axes[1].set_ylabel("shortest distance between the labels (mm)")
-    axes[1].set_ylim(bottom=0)
-    for ax in axes:
-        ax.set_xticks(range(len(pairs)), names, fontsize=10)
-        ax.set_xlim(-0.5, len(pairs) - 0.5)
-    decorate(
-        fig,
-        "Which Organ Labels Touch Each Other",
-        subtitle="One dot per patient. Border voxels count the second label's voxels directly next to the first "
-        "(including diagonal neighbours).",
-    )
-    fig.savefig(out_dir / "organ_contact.png")
     plt.close(fig)
 
 

@@ -7,11 +7,16 @@
     "3": "trachea",
     "4": "aorta"
   },
-  "label_mapping_note": "Matches the course readme's class order. Label 4 (aorta) has no voxels in this release; the professor confirmed this is an intentional omission for the course dataset, not an annotation error.",
+  "label_mapping_note": "Matches the course readme's class order. All labeled organs have voxels in this data-dir.",
   "split": {
-    "val_patients": [],
-    "train_patients": [
+    "val_patients": [
       "Patient_01",
+      "Patient_11",
+      "Patient_15",
+      "Patient_17",
+      "Patient_19"
+    ],
+    "train_patients": [
       "Patient_02",
       "Patient_03",
       "Patient_04",
@@ -21,15 +26,11 @@
       "Patient_08",
       "Patient_09",
       "Patient_10",
-      "Patient_11",
       "Patient_12",
       "Patient_13",
       "Patient_14",
-      "Patient_15",
       "Patient_16",
-      "Patient_17",
       "Patient_18",
-      "Patient_19",
       "Patient_20"
     ],
     "note": "Statistics below are pooled over ALL patients, including the held-out validation patients. Any preprocessing derived from them (normalization percentiles, target spacing) is therefore fitted on validation data too."
@@ -128,12 +129,12 @@
   },
   "class_balance": {
     "background": {
-      "pct_voxels": 98.95538348476987,
+      "pct_voxels": 98.95698009707664,
       "pct_slices_present": 100.0
     },
     "esophagus": {
-      "pct_voxels": 0.2410161916849314,
-      "pct_slices_present": 63.531618435155416
+      "pct_voxels": 0.04251016042367949,
+      "pct_slices_present": 54.68917470525187
     },
     "heart": {
       "pct_voxels": 0.7662125083539008,
@@ -144,8 +145,8 @@
       "pct_slices_present": 27.974276527331188
     },
     "aorta": {
-      "pct_voxels": 0.0,
-      "pct_slices_present": 0.0
+      "pct_voxels": 0.19690941895447103,
+      "pct_slices_present": 50.29474812433012
     }
   },
   "hu_global": {
@@ -161,14 +162,14 @@
     "note": "nnU-Net's CTNormalization clips to the [0.5, 99.5] percentiles of the FOREGROUND voxels pooled across the dataset, then z-scores with the foreground mean/std. These are those numbers.",
     "p0_5": -992.0,
     "p99_5": 250.0,
-    "mean": 12.381811403538814,
-    "std": 183.23395060469295
+    "mean": 12.322695556731542,
+    "std": 183.3742250995901
   },
   "hu_by_organ_foreground_only": {
     "esophagus": {
-      "p0_5": -642.0499999999997,
-      "mean": 52.27666982618413,
-      "p99_5": 243.0
+      "p0_5": -1000.0,
+      "mean": -17.995203519823047,
+      "p99_5": 121.07499999999709
     },
     "heart": {
       "p0_5": -158.0,
@@ -180,14 +181,18 @@
       "mean": -811.4611557596633,
       "p99_5": 54.0
     },
-    "aorta": null
+    "aorta": {
+      "p0_5": -30.0,
+      "mean": 67.55841459268238,
+      "p99_5": 246.0
+    }
   },
   "organ_bbox_extent_mm_dx_dy_dz": {
     "esophagus": {
       "median": [
-        75.19529724121094,
-        111.03514099121094,
-        274.5
+        42.9687385559082,
+        59.082000732421875,
+        236.25
       ],
       "n_patients_present": 20
     },
@@ -208,17 +213,21 @@
       "n_patients_present": 20
     },
     "aorta": {
-      "median": null,
-      "n_patients_present": 0
+      "median": [
+        75.19529724121094,
+        111.03514099121094,
+        216.25
+      ],
+      "n_patients_present": 20
     }
   },
   "organ_volume_cm3": {
     "esophagus": {
-      "median": 255.72357177734375,
-      "min": 126.9673080444336,
-      "max": 522.251708984375,
-      "max_over_min": 4.113276958465576,
-      "cv_pct": 31.891136280751287
+      "median": 45.78755187988281,
+      "min": 29.838056564331055,
+      "max": 86.73412322998047,
+      "max_over_min": 2.9068288803100586,
+      "cv_pct": 29.593712173615756
     },
     "heart": {
       "median": 862.0498657226562,
@@ -235,11 +244,11 @@
       "cv_pct": 27.711641322800098
     },
     "aorta": {
-      "median": 0.0,
-      "min": 0.0,
-      "max": 0.0,
-      "max_over_min": null,
-      "cv_pct": null
+      "median": 202.40940856933594,
+      "min": 93.400390625,
+      "max": 466.2630615234375,
+      "max_over_min": 4.992088794708252,
+      "cv_pct": 37.35920702020546
     }
   },
   "nonzero_ct_fraction": {
@@ -313,17 +322,14 @@
     ]
   },
   "patient_outliers": {
-    "pca_variance_explained_pc1_pc2_pct": 52.03418308152282,
-    "pca_distance_threshold": 3.989896300401955,
-    "flagged_by_pca_projection": [
-      "Patient_15"
-    ],
+    "pca_variance_explained_pc1_pc2_pct": 51.78979355976345,
+    "pca_distance_threshold": 4.615480254044054,
+    "flagged_by_pca_projection": [],
     "flagged_by_feature_modified_z": {
       "Patient_05": {
         "z_shape": 4.6
       },
       "Patient_15": {
-        "vol_esophagus": 3.94,
         "vol_trachea": 3.57
       },
       "Patient_18": {
@@ -339,7 +345,7 @@
   "per_patient": [
     {
       "patient": "Patient_01",
-      "split": "train",
+      "split": "val",
       "shape": [
         512,
         512,
@@ -529,7 +535,7 @@
     },
     {
       "patient": "Patient_11",
-      "split": "train",
+      "split": "val",
       "shape": [
         512,
         512,
@@ -605,7 +611,7 @@
     },
     {
       "patient": "Patient_15",
-      "split": "train",
+      "split": "val",
       "shape": [
         512,
         512,
@@ -643,7 +649,7 @@
     },
     {
       "patient": "Patient_17",
-      "split": "train",
+      "split": "val",
       "shape": [
         512,
         512,
@@ -681,7 +687,7 @@
     },
     {
       "patient": "Patient_19",
-      "split": "train",
+      "split": "val",
       "shape": [
         512,
         512,

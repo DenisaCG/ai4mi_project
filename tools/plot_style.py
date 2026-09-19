@@ -22,10 +22,12 @@ line count (not figure-fraction, and not a fixed one-line assumption) so the
 layout is correct regardless of figsize or text length. Call it LAST, after
 all axes/legends are drawn -- it calls tight_layout/subplots_adjust itself.
 """
+
 from __future__ import annotations
 
 import textwrap
 
+import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 
 # Pastel qualitative palette (dusty blue, peach, seafoam, sage, lavender, rose,
@@ -45,6 +47,14 @@ PALETTE = [
 
 # Fixed color per segmentation label number, shared by every figure.
 LABEL_COLORS = {1: PALETTE[0], 2: PALETTE[1], 3: PALETTE[2], 4: "#8C8C8C"}
+
+# Earthy qualitative palette (brick, deep teal, ochre, olive) for figures that
+# need a few categories which read as one family, e.g. scan field-of-view sizes.
+EARTH = ["#B5533C", "#2E5E6E", "#C9A15B", "#6E7F5A"]
+
+# Earthy alternative to LABEL_COLORS (teal esophagus, brick heart, ochre trachea,
+# olive aorta), used by figures that share the scan field-of-view look.
+EARTH_LABEL_COLORS = {1: EARTH[1], 2: EARTH[0], 3: EARTH[2], 4: "#5E9142"}
 
 GRID_COLOR = "#D9D9D9"
 FOOTNOTE_COLOR = "#6B6B6B"
@@ -88,6 +98,20 @@ def apply_style() -> None:
     )
 
 
+def tint(color, amount: float) -> tuple[float, float, float]:
+    """Blend a color towards white.
+
+    Args:
+        color: Any matplotlib color.
+        amount: 0 gives white, 1 gives the color unchanged.
+
+    Returns:
+        The blended RGB tuple.
+    """
+    r, g, b = mcolors.to_rgb(color)
+    return tuple(1 - amount * (1 - c) for c in (r, g, b))
+
+
 def style_axis_horizontal_bars(ax) -> None:
     """For horizontal bar charts: gridlines on x only, no y-gridlines."""
     ax.grid(axis="x", color=GRID_COLOR, linewidth=0.8)
@@ -105,7 +129,9 @@ def legend_below(ax, ncol: int = 4) -> None:
     ax.figure._pending_legend = (handles, labels, ncol)
 
 
-def _wrap(text: str, fontsize_pt: float, fig_width_in: float, char_width_factor: float = 0.60) -> tuple[str, int]:
+def _wrap(
+    text: str, fontsize_pt: float, fig_width_in: float, char_width_factor: float = 0.60
+) -> tuple[str, int]:
     """Wrap `text` to fit `fig_width_in`, given a rough average glyph width
     for this font size (in points). Returns (wrapped_text, n_lines)."""
     usable_in = max(fig_width_in - _SIDE_MARGIN_IN, 1.5)
@@ -117,7 +143,7 @@ def _wrap(text: str, fontsize_pt: float, fig_width_in: float, char_width_factor:
 
 def decorate(
     fig,
-    title: str,
+    title: str | None,
     subtitle: str | None = None,
     footnote_text: str | None = None,
     has_legend: bool = False,
@@ -130,36 +156,62 @@ def decorate(
     w, h = fig.get_size_inches()
     has_legend = has_legend or getattr(fig, "_pending_legend", None) is not None
 
-    title_wrapped, n_title_lines = _wrap(title, 16, w, char_width_factor=0.62)
-    title_h = n_title_lines * _TITLE_LINE_H
+    title_wrapped, title_h = "", 0.0
+    if title:
+        title_wrapped, n_title_lines = _wrap(title, 16, w, char_width_factor=0.62)
+        title_h = n_title_lines * _TITLE_LINE_H
 
     subtitle_wrapped = subtitle_h = None
     n_subtitle_lines = 0
     if subtitle:
-        subtitle_wrapped, n_subtitle_lines = _wrap(subtitle, 11.5, w, char_width_factor=0.52)
+        subtitle_wrapped, n_subtitle_lines = _wrap(
+            subtitle, 11.5, w, char_width_factor=0.52
+        )
         subtitle_h = n_subtitle_lines * _SUBTITLE_LINE_H
 
     footnote_wrapped = None
     n_footnote_lines = 0
     if footnote_text:
-        footnote_wrapped, n_footnote_lines = _wrap(footnote_text, 9, w, char_width_factor=0.60)
+        footnote_wrapped, n_footnote_lines = _wrap(
+            footnote_text, 9, w, char_width_factor=0.60
+        )
 
     top_reserved = _TOP_PAD + title_h + (_GAP + subtitle_h if subtitle else 0.0) + 0.05
     bottom_reserved = (
-        _BOTTOM_PAD + (_LEGEND_H if has_legend else 0.0) + (n_footnote_lines * _FOOTNOTE_LINE_H if footnote_text else 0.0)
+        _BOTTOM_PAD
+        + (_LEGEND_H if has_legend else 0.0)
+        + (n_footnote_lines * _FOOTNOTE_LINE_H if footnote_text else 0.0)
     )
 
     # va='top' so the y coordinate is the TOP of the (possibly multi-line) block.
     title_y = 1.0 - _TOP_PAD / h
-    fig.suptitle(title_wrapped, fontsize=16, fontweight="bold", y=title_y, va="top")
+    if title:
+        fig.suptitle(title_wrapped, fontsize=16, fontweight="bold", y=title_y, va="top")
 
     if subtitle_wrapped:
         subtitle_y = 1.0 - (_TOP_PAD + title_h + _GAP) / h
-        fig.text(0.5, subtitle_y, subtitle_wrapped, fontsize=11.5, ha="center", va="top", color="#333333")
+        fig.text(
+            0.5,
+            subtitle_y,
+            subtitle_wrapped,
+            fontsize=11.5,
+            ha="center",
+            va="top",
+            color="#333333",
+        )
 
     if footnote_wrapped:
         footnote_y = _BOTTOM_PAD / h
-        fig.text(0.01, footnote_y, footnote_wrapped, fontsize=9, color=FOOTNOTE_COLOR, ha="left", va="bottom", style="italic")
+        fig.text(
+            0.01,
+            footnote_y,
+            footnote_wrapped,
+            fontsize=9,
+            color=FOOTNOTE_COLOR,
+            ha="left",
+            va="bottom",
+            style="italic",
+        )
 
     # tight_layout() first (no rect) so axis labels/ticks/tick-labels get
     # correct spacing for THIS figure's content -- that spacing is not

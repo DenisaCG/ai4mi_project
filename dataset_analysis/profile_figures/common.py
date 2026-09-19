@@ -9,12 +9,18 @@ figures/profile/.
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 import seaborn as sns
 
-# Fixed color per organ label, shared by every figure in this package.
-LABEL_COLORS = {1: "#2A9D8F", 2: "#E76F51", 3: "#E9A23B"}
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools"))
+from plot_style import LABEL_COLORS  # noqa: E402, F401
+
+# Re-exported from tools/plot_style.py so every figure in the repo -- these
+# profile figures, explore_data.py, nnunet_planner_checks.py, render_figures.py --
+# draws each organ label in the same color. Keys 1-4 cover esophagus, heart,
+# trachea and aorta; a dataset missing a label simply never indexes that key.
 
 
 def apply_ticks_style() -> None:
@@ -52,11 +58,11 @@ def build_arg_parser(description: str) -> argparse.ArgumentParser:
 
 
 def out_subdir(profile_dir: Path, name: str) -> Path:
-    """Create (if needed) and return a numbered output subfolder under profile_dir.
+    """Create (if needed) and return a named output subfolder under profile_dir.
 
     Args:
         profile_dir: Root profile directory, e.g. figures/profile.
-        name: Subfolder name, e.g. "01-03_scan_geometry".
+        name: Subfolder name, e.g. "scan_geometry".
 
     Returns:
         The subfolder path.

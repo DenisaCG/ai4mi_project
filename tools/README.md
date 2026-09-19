@@ -4,11 +4,22 @@ Helper scripts for dataset exploration and for turning training output into
 shareable PNGs. All are additions to the course codebase; nothing in the original
 scripts is modified.
 
+- `run_all_figures.py` — runs every figure-producing script below (plus
+  `dataset_analysis/profile_figures/*` and, optionally, `dataset_analysis`'s own
+  pipeline) against one dataset directory. See "Regenerating every figure at
+  once" below.
 - `explore_data.py` — dataset fingerprint + EDA/QC over the raw NIfTI volumes.
   Writes `fingerprint.json`, `fingerprint.md`, `organ_volumes_cm3.csv` and 9 PNGs.
   Needs no training run and no `results/`.
-- `plot_style.py` — shared matplotlib style (titles, subtitles, footnotes, palette)
-  used by `explore_data.py`. Not a standalone script.
+- `dataset_profile.py` — writes the tables and intensity histograms that
+  `dataset_analysis/profile_figures/*.py` read; not a standalone figure script.
+- `nnunet_planner_checks.py` — nnU-Net planner/fingerprint checks (anisotropy,
+  cropping, connected components, organ adjacency, etc.) not already covered
+  by `explore_data.py`.
+- `plot_style.py` — shared matplotlib style (titles, subtitles, footnotes,
+  palette). `LABEL_COLORS` (keys 1-4: esophagus, heart, trachea, aorta) is the
+  single source of organ colors reused by every figure script in this repo,
+  including `dataset_analysis/*`. Not a standalone script.
 - `save_viewer.py` — runs `viewer/viewer.py` headlessly and saves its figure to PNG
   (the stock viewer opens a GUI window and has no save option).
 - `render_figures.py` — orthogonal-plane and 3D-surface renders from a stitched volume.
@@ -19,6 +30,54 @@ All commands are run **from the repo root** with the environment active:
 cd ~/ProjectsMSc/ai4mi_project
 conda activate ai4mi
 ```
+
+## Regenerating every figure at once
+
+`run_all_figures.py` runs the dataset-profile figures, `nnunet_planner_checks.py`
+and `explore_data.py` against one raw NIfTI dataset directory, in order. It runs
+the same on a laptop and on Snellius (`jobsAndOutputs/baseline/jobs/all_figures.job`).
+
+```bash
+python tools/run_all_figures.py --data-dir data/segthor_part1/train --out-dir figures
+```
+
+It works whether that dataset has the aorta annotation (label 4) or not --
+every step detects which labels actually have voxels instead of assuming a
+fixed class count.
+
+### Running locally: original data before, corrected data after
+
+Set up once (`requirements.txt` lists everything the figures import):
+
+```bash
+conda create -n ai4mi python=3.11 -y && conda activate ai4mi
+python -m pip install -r requirements.txt
+```
+
+Every figure from the corrected 4-label data, and the HU intensity figure drawn
+once with the original 3-label data upwards and the corrected data mirrored
+downwards on the same axis:
+
+```bash
+python tools/run_all_figures.py --data-dir data/segthor_part1_corrected/train --out-dir figures \
+    --before-data-dir data/segthor_part1/train --names "3 labels (aorta merged)" "4 labels (aorta separate)" \
+    --processed-dir data/SEGTHOR_corrected
+```
+
+- `--before-data-dir` is only profiled (into `figures/before/profile`) and used for
+  the comparison in `figures/comparison/`; everything else comes from `--data-dir`.
+- `--processed-dir` also runs `analyze_dataset.py`. Make it once from the raw data
+  with `python slice_segthor.py --source_dir data/segthor_part1_corrected
+  --dest_dir data/SEGTHOR_corrected --shape 256 256 --retains 5` (delete any
+  `.DS_Store` under the data folder first: it is read as a patient and changes the
+  train/val split). `--predictions <val PNG folder>` also runs `analyze_baseline.py`
+  and `validate_results.py`, which need a model trained on that data.
+- Rough times on a laptop for 20 patients: profile tables 30 s, profile figures
+  5 min, nnU-Net checks 10-15 min (`--skip-nnunet-checks` to leave it out), fingerprint
+  75 s. `--max-patients 3` runs every step over 3 patients as a quick end-to-end check.
+- The comparison alone, from two profile folders written by `tools/dataset_profile.py`:
+  `python dataset_analysis/profile_figures/label_hu_distribution.py --profile-dir
+  <before> <after> --names "before" "after" --out-dir figures/comparison`.
 
 ## 0. Dataset fingerprint (no training needed)
 
@@ -32,11 +91,13 @@ Runs in about a minute over the 20 part1 patients and needs only
 (default `data/SEGTHOR/val/gt`) is used only to label which patients are
 held out — it is skipped silently if that directory does not exist.
 
-**Label mapping.** In `data/segthor_part1`, GT labels are `1=esophagus,
-2=heart, 3=trachea, 4=aorta` — matching the top-level readme's class order.
-**Aorta (4)** is the class with no voxels: the professor confirmed this is an
-intentional omission for the course dataset. See
-`dataset_analysis/utils.py:CLASSES` for the canonical mapping.
+**Label mapping.** GT labels are `1=esophagus, 2=heart, 3=trachea, 4=aorta` —
+matching the top-level readme's class order. See `dataset_analysis/utils.py:CLASSES`
+for the canonical mapping. In `data/segthor_part1`, **aorta (4)** has no voxels
+in any patient — the professor confirmed this is an intentional omission for
+the course dataset. A full 4-class release has voxels for all of them; this
+script (and every other figure script in the repo) detects which labels are
+actually present rather than assuming either case.
 
 Requires matplotlib >= 3.9 (`tick_labels=` boxplot kwarg).
 

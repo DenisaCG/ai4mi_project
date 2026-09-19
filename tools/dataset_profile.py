@@ -21,7 +21,7 @@ import pandas as pd
 from scipy.ndimage import distance_transform_edt, generate_binary_structure, label
 
 LABELS = [1, 2, 3, 4]
-INTENSITY_GROUPS = {"background": [0], "label 1": [1], "label 2": [2], "label 3": [3], "all labels": [1, 2, 3, 4]}
+INTENSITY_GROUPS = {"background": [0], "label 1": [1], "label 2": [2], "label 3": [3], "label 4": [4], "all labels": [1, 2, 3, 4]}
 HU_OFFSET = 4096  # added before np.bincount so every stored CT value maps to a non-negative bin
 NNUNET_SAMPLES_PER_CASE = 5_000_000  # fingerprint_extractor.py: 10e7 // 20 training cases
 NNUNET_SEED = 1234  # fingerprint_extractor.py: analyze_case(..., seed=1234)

@@ -11,21 +11,23 @@ from PIL import Image
 
 from analyze_dataset import original_stats
 from analyze_baseline import bin_index, class_summary
-from utils import extent, load_png, normalized_z, overlap
+from utils import CLASSES, extent, load_png, normalized_z, overlap
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 from nnunet_planner_checks import (PROFILE_DISTANCES_MM, boundary_hu_profile, interior_hu_stats, intensity_stats,
                                    slice_profiles, trachea_inferior_end_mm)
-from profile_figures.f01_03_scan_geometry import dot_stacks
-from profile_figures.f05_label_intensity import binned_counts
-from profile_figures.f06_07_label_size_intensity import resample_mask, shades
-from profile_figures.f08_11_slices_and_change import slice_changes
-from profile_figures.f12_connected_components import piece_counts, piece_shares
-from profile_figures.f13_label_pairs import label_grids, shared_area_by_direction
-from profile_figures.f09_label_bounding_box import box_edges, label_boxes
-from profile_figures.f07_label_shapes_and_sizes import label_boxes as shape_boxes
+from profile_figures.scan_geometry import dot_stacks, fov_groups
+from profile_figures.label_hu_distribution import bar_style, bin_values, draw_order, foreground_stats, share_outside, tick_positions, tissue_high, warp
+from profile_figures.label_intensity import binned_counts
+from profile_figures.label_size_and_intensity import resample_mask, shades
+from profile_figures.slices_and_change import slice_changes
+from profile_figures.connected_components import piece_counts, piece_shares
+from profile_figures.label_pairs import label_grids, shared_area_by_direction
+from profile_figures.label_bounding_box import box_edges, label_boxes
+from profile_figures.label_shapes_and_sizes import label_boxes as shape_boxes
+from run_all_figures import build_plan, parse_args
 from dataset_profile import hist_stats, identical_neighbour_slices, label_row, occupied_box, pair_row, slice_rows
-from profile_figures.f04_scan_intensity.common import nnunet_ct_normalisation, normalise, pool_histograms, range_percent, slice_regions
+from profile_figures.scan_intensity.common import nnunet_ct_normalisation, normalise, pool_histograms, range_percent, slice_regions
 
 
 class MeasurementTests(unittest.TestCase):
@@ -69,18 +71,18 @@ class MeasurementTests(unittest.TestCase):
             p = Path(temp) / "mask.png"
             Image.fromarray(np.array([[0, 63, 126, 189]], dtype=np.uint8)).save(p)
             np.testing.assert_array_equal(load_png(p), [[0, 1, 2, 3]])
+            # Label 4 (aorta) decodes the same whether it's GT or a prediction --
+            # only a dataset without any aorta voxels ever omits it, not the loader.
             Image.fromarray(np.array([[252]], dtype=np.uint8)).save(p)
-            with self.assertRaises(ValueError):
-                load_png(p)
-            self.assertEqual(load_png(p, prediction=True)[0, 0], 4)
+            self.assertEqual(load_png(p)[0, 0], 4)
             Image.fromarray(np.array([[64]], dtype=np.uint8)).save(p)
             with self.assertRaises(ValueError):
-                load_png(p, prediction=True)
+                load_png(p)
 
     def test_summary_excludes_joint_empty_and_fp_only(self):
         zero, one = np.zeros((1, 1), bool), np.ones((1, 1), bool)
         rows = [{"class_id": k, "patient_id": "Patient_99", **overlap(g, p)}
-                for k in (1, 2, 3) for g, p in ((zero, zero), (zero, one), (one, zero))]
+                for k in CLASSES for g, p in ((zero, zero), (zero, one), (one, zero))]
         for r in class_summary(rows):
             self.assertEqual(r["positive_slice_dice_mean"], 0)
             self.assertEqual(r["joint_empty_slices"], 1)
@@ -210,6 +212,68 @@ class DatasetProfileTests(unittest.TestCase):
         self.assertEqual(len(x), 4)
         self.assertEqual(sorted(zip(np.round(x, 2), y)), [(0.98, 0.5), (0.98, 1.5), (1.37, 0.5), (2.0, 0.5)])
 
+    def test_fov_groups_counts_each_size_largest_first(self):
+        scans = pd.DataFrame(
+            {"patient": list("abcd"), "x_extent_mm": [499.9998, 500.0, 459.0, 700.0002], "x_spacing_mm": [0.9765625, 0.9765625, 0.896484, 1.367188]}
+        )
+        g = fov_groups(scans)
+        self.assertEqual(g.index.tolist(), [700, 500, 459])
+        self.assertEqual(g.n.tolist(), [1, 2, 1])
+        self.assertAlmostEqual(g.loc[500, "pixel_mm"], 0.9765625)
+
+    def test_share_outside_windows(self):
+        counts = np.array([1, 1, 1, 1])
+        self.assertEqual(share_outside(counts, 0, [(0, 2)]), 50)
+        self.assertEqual(share_outside(counts, 0, [(0, 2), (2, 4)]), 0)
+        self.assertEqual(share_outside(counts, -4, [(0, 2)]), 100)
+
+    def test_tissue_window_grows_for_bright_labels(self):
+        self.assertEqual(tissue_high(120), 300)
+        self.assertEqual(tissue_high(410), 500)
+
+    def test_bin_values_sum_all_patients_in_thousands(self):
+        counts = np.zeros(2000)
+        counts[50:60] = 100  # 1000 voxels at -1050 + 50 .. -1050 + 59
+        data = {"pooled": {2: (counts, -1050)}, "patients": ["a", "b"]}
+        x, y = bin_values(data, 2, 300)
+        self.assertEqual(len(x), (300 + 1050) // 10)
+        self.assertEqual(x[0], -1045)
+        self.assertEqual(y.sum(), 1.0)  # 1000 voxels, not divided by the 2 patients, in thousands
+        self.assertEqual(np.flatnonzero(y).tolist(), [5])
+
+    def test_warp_squeezes_only_the_stretch_between_air_and_tissue(self):
+        np.testing.assert_allclose(warp([-1000, -900, -500, -200, 0, 300]), [-1000, -900, -1000 * 0 - 2500 / 3, -2350 / 3, -1750 / 3, -850 / 3])
+        self.assertTrue(np.all(np.diff(warp(np.arange(-1050, 350, 10))) > 0))
+
+    def test_draw_order_puts_the_smaller_bar_of_each_bin_in_front(self):
+        heights = np.array([[10, 3, 0], [12, 5, 0], [1, 9, 0]])
+        rank = draw_order(heights)
+        np.testing.assert_array_equal(rank[:, 0], [1, 0, 2])  # 12 at the back, 1 in front
+        np.testing.assert_array_equal(rank[:, 1], [2, 1, 0])
+        np.testing.assert_array_equal(np.sort(rank, axis=0), [[0] * 3, [1] * 3, [2] * 3])
+
+    def test_bar_style_fades_the_heart_and_strengthens_the_other_labels(self):
+        heart, aorta = bar_style(2, "#B5533C"), bar_style(4, "#5E9142")
+        self.assertGreater(min(heart["facecolor"]), min(bar_style(4, "#B5533C")["facecolor"]))  # lighter than a strong label
+        self.assertEqual(aorta["edgecolor"], "#5E9142")  # a strong label keeps its full colour outline
+        self.assertGreater(aorta["linewidth"], heart["linewidth"])
+
+    def test_tick_positions_are_denser_outside_the_squeezed_stretch(self):
+        major, minor = tick_positions(300)
+        self.assertEqual(major, [-1000, -900, -600, -200, -100, 0, 100, 200, 300])
+        self.assertFalse(set(major) & set(minor))
+        self.assertIn(50, minor)
+        self.assertIn(-500, minor)  # every 100 HU inside the squeezed stretch
+        self.assertNotIn(-550, minor)
+
+    def test_foreground_stats_weight_every_patient_equally(self):
+        small = (np.array([1]), 0)  # one labelled voxel at HU 0
+        large = (np.array([3]), 10)  # three labelled voxels at HU 10
+        stats = foreground_stats([small, large])
+        self.assertAlmostEqual(stats["mean"], 5.0)  # plain pooling would give 7.5
+        self.assertEqual(stats["p0.5"], 0)
+        self.assertEqual(stats["p99.5"], 10)
+
     def test_binned_counts_crops_and_sums(self):
         x, c = binned_counts(np.array([1, 2, 3, 4, 5]), start=-2, lo=0, hi=4, width=2)
         self.assertEqual(x.tolist(), [1.0, 3.0])
@@ -250,7 +314,7 @@ class DatasetProfileTests(unittest.TestCase):
                 **{f"{a}_max_mm": [4.0, 2.0, 99.0] for a in "xyz"},
             }
         )
-        box = shape_boxes(labels).loc["P1"]
+        box = shape_boxes(labels, [1, 2, 4]).loc["P1"]
         self.assertEqual((box["x_min_mm"], box["x_max_mm"]), (-3.0, 4.0))
 
 class ScanIntensityTests(unittest.TestCase):
@@ -351,6 +415,36 @@ class ConnectedComponentTests(unittest.TestCase):
         split = shared_area_by_direction(a, b, zooms)
         self.assertEqual(split, {"within a slice": 6.0, "between slices": 2.0})
         self.assertEqual(sum(split.values()), pair_row(a, b, zooms)["shared_face_area_mm2"])
+
+
+class RunAllFiguresTests(unittest.TestCase):
+    def test_default_plan_profiles_first_and_skips_unavailable_stages(self):
+        plan = build_plan(parse_args(["--out-dir", "out"]))
+        labels = [label for label, _ in plan]
+        self.assertEqual(labels[0], "dataset_profile")
+        self.assertIn("profile_figures/label_hu_distribution", labels)
+        self.assertLess(labels.index("nnunet_planner_checks"), labels.index("explore_data"))
+        self.assertTrue(any(label.startswith("analyze_dataset skipped") for label in labels))
+        self.assertNotIn("validate_results", labels)
+        self.assertFalse(any(label.startswith("before/") for label in labels))
+
+    def test_skip_nnunet_and_only(self):
+        labels = [label for label, _ in build_plan(parse_args(["--skip-nnunet-checks", "--only", "profile,nnunet"]))]
+        self.assertNotIn("nnunet_planner_checks", labels)
+        self.assertNotIn("explore_data", labels)
+
+    def test_before_dataset_is_only_profiled_and_compared(self):
+        args = parse_args(["--data-dir", "new/train", "--out-dir", "figs", "--before-data-dir", "old/train",
+                           "--names", "a", "b"])
+        plan = build_plan(args)
+        before = dict(plan)["before/dataset_profile"]
+        self.assertEqual(before[before.index("--data-dir") + 1], "old/train")
+        self.assertEqual(sum(label.endswith("dataset_profile") for label, _ in plan), 2)
+        label, cmd = plan[-1]
+        self.assertEqual(label, "label_hu_distribution (before/after)")
+        folders = cmd[cmd.index("--profile-dir") + 1 : cmd.index("--names")]
+        self.assertEqual(folders, ["figs/before/profile", "figs/profile"])
+        self.assertEqual(cmd[cmd.index("--out-dir") + 1], "figs/comparison")
 
 
 if __name__ == "__main__":
