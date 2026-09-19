@@ -77,7 +77,7 @@ function card(s, { label, body, x, y, w, h, accent }) {
 // Layout: one large figure (segthor-deck style) — image sized to its
 // true aspect ratio on the left, structured annotation panel on the right
 // ---------------------------------------------------------------
-function bigFigureSlide({ pageLabel, time, kicker, title, subtitle, image, sections, learnCard, accent = RED }) {
+function bigFigureSlide({ pageLabel, time, kicker, title, subtitle, image, boxes, accent = RED }) {
   const s = pres.addSlide();
   s.background = { color: WHITE };
   s.addShape(pres.ShapeType.rect, { x: 0, y: 0, w: 0.18, h: 7.5, fill: { color: accent } });
@@ -110,21 +110,11 @@ function bigFigureSlide({ pageLabel, time, kicker, title, subtitle, image, secti
   if (h > maxH) { h = maxH; w = h * image.aspect; }
   s.addImage({ path: image.path, x: boxX, y: boxY, w, h, sizing: { type: "contain", w, h } });
 
-  const rx = 10.3, rw = 2.55;
-  let y = 1.35;
-  (sections || []).forEach((sec) => {
-    s.addText(sec.label.toUpperCase(), {
-      x: rx, y, w: rw, h: 0.28, fontSize: 11.5, bold: true, color: sec.color || accent,
-      fontFace: BODY_FONT, isTextBox: true, margin: 0, charSpacing: 1,
-    });
-    s.addText(sec.body, {
-      x: rx, y: y + 0.3, w: rw, h: sec.h || 1.0, fontSize: 12.5, italic: sec.italic,
-      color: TEXT, fontFace: BODY_FONT, isTextBox: true, margin: 0, valign: "top", lineSpacingMultiple: 1.15,
-    });
-    y += 0.3 + (sec.h || 1.0) + 0.2;
+  const rx = boxX + w + 0.4, rw = 12.85 - rx;
+  const gap = 0.2, boxH = (maxH - gap * (boxes.length - 1)) / boxes.length;
+  boxes.forEach((b, i) => {
+    card(s, { ...b, x: rx, y: boxY + i * (boxH + gap), w: rw, h: boxH });
   });
-
-  if (learnCard) card(s, { ...learnCard, x: rx, y, w: rw, h: learnCard.h || 6.65 - y, accent });
 
   footer(s, pageLabel);
 }
@@ -266,7 +256,7 @@ function titleSlide() {
     x: 0.8, y: 6.5, w: 8, h: 0.35, fontSize: 13, color: "B5B5B5",
     fontFace: BODY_FONT, isTextBox: true, margin: 0,
   });
-  s.addText("September 2026 · 8 slides, 6:40 + buffer", {
+  s.addText("September 2026", {
     x: 0.8, y: 6.85, w: 8, h: 0.3, fontSize: 11, color: "B5B5B5",
     fontFace: BODY_FONT, isTextBox: true, margin: 0,
   });
@@ -311,12 +301,13 @@ singleColumn({
 bigFigureSlide({
   pageLabel: "03", time: "0:35", accent: ORANGE,
   kicker: "Data exploration",
-  title: "Exploratory Analysis I: Acquisition Geometry",
+  title: "Exploratory Analysis I: Scan Geometry for the 20 CT Scans",
   image: IMG.fov,
-  sections: [
-    { label: "What it shows", color: ORANGE, body: "[TODO] voxel spacing across patients\n[TODO] slice count / scan length", h: 1.1 },
+  boxes: [
+    { label: "What it shows", body: "[TODO] voxel spacing across patients, slice count / scan length", accent: ORANGE },
+    { label: "How it was made", body: "[TODO] how it was measured", accent: RED },
+    { label: "What we learn", body: "[TODO] what this implies", accent: PURPLE },
   ],
-  learnCard: { label: "What we learn", body: "[TODO] what this implies" },
 });
 
 // ---------------------------------------------------------------
@@ -327,8 +318,8 @@ singleColumn({
   kicker: "Data exploration",
   title: "Exploratory Analysis II: Whole-Scan & Per-Organ Intensity",
   bullets: [
-    { text: "[TODO] whole-scan HU distribution" },
-    { text: "[TODO] per-organ HU, esp. aorta vs. heart" },
+    { text: "[TODO] whole-scan HU distribution, with each organ's voxels coloured" },
+    { text: "[TODO] aorta vs. heart in HU" },
     { text: "[TODO] what this implies" },
   ],
 });
@@ -369,8 +360,8 @@ stepFlow({
   title: "Preprocessing: From Measurement to Method",
   steps: [
     { label: "Step 1", detail: "[TODO], motivated by the geometry measurement (slide 3)" },
-    { label: "Step 2", detail: "[TODO], motivated by the intensity measurement (slide 3)" },
-    { label: "Step 3", detail: "[TODO], motivated by the position/extent measurement (slide 5)" },
+    { label: "Step 2", detail: "[TODO], motivated by the intensity measurement (slide 4)" },
+    { label: "Step 3", detail: "[TODO], motivated by the position/extent measurement (slide 6)" },
   ],
 });
 
@@ -400,7 +391,7 @@ stepFlow({
   kicker: "Modification & result — largest rubric weight",
   title: "Proposed Modification: Motivation, Method & Preliminary Result",
   steps: [
-    { label: "Motivation", detail: "[TODO], tied back to an exploration finding (slides 3–5)" },
+    { label: "Motivation", detail: "[TODO], tied back to an exploration finding (slides 3–6)" },
     { label: "Method", detail: "[TODO] the modification tried" },
     { label: "Result", detail: "[TODO] vs. baseline — from the run in progress" },
     { label: "Next steps", detail: "[TODO] one or two concrete next experiments" },
@@ -439,12 +430,12 @@ closingSlide();
 // ---------------------------------------------------------------
 singleColumn({
   pageLabel: "A1", accent: GREY,
-  kicker: "Appendix A — backup, not in the timed 6:40",
+  kicker: "Appendix A — backup, not in the timed talk",
   title: "Appendix A: Label Shape Variability Across Patients",
   bullets: [
     { text: "[TODO] what this figure shows, patient by patient" },
     { text: "[TODO] where aorta fits into that pattern" },
-    { text: "Cut from the main 8 slides for time — pull in only if a question opens the door", italic: true, sub: true },
+    { text: "Backup only — pull in if a question opens the door", italic: true, sub: true },
   ],
 });
 
