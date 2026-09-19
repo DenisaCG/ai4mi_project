@@ -60,11 +60,11 @@ function header(s, { kicker, time, title, accent }) {
 }
 
 // segthor-style callout card: tinted box, colored left edge, label + body
-function card(s, { label, body, x, y, w, h, accent }) {
+function card(s, { label, body, x, y, w, h, accent, labelColor = accent }) {
   s.addShape(pres.ShapeType.rect, { x, y, w, h, fill: { color: TINT[accent] || "F0F0F0" }, line: { type: "none" } });
   s.addShape(pres.ShapeType.rect, { x, y, w: 0.06, h, fill: { color: accent } });
   s.addText(label.toUpperCase(), {
-    x: x + 0.3, y: y + 0.2, w: w - 0.6, h: 0.3, fontSize: 11, bold: true, color: accent,
+    x: x + 0.3, y: y + 0.2, w: w - 0.6, h: 0.3, fontSize: 11, bold: true, color: labelColor,
     fontFace: BODY_FONT, isTextBox: true, margin: 0, charSpacing: 1,
   });
   s.addText(body, {
@@ -77,7 +77,7 @@ function card(s, { label, body, x, y, w, h, accent }) {
 // Layout: one large figure (segthor-deck style) — image sized to its
 // true aspect ratio on the left, structured annotation panel on the right
 // ---------------------------------------------------------------
-function bigFigureSlide({ pageLabel, time, kicker, title, subtitle, image, boxes, accent = RED }) {
+function bigFigureSlide({ pageLabel, time, kicker, title, subtitle, image, sections, learnCard, accent = RED }) {
   const s = pres.addSlide();
   s.background = { color: WHITE };
   s.addShape(pres.ShapeType.rect, { x: 0, y: 0, w: 0.18, h: 7.5, fill: { color: accent } });
@@ -111,10 +111,19 @@ function bigFigureSlide({ pageLabel, time, kicker, title, subtitle, image, boxes
   s.addImage({ path: image.path, x: boxX, y: boxY, w, h, sizing: { type: "contain", w, h } });
 
   const rx = boxX + w + 0.4, rw = 12.85 - rx;
-  const gap = 0.2, boxH = (maxH - gap * (boxes.length - 1)) / boxes.length;
-  boxes.forEach((b, i) => {
-    card(s, { ...b, x: rx, y: boxY + i * (boxH + gap), w: rw, h: boxH });
+  sections.forEach((sec, i) => {
+    const y = boxY + i * 1.55;
+    s.addText(sec.label.toUpperCase(), {
+      x: rx, y, w: rw, h: 0.28, fontSize: 11.5, bold: true, color: sec.color,
+      fontFace: BODY_FONT, isTextBox: true, margin: 0, charSpacing: 1,
+    });
+    s.addText(sec.body, {
+      x: rx, y: y + 0.32, w: rw, h: 1.05, fontSize: 12.5, color: TEXT,
+      fontFace: BODY_FONT, isTextBox: true, margin: 0, valign: "top", lineSpacingMultiple: 1.15,
+    });
   });
+  const learnH = 1.7;
+  card(s, { ...learnCard, x: rx, y: boxY + maxH - learnH, w: rw, h: learnH, accent, labelColor: TEXT });
 
   footer(s, pageLabel);
 }
@@ -303,11 +312,11 @@ bigFigureSlide({
   kicker: "Data exploration",
   title: "Exploratory Analysis I: Scan Geometry for the 20 CT Scans",
   image: IMG.fov,
-  boxes: [
-    { label: "What it shows", body: "[TODO] voxel spacing across patients, slice count / scan length", accent: ORANGE },
-    { label: "How it was made", body: "[TODO] how it was measured", accent: RED },
-    { label: "What we learn", body: "[TODO] what this implies", accent: PURPLE },
+  sections: [
+    { label: "What it shows", body: "[TODO] voxel spacing across patients, slice count / scan length", color: ORANGE },
+    { label: "How it was made", body: "[TODO] how it was measured", color: RED },
   ],
+  learnCard: { label: "What we learn", body: "[TODO] what this implies" },
 });
 
 // ---------------------------------------------------------------
