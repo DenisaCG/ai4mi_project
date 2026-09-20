@@ -10,6 +10,81 @@ after a crash, and logs to Weights & Biases.
 The original `main.py` / `stitch.py` / `plot.py` still work and are untouched; `src/` reuses
 `ENet.py`, `ShallowNet.py`, `losses.py`, `dataset.py` and `utils.py` from the repo root.
 
+## How it fits together
+
+```mermaid
+flowchart TB
+    cfg["configs/my_experiment.yaml<br/>(overrides configs/base.yaml)"]
+    slices[("data/SEGTHOR/<br/>2D slice PNGs")]
+    raw[("data/segthor_part1/<br/>original CT and GT volumes")]
+
+    subgraph training["training (sbatch train.job)"]
+        train["src/train.py<br/>run dir, seed, W and B, resume"]
+        engine["src/engine.py<br/>epoch loop, best checkpoint"]
+        parts["src/data.py, models/, losses/,<br/>optim.py, metrics.py"]
+        train --> engine --> parts
+    end
+
+    subgraph rundir["runs/my_experiment/seed0/ (scratch)"]
+        prov["config.yaml, manifest.json, train.log"]
+        curves["epochs.csv, plots/curves.png"]
+        ckpt["checkpoints/best.pt, last.pt"]
+    end
+
+    subgraph evaluation["3D evaluation (same job, or eval.job)"]
+        ev["src/evaluate.py<br/>predict, stitch to volumes"]
+        m3["src/metrics_3d.py<br/>Dice, HD95, ASSD"]
+        ev --> m3
+    end
+
+    results["predictions/, volumes/*.nii.gz,<br/>eval/metrics_3d.csv, dice/hd95/assd .npz"]
+    shared[("metrics/my_experiment/seed0/<br/>small files, committed to git")]
+    table["metrics/comparison.md<br/>built by src/aggregate.py"]
+    wb(["Weights and Biases"])
+
+    cfg --> train
+    slices --> parts
+    training --> rundir
+    slices --> ev
+    raw --> ev
+    ckpt --> ev
+    evaluation --> results
+    curves -- "copied automatically" --> shared
+    results -- "copied automatically" --> shared
+    shared --> table
+    training -.-> wb
+    evaluation -.-> wb
+```
+
+### What each file is for
+
+| file | does |
+|---|---|
+| `configs/base.yaml` | every setting and its default; the reference for what can be changed |
+| `configs/<experiment>.yaml` | one experiment: only what it changes |
+| `src/train.py` | entry point: resolve config, make/resume the run dir, seed, start W&B, train |
+| `src/engine.py` | the epoch loop: train/val passes, best checkpoint, CSV rows, error handling |
+| `src/config.py` | load and merge configs, `--set` overrides, reject unknown keys, config hash |
+| `src/registry.py` | name → component lookup, so configs can select models/losses by string |
+| `src/data.py` | datasets and loaders from the `data` config; augmentation extension point |
+| `src/models/` | one file per architecture + its factory (`baseline.py` = ENet, shallowCNN) |
+| `src/losses/` | one file per loss + its factory (`cross_entropy.py`) |
+| `src/optim.py` | optimizers and LR schedulers |
+| `src/metrics.py` | 2D metrics during training: per-slice counts → patient-level Dice |
+| `src/checkpoint.py` | seeding, RNG capture/restore, atomic checkpoint files |
+| `src/run.py` | run directory rules (skip/resume/refuse), manifest, logging, copy to `metrics/` |
+| `src/wandb_logger.py` | W&B wrapper that degrades to local-only instead of failing |
+| `src/plots.py` | loss and Dice curves for a run |
+| `src/evaluate.py` | best checkpoint → predictions → 3D volumes → metrics and submission `.npz` |
+| `src/metrics_3d.py` | 3D Dice, HD95 and ASSD in mm |
+| `src/aggregate.py` | all runs in `metrics/` → comparison table |
+| `jobsAndOutputs/pipeline/jobs/` | the Slurm jobs (see the table below) |
+| `tests/` | legacy parity, resume, stitching and metric conventions |
+
+Reused unchanged from the original codebase: `ENet.py`, `ShallowNet.py`, `losses.py` (the
+`CrossEntropy` class), `dataset.py` (`SliceDataset`) and `utils.py` (one-hot helpers, `save_images`).
+Data preparation is still `slice_segthor.py`.
+
 ## One-time setup (per person)
 
 ```bash

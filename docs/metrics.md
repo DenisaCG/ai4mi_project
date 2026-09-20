@@ -7,9 +7,13 @@ across the whole project:
 - **both empty → NaN** (undefined, excluded from means). An empty/empty case is not a success, and
   counting it as 1.0 (as the course `dice_coef` with `smooth=1e-8` does) inflates scores for small organs.
 - **one empty → Dice 0**, surface distances NaN
-- foreground (`*_fg`) = mean over `eval.classes`, currently `[1, 2, 3]` (esophagus, heart, trachea).
-  The aorta (4) has **no voxels in any ground truth** of `segthor_part1`, so it is excluded from `*_fg`.
-  It still gets per-class rows in the 3D evaluation: Dice 0 if the model predicts it anywhere, NaN otherwise.
+- foreground (`*_fg`) = mean over `eval.classes`, which depends on the label version:
+  - **original labels** (`segthor_part1`, `configs/base.yaml`): `[1, 2, 3]` (esophagus, heart, trachea). The aorta (4)
+    has no voxels in any ground truth (it is merged into label 1), so it is excluded from `*_fg`. It still gets
+    per-class rows in the 3D evaluation: Dice 0 if the model predicts it anywhere, NaN otherwise.
+  - **corrected labels** (`segthor_part1_corrected`, `configs/segthor_enet_ce_corrected.yaml`): `[1, 2, 3, 4]`, since all
+    20 patients have aorta voxels. `*_fg` therefore averages four organs and is not comparable with an original-label `*_fg`,
+    and the esophagus differs too (the original label 1 also contained the aorta).
 
 ## During training (`epochs.csv`, W&B)
 
