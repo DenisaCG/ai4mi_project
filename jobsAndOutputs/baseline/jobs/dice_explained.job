@@ -1,0 +1,29 @@
+#!/bin/bash
+#SBATCH --job-name=dice_explained
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=4G
+#SBATCH --time=00:10:00
+#SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/dice_explained_%j.out
+
+# Slide figure comparing the legacy per-slice Dice with the patient-level Dice on the same predictions.
+# Reads a finished analysis folder (tables/baseline_slice_metrics.csv); run baseline_median_runs.job first.
+set -euo pipefail
+PROJECT_DIR="$HOME/ai4mi_project"
+
+module purge
+module load 2024
+module load Anaconda3/2024.06-1
+set +u
+source "${EBROOTANACONDA3:-$CONDA_PREFIX}/etc/profile.d/conda.sh"
+conda activate ai4mi
+set -u
+
+cd "$PROJECT_DIR"
+export MPLCONFIGDIR="$PROJECT_DIR/dataset_analysis/results/.matplotlib"
+python -B -u dataset_analysis/dice_explained.py \
+    --analysis-dir dataset_analysis/results/repro_corrected_seed0 \
+    --output dataset_analysis/results/before_after/plots/dice_metrics_explained.png \
+    --organ 1 --run-label "Corrected labels, median run (pipeline seed 7)"

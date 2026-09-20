@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 import nibabel as nib
@@ -134,6 +135,11 @@ def main():
     p.add_argument("--reconstructed-volumes", type=Path)
     args = p.parse_args()
     root, original, processed, output = paths(args)
+    for flag, given, default in (("--predictions", args.predictions, "results/segthor/ce/best_epoch/val"),
+                                 ("--reconstructed-volumes", args.reconstructed_volumes, "volumes/segthor/ce")):
+        if given is None:
+            print(f"WARNING: {flag} not given, falling back to the old 3-organ baseline '{default}' "
+                  "(it never predicted aorta); pass it explicitly for the corrected data", file=sys.stderr)
     predictions = (args.predictions or root / "results/segthor/ce/best_epoch/val").resolve()
     volumes = (args.reconstructed_volumes or root / "volumes/segthor/ce").resolve()
     if not predictions.is_dir():
@@ -159,7 +165,7 @@ def main():
     rows, inputs, decoded = [], [run_path, feature_path], {}
     for name in sorted(expected):
         gt_path, pred_path = processed / "val/gt" / name, predictions / name
-        gt, pred = load_png(gt_path), load_png(pred_path, prediction=True)
+        gt, pred = load_png(gt_path), load_png(pred_path)
         patient, z = identity(gt_path)
         decoded.setdefault(patient, {})[z] = pred
         for k, class_name in CLASSES.items():

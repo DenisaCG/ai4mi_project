@@ -16,7 +16,7 @@ import nibabel as nib
 import numpy as np
 from PIL import Image
 
-CLASSES = {1: "esophagus", 2: "heart", 3: "trachea"}
+CLASSES = {1: "esophagus", 2: "heart", 3: "trachea", 4: "aorta"}
 REPO = Path(__file__).resolve().parents[1]
 
 
@@ -91,11 +91,11 @@ def discover(processed: Path) -> dict:
     return dict(sorted(patients.items()))
 
 
-def load_png(path: Path, prediction: bool = False) -> np.ndarray:
-    """Decode exact 63-spaced labels; class 4 is allowed only in predictions."""
+def load_png(path: Path) -> np.ndarray:
+    """Decode exact 63-spaced labels, one per class in CLASSES plus background."""
     with Image.open(path) as img:
         a = np.asarray(img)
-    allowed = np.array([0, 63, 126, 189, 252] if prediction else [0, 63, 126, 189])
+    allowed = np.array([0] + [63 * k for k in CLASSES])
     if a.ndim != 2 or a.dtype != np.uint8 or not np.isin(a, allowed).all():
         raise ValueError(f"Invalid PNG label encoding: {path}")
     return a // 63
@@ -112,8 +112,8 @@ def load_original(folder: Path, patient: str):
             or not np.allclose(spacing, np.linalg.norm(gt.affine[:3, :3], axis=0))):
         raise ValueError(f"Unusable physical geometry for {patient}")
     data = np.asanyarray(gt.dataobj)
-    if not np.issubdtype(data.dtype, np.integer) or data.min() < 0 or data.max() > 3:
-        raise ValueError(f"Expected supplied annotations 0–3 for {patient}")
+    if not np.issubdtype(data.dtype, np.integer) or data.min() < 0 or data.max() > max(CLASSES):
+        raise ValueError(f"Expected supplied annotations 0–{max(CLASSES)} for {patient}")
     return gt, data
 
 

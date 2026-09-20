@@ -1,0 +1,20 @@
+{
+  "status": "completed",
+  "started": "2026-09-14T15:41:08",
+  "config_hash": "edf398559067",
+  "smoke": false,
+  "user": "scur0049",
+  "host": "gcn2.local.snellius.surf.nl",
+  "slurm_job_id": "26683776",
+  "python": "3.11.16",
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100-SXM4-40GB MIG 3g.20gb",
+  "git_commit": "63235a88b51a9974e78b65918a4b2b74b51b8708",
+  "git_branch": "standardized_pipeline",
+  "git_dirty": true,
+  "command": "/gpfs/home5/scur0049/ai4mi_project/src/train.py --config configs/segthor_enet_ce.yaml --set wandb.mode=offline",
+  "wandb_id": "1c2wimd8",
+  "wandb_url": null,
+  "finished": "2026-09-14T15:50:42"
+}

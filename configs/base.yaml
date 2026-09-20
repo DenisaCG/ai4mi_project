@@ -10,6 +10,8 @@ notes: ""                 # free text, copied to the manifest and W&B
 data:
   root: data/SEGTHOR      # sliced dataset: <root>/{train,val[,test]}/{img,gt}/*.png
                           # "switching preprocessing" = pointing this at a differently sliced copy
+  preprocess: null        # {source_dir, shape, retains, fold, seed}: slice source_dir on first use into
+                          # data/sliced_<hash> and use that as root (overrides root); null = use root as-is
   num_classes: 5
   class_names: [background, esophagus, heart, trachea, aorta]
   label_scale: 63         # grey value per class index in the gt PNGs (63 for SEGTHOR, 255 for TOY2)

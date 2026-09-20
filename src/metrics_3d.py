@@ -34,6 +34,11 @@ def surface_distances(gt: np.ndarray, pred: np.ndarray, spacing) -> tuple[np.nda
 
 
 def volume_metrics(gt: np.ndarray, pred: np.ndarray, spacing) -> dict:
+    # NOTE: hd95/assd stay NaN when either mask is empty, and evaluate.mean() then drops them, so a model
+    # that misses an organ entirely is not penalised. Preliminary literature review suggests a better way:
+    # BraTS scores a region that exists but is not predicted as Dice 0 with a fixed worst-case HD95 (374),
+    # and Metrics Reloaded recommends setting undefined values to the worst possible value (e.g. the image
+    # diagonal) rather than ignoring them. Not adopted here yet; reported numbers would change.
     out = {"dice": dice(gt, pred), "hd95": np.nan, "assd": np.nan}
     if gt.any() and pred.any():
         a, b = surface_distances(gt, pred, spacing)

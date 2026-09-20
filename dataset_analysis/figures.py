@@ -10,7 +10,9 @@ def select_shape_examples(rows):
     """Volume extremes and closest-to-median case; ties resolve by patient ID."""
     selected = []
     for k in NAMES:
-        rs = [r for r in rows if int(r['class_id']) == k]
+        rs = [r for r in rows if int(r['class_id']) == k and float(r['volume_ml']) > 0]
+        if not rs:  # organ has no annotation in this dataset (e.g. aorta in the original release)
+            continue
         median = np.median([float(r['volume_ml']) for r in rs])
         choices = {
             'small': min(rs, key=lambda r: (float(r['volume_ml']), r['patient_id'])),
@@ -118,7 +120,7 @@ def class_distribution(output, frequency, inventory):
     fg_percent = 100 * foreground / total
     fig = frame(plt, "Class distribution: background and annotated organs",
         f"Original NIfTI ground truth  |  {cohort(inventory)}  |  Counts pooled across scans",
-        "Background means label 0, including unannotated anatomy. Aorta annotation is intentionally excluded.\n"
+        "Background means label 0, including unannotated anatomy.\n"
         "The two panels use different denominators; counts are original voxels, not physical-volume totals.")
     fig.text(.10, .81, f"{total:,} total scan voxels", fontsize=20, weight='bold')
     fig.text(.10, .765, f"Background: {100 - fg_percent:.3f}%", color=BACKGROUND, fontsize=15, weight='bold')
@@ -131,12 +133,13 @@ def class_distribution(output, frequency, inventory):
     ax.tick_params(length=0)
     fig.text(.10, .535, f"{foreground:,} annotated foreground voxels", fontsize=22, weight='bold')
     ax = fig.add_axes([.23, .205, .68, .285])
-    for k, y in zip(NAMES, (2, 1, 0)):
+    positions = range(len(NAMES) - 1, -1, -1)
+    for k, y in zip(NAMES, positions):
         fraction = 100 * rows[k]['voxel_count'] / foreground
         ax.barh(y, fraction, color=COLORS[k], height=.58)
         ax.text(fraction + 1.7, y, f"{fraction:.2f}%\n{rows[k]['voxel_count']:,} voxels",
                 va='center', fontsize=14, weight='bold', linespacing=1.3)
-    ax.set(xlim=(0, 108), ylim=(-.55, 2.55), yticks=[2, 1, 0],
+    ax.set(xlim=(0, 108), ylim=(-.55, len(NAMES) - 1 + .55), yticks=list(positions),
            yticklabels=list(NAMES.values()), xlabel="Share of annotated foreground voxels (%)",
            ylabel="Annotated organ", xticks=[0, 25, 50, 75, 100])
     ax.spines['left'].set_visible(False)
@@ -224,7 +227,7 @@ def area_through_scan(output, trends, inventory):
         f"Processed 256 × 256 ground-truth masks  |  {cohort(inventory)}  |  Empty slices included",
         "Within each of 10 scan-position bins, average slices per patient, then take the median across patients.\n"
         "Shading: middle 50% of patient means, not confidence intervals. Scan position does not align anatomy between patients.")
-    axes = fig.subplots(1, 3, sharex=True)
+    axes = fig.subplots(1, len(NAMES), sharex=True)
     for ax, k in zip(axes, NAMES):
         rs = [r for r in trends if r['split'] == 'all' and r['class_id'] == k]
         x = [r['z_midpoint'] for r in rs]
@@ -251,6 +254,8 @@ def baseline_dice(output, patients):
     for k in NAMES:
         rs = sorted([r for r in patients if r['class_id'] == k], key=lambda r:r['patient_id'])
         vals = np.array([r['dice_3d'] for r in rs], float)
+        if not np.isfinite(vals).any():  # organ absent from this dataset's GT (aorta in the original release)
+            continue
         if not np.isfinite(vals).all():
             raise ValueError('The primary baseline figure requires defined 3D Dice for every patient-organ pair')
         offsets = np.linspace(-.25,.25,len(rs))
@@ -262,11 +267,17 @@ def baseline_dice(output, patients):
         mean = vals.mean()
         ax.hlines(mean,k-.36,k+.36,color=COLORS[k],linewidth=4,zorder=3)
         ax.text(k,1.035,f"Mean {mean:.3f}",color=COLORS[k],ha='center',fontsize=17,weight='bold')
-    ax.set(xlim=(.45,3.55),ylim=(-.04,1.12),ylabel='Patient-level 3D Dice (0–1)',xlabel='Annotated organ')
+    ax.set(xlim=(min(NAMES)-.55,max(NAMES)+.55),ylim=(-.04,1.12),ylabel='Patient-level 3D Dice (0–1)',xlabel='Annotated organ')
     ax.set_xticks(list(NAMES), list(NAMES.values()))
     ax.set_yticks(np.arange(0,1.01,.2))
     clean_axis(ax)
     save(fig, output, 'baseline_3d_dice_by_class.png', plt)
+
+
+def no_ground_truth(ax, k):
+    """Placeholder panel for an organ absent from this dataset's GT (aorta in the original release)."""
+    ax.set(title=NAMES[k], xticks=[], yticks=[])
+    ax.text(.5, .5, "No ground truth", transform=ax.transAxes, ha='center', va='center', fontsize=14, color='#666666')
 
 
 def baseline_size(output, bins, patients):
@@ -274,13 +285,16 @@ def baseline_size(output, bins, patients):
     plt = pyplot(output)
     from matplotlib.ticker import NullFormatter
     n = len({r['patient_id'] for r in patients})
-    fig = frame(plt, "Baseline Dice and target size: three different patterns",
+    fig = frame(plt, "Baseline Dice and target size, per organ",
         f"Original ENet baseline  |  {n} validation patients  |  Processed 256 × 256 slices with the organ present in ground truth",
         "Five area-quantile bins per organ. Average Dice within each patient/bin, then average those patient means equally.\n"
         "Shading: middle 50% of patient means. n = contributing patients; composition differs by bin. Association is not causation.")
-    axes = fig.subplots(1,3,sharey=True)
+    axes = fig.subplots(1,len(NAMES),sharey=True)
     for ax,k in zip(axes,NAMES):
         rs = [r for r in bins if r['class_id']==k and r['bin_type']=='area_quantile']
+        if not rs:
+            no_ground_truth(ax, k)
+            continue
         x = [r['median_gt_area'] for r in rs]
         ax.plot(x,[r['patient_mean_dice_mean'] for r in rs], 'o-', color=COLORS[k], markersize=7)
         ax.fill_between(x,[r['patient_mean_dice_p25'] for r in rs],
@@ -308,9 +322,12 @@ def baseline_position(output,bins,patients):
         f'Original ENet baseline  |  {n} validation patients  |  Processed slices with the organ present in ground truth',
         'Position runs from the first to last organ-positive slice in each patient. Average slices per patient/region, then patients equally.\n'
         'Shading: middle 50% of patient means. Size and position vary together; these descriptive differences are not causal effects.')
-    axes=fig.subplots(1,3,sharey=True)
+    axes=fig.subplots(1,len(NAMES),sharey=True)
     for ax,k in zip(axes,NAMES):
         rs=[r for r in bins if r['class_id']==k and r['bin_type']=='organ_z']
+        if not rs:
+            no_ground_truth(ax, k)
+            continue
         x=[r['bin_id'] for r in rs]
         y=[r['patient_mean_dice_mean'] for r in rs]
         ax.plot(x,y,'o-',color=COLORS[k],markersize=8)

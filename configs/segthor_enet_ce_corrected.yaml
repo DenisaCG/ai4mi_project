@@ -1,0 +1,19 @@
+# segthor_enet_ce on the CORRECTED labels (esophagus and aorta separated; aorta present in all 20 patients).
+# Same model/loss/optimizer as the course baseline; only data and the evaluated class set change.
+experiment: segthor_enet_ce_corrected
+notes: ENet + cross-entropy, corrected SEGTHOR labels, aorta included in *_fg metrics
+
+data:
+  root: data/SEGTHOR_corrected
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: cross_entropy
+  kwargs: {idk: [0, 1, 2, 3, 4]}
+
+eval:
+  classes: [1, 2, 3, 4]   # aorta now has GT

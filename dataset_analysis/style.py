@@ -2,10 +2,10 @@
 import os
 from pathlib import Path
 
-COLORS = {1: "#B637CA", 2: "#087F9D", 3: "#16B79B"}
+COLORS = {1: "#B637CA", 2: "#087F9D", 3: "#16B79B", 4: "#D9822B"}
 BACKGROUND = "#929292"
 INK = "#171717"
-NAMES = {1: "Esophagus", 2: "Heart", 3: "Trachea"}
+NAMES = {1: "Esophagus", 2: "Heart", 3: "Trachea", 4: "Aorta"}
 FIGURES = ("class_distribution.png", "shape_descriptors_3d.png",
            "shape_descriptors_summary.png", "target_area_through_scan.png",
            "baseline_3d_dice_by_class.png", "baseline_dice_vs_target_size.png",

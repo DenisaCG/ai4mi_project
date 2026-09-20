@@ -1,0 +1,83 @@
+#!/bin/bash
+#SBATCH --job-name=rebuild_env
+#SBATCH --partition=staging
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=03:00:00
+#SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/rebuild_env_%j.out
+
+# Rebuild the `ai4mi` conda env from requirements.txt after it was replaced by a bare `conda create -n ai4mi python=3.10`
+# (2026-09-19 17:04). Only touches the env if torch cannot be imported; fails unless every pin in requirements.txt
+# is installed at exactly that version. Runs on staging: genoa nodes had congested home I/O (10-185 files/s). Does not touch data/ or runs/.
+set -euo pipefail
+PROJECT_DIR="$HOME/ai4mi_project"
+cd "$PROJECT_DIR"
+
+# Home-filesystem writes flap between thousands and single-digit files/s within minutes (seen on genoa and staging nodes;
+# a first attempt hung 22 min in I/O wait). Wait for a fast spell before the file-heavy conda/pip steps, give up after 20 attempts.
+io_rate() {
+    local d="$HOME/.conda/iotest_${SLURM_JOB_ID:-$$}" t0 t1
+    mkdir -p "$d"; t0=$(date +%s.%N)
+    for i in $(seq 1 100); do echo x > "$d/f$i"; done
+    t1=$(date +%s.%N); rm -rf "$d"
+    awk -v a="$t0" -v b="$t1" 'BEGIN{printf "%d", 100/(b-a)}'
+}
+for attempt in $(seq 1 20); do
+    RATE=$(io_rate)
+    echo "[$(date +%T)] home write speed on $(hostname), attempt $attempt: $RATE files/s"
+    [ "$RATE" -ge 200 ] && break
+    [ "$attempt" = 20 ] && { echo "filesystem stayed too slow for 20 attempts; giving up"; exit 1; }
+    sleep 30
+done
+
+module purge
+module load 2024
+module load Anaconda3/2024.06-1
+set +u
+source "${EBROOTANACONDA3:-$CONDA_PREFIX}/etc/profile.d/conda.sh"
+set -u
+
+if conda run -n ai4mi python -c "import torch" 2>/dev/null; then
+    echo "ai4mi already has torch; nothing to rebuild"
+    exit 0
+fi
+echo "ai4mi cannot import torch; rebuilding. Current history:"
+grep "cmd:" "$HOME/.conda/envs/ai4mi/conda-meta/history" || true
+
+if ! conda env remove -n ai4mi -y; then
+    ENV_DIR="$HOME/.conda/envs/ai4mi"
+    if [ -e "$ENV_DIR/conda-meta/history" ]; then
+        echo "conda could not remove a valid env; stopping"; exit 1
+    fi
+    echo "removing partial env directory $ENV_DIR (no conda-meta/history: a cancelled earlier build)"
+    rm -rf "$ENV_DIR"
+fi
+conda create -n ai4mi python=3.11.16 pip -y || conda create -n ai4mi python=3.11 pip -y
+
+set +u
+conda activate ai4mi
+set -u
+echo "python: $(which python) $(python --version)"
+python -m pip install --upgrade pip wheel setuptools
+python -m pip install -r requirements.txt
+
+python - <<'PY'
+import re, sys
+from importlib.metadata import version
+bad = []
+for line in open("requirements.txt"):
+    line = line.split("#")[0].strip()
+    if not line:
+        continue
+    name, pin = re.split(r"==", line)
+    got = version(name.strip())
+    print(f"{name.strip():14s} pinned {pin.strip():10s} installed {got}")
+    if got.split("+")[0] != pin.strip():
+        bad.append(name)
+import torch
+print("torch built for CUDA", torch.version.cuda)
+sys.exit(f"version mismatch: {bad}" if bad else 0)
+PY
+echo "env rebuilt"

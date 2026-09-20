@@ -67,6 +67,14 @@ def group_by_patient(preds: dict[str, np.ndarray], regex: str) -> dict[str, dict
 
 
 def mean(values) -> float:
+    """NaN-aware mean; NaN if every value is NaN.
+
+    Caveat for hd95/assd: a class metric is NaN when the prediction or GT is empty (metrics_3d.csv shows
+    pred_voxels=0, hd95=nan). Those patients are dropped, and the `*_fg` value averages only the classes
+    that have a value, so a model that misses an organ entirely can get a better-looking HD95/ASSD.
+    Read them together with Dice (a missed organ has Dice 0) and do not compare `*_fg` across runs whose
+    set of scored classes differs.
+    """
     a = np.asarray(values, dtype=float)
     return float(np.nanmean(a)) if np.isfinite(a).any() else float("nan")
 

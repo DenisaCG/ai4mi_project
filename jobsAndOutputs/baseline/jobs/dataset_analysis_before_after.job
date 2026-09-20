@@ -1,0 +1,56 @@
+#!/bin/bash
+#SBATCH --job-name=segthor_before_after
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+#SBATCH --time=00:40:00
+#SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/dataset_analysis_before_after_%j.out
+
+# Before = ce_repro_original (original labels, no aorta); after = ce_repro_corrected_fixed (aorta present, retrained
+# after the stale Patient_02/Patient_15 PNGs were repaired). Both use seed 0 (run0).
+# ONLY=corrected (or original) runs a single variant. Stitches each rerun's val predictions to 3D, then runs the analysis on it.
+set -euo pipefail
+PROJECT_DIR="$HOME/ai4mi_project"
+
+module purge
+module load 2024
+module load Anaconda3/2024.06-1
+
+set +u
+source "${EBROOTANACONDA3:-$CONDA_PREFIX}/etc/profile.d/conda.sh"
+conda activate ai4mi
+set -u
+
+cd "$PROJECT_DIR"
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MPLCONFIGDIR="$PROJECT_DIR/dataset_analysis/results/.matplotlib"
+
+python -B -u dataset_analysis/test_analysis.py
+
+run_variant() {  # name, raw GT dir, processed data dir, run tag
+    local name="$1" original="$2" processed="$3" tag="$4"
+    local preds="results/segthor/ce_repro_${tag}/run0/best_epoch/val"
+    local volumes="volumes/segthor/ce_repro_${tag}_run0"
+    local out="dataset_analysis/results/repro_${name}_seed0"
+
+    echo "=== $name: stitching $preds -> $volumes"
+    python -O stitch.py --data_folder "$preds" --dest_folder "$volumes" \
+        --num_classes 255 --grp_regex "(Patient_\d\d)_\d\d\d\d" \
+        --source_scan_pattern "${original}/{id_}/GT.nii.gz"
+
+    echo "=== $name: analysis -> $out"
+    python -B -u dataset_analysis/analyze_dataset.py --original-data "$original" --processed-data "$processed" --output-dir "$out"
+    python -B -u dataset_analysis/analyze_baseline.py --original-data "$original" --processed-data "$processed" \
+        --predictions "$preds" --reconstructed-volumes "$volumes" --output-dir "$out"
+    python -B -u dataset_analysis/validate_results.py --original-data "$original" --processed-data "$processed" --output-dir "$out"
+}
+
+if [ "${ONLY:-corrected}" = "corrected" ] || [ -z "${ONLY:-}" ]; then
+    run_variant corrected data/segthor_part1_corrected/train data/SEGTHOR_corrected corrected_fixed
+fi
+if [ -z "${ONLY:-}" ] || [ "${ONLY:-}" = "original" ]; then
+    run_variant original data/segthor_part1/train data/SEGTHOR original
+fi

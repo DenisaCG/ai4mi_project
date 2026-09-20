@@ -1,0 +1,70 @@
+#!/bin/bash
+#SBATCH --job-name=repro_original
+#SBATCH --partition=gpu_a100
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --gpus=1
+#SBATCH --time=00:30:00
+#SBATCH --array=0-2
+#SBATCH --output=jobsAndOutputs/baseline/outputs/%x_%A_%a.out
+
+# Original (non-standardized) main.py, unchanged, rerun N times for the reproduction check against src/.
+# main.py sets no seed, so each array task is an independent run; results/segthor/ce (the saved
+# baseline) is never touched.
+# I/O: main.py writes ~900 prediction PNGs per epoch and copies the best folder on every improvement;
+# on GPFS that stalled a run (3 min/epoch, GPU idle). So code, data and output live in node-local
+# $TMPDIR; only the results needed for the comparison are copied back at the end (or on timeout).
+# Skipped on copy-back: the per-epoch iterXXX/ prediction folders (best_epoch/ is kept).
+# Smoke: sbatch --partition=gpu_mig --cpus-per-task=9 --time=00:10:00 --array=0-0 --export=ALL,SMOKE=1 jobsAndOutputs/baseline/jobs/repro_original.job
+# Full:  sbatch --array=0-0 jobsAndOutputs/baseline/jobs/repro_original.job   (then --array=1-2)
+set -euo pipefail
+
+PROJECT_DIR="$HOME/ai4mi_project"
+TASK="${SLURM_ARRAY_TASK_ID:-0}"
+
+module purge
+module load 2024
+module load Anaconda3/2024.06-1
+set +u
+source "${EBROOTANACONDA3:-$CONDA_PREFIX}/etc/profile.d/conda.sh"
+conda activate ai4mi
+set -u
+
+cd "$PROJECT_DIR"
+echo "[$(date -Is)] job $SLURM_JOB_ID task $TASK on $(hostname), commit $(git rev-parse --short HEAD)"
+CODE="main.py utils.py losses.py ENet.py ShallowNet.py dataset.py"
+git diff --quiet master -- $CODE || { echo "original code differs from master"; exit 1; }
+nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv
+
+# DATASET=SEGTHOR (original labels, TAG=original) or SEGTHOR_CLEAN (K=5 entry of main.py; data/SEGTHOR_CLEAN -> SEGTHOR_corrected).
+DATASET="${DATASET:-SEGTHOR_CLEAN}"
+TAG="${TAG:-corrected}"
+[ -d "data/$DATASET" ] || { echo "data/$DATASET missing"; exit 1; }
+echo "dataset $DATASET ($(readlink -f data/$DATASET)), tag $TAG"
+
+if [ "${SMOKE:-0}" = "1" ]; then
+    DEST="results/segthor/_smoke_repro_${TAG}/run${TASK}"
+    EXTRA="--epochs 2 --debug"
+else
+    DEST="results/segthor/ce_repro_${TAG}/run${TASK}"
+    EXTRA="--epochs 25"
+    [ -f "$DEST/dice_val.npy" ] && { echo "$DEST already exists, refusing to overwrite"; exit 1; }
+fi
+
+WORK="$TMPDIR/repro_${SLURM_JOB_ID}_${TASK}"
+mkdir -p "$WORK/data" "$WORK/out" "$PROJECT_DIR/$DEST"
+cp $CODE "$WORK/"
+cp -rL "data/$DATASET" "$WORK/data/$DATASET"
+echo "[$(date -Is)] staged code + data in $WORK ($(du -sh "$WORK/data" | cut -f1))"
+
+copy_back() {
+    trap - EXIT TERM
+    echo "[$(date -Is)] copying results back to $DEST"
+    rsync -a --exclude 'iter*/' "$WORK/out/" "$PROJECT_DIR/$DEST/" || echo "copy-back FAILED, results remain in $WORK"
+}
+trap copy_back EXIT TERM
+
+cd "$WORK"
+python -O main.py --dataset "$DATASET" --mode full $EXTRA --dest out --gpu
+echo "[$(date -Is)] training done"

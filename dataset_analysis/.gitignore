@@ -1,2 +1,5 @@
 __pycache__/
-results/
+# only figures are tracked; tables, run json and caches stay local
+results/**
+!results/**/
+!results/**/*.png
