@@ -1,0 +1,7 @@
+# Reproduction check vs the original main.py (jobsAndOutputs/baseline/jobs/repro_original.job): same baseline config, 3 seeds,
+# separate experiment name so the existing segthor_enet_ce runs are untouched. Uses data/SEGTHOR (original labels).
+# sbatch --time=00:30:00 --array=0-0 --export=ALL,SWEEP=sweeps/segthor_enet_repro.txt jobsAndOutputs/pipeline/jobs/sweep.job
+# sbatch --time=00:30:00 --array=1-2 --export=ALL,SWEEP=sweeps/segthor_enet_repro.txt jobsAndOutputs/pipeline/jobs/sweep.job
+configs/segthor_enet_ce.yaml experiment=segthor_enet_ce_repro seed=0 wandb.mode=disabled
+configs/segthor_enet_ce.yaml experiment=segthor_enet_ce_repro seed=1 wandb.mode=disabled
+configs/segthor_enet_ce.yaml experiment=segthor_enet_ce_repro seed=2 wandb.mode=disabled

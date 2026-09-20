@@ -1,0 +1,6 @@
+# Reproduction check on the CORRECTED data, pipeline side; pairs with jobsAndOutputs/baseline/jobs/repro_original.job (DATASET=SEGTHOR_CLEAN).
+# sbatch --time=00:45:00 --array=0-0 --export=ALL,SWEEP=sweeps/segthor_enet_repro_corrected.txt jobsAndOutputs/pipeline/jobs/sweep.job
+# sbatch --time=00:45:00 --array=1-2 --export=ALL,SWEEP=sweeps/segthor_enet_repro_corrected.txt jobsAndOutputs/pipeline/jobs/sweep.job
+configs/segthor_enet_ce_corrected.yaml experiment=segthor_enet_ce_repro_corrected seed=0 wandb.mode=disabled
+configs/segthor_enet_ce_corrected.yaml experiment=segthor_enet_ce_repro_corrected seed=1 wandb.mode=disabled
+configs/segthor_enet_ce_corrected.yaml experiment=segthor_enet_ce_repro_corrected seed=2 wandb.mode=disabled

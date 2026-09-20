@@ -1,0 +1,44 @@
+#!/bin/bash
+#SBATCH --job-name=check_processed_gt
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=8G
+#SBATCH --time=00:40:00
+#SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/check_processed_gt_%j.out
+
+# Reslices every corrected patient and compares with data/SEGTHOR_corrected (read-only check).
+# Set FIX=1 to replace mismatching gt PNGs (old ones are backed up first).
+# Defaults to the corrected data; for the original: --export=ALL,SOURCE=data/segthor_part1,PROCESSED=data/SEGTHOR
+set -euo pipefail
+PROJECT_DIR="$HOME/ai4mi_project"
+
+module purge
+module load 2024
+module load Anaconda3/2024.06-1
+
+set +u
+source "${EBROOTANACONDA3:-$CONDA_PREFIX}/etc/profile.d/conda.sh"
+conda activate ai4mi
+set -u
+
+cd "$PROJECT_DIR"
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+
+WORK="/scratch-shared/$USER/ai4mi_project/check_processed_gt_${SLURM_JOB_ID}"
+SOURCE="${SOURCE:-data/segthor_part1_corrected}"
+PROCESSED="${PROCESSED:-data/SEGTHOR_corrected}"
+ARGS=(--source "$SOURCE" --processed "$PROCESSED" --staging "$WORK/staging")
+if [ "${FIX:-0}" = "1" ]; then
+    ARGS+=(--fix --backup "$WORK/backup")
+fi
+python -B -u check_processed_gt.py "${ARGS[@]}"
+if [ "${FIX:-0}" = "1" ]; then
+    echo "=== verifying after the fix"
+    python -B -u check_processed_gt.py --source "$SOURCE" --processed "$PROCESSED" \
+        --staging "$WORK/staging_verify" | tee "$WORK/verify.log"
+    grep -q "Stale gt patients: none" "$WORK/verify.log"
+fi
+echo "work dir: $WORK"
