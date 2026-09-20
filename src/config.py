@@ -80,6 +80,8 @@ def resolve_preprocess(cfg: dict) -> None:
         return
     if "source_dir" not in p:
         raise ValueError("data.preprocess needs `source_dir`")
+    if p.get("gt_version") not in ("original", "corrected"):
+        raise ValueError("data.preprocess.gt_version must be 'original' or 'corrected'")
     p = cfg["data"]["preprocess"] = PREPROCESS_DEFAULTS | p
     cfg["data"]["root"] = f"data/sliced_{hashlib.sha256(json.dumps(p, sort_keys=True).encode()).hexdigest()[:8]}"
 

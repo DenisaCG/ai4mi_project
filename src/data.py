@@ -35,7 +35,8 @@ def ensure_sliced(cfg: dict) -> None:
     shutil.rmtree(tmp, ignore_errors=True)
     subprocess.run([sys.executable, "slice_segthor.py", "--source_dir", p["source_dir"], "--dest_dir", str(tmp),
                     "--shape", *map(str, p["shape"]), "--retains", str(p["retains"]),
-                    "--fold", str(p["fold"]), "--seed", str(p["seed"])], cwd=REPO, check=True)
+                    "--fold", str(p["fold"]), "--seed", str(p["seed"]),
+                    "--gt_version", p["gt_version"]], cwd=REPO, check=True)
     tmp.rename(root)
 
 

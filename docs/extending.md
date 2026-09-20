@@ -148,11 +148,13 @@ when slicing the NIfTI volumes, not in the training loop:
 **Or let the config slice it** (`data.preprocess`): instead of running `slice_segthor.py` by hand, list
 its settings in the experiment config. On first use `src.train` slices `source_dir` into
 `data/sliced_<hash of the settings>` and sets `data.root` to it; the same settings reuse that directory.
-Missing keys default to `shape: [256, 256]`, `retains: 25`, `fold: 0`, `seed: 0`.
+`gt_version` (`original` or `corrected`) is required: slicing asserts every patient has exactly that version's labels
+(`{0,1,2,3}` or `{0..4}`), so the wrong dataset fails at once. Missing other keys default to
+`shape: [256, 256]`, `retains: 25`, `fold: 0`, `seed: 0`.
 
 ```yaml
 data:
-  preprocess: {source_dir: data/segthor_part1, shape: [256, 256], retains: 5, fold: 0, seed: 0}
+  preprocess: {source_dir: data/segthor_part1_corrected, gt_version: corrected, shape: [256, 256], retains: 5, fold: 0, seed: 0}
 ```
 
 Only what `slice_segthor.py` already takes (slice shape and the patient split) is configurable; a new

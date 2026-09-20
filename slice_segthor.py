@@ -69,7 +69,7 @@ def sanity_ct(ct, x, y, z, dx, dy, dz) -> bool:
 
 def sanity_gt(gt, ct) -> bool:
     assert gt.shape == ct.shape
-    assert gt.dtype in [np.uint8], gt.dtype
+    assert gt.dtype in [np.uint8, np.int16], gt.dtype
 
     # Do the test on 3d: assume all organs are present..
     # assert set(np.unique(gt)) == set(range(5))
@@ -77,11 +77,15 @@ def sanity_gt(gt, ct) -> bool:
     return True
 
 
+# Labels every patient must contain, per SEGTHOR version (see --gt_version)
+EXPECTED_LABELS: dict[str, set[int]] = {"original": {0, 1, 2, 3}, "corrected": {0, 1, 2, 3, 4}}
+
+
 resize_: Callable = partial(resize, mode="constant", preserve_range=True, anti_aliasing=False)
 
 
 def slice_patient(id_: str, dest_path: Path, source_path: Path, shape: tuple[int, int],
-                  test_mode: bool = False) -> tuple[float, float, float]:
+                  test_mode: bool = False, gt_version: str | None = None) -> tuple[float, float, float]:
     id_path: Path = source_path / ("train" if not test_mode else "test") / id_
 
     ct_path: Path = (id_path / f"{id_}.nii.gz") if not test_mode else (source_path / "test" / f"{id_}.nii.gz")
@@ -100,6 +104,8 @@ def slice_patient(id_: str, dest_path: Path, source_path: Path, shape: tuple[int
         # print(nib_obj.affine, gt_nib.affine)
         gt = np.asarray(gt_nib.dataobj)
         assert sanity_gt(gt, ct)
+        if gt_version:
+            assert set(np.unique(gt)) == EXPECTED_LABELS[gt_version], (id_, gt_version, np.unique(gt))
     else:
         gt = np.zeros_like(ct, dtype=np.uint8)
 
@@ -180,7 +186,8 @@ def main(args: argparse.Namespace):
                                  dest_path=dest_mode,
                                  source_path=src_path,
                                  shape=tuple(args.shape),
-                                 test_mode=mode == 'test')
+                                 test_mode=mode == 'test',
+                                 gt_version=args.gt_version)
         resolutions: list[tuple[float, float, float]]
         iterator = tqdm_(split_ids)
         match args.process:
@@ -208,6 +215,8 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('--retains', type=int, default=25, help="Number of retained patient for the validation data")
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--fold', type=int, default=0)
+    parser.add_argument('--gt_version', choices=list(EXPECTED_LABELS), default=None,
+                        help="SEGTHOR version of the GT; asserts every patient has exactly its labels (default: no check)")
     parser.add_argument('--process', '-p', type=int, default=1,
                         help="The number of cores to use for processing")
     args = parser.parse_args()
