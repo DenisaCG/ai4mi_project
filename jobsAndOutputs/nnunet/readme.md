@@ -3,7 +3,7 @@
 nnU-Net is installed from PyPI (`nnunetv2==2.8.1`) into its own venv, separate from the `ai4mi` conda env. Only the conversion script and the job live in this repo.
 
 1. Put the corrected data at `data/segthor_part1_corrected/train` (one `Patient_XX` folder per patient).
-2. Build the venv once, on a login node: `bash nnunet/setup_venv.sh`. It creates `~/.venv_nnunet_ai4mi`.
+2. Build the venv once: `sbatch jobsAndOutputs/nnunet/jobs/setup_venv.job` (CPU node), or run `bash nnunet/setup_venv.sh` on a login node. It creates `~/.venv_nnunet_ai4mi`.
 3. Submit from the project root: `sbatch jobsAndOutputs/nnunet/jobs/run_nnunet.job`.
 
 `jobs/run_nnunet.job` does everything in one go: convert to nnU-Net raw format (`Dataset102_SegTHOR_corrected`), plan and preprocess, write the split, train fold 0 with nnU-Net's default trainer.

@@ -1,0 +1,14 @@
+#!/bin/bash
+#SBATCH --job-name=nnunet_venv
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=01:00:00
+#SBATCH --output=jobsAndOutputs/nnunet/outputs/setup_venv_%j.out
+
+# Submit from the project root: sbatch jobsAndOutputs/nnunet/jobs/setup_venv.job
+set -euo pipefail
+
+cd "${SLURM_SUBMIT_DIR:-$HOME/ai4mi_project}"
+bash nnunet/setup_venv.sh

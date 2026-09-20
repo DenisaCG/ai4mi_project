@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build the nnU-Net virtualenv. Run on a Snellius login node (no SLURM job needed):
+# Build the nnU-Net virtualenv. Run it through jobs/setup_venv.job, or directly on a login node:
 #   bash nnunet/setup_venv.sh
 set -euo pipefail
 
