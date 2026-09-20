@@ -21,7 +21,7 @@ unset PYTHONPATH PYTHONHOME
 export PYTHONNOUSERSITE=1
 
 python -m pip install --upgrade pip wheel setuptools
-python -m pip install "nnunetv2==$NNUNET_VERSION"
+python -m pip install --no-compile "nnunetv2==$NNUNET_VERSION"
 
 python - <<'PY'
 import importlib.metadata
