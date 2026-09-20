@@ -145,6 +145,20 @@ when slicing the NIfTI volumes, not in the training loop:
 2. Point the config at it: `data: {root: data/SEGTHOR_hu_window}`. The run records `data.root`,
    and the dataset name becomes a W&B tag, so tables show which preprocessing each run used.
 
+**Or let the config slice it** (`data.preprocess`): instead of running `slice_segthor.py` by hand, list
+its settings in the experiment config. On first use `src.train` slices `source_dir` into
+`data/sliced_<hash of the settings>` and sets `data.root` to it; the same settings reuse that directory.
+Missing keys default to `shape: [256, 256]`, `retains: 25`, `fold: 0`, `seed: 0`.
+
+```yaml
+data:
+  preprocess: {source_dir: data/segthor_part1, shape: [256, 256], retains: 5, fold: 0, seed: 0}
+```
+
+Only what `slice_segthor.py` already takes (slice shape and the patient split) is configurable; a new
+step needs a new argument there and a matching key here. Keep `retains`/`fold`/`seed`
+identical across variants so they share one train/val split.
+
 **When the final dataset arrives:** slice it the same way into e.g. `data/SEGTHOR_final`, then set
 in `configs/base.yaml` (so every experiment follows):
 
