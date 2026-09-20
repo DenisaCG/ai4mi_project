@@ -12,6 +12,8 @@ BASE_CONFIG = REPO / "configs" / "base.yaml"
 FREE_FORM = "kwargs"  # keys below a `kwargs` block are component-specific, not validated
 IGNORED_BY_HASH = ("notes", "wandb", "paths", "device")
 
+PREPROCESS_DEFAULTS = {"shape": [256, 256], "retains": 25, "fold": 0, "seed": 0}  # = slice_segthor.py defaults
+
 # --smoke: a few slices, two epochs, separate run dir, no W&B. Applied before --set overrides.
 SMOKE = {"train": {"epochs": 2, "debug_samples": 16}, "wandb": {"mode": "disabled"}}
 
@@ -66,8 +68,20 @@ def load_config(path: Path | None, overrides: list[str] = (), smoke: bool = Fals
         cfg = merge(cfg, SMOKE)
         cfg["paths"]["run_root"] = f"{cfg['paths']['run_root']}/_smoke"
     cfg = merge(cfg, parse_overrides(list(overrides)))
+    resolve_preprocess(cfg)
     validate(cfg)
     return cfg
+
+
+def resolve_preprocess(cfg: dict) -> None:
+    """data.preprocess -> fill defaults and point data.root at data/sliced_<hash of the settings>."""
+    p = cfg["data"]["preprocess"]
+    if p is None:
+        return
+    if "source_dir" not in p:
+        raise ValueError("data.preprocess needs `source_dir`")
+    p = cfg["data"]["preprocess"] = PREPROCESS_DEFAULTS | p
+    cfg["data"]["root"] = f"data/sliced_{hashlib.sha256(json.dumps(p, sort_keys=True).encode()).hexdigest()[:8]}"
 
 
 def validate(cfg: dict) -> None:

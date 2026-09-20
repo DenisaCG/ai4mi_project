@@ -15,6 +15,7 @@ import torch
 
 from src.checkpoint import seed_everything
 from src.config import config_hash, load_config
+from src.data import ensure_sliced
 from src.engine import fit
 from src.plots import plot_curves
 from src.run import (copy_back, environment, now, prepare_run_dir, read_json, resolve_device,
@@ -71,6 +72,7 @@ def main(argv: list[str] | None = None) -> None:
         update_manifest(run_dir, wandb_id=wb.id, wandb_url=wb.url)
     seed_everything(cfg["seed"])  # after W&B init, which uses `random` itself; resume restores RNG later
     try:
+        ensure_sliced(cfg)
         best_epoch = fit(cfg, run_dir, device, resume, wb)
     except BaseException as exc:
         log.error("run failed:\n%s", traceback.format_exc())

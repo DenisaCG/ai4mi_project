@@ -8,6 +8,9 @@ belongs in the slicing step: write a new sliced dataset and point `data.root` at
 """
 import random
 import re
+import shutil
+import subprocess
+import sys
 from functools import partial
 
 import numpy as np
@@ -19,6 +22,21 @@ from dataset import SliceDataset
 from src.config import REPO
 from src.registry import build
 from utils import class2one_hot
+
+
+def ensure_sliced(cfg: dict) -> None:
+    """Build data.root with slice_segthor.py from data.preprocess unless it already exists.
+    Slices into a temp dir and renames, so a crash never leaves a half-built dataset behind."""
+    p = cfg["data"]["preprocess"]
+    root = REPO / cfg["data"]["root"]
+    if p is None or root.exists():
+        return
+    tmp = root.with_name(root.name + "_tmp")
+    shutil.rmtree(tmp, ignore_errors=True)
+    subprocess.run([sys.executable, "slice_segthor.py", "--source_dir", p["source_dir"], "--dest_dir", str(tmp),
+                    "--shape", *map(str, p["shape"]), "--retains", str(p["retains"]),
+                    "--fold", str(p["fold"]), "--seed", str(p["seed"])], cwd=REPO, check=True)
+    tmp.rename(root)
 
 
 def img_transform(img: Image.Image) -> torch.Tensor:
