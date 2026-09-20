@@ -3,7 +3,7 @@
 #SBATCH --partition=genoa
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=24
 #SBATCH --time=01:00:00
 #SBATCH --output=jobsAndOutputs/nnunet/outputs/setup_venv_%j.out
 
