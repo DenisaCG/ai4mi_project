@@ -15,7 +15,7 @@ export PIP_NO_CACHE_DIR=1
 export TMPDIR="$HOME/.tmp_pip_build"
 mkdir -p "$TMPDIR"
 
-python -m venv "$VENV"
+[ -f "$VENV/bin/activate" ] || python -m venv "$VENV"
 source "$VENV/bin/activate"
 unset PYTHONPATH PYTHONHOME
 export PYTHONNOUSERSITE=1
