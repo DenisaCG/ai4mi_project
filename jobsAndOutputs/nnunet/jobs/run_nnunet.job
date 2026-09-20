@@ -1,0 +1,78 @@
+#!/bin/bash
+#SBATCH --job-name=run_nnunet
+#SBATCH --partition=gpu_h100
+#SBATCH --nodes=1
+#SBATCH --gpus=1
+#SBATCH --constraint=scratch-node
+#SBATCH --time=72:00:00
+#SBATCH --output=jobsAndOutputs/nnunet/outputs/run_nnunet_%j.out
+
+# Submit from the project root: sbatch jobsAndOutputs/nnunet/jobs/run_nnunet.job
+# Resubmitting continues where the last run stopped.
+set -euo pipefail
+
+PROJECT_DIR="${SLURM_SUBMIT_DIR:-$HOME/ai4mi_project}"
+VENV="$HOME/.venv_nnunet_ai4mi"
+CONFIGURATION=3d_fullres   # the one line to edit: 3d_fullres or 2d
+DATASET=Dataset102_SegTHOR_corrected
+
+module purge
+module load 2025
+module load Python/3.13.1-GCCcore-14.2.0
+
+source "$VENV/bin/activate"
+unset PYTHONPATH PYTHONHOME
+export PYTHONNOUSERSITE=1
+
+export TEMP="$TMPDIR" TMP="$TMPDIR"
+export nnUNet_raw="$PROJECT_DIR/data/nnUNet_raw"
+export nnUNet_preprocessed="$PROJECT_DIR/data/nnUNet_preprocessed"
+export nnUNet_results="$PROJECT_DIR/results/nnunet"
+export nnUNet_n_proc_DA=12
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+
+cd "$PROJECT_DIR"
+
+echo "python : $(which python)"
+nvidia-smi
+
+python - <<'PY'
+import sys
+
+import torch
+
+if not torch.cuda.is_available():
+    sys.exit("torch.cuda.is_available() is False, aborting")
+print("torch", torch.__version__, "| CUDA", torch.version.cuda, "|", torch.cuda.get_device_name(0))
+PY
+
+[ -d data/segthor_part1_corrected/train ] || { echo "data/segthor_part1_corrected/train missing"; exit 1; }
+
+echo "--- convert to nnU-Net raw format ---"
+python nnunet/prepare_dataset.py convert
+
+PREPROCESSED="$nnUNet_preprocessed/$DATASET"
+MARKER="$PREPROCESSED/.preprocessed_$CONFIGURATION"
+if [ -f "$MARKER" ] && [ -d "$PREPROCESSED/nnUNetPlans_$CONFIGURATION" ]; then
+    echo "--- $CONFIGURATION already preprocessed, skipping ---"
+else
+    echo "--- plan and preprocess ($CONFIGURATION) ---"
+    nnUNetv2_plan_and_preprocess -d 102 --verify_dataset_integrity -c "$CONFIGURATION"
+    touch "$MARKER"
+fi
+
+echo "--- write the fixed train/val split ---"
+python nnunet/prepare_dataset.py splits
+
+FOLD_DIR="$nnUNet_results/$DATASET/nnUNetTrainer__nnUNetPlans__$CONFIGURATION/fold_0"
+if [ -f "$FOLD_DIR/checkpoint_final.pth" ] && [ -f "$FOLD_DIR/validation/summary.json" ]; then
+    echo "--- fold 0 ($CONFIGURATION) already trained and validated, skipping ---"
+else
+    echo "--- train fold 0 ($CONFIGURATION) ---"
+    srun nnUNetv2_train 102 "$CONFIGURATION" 0 --c
+fi
+
+echo "--- done, results in $FOLD_DIR ---"
+ls "$FOLD_DIR"
