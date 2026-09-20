@@ -18,8 +18,8 @@ def original_stats(patient, split, nii, data):
     shape = data.shape
     spacing = nii.header.get_zooms()[:3]
     voxel_mm3 = abs(float(np.linalg.det(nii.affine[:3, :3])))
-    counts = np.bincount(data.ravel(), minlength=4)
-    foreground = int(counts[1:4].sum())
+    counts = np.bincount(data.ravel(), minlength=len(CLASSES) + 1)
+    foreground = int(counts[1:len(CLASSES) + 1].sum())
     inventory = {"patient_id": patient, "split": split, "source_grid": "original_nifti",
                  "shape_x": shape[0], "shape_y": shape[1], "num_slices": shape[2],
                  "spacing_x_mm": spacing[0], "spacing_y_mm": spacing[1], "spacing_z_mm": spacing[2],
@@ -64,7 +64,7 @@ def processed_stats(patient, entry, num_slices):
                 raise ValueError(f"Image/mask shape or channel mismatch: {image}")
         if a.shape != (256, 256):
             raise ValueError(f"Expected repository's 256x256 grid: {gt}")
-        counts[z] = np.bincount(a.ravel(), minlength=4)
+        counts[z] = np.bincount(a.ravel(), minlength=len(CLASSES) + 1)
         shapes[z] = a.shape
     positives = {k: [z for z in sorted(counts) if counts[z][k] > 0] for k in CLASSES}
     rows = []

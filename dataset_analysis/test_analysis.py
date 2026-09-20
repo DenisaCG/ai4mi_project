@@ -17,11 +17,11 @@ from utils import extent, load_png, normalized_z, overlap
 class MeasurementTests(unittest.TestCase):
     def test_example_selection_extremes_median_ties_and_input_order(self):
         rows = [dict(class_id=k, patient_id=f'Patient_{p:02d}', volume_ml=v)
-                for k in (1, 2, 3) for p, v in ((4, 90), (3, 30), (2, 20), (1, 10))]
+                for k in (1, 2, 3, 4) for p, v in ((4, 90), (3, 30), (2, 20), (1, 10))]
         selected = select_shape_examples(rows)
         self.assertEqual(selected, select_shape_examples(rows[::-1]))
-        self.assertEqual(len(selected), 9)
-        for k in (1, 2, 3):
+        self.assertEqual(len(selected), 12)
+        for k in (1, 2, 3, 4):
             self.assertEqual([r['patient_id'] for r in selected if r['class_id'] == k],
                              ['Patient_01', 'Patient_02', 'Patient_04'])
 
@@ -69,20 +69,16 @@ class MeasurementTests(unittest.TestCase):
     def test_strict_png_encoding(self):
         with tempfile.TemporaryDirectory() as temp:
             p = Path(temp) / "mask.png"
-            Image.fromarray(np.array([[0, 63, 126, 189]], dtype=np.uint8)).save(p)
-            np.testing.assert_array_equal(load_png(p), [[0, 1, 2, 3]])
-            Image.fromarray(np.array([[252]], dtype=np.uint8)).save(p)
-            with self.assertRaises(ValueError):
-                load_png(p)
-            self.assertEqual(load_png(p, prediction=True)[0, 0], 4)
+            Image.fromarray(np.array([[0, 63, 126, 189, 252]], dtype=np.uint8)).save(p)
+            np.testing.assert_array_equal(load_png(p), [[0, 1, 2, 3, 4]])
             Image.fromarray(np.array([[64]], dtype=np.uint8)).save(p)
             with self.assertRaises(ValueError):
-                load_png(p, prediction=True)
+                load_png(p)
 
     def test_summary_excludes_joint_empty_and_fp_only(self):
         zero, one = np.zeros((1, 1), bool), np.ones((1, 1), bool)
         rows = [{"class_id": k, "patient_id": "Patient_99", **overlap(g, p)}
-                for k in (1, 2, 3) for g, p in ((zero, zero), (zero, one), (one, zero))]
+                for k in (1, 2, 3, 4) for g, p in ((zero, zero), (zero, one), (one, zero))]
         for r in class_summary(rows):
             self.assertEqual(r["positive_slice_dice_mean"], 0)
             self.assertEqual(r["joint_empty_slices"], 1)

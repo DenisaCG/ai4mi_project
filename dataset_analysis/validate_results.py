@@ -8,7 +8,7 @@ import numpy as np
 
 from style import FIGURES, COLORS
 from figures import select_shape_examples
-from utils import parser, paths, read_csv
+from utils import CLASSES, parser, paths, read_csv
 
 
 def require(condition, message):
@@ -32,10 +32,11 @@ def main():
     require(len(ids) == len(inventory), "Duplicate patients")
     if not run["subset"]:
         require(ids == {p.parent.name for p in original.glob("Patient_*/GT.nii.gz")}, "Original patient coverage mismatch")
-    require(len(shapes) == 3 * len(ids), "Incorrect shape descriptor row count")
+    require(len(shapes) == len(CLASSES) * len(ids), "Incorrect shape descriptor row count")
     shape_map = {(r["patient_id"], int(r["class_id"])): r for r in shapes}
-    require(set(shape_map) == {(p, k) for p in ids for k in (1, 2, 3)}, "Invalid shape patient/organ keys")
+    require(set(shape_map) == {(p, k) for p in ids for k in CLASSES}, "Invalid shape patient/organ keys")
     # Independent checks use per-axis marginal counts rather than coordinate means.
+    organ_counts = {}
     for patient in sorted(ids):
         nii = nib.load(original / patient / "GT.nii.gz")
         data = np.asanyarray(nii.dataobj)
@@ -43,11 +44,14 @@ def main():
         require(np.allclose(nii.affine[2, :2], 0) and nii.affine[2, 2] > 0,
                 "This scan-position figure requires an axial superior-pointing slice axis")
         require(nii.header.get_xyzt_units()[0] == "mm", "Physical units are not millimetres")
-        for k in (1, 2, 3):
+        for k in CLASSES:
             row = shape_map[patient, k]
             mask = data == k
             count = int(np.count_nonzero(mask))
-            require(count > 0, f"Unexpected empty annotated organ: {patient}, {k}")
+            organ_counts.setdefault(k, []).append(count)
+            if count == 0:  # allowed only if the organ is absent everywhere (checked after the loop)
+                require(int(row["voxel_count"]) == 0, f"Shape row disagrees with empty organ: {patient}, {k}")
+                continue
             marginals = [np.count_nonzero(mask, axis=tuple(j for j in range(3) if j != a)) for a in range(3)]
             centre = np.array([np.dot(np.arange(len(m)), m) / count for m in marginals])
             world = nii.affine[:3, :3] @ centre + nii.affine[:3, 3]
@@ -64,15 +68,17 @@ def main():
             require(0 <= float(row["normalized_si_centroid"]) <= 1 and math.isclose(float(row["normalized_si_centroid"]), normalized),
                     "Invalid normalized SI centroid")
             require(row["axis_codes"] == "LPS", "Incorrect recorded orientation")
-    require(len(organs) == 3 * len(ids), "Unexpected patient-class count")
-    require(len(slices) == 3 * sum(int(r["num_slices"]) for r in inventory), "Unexpected slice-class count")
-    require(len(baseline) == 3 * sum(int(r["num_slices"]) for r in inventory if r["split"] == "val"), "Unexpected baseline count")
+    for k, counts in organ_counts.items():
+        require(all(counts) or not any(counts), f"Organ {k} is empty in some patients but not others")
+    require(len(organs) == len(CLASSES) * len(ids), "Unexpected patient-class count")
+    require(len(slices) == len(CLASSES) * sum(int(r["num_slices"]) for r in inventory), "Unexpected slice-class count")
+    require(len(baseline) == len(CLASSES) * sum(int(r["num_slices"]) for r in inventory if r["split"] == "val"), "Unexpected baseline count")
     for rows, keys in ((organs, ("patient_id", "class_id")),
                        (slices, ("patient_id", "slice_index", "class_id")),
                        (baseline, ("patient_id", "slice_index", "class_id")),
                        (patients, ("patient_id", "class_id"))):
         require(len({tuple(r[k] for k in keys) for r in rows}) == len(rows), "Duplicate table keys")
-        require(all(r["class_id"] in ("1", "2", "3") for r in rows), "Unexpected class in analysis")
+        require(all(int(r["class_id"]) in CLASSES for r in rows), "Unexpected class in analysis")
     for r in organs:
         i = inv[r["patient_id"]]
         expected = int(r["voxel_count"]) * float(i["voxel_volume_mm3"])
@@ -95,7 +101,7 @@ def main():
         else:
             require(0 <= float(r["dice"]) <= 1 and math.isclose(float(r["dice"]), 2 * inter / (g + p)), "Invalid Dice")
     for r in patients:
-        if r["reconstruction_available"] == "True":
+        if r["reconstruction_available"] == "True" and int(r["gt_voxels_3d"]) > 0:
             require(0 <= float(r["dice_3d"]) <= 1, "Invalid 3D Dice")
     for stage in ("dataset", "baseline"):
         for r in read_csv(tables / f"{stage}_inputs.csv"):
@@ -116,7 +122,7 @@ def main():
             "Missing curated figures or obsolete files remain")
     examples = read_csv(tables / 'shape_example_selection.csv')
     expected = select_shape_examples(shapes)
-    require(len(examples) == 9, 'Expected nine primary shape examples')
+    require(len(examples) == 3 * len({r['class_id'] for r in expected}), 'Expected three primary shape examples per annotated class')
     require({p.name for p in (output / 'examples').iterdir() if p.is_file()} ==
             {r['filename'] for r in expected}, 'Missing or unexpected example files')
     for actual, chosen in zip(examples, expected):

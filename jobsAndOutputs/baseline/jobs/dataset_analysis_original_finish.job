@@ -1,0 +1,39 @@
+#!/bin/bash
+#SBATCH --job-name=segthor_orig_finish
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+#SBATCH --time=00:20:00
+#SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/dataset_analysis_original_finish_%j.out
+
+# Finishes the "before" variant of dataset_analysis_before_after.job: its dataset stage and stitching
+# already completed; only the baseline figures and validation failed (aorta has no GT in the original data).
+set -euo pipefail
+PROJECT_DIR="$HOME/ai4mi_project"
+
+module purge
+module load 2024
+module load Anaconda3/2024.06-1
+
+set +u
+source "${EBROOTANACONDA3:-$CONDA_PREFIX}/etc/profile.d/conda.sh"
+conda activate ai4mi
+set -u
+
+cd "$PROJECT_DIR"
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MPLCONFIGDIR="$PROJECT_DIR/dataset_analysis/results/.matplotlib"
+
+ORIGINAL_DATA="data/segthor_part1/train"
+PROCESSED_DATA="data/SEGTHOR"
+PREDS="results/segthor/ce_repro_original/run0/best_epoch/val"
+VOLUMES="volumes/segthor/ce_repro_original_run0"
+OUT="dataset_analysis/results/repro_original_seed0"
+
+python -B -u dataset_analysis/test_analysis.py
+python -B -u dataset_analysis/analyze_baseline.py --original-data "$ORIGINAL_DATA" --processed-data "$PROCESSED_DATA" \
+    --predictions "$PREDS" --reconstructed-volumes "$VOLUMES" --output-dir "$OUT"
+python -B -u dataset_analysis/validate_results.py --original-data "$ORIGINAL_DATA" --processed-data "$PROCESSED_DATA" --output-dir "$OUT"
