@@ -1,0 +1,19 @@
+# Control for the spacing experiment: same model/loss/data as segthor_enet_ce_corrected, but the sliced dataset is
+# built from the `preprocess` block below with NO resampling. Differs from *_median_spacing.yaml only in `resample`.
+experiment: segthor_enet_ce_corrected_control
+notes: ENet + CE, corrected labels, native spacing (control for median-spacing resampling)
+
+data:
+  preprocess: {source_dir: data/segthor_part1_corrected, gt_version: corrected, retains: 5, fold: 0, seed: 0}
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: cross_entropy
+  kwargs: {idk: [0, 1, 2, 3, 4]}
+
+eval:
+  classes: [1, 2, 3, 4]

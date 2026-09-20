@@ -171,7 +171,7 @@ Common switches:
 
 | to change | set |
 |---|---|
-| dataset / preprocessing variant | `data.root` (+ `num_classes`, `class_names`, `label_scale` if they differ) |
+| dataset / preprocessing variant | `data.preprocess` (sliced on first use) or `data.root` for a prebuilt dataset (+ `num_classes`, `class_names`, `label_scale` if they differ) |
 | architecture | `model.name`, `model.kwargs` |
 | loss | `loss.name`, `loss.kwargs` |
 | optimizer / LR schedule | `optim.name/kwargs`, `scheduler.name/kwargs` (`none`, `cosine`, `step`) |
@@ -249,5 +249,7 @@ warning and continues with local files only. Nothing ever blocks on it. To uploa
   small run-to-run differences. That is why the tables report mean ± std over seeds.
 - Data split: the train/val patient split is fixed at slicing time (`slice_segthor.py --retain 5`,
   seed 0; val = Patient_01, 11, 15, 17, 19), so all experiments on the same `data.root` share it.
+  With `data.preprocess` the split comes from its `retains`/`fold`/`seed` instead (shuffled patient ids,
+  same values = same split); keep them identical across variants you want to compare.
 - `python -O` (used in the jobs) disables the course code's many `assert`s for speed; the pipeline
   does not rely on asserts.
