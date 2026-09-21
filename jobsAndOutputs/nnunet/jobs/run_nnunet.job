@@ -13,7 +13,8 @@ set -euo pipefail
 
 PROJECT_DIR="${SLURM_SUBMIT_DIR:-$HOME/ai4mi_project}"
 VENV="$HOME/.venv_nnunet_ai4mi"
-CONFIGURATION=3d_fullres   # the one line to edit: 3d_fullres or 2d
+CONFIGURATION=2d   # 2d or 3d_fullres
+TRAINER=nnUNetTrainer_100epochs   # nnUNetTrainer for the full 1000 epochs
 DATASET=Dataset102_SegTHOR_corrected
 
 module purge
@@ -66,12 +67,12 @@ fi
 echo "--- write the fixed train/val split ---"
 python nnunet/prepare_dataset.py splits
 
-FOLD_DIR="$nnUNet_results/$DATASET/nnUNetTrainer__nnUNetPlans__$CONFIGURATION/fold_0"
+FOLD_DIR="$nnUNet_results/$DATASET/${TRAINER}__nnUNetPlans__$CONFIGURATION/fold_0"
 if [ -f "$FOLD_DIR/checkpoint_final.pth" ] && [ -f "$FOLD_DIR/validation/summary.json" ]; then
     echo "--- fold 0 ($CONFIGURATION) already trained and validated, skipping ---"
 else
     echo "--- train fold 0 ($CONFIGURATION) ---"
-    srun nnUNetv2_train 102 "$CONFIGURATION" 0 --c
+    srun nnUNetv2_train 102 "$CONFIGURATION" 0 -tr "$TRAINER" --c
 fi
 
 echo "--- done, results in $FOLD_DIR ---"

@@ -6,9 +6,10 @@ nnU-Net is installed from PyPI (`nnunetv2==2.8.1`) into its own venv, separate f
 2. Build the venv once: `sbatch jobsAndOutputs/nnunet/jobs/setup_venv.job` (CPU node), or run `bash nnunet/setup_venv.sh` on a login node. It creates `~/.venv_nnunet_ai4mi`.
 3. Submit from the project root: `sbatch jobsAndOutputs/nnunet/jobs/run_nnunet.job`.
 
-`jobs/run_nnunet.job` does everything in one go: convert to nnU-Net raw format (`Dataset102_SegTHOR_corrected`), plan and preprocess, write the split, train fold 0 with nnU-Net's default trainer.
+`jobs/run_nnunet.job` does everything in one go: convert to nnU-Net raw format (`Dataset102_SegTHOR_corrected`), plan and preprocess, write the split, train fold 0 with nnU-Net's default settings.
 
-- Configuration: edit `CONFIGURATION` at the top of the job (`3d_fullres` or `2d`). Each configuration is preprocessed once.
+- Configuration: edit `CONFIGURATION` at the top of the job (`2d` or `3d_fullres`). Each configuration is preprocessed once.
+- Length: `TRAINER` is `nnUNetTrainer_100epochs`, which is the default trainer cut to 100 epochs of 250 iterations. Set it to `nnUNetTrainer` for the full 1000 epochs.
 - Split: one fold, validating on Patient_01, 11, 15, 17, 19 (the same five as `data/SEGTHOR/val`) and training on the other 15. `nnunet/prepare_dataset.py` writes it to `splits_final.json` after planning.
 - Resubmitting continues from the last checkpoint. A fold that is trained and validated is skipped.
 
@@ -16,7 +17,7 @@ Everything nnU-Net produces stays out of git: `data/nnUNet_raw`, `data/nnUNet_pr
 
 ## Results
 
-nnU-Net writes to `results/nnunet/Dataset102_SegTHOR_corrected/nnUNetTrainer__nnUNetPlans__<configuration>/fold_0/`:
+nnU-Net writes to `results/nnunet/Dataset102_SegTHOR_corrected/<trainer>__nnUNetPlans__<configuration>/fold_0/`:
 
 - `progress.png` and `training_log_*.txt`: training curves. The pseudo Dice in the log is measured on patches and is only for monitoring.
 - `checkpoint_final.pth`: the trained weights.
