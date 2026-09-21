@@ -1,0 +1,19 @@
+# Median-spacing resampling of every volume (target = median of the training patients) before slicing.
+# Everything else is identical to segthor_enet_ce_corrected_control.yaml, so any difference is due to `resample`.
+experiment: segthor_enet_ce_corrected_median_spacing
+notes: ENet + CE, corrected labels, median-spacing resampling
+
+data:
+  preprocess: {source_dir: data/segthor_part1_corrected, gt_version: corrected, retains: 5, fold: 0, seed: 0, resample: median}
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: cross_entropy
+  kwargs: {idk: [0, 1, 2, 3, 4]}
+
+eval:
+  classes: [1, 2, 3, 4]

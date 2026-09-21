@@ -49,12 +49,16 @@ def predict(net, cfg: dict, split: str, device, out_dir: Path) -> dict[str, np.n
     return preds
 
 
-def stitch(slices: dict[int, np.ndarray], reference: nib.Nifti1Image, patient: str) -> np.ndarray:
-    """Inverse of slice_segthor.py: slice z of the volume was resized to 256x256 and saved as one PNG."""
+def stitch(slices: dict[int, np.ndarray], reference: nib.Nifti1Image, patient: str,
+           resampled: bool = False) -> np.ndarray:
+    """Inverse of slice_segthor.py: slice z of the volume was resized to 256x256 and saved as one PNG.
+    With `resampled` (data.preprocess.resample) the slice count differs from the source volume's Z; the
+    stack is then mapped back onto the source grid, so scoring stays on the original GT and spacing."""
     X, Y, Z = reference.shape
-    if sorted(slices) != list(range(Z)):
-        raise ValueError(f"{patient}: predicted {len(slices)} slices, volume has {Z}")
-    stack = np.stack([slices[z] for z in range(Z)], axis=-1)
+    n = len(slices)
+    if sorted(slices) != list(range(n)) or (not resampled and n != Z):
+        raise ValueError(f"{patient}: predicted {n} slices, volume has {Z}")
+    stack = np.stack([slices[z] for z in range(n)], axis=-1)
     return resize(stack, (X, Y, Z), order=0, preserve_range=True, anti_aliasing=False,
                   mode="constant").astype(np.uint8)
 
@@ -109,7 +113,7 @@ def evaluate(run_dir: Path, device: torch.device) -> dict:
             if patient in sliced_spacing and not np.allclose(sliced_spacing[patient], spacing):
                 log.warning("%s: spacing %s differs from spacing.pkl %s", patient, spacing,
                             sliced_spacing[patient])
-            vol = stitch(slices, ref, patient)
+            vol = stitch(slices, ref, patient, resampled=bool((d.get("preprocess") or {}).get("resample")))
             out = run_dir / "volumes" / split / f"{patient}.nii.gz"
             out.parent.mkdir(parents=True, exist_ok=True)
             nib.save(nib.Nifti1Image(vol, ref.affine, ref.header), out)

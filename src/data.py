@@ -36,7 +36,8 @@ def ensure_sliced(cfg: dict) -> None:
     subprocess.run([sys.executable, "slice_segthor.py", "--source_dir", p["source_dir"], "--dest_dir", str(tmp),
                     "--shape", *map(str, p["shape"]), "--retains", str(p["retains"]),
                     "--fold", str(p["fold"]), "--seed", str(p["seed"]),
-                    "--gt_version", p["gt_version"]], cwd=REPO, check=True)
+                    "--gt_version", p["gt_version"]] + (["--resample", p["resample"]] if p.get("resample") else []),
+                   cwd=REPO, check=True)
     tmp.rename(root)
 
 

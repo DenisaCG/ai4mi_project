@@ -157,9 +157,22 @@ data:
   preprocess: {source_dir: data/segthor_part1_corrected, gt_version: corrected, shape: [256, 256], retains: 5, fold: 0, seed: 0}
 ```
 
-Only what `slice_segthor.py` already takes (slice shape and the patient split) is configurable; a new
-step needs a new argument there and a matching key here. Keep `retains`/`fold`/`seed`
+Configurable: slice shape, the patient split and `resample: median` (below); a new
+step needs a new argument in `slice_segthor.py` and a matching key here. Keep `retains`/`fold`/`seed`
 identical across variants so they share one train/val split.
+
+**Spacing normalisation** (`resample: median`): before slicing, every CT and GT volume is resampled to one
+target spacing: the per-axis median over the *training* patients (if max/min of the target is >= 3, the coarsest
+axis takes its 10th percentile instead, as in nnU-Net). The same target is used for train and val and is printed
+in the build log. CT uses cubic interpolation (order 3), labels nearest neighbour (order 0), and nothing else changes
+(no crop, no HU clip, same min-max scaling; the log shows each patient's HU min/max before and after). The resampled
+volumes are also written to `data/sliced_<hash>/resampled/train/<patient>/` for geometry checks. Evaluation maps
+predictions back onto the original grid and scores against the original GT, so metrics stay comparable.
+Known limit: the 256x256 resize still makes mm/pixel depend on each scan's FOV (in-plane outliers: Patients 11, 15, 20).
+
+To test the effect use the pair `configs/segthor_enet_ce_corrected_control.yaml` /
+`..._median_spacing.yaml` (identical except `resample`). Build each dataset once on CPU, then train:
+`sbatch --export=ALL,CONFIG=<config> jobsAndOutputs/pipeline/jobs/build_dataset.job`.
 
 **When the final dataset arrives:** slice it the same way into e.g. `data/SEGTHOR_final`, then set
 in `configs/base.yaml` (so every experiment follows):

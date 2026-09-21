@@ -1,0 +1,40 @@
+#!/bin/bash
+#SBATCH --job-name=build_dataset
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=01:30:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Build the sliced dataset of a config with `data.preprocess` on CPU, so the (billed) GPU training job only reuses it.
+# Then print the spacing before/after resampling and check image/label shapes match.
+# Usage: sbatch --export=ALL,CONFIG=configs/segthor_enet_ce_corrected_median_spacing.yaml \
+#               jobsAndOutputs/pipeline/jobs/build_dataset.job
+set -euo pipefail
+CONFIG="${CONFIG:?set CONFIG=configs/<experiment>.yaml via --export}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+python -B - "$CONFIG" <<'PY'
+import pickle, sys
+import nibabel as nib
+import numpy as np
+from src.config import REPO, load_config
+from src.data import ensure_sliced
+
+cfg = load_config(sys.argv[1])
+ensure_sliced(cfg)
+root = REPO / cfg["data"]["root"]
+print("dataset:", root, "| preprocess:", cfg["data"]["preprocess"])
+print("val patients:", sorted({p.name.rsplit("_", 1)[0] for p in (root / "val" / "gt").glob("*.png")}))
+before = np.array(list(pickle.loads((root / "spacing.pkl").read_bytes()).values()), dtype=float)
+print("spacing before (mm)  min", before.min(0).round(3), "median", np.median(before, 0).round(3), "max", before.max(0).round(3))
+resampled = sorted((root / "resampled" / "train").glob("Patient_*"))
+if resampled:
+    after = np.array([nib.load(p / f"{p.name}.nii.gz").header.get_zooms()[:3] for p in resampled], dtype=float)
+    print("spacing after (mm)   min", after.min(0).round(3), "median", np.median(after, 0).round(3), "max", after.max(0).round(3))
+    bad = [p.name for p in resampled if nib.load(p / f"{p.name}.nii.gz").shape != nib.load(p / "GT.nii.gz").shape]
+    print("image/label shape mismatches:", bad or "none", f"({len(resampled)} patients)")
+PY
+echo "[$(date -Is)] done"

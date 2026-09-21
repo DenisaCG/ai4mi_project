@@ -33,6 +33,7 @@ from typing import Callable
 
 import numpy as np
 import nibabel as nib
+from scipy import ndimage
 from skimage.io import imsave
 from skimage.transform import resize
 
@@ -71,6 +72,7 @@ def sanity_gt(gt, ct) -> bool:
     assert gt.shape == ct.shape
     assert gt.dtype in [np.uint8, np.int16], gt.dtype
 
+    # moved check in the main function so we don't lose patient ID on error
     # Do the test on 3d: assume all organs are present..
     # assert set(np.unique(gt)) == set(range(5))
 
@@ -84,8 +86,40 @@ EXPECTED_LABELS: dict[str, set[int]] = {"original": {0, 1, 2, 3}, "corrected": {
 resize_: Callable = partial(resize, mode="constant", preserve_range=True, anti_aliasing=False)
 
 
+def median_target_spacing(spacings: list[tuple[float, float, float]]) -> tuple[float, float, float]:
+    """per-axis median: if max/min >= 3 the coarsest axis takes its 10th percentile."""
+    s = np.asarray(spacings, dtype=float)
+    target = np.median(s, axis=0)
+    if target.max() / target.min() >= 3:
+        coarsest = int(np.argmax(target))
+        target[coarsest] = np.percentile(s[:, coarsest], 10)
+    return tuple(float(t) for t in target)
+
+
+def resample_image(ct: np.ndarray, spacing, target) -> np.ndarray:
+    """Cubic (order=3). grid_mode=True aligns pixel edges, like skimage's resize used for slicing/stitching."""
+    factors = np.asarray(spacing, dtype=float) / np.asarray(target, dtype=float)
+    return ndimage.zoom(ct.astype(np.float32), factors, order=3, mode="nearest", grid_mode=True)
+
+
+def resample_label(gt: np.ndarray, spacing, target) -> np.ndarray:
+    """Nearest neighbour (order=0): never interpolate labels, that would invent in-between classes."""
+    factors = np.asarray(spacing, dtype=float) / np.asarray(target, dtype=float)
+    return ndimage.zoom(gt, factors, order=0, mode="nearest", grid_mode=True)
+
+
+def resampled_affine(affine: np.ndarray, in_shape, out_shape) -> np.ndarray:
+    """Affine of the resampled volume from the achieved (shape-rounded) voxel size, keeping the FOV in place."""
+    ratio = np.asarray(in_shape, dtype=float) / np.asarray(out_shape, dtype=float)
+    new = affine.copy()
+    new[:3, :3] = affine[:3, :3] @ np.diag(ratio)
+    new[:3, 3] = affine[:3, 3] + affine[:3, :3] @ ((ratio - 1) / 2)
+    return new
+
+
 def slice_patient(id_: str, dest_path: Path, source_path: Path, shape: tuple[int, int],
-                  test_mode: bool = False, gt_version: str | None = None) -> tuple[float, float, float]:
+                  test_mode: bool = False, gt_version: str | None = None,
+                  target_spacing: tuple[float, float, float] | None = None) -> tuple[float, float, float]:
     id_path: Path = source_path / ("train" if not test_mode else "test") / id_
 
     ct_path: Path = (id_path / f"{id_}.nii.gz") if not test_mode else (source_path / "test" / f"{id_}.nii.gz")
@@ -108,6 +142,23 @@ def slice_patient(id_: str, dest_path: Path, source_path: Path, shape: tuple[int
             assert set(np.unique(gt)) == EXPECTED_LABELS[gt_version], (id_, gt_version, np.unique(gt))
     else:
         gt = np.zeros_like(ct, dtype=np.uint8)
+
+    if target_spacing is not None:
+        in_shape, spacing = ct.shape, (dx, dy, dz)
+        hu_before = (ct.min(), ct.max())
+        ct = resample_image(ct, spacing, target_spacing)
+        gt = resample_label(gt, spacing, target_spacing)
+        assert ct.shape == gt.shape, (id_, ct.shape, gt.shape)
+        z = ct.shape[2]
+        new_affine = resampled_affine(nib_obj.affine, in_shape, ct.shape)
+        print(f"{id_}: spacing {np.round(spacing, 3).tolist()} -> "
+              f"{np.round(np.abs(new_affine[:3, :3]).sum(0), 3).tolist()} mm, shape {in_shape} -> {ct.shape}, "
+              f"HU min/max {hu_before[0]}/{hu_before[1]} -> {ct.min():.0f}/{ct.max():.0f}")
+        if not test_mode:  # NIfTI copy of the source `train/<id>/` layout, for geometry checks
+            out_dir = dest_path.parent / "resampled" / "train" / id_
+            out_dir.mkdir(parents=True, exist_ok=True)
+            nib.save(nib.Nifti1Image(ct, new_affine), str(out_dir / f"{id_}.nii.gz"))
+            nib.save(nib.Nifti1Image(gt, new_affine), str(out_dir / "GT.nii.gz"))
 
     norm_ct: np.ndarray = norm_arr(ct)
 
@@ -142,7 +193,7 @@ def slice_patient(id_: str, dest_path: Path, source_path: Path, shape: tuple[int
 
 
 def get_splits(src_path: Path, retains: int, fold: int) -> tuple[list[str], list[str], list[str]]:
-    ids: list[str] = sorted(map_(lambda p: p.name, (src_path / 'train').glob('*')))
+    ids: list[str] = sorted(map_(lambda p: p.name, (src_path / 'train').glob('Patient_*')))
     print(f"Founds {len(ids)} in the id list")
     print(ids[:10])
     assert len(ids) > retains
@@ -175,6 +226,14 @@ def main(args: argparse.Namespace):
     test_ids: list[str]
     training_ids, validation_ids, test_ids = get_splits(src_path, args.retains, args.fold)
 
+    target_spacing: tuple[float, float, float] | None = None
+    if args.resample == "median":  # training patients only, then the same target for train and val
+        train_spacings = [nib.load(str(src_path / "train" / i / f"{i}.nii.gz")).header.get_zooms()[:3]
+                          for i in training_ids]
+        target_spacing = median_target_spacing(train_spacings)
+        print(f"Resampling every volume to target spacing {np.round(target_spacing, 4).tolist()} mm "
+              f"(median of {len(training_ids)} training patients)")
+
     resolution_dict: dict[str, tuple[float, float, float]] = {}
 
     split_ids: list[str]
@@ -187,7 +246,8 @@ def main(args: argparse.Namespace):
                                  source_path=src_path,
                                  shape=tuple(args.shape),
                                  test_mode=mode == 'test',
-                                 gt_version=args.gt_version)
+                                 gt_version=args.gt_version,
+                                 target_spacing=target_spacing)
         resolutions: list[tuple[float, float, float]]
         iterator = tqdm_(split_ids)
         match args.process:
@@ -215,6 +275,8 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('--retains', type=int, default=25, help="Number of retained patient for the validation data")
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--fold', type=int, default=0)
+    parser.add_argument('--resample', choices=['median'], default=None,
+                        help="resample every volume to the median training spacing before slicing (default: off)")
     parser.add_argument('--gt_version', choices=list(EXPECTED_LABELS), default=None,
                         help="SEGTHOR version of the GT; asserts every patient has exactly its labels (default: no check)")
     parser.add_argument('--process', '-p', type=int, default=1,
