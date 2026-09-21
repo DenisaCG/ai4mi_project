@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH --job-name=scan_geometry_ba
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=4G
+#SBATCH --time=00:10:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Before/after-resampling scan geometry figure (NIfTI headers only, no volume is resampled).
+# Usage: sbatch jobsAndOutputs/pipeline/jobs/scan_geometry_before_after.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+python -B dataset_analysis/scan_geometry_before_after.py
+echo "[$(date -Is)] done"

@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH --job-name=test_ct_norm
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+#SBATCH --time=00:15:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# CT intensity normalization unit tests (synthetic volumes, no dataset needed) + config tests.
+# Usage: sbatch jobsAndOutputs/pipeline/jobs/test_ct_norm.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+python -m unittest tests.test_ct_norm tests.test_config tests.test_resample -v

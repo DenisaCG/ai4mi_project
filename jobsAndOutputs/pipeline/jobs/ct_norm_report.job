@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH --job-name=ct_norm_report
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=02:00:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Build a config's normalized dataset and its un-normalized control on CPU, print the normalization stats,
+# check the GT PNGs are byte-identical, save before/after intensity histograms.
+# Usage: sbatch --export=ALL,CONFIG=configs/segthor_enet_ce_corrected_ct_window.yaml \
+#               jobsAndOutputs/pipeline/jobs/ct_norm_report.job
+set -euo pipefail
+CONFIG="${CONFIG:?set CONFIG=configs/<experiment>.yaml via --export}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+python -B dataset_analysis/ct_norm_report.py --config "$CONFIG"
+echo "[$(date -Is)] done"
