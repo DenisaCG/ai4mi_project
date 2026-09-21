@@ -1,0 +1,132 @@
+#!/bin/bash
+#SBATCH --job-name=build_dataset_local
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=24
+#SBATCH --time=00:45:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Fast build of a config's `data.preprocess` dataset (same result as build_dataset.job / src.data.ensure_sliced):
+#   1. slice all patients in parallel (one worker per patient) onto node-local disk, never onto GPFS
+#   2. verify the result (image/label lists match, PNG size, optional comparison with REF)
+#   3. bulk-copy it with parallel tar streams to /scratch-shared/$USER/ai4mi_project/<sliced_hash>
+#   4. link data/<sliced_hash> -> that copy, so ensure_sliced sees an existing dataset and skips building
+# Memory is the genoa default for 24 CPUs (~1.8 GB per CPU). If scratch is ever wiped, the link dangles and the
+# next run rebuilds the dataset (about 5 minutes with this script).
+# Usage: sbatch --export=ALL,CONFIG=configs/segthor_enet_ce_corrected_control_512.yaml,REF=data/sliced_029bf0bc \
+#               jobsAndOutputs/pipeline/jobs/build_dataset_local.job
+#   REF (optional): an existing dataset made with the same split settings (only the shape differs); the slice file
+#                   names must be identical to it.  PROCS (optional, default 15): slicing workers.
+set -euo pipefail
+CONFIG="${CONFIG:?set CONFIG=configs/<experiment>.yaml via --export}"
+REF="${REF:-}"
+PROCS="${PROCS:-15}"   # the train split has 15 patients, so more workers than that sit idle
+SCRATCH_ROOT="${SCRATCH_ROOT:-/scratch-shared/$USER/ai4mi_project}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1   # workers x threads would oversubscribe the CPUs
+
+# --- node-local disk: $TMPDIR here can be on GPFS, so check the filesystem type instead of trusting it
+pick_local() {
+    local base fs avail_kb
+    for base in "${TMPDIR:-}" /scratch-local /dev/shm; do
+        { [ -n "$base" ] && [ -d "$base" ] && [ -w "$base" ]; } || continue
+        fs=$(df -PT "$base" | awk 'NR==2{print $2}')
+        avail_kb=$(df -Pk "$base" | awk 'NR==2{print $4}')
+        case "$fs" in gpfs|lustre|nfs|nfs4|beegfs|cephfs|fuse*) continue ;; esac
+        [ "$avail_kb" -gt 4000000 ] || continue
+        echo "$base"; return 0
+    done
+    return 1
+}
+LOCAL_BASE=$(pick_local) || { echo "no node-local disk with >= 4 GB free (tried \$TMPDIR, /scratch-local, /dev/shm)"; exit 1; }
+WORK="$LOCAL_BASE/${USER}_${SLURM_JOB_ID}"
+mkdir -p "$WORK"
+trap 'rm -rf "$WORK"' EXIT
+echo "local work dir: $WORK ($(df -PT "$LOCAL_BASE" | awk 'NR==2{print $2}'), $(df -Ph "$LOCAL_BASE" | awk 'NR==2{print $4}') free)"
+echo "workers: $PROCS of $SLURM_CPUS_PER_TASK CPUs; memory: $(free -g | awk '/Mem:/{print $2}') GB on node"
+
+# --- 1 + 2: slice in parallel, then verify. Arguments mirror src.data.ensure_sliced (plus --process).
+SECONDS=0
+python -B - "$CONFIG" "$WORK" "$PROCS" "$REF" <<'PY'
+import subprocess, sys
+from pathlib import Path
+from PIL import Image
+from src.config import load_config
+
+config, work, procs, ref = sys.argv[1:5]
+cfg = load_config(config)
+p = cfg["data"]["preprocess"]
+if p is None:
+    sys.exit("config has no data.preprocess: nothing to build")
+name = Path(cfg["data"]["root"]).name
+dest = Path(work) / name
+cmd = [sys.executable, "slice_segthor.py", "--source_dir", p["source_dir"], "--dest_dir", str(dest),
+       "--shape", *map(str, p["shape"]), "--retains", str(p["retains"]), "--fold", str(p["fold"]),
+       "--seed", str(p["seed"]), "--gt_version", p["gt_version"], "--process", procs]
+if p.get("resample"):
+    cmd += ["--resample", p["resample"]]
+if p.get("normalize"):
+    cmd += ["--normalize", p["normalize"]]
+print("preprocess:", p, "\n->", name, flush=True)
+print(" ".join(cmd), flush=True)
+subprocess.run(cmd, check=True)
+
+shape = tuple(p["shape"])
+split_patients = {}
+for split in ("train", "val"):
+    img = sorted(f.name for f in (dest / split / "img").glob("*.png"))
+    gt = sorted(f.name for f in (dest / split / "gt").glob("*.png"))
+    assert img and img == gt, f"{split}: image/label lists differ or are empty ({len(img)} vs {len(gt)})"
+    if ref:
+        ref_img = sorted(f.name for f in (Path(ref) / split / "img").glob("*.png"))
+        assert img == ref_img, f"{split}: slice names differ from {ref} ({len(img)} vs {len(ref_img)})"
+    for f in (img[0], img[len(img) // 2], img[-1]):
+        for kind in ("img", "gt"):
+            size = Image.open(dest / split / kind / f).size
+            assert size == shape[::-1], f"{split}/{kind}/{f}: size {size}, expected {shape}"
+    patients = {n.rsplit("_", 1)[0] for n in img}
+    split_patients[split] = patients
+    print(f"{split}: {len(patients)} patients, {len(img)} slices" + (f", names identical to {ref}" if ref else ""))
+overlap = split_patients["train"] & split_patients["val"]
+assert not overlap, f"patients in both train and val: {sorted(overlap)}"   # patient-level split, no leakage
+print("val patients:", sorted(split_patients["val"]), "| train/val overlap: none")
+assert (dest / "spacing.pkl").exists(), "spacing.pkl missing"
+Path(work, "root_name").write_text(name)
+PY
+NAME=$(cat "$WORK/root_name")
+echo "[slice + verify: ${SECONDS}s]"
+
+# --- 3: bulk copy, one tar stream per (split, kind, patient), all in parallel; then rename into place
+SECONDS=0
+DEST="$SCRATCH_ROOT/$NAME"
+DEST_TMP="$DEST.tmp_$SLURM_JOB_ID"
+mkdir -p "$SCRATCH_ROOT"
+[ ! -e "$DEST" ] || { echo "$DEST already exists, refusing to overwrite it"; exit 1; }
+for sub in train/img train/gt val/img val/gt; do mkdir -p "$DEST_TMP/$sub"; done
+cp "$WORK/$NAME/spacing.pkl" "$DEST_TMP/"
+[ ! -d "$WORK/$NAME/resampled" ] || cp -r "$WORK/$NAME/resampled" "$DEST_TMP/"
+[ ! -f "$WORK/$NAME/ct_norm_stats.json" ] || cp "$WORK/$NAME/ct_norm_stats.json" "$DEST_TMP/"
+copy_one() {   # $1 = train/img etc, $2 = patient id; file names look like Patient_02_0000.png
+    ( cd "$WORK/$NAME/$1" && tar -cf - "$2"_*.png ) | tar -C "$DEST_TMP/$1" -xf -
+}
+export -f copy_one
+export WORK NAME DEST_TMP
+for sub in train/img train/gt val/img val/gt; do
+    ls "$WORK/$NAME/$sub" | sed -E 's/_[0-9]+\.png$//' | sort -u | sed "s|^|$sub |"
+done | xargs -P "$SLURM_CPUS_PER_TASK" -n 2 bash -c 'copy_one "$@"' _
+
+n_local=$(find "$WORK/$NAME" -type f | wc -l)
+n_dest=$(find "$DEST_TMP" -type f | wc -l)
+b_local=$(find "$WORK/$NAME" -type f -printf '%s\n' | awk '{s+=$1} END{print s+0}')
+b_dest=$(find "$DEST_TMP" -type f -printf '%s\n' | awk '{s+=$1} END{print s+0}')
+echo "files: local $n_local, copy $n_dest | bytes: local $b_local, copy $b_dest"
+[ "$n_local" = "$n_dest" ] && [ "$b_local" = "$b_dest" ] || { echo "copy differs from the local build, not installing it"; exit 1; }
+mv "$DEST_TMP" "$DEST"
+echo "[copy: ${SECONDS}s] installed $DEST"
+
+# --- 4: link it into data/ (a leftover dangling link is replaced; a real directory is never touched)
+LINK="data/$NAME"
+if [ -L "$LINK" ]; then rm "$LINK"; elif [ -e "$LINK" ]; then echo "$LINK is a real directory; leaving it. The dataset is at $DEST"; exit 1; fi
+ln -s "$DEST" "$LINK"
+echo "[$(date -Is)] done: $LINK -> $(readlink "$LINK")"

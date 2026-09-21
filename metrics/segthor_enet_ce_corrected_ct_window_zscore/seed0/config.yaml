@@ -1,0 +1,75 @@
+experiment: segthor_enet_ce_corrected_ct_window_zscore
+seed: 0
+device: cuda
+notes: ENet + CE, corrected labels, native spacing, HU window + load-time z-score
+data:
+  root: data/sliced_53f18cd1
+  preprocess:
+    shape:
+    - 256
+    - 256
+    retains: 5
+    fold: 0
+    seed: 0
+    source_dir: data/segthor_part1_corrected
+    gt_version: corrected
+    normalize: ct_window_zscore
+  num_classes: 5
+  class_names:
+  - background
+  - esophagus
+  - heart
+  - trachea
+  - aorta
+  label_scale: 63
+  patient_regex: (Patient_\d+)_\d{4}
+  in_channels: 1
+  batch_size: 8
+  num_workers: 5
+  augment: []
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+  test_source_pattern: null
+model:
+  name: enet
+  kwargs:
+    kernels: 8
+    factor: 2
+loss:
+  name: cross_entropy
+  kwargs:
+    idk:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+optim:
+  name: adam
+  kwargs:
+    lr: 0.0005
+    betas:
+    - 0.9
+    - 0.999
+scheduler:
+  name: none
+  kwargs: {}
+train:
+  epochs: 25
+  select_metric: val_dice_fg
+  max_failed_batches: 5
+  debug_samples: 0
+eval:
+  classes:
+  - 1
+  - 2
+  - 3
+  - 4
+wandb:
+  mode: online
+  entity: ''
+  project: ai4mi-segthor
+  tags: []
+  image_every: 5
+paths:
+  run_root: runs
+  metrics_dir: metrics

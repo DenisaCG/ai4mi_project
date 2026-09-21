@@ -1,0 +1,10 @@
+# ROI crop with median spacing only (min-max intensity). Lines 0-2: the crop arm, seeds 0-2. Lines 3-4: seeds 1-2 of the no-crop arm
+# (metrics/segthor_enet_ce_corrected_median_spacing has seed 0 only), so both arms have the same 3 seeds. Reference: the 9-seed baseline
+# metrics/segthor_enet_ce_repro_corrected_fixed. The crop dataset must be built first (build_dataset.job); lines 3-4 need no build.
+# sbatch --time=00:30:00 --array=3-4 --export=ALL,SWEEP=sweeps/segthor_enet_ce_corrected_median_spacing_roi_crop_seeds.txt jobsAndOutputs/pipeline/jobs/sweep.job
+# after the build: --array=0-0 (pilot), then --array=1-2
+configs/segthor_enet_ce_corrected_median_spacing_roi_crop.yaml seed=0
+configs/segthor_enet_ce_corrected_median_spacing_roi_crop.yaml seed=1
+configs/segthor_enet_ce_corrected_median_spacing_roi_crop.yaml seed=2
+configs/segthor_enet_ce_corrected_median_spacing.yaml seed=1
+configs/segthor_enet_ce_corrected_median_spacing.yaml seed=2

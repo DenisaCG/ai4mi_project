@@ -1,0 +1,85 @@
+experiment: segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop
+seed: 2
+device: cuda
+notes: ENet + CE (all classes) + soft Dice (foreground), corrected labels, median
+  spacing + HU window + z-score + ROI crop/pad
+data:
+  root: data/sliced_a2842ac2
+  preprocess:
+    shape:
+    - 256
+    - 256
+    retains: 5
+    fold: 0
+    seed: 0
+    source_dir: data/segthor_part1_corrected
+    gt_version: corrected
+    resample: median
+    normalize: ct_window_zscore
+    crop: roi
+  num_classes: 5
+  class_names:
+  - background
+  - esophagus
+  - heart
+  - trachea
+  - aorta
+  label_scale: 63
+  patient_regex: (Patient_\d+)_\d{4}
+  in_channels: 1
+  batch_size: 8
+  num_workers: 5
+  augment: []
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+  test_source_pattern: null
+model:
+  name: enet
+  kwargs:
+    kernels: 8
+    factor: 2
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    dice_idk:
+    - 1
+    - 2
+    - 3
+    - 4
+    ce_weight: 1.0
+    dice_weight: 1.0
+optim:
+  name: adam
+  kwargs:
+    lr: 0.0005
+    betas:
+    - 0.9
+    - 0.999
+scheduler:
+  name: none
+  kwargs: {}
+train:
+  epochs: 25
+  select_metric: val_dice_fg
+  max_failed_batches: 5
+  debug_samples: 0
+eval:
+  classes:
+  - 1
+  - 2
+  - 3
+  - 4
+wandb:
+  mode: disabled
+  entity: ''
+  project: ai4mi-segthor
+  tags: []
+  image_every: 5
+paths:
+  run_root: runs
+  metrics_dir: metrics

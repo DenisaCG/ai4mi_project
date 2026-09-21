@@ -1,0 +1,9 @@
+# ROI crop experiment on the full pipeline (median spacing + HU window + z-score): seeds 0-2, the same seeds and fold as the
+# existing no-crop arm metrics/segthor_enet_ce_corrected_ct_window_zscore_median_spacing (seeds 0-2). Only 3 seeds per arm, so
+# this can show a large effect but not a difference of a few hundredths (seed sd of foreground Dice is about 0.09): exploratory.
+# Reference for the whole preprocessing stack: metrics/segthor_enet_ce_repro_corrected_fixed (9 seeds, native spacing, min-max).
+# Order of use: smoke on gpu_mig, then `--array=0-0` (seed 0, check the 3D Dice against the no-crop arm), then `--array=1-2`.
+# sbatch --time=00:30:00 --array=1-2 --export=ALL,SWEEP=sweeps/segthor_enet_ce_corrected_ct_window_zscore_median_spacing_roi_crop_seeds.txt jobsAndOutputs/pipeline/jobs/sweep.job
+configs/segthor_enet_ce_corrected_ct_window_zscore_median_spacing_roi_crop.yaml seed=0
+configs/segthor_enet_ce_corrected_ct_window_zscore_median_spacing_roi_crop.yaml seed=1
+configs/segthor_enet_ce_corrected_ct_window_zscore_median_spacing_roi_crop.yaml seed=2

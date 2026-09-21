@@ -1,0 +1,21 @@
+# Median-spacing resampling + HU window + load-time z-score + in-plane ROI crop/pad to one fixed TxT window.
+# Differs from ct_window_zscore_median_spacing.yaml only in `crop: roi`: order is load, resample, crop/pad (image padded with air),
+# normalise, slice. T comes from the training labels (printed in the build log, saved to <root>/roi_crop.json); the window
+# position comes from the image only. Compare the 3D metrics only: the 2D val Dice is computed on the cropped frame.
+experiment: segthor_enet_ce_corrected_ct_window_zscore_median_spacing_roi_crop
+notes: ENet + CE, corrected labels, median-spacing resampling + HU window + load-time z-score + ROI crop/pad to a fixed window
+
+data:
+  preprocess: {source_dir: data/segthor_part1_corrected, gt_version: corrected, retains: 5, fold: 0, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: cross_entropy
+  kwargs: {idk: [0, 1, 2, 3, 4]}
+
+eval:
+  classes: [1, 2, 3, 4]
