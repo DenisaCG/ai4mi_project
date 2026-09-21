@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Whole-scan intensity distribution against the distribution inside labels 1-3,
+Whole-scan intensity distribution against the distribution inside the labels,
 one small panel per patient.
 
 For each patient, the "scan" histogram (every voxel) is rebinned into 20 HU
 ranges from -1000 to 1600 HU (values above 1600 fall into the last range) and
-drawn as bars above zero; the "all labels" histogram (voxels inside labels
-1-3; label 4 has no voxels in this release) is rebinned the same
+drawn as bars above zero; the "all labels" histogram (voxels inside any
+label) is rebinned the same
 way and drawn as bars below zero, mirrored. Both use a log scale on percent
 of voxels so rare but non-zero ranges stay visible. A gray band repeated
 behind every panel's top half is the "scan" percentages averaged across all
@@ -119,7 +119,7 @@ def main():
 
     handles = [
         plt.Rectangle((0, 0), 1, 1, color=SCAN_COLOR, label="whole scan (up)"),
-        plt.Rectangle((0, 0), 1, 1, color=LABEL_COLOR, label="voxels in labels 1-3 (down)"),
+        plt.Rectangle((0, 0), 1, 1, color=LABEL_COLOR, label="voxels in any label (down)"),
         plt.Rectangle((0, 0), 1, 1, color=POOLED_COLOR, label="whole scan, mean of all 20 patients"),
         plt.Line2D(
             [],
@@ -134,7 +134,7 @@ def main():
     title_block(
         fig,
         "Scan Intensity: Whole Scan vs Labeled Voxels, per Patient",
-        "Up: every voxel of the whole scan. Down: only voxels inside labels 1–3. "
+        "Up: every voxel of the whole scan. Down: only voxels inside any label. "
         "Each bar = voxels whose value falls in one 20 HU range, e.g. −1000 to −981.",
     )
 

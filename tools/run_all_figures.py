@@ -15,8 +15,8 @@ Runs, in order:
 
 Every step above detects which labels actually have voxels in --data-dir
 rather than assuming a fixed class count, so the same command works whether
-the dataset omits the aorta annotation (label 4, the original course release)
-or includes it (a full release).
+the aorta has its own label (the corrected release) or is merged into label 1
+(the original course release).
 
 Before/after: add --before-data-dir (e.g. the original 3-label data while --data-dir
 is the corrected 4-label data). It is only profiled (tools/dataset_profile.py, into
@@ -267,7 +267,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--reconstructed-volumes", type=Path, default=None,
                     help="Passed through to analyze_baseline.py.")
     ap.add_argument("--max-patients", type=int, default=None,
-                    help="Deterministic subset, for a fast smoke run over every step.")
+                    help="Deterministic subset for a fast smoke run of the profile, comparison and "
+                         "dataset-analysis steps (the nnU-Net checks and the fingerprint ignore it).")
     ap.add_argument("--skip-nnunet-checks", action="store_true", help="Skip tools/nnunet_planner_checks.py (slow).")
     ap.add_argument("--only", type=str, default=None,
                     help="Comma-separated stage names to run, skipping the rest. "

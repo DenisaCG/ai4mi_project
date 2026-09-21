@@ -2,7 +2,7 @@
 
 Helper scripts for dataset exploration and for turning training output into
 shareable PNGs. All are additions to the course codebase; nothing in the original
-scripts is modified.
+training scripts is modified.
 
 - `run_all_figures.py` — runs every figure-producing script below (plus
   `dataset_analysis/profile_figures/*` and, optionally, `dataset_analysis`'s own
@@ -27,7 +27,7 @@ scripts is modified.
 All commands are run **from the repo root** with the environment active:
 
 ```bash
-cd ~/ProjectsMSc/ai4mi_project
+cd <repo root>
 conda activate ai4mi
 ```
 
@@ -74,7 +74,8 @@ python tools/run_all_figures.py --data-dir data/segthor_part1_corrected/train --
   and `validate_results.py`, which need a model trained on that data.
 - Rough times on a laptop for 20 patients: profile tables 30 s, profile figures
   5 min, nnU-Net checks 10-15 min (`--skip-nnunet-checks` to leave it out), fingerprint
-  75 s. `--max-patients 3` runs every step over 3 patients as a quick end-to-end check.
+  75 s. `--max-patients 3` runs the profile, comparison and dataset-analysis steps over 3 patients
+  as a quick end-to-end check (the nnU-Net checks and the fingerprint always use all patients).
 - The comparison alone, from two profile folders written by `tools/dataset_profile.py`:
   `python dataset_analysis/profile_figures/label_hu_distribution.py --profile-dir
   <before> <after> --names "before" "after" --out-dir figures/comparison`.
@@ -94,8 +95,8 @@ held out — it is skipped silently if that directory does not exist.
 **Label mapping.** GT labels are `1=esophagus, 2=heart, 3=trachea, 4=aorta` —
 matching the top-level readme's class order. See `dataset_analysis/utils.py:CLASSES`
 for the canonical mapping. In `data/segthor_part1`, **aorta (4)** has no voxels
-in any patient — the professor confirmed this is an intentional omission for
-the course dataset. A full 4-class release has voxels for all of them; this
+in any patient and label 1 holds the esophagus and aorta together. The corrected
+release `data/segthor_part1_corrected` has voxels for all four labels; this
 script (and every other figure script in the repo) detects which labels are
 actually present rather than assuming either case.
 

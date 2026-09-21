@@ -8,6 +8,12 @@ __pycache__/
 .DS_Store
 figures/_checks_cache.npz
 figures/_checks_cache.json
+figures/before/
+figures/profile/*.csv
+figures/profile/*.npz
+figures/fingerprint.*
+figures/nnunet_checks.*
+figures/organ_volumes_cm3.csv
 
 projects
 

@@ -14,6 +14,9 @@
 # Figures are written under OUT_DIR (tools/run_all_figures.py); this job's log goes to
 # jobsAndOutputs/baseline/outputs.
 #
+# Needs the ai4mi environment built from the current requirements.txt (it adds scipy,
+# pandas and seaborn); run env.job again first if the environment predates it.
+#
 # Usage:
 #   sbatch jobsAndOutputs/baseline/jobs/all_figures.job
 #   sbatch jobsAndOutputs/baseline/jobs/all_figures.job [DATA_DIR [OUT_DIR [BEFORE_DIR]]]

@@ -1,9 +1,9 @@
 # SegTHOR exploratory analysis
 
 This analysis covers annotated classes 1 (esophagus), 2 (heart), 3 (trachea),
-and 4 (aorta). The original course release omits the aorta annotation
-entirely (the professor confirmed this is intentional, not corruption); a
-full 4-class release doesn't. Every script here reports which classes are
+and 4 (aorta). In the original course release the aorta has no label of
+its own (label 4 is empty and label 1 holds the esophagus and aorta together);
+the corrected release splits them. Every script here reports which classes are
 actually present in the data it's given rather than assuming either case, and
 an absent class is left out of quality summaries rather than counted as zero.
 Background means the supplied label 0, not necessarily anatomically empty
@@ -35,6 +35,9 @@ It follows the existing genoa/module/conda setup. Logs go to the existing
 write to data, predictions, checkpoints, or existing training logs. Run manifests
 record arguments, library versions, code hashes, Git commit, and source size/mtime.
 Results and caches are ignored by Git. A dataset run must precede a baseline run.
+
+The tests import the figure scripts, so they need the full `requirements.txt`
+(pandas, seaborn, scipy); rebuild the environment with `env.job` if it predates it.
 
 For numerical checks and a deterministic small end-to-end run:
 

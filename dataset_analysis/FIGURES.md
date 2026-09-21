@@ -131,7 +131,7 @@ visible range and how much mass sits at the clip boundaries.
 **File:** `figures/profile/scan_intensity/scan_vs_labels.png`
 **Script:** `dataset_analysis/profile_figures/scan_intensity/scan_vs_labels.py --profile-dir figures/profile`
 **Shows:** One small panel per patient: the whole-scan HU distribution drawn
-above zero and the distribution restricted to labels 1-3 mirrored below it,
+above zero and the distribution restricted to labeled voxels mirrored below it,
 with a gray band for the across-patient average whole-scan distribution and
 dashed nnU-Net clip lines.
 **Unit and pooling:** Per patient, voxels rebinned into 20 fixed-width HU
@@ -204,7 +204,7 @@ before/after adding a label.
 ## Label size and intensity
 
 **File:** `figures/profile/label_size_and_intensity/label_size_intensity.png`
-**Script:** `dataset_analysis/profile_figures/label_size_and_intensity.py --profile-dir figures/profile --data-dir data/segthor_part1/train`
+**Script:** `dataset_analysis/profile_figures/label_size_and_intensity.py --profile-dir figures/profile --data-dir data/segthor_part1_corrected/train`
 **Shows:** Top, every patient's label 1, 2 and 3 surface at the same
 physical scale, sorted left to right from smallest to largest volume
 (shading light to dark), in the earth palette (teal label 1, brick label 2,
@@ -222,13 +222,13 @@ differently in HU.
 ## Label shapes and sizes
 
 **File:** `figures/profile/label_shapes_and_sizes/label_shapes_3d.png`
-**Script:** `dataset_analysis/profile_figures/label_shapes_and_sizes.py --profile-dir figures/profile --data-dir data/segthor_part1/train`
+**Script:** `dataset_analysis/profile_figures/label_shapes_and_sizes.py --profile-dir figures/profile --data-dir data/segthor_part1_corrected/train`
 **Shows:** One 3D panel per patient with labels 1, 2 and 3 rendered at
 identical physical scale and camera angle.
 **Unit and pooling:** One mesh set per patient (surfaces from marching cubes
 on the raw mask, no resampling); 20 panels, not aggregated.
 **Useful for:** Visually comparing the shape and relative position of the
-three labels across all patients at a glance.
+labels across all patients at a glance.
 
 **File:** `figures/profile/label_shapes_and_sizes/label_size_per_patient.png`
 **Script:** same command as above (`main()` writes both figures).
@@ -248,7 +248,7 @@ sampling or class-balance choices.
 each label, one count per patient. Top right, the median with middle-50%/
 middle-90% bands of each label's area (normalized to its own peak slice)
 against position within the label's slice range (0% lowest to 100% highest
-slice), the three labels overlapped. Bottom, the same layout for
+slice), the labels overlapped. Bottom, the same layout for
 slice-to-slice area change.
 **Unit and pooling:** Top-left bars are one count per patient (20 per
 label). The bands are computed per label across all 20 patients at each of
@@ -287,12 +287,12 @@ and axis, e.g. the minimum patch size needed to contain a label.
 
 **File:** `figures/profile/label_bounding_box/label_bbox_position_3d.png`
 **Script:** same command as above (`main()` writes both figures).
-**Shows:** All three labels' bounding boxes in one shared 3D space, each
+**Shows:** All labels' bounding boxes in one shared 3D space, each
 patient's boxes shifted so that patient's label 2 center sits at the origin.
 **Unit and pooling:** One wireframe box per patient per label (20 patients x
-3 labels), all referenced to that patient's own label 2 center.
+4 labels), all referenced to that patient's own label 2 center.
 **Useful for:** Seeing typical relative position and extent overlap between
-the three labels, e.g. for anchoring a crop around one of them.
+the labels, e.g. for anchoring a crop around one of them.
 
 ## Organ position in 3D
 
@@ -367,8 +367,8 @@ labels, lightly smoothed).
 **File:** `figures/comparison/label_example_2D.png` and `figures/comparison/label_example_3D.png`
 **Script:** `dataset_analysis/profile_figures/label_example.py --patient Patient_18 --out-dir figures/comparison`
 **Shows:** One patient's four organs, once on an axial CT slice (the one where the smallest organ is
-largest) and once as 3D surfaces seen from the patient's side; patient and slice are written under
-each figure.
+largest) and once as 3D surfaces seen from the patient's side; the patient is named on both figures and the slice on
+the 2D one.
 **Unit and pooling:** One patient, corrected labels only.
 **Useful for:** Showing the four annotated organs on a real scan.
 
@@ -386,8 +386,8 @@ pairs of labels that have voxels are drawn.
 between patients.
 
 **File:** `figures/profile/label_pairs/label_pairs_contact_3d.png`
-**Script:** `dataset_analysis/profile_figures/label_pairs.py --profile-dir figures/profile --data-dir data/segthor_part1/train`
-**Shows:** Every patient's three labels as faint gray surfaces, with the
+**Script:** `dataset_analysis/profile_figures/label_pairs.py --profile-dir figures/profile --data-dir data/segthor_part1_corrected/train`
+**Shows:** Every patient's labels as faint gray surfaces, with the
 part of each label's surface that lies within one voxel of another label
 painted in that pair's earth-palette color (full color between slices, a
 lighter tint within a slice); under every patient a small bar chart, with its
