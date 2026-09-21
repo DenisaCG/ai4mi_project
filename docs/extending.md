@@ -211,6 +211,24 @@ dataset and its un-normalised twin, prints the four numbers, checks the labels a
 before/after intensity histograms to `dataset_analysis/results/ct_norm/`. Unit tests:
 `sbatch jobsAndOutputs/pipeline/jobs/test_ct_norm.job`.
 
+**ROI crop** (`crop: roi`, needs `resample: median`): the resize to `shape` squeezes each scan's whole FOV into 256x256, so
+mm/pixel still varies (1.8-2.7). With `crop`, each resampled volume is instead cut (or padded) in-plane to one fixed
+T x T window and `shape` is ignored (T x T is the slice size). Order is load, resample, **crop/pad**, normalise, slice: the image
+is padded with air before normalisation, so padding gets the grey value real air gets (0 in the PNG); labels are padded with 0.
+
+- **Window position: image only.** The centre is the in-plane centre of the body's bounding box (largest component of
+  HU > -500 after an opening, so the couch is dropped), one window per volume for every slice (`roi_centre`). Labels
+  never place the window: there are none at test time.
+- **T: train labels only.** For each training patient, T must cover the distance from that centre to the farthest label edge (both axes);
+  T = the largest such requirement + 15 px per side, rounded up to a multiple of 32, printed in the build log and saved
+  to `<root>/roi_crop.json`. The same T is used for val. Training patients are asserted to keep 100% of their label voxels;
+  val retention is printed (and warned about if below 100%), since val is the out-of-sample check.
+- **Evaluation:** each patient's window position is saved in `<root>/roi_crop/<patient>.json`; `src.evaluate.stitch` pastes the
+  predicted window back into a background frame of the resampled grid before mapping to the original grid, and the score is
+  against the full original GT (an organ outside the window counts as missed). A missing json is an error. The 2D val Dice is
+  computed on the cropped frame, so compare runs on the 3D metrics.
+- Feasibility check behind the choice of rule and T: `dataset_analysis/roi_crop_check.py`. Tests: `tests/test_roi_crop.py`.
+
 **When the final dataset arrives:** slice it the same way into e.g. `data/SEGTHOR_final`, then set
 in `configs/base.yaml` (so every experiment follows):
 

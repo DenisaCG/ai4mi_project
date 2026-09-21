@@ -24,6 +24,7 @@ from PIL import Image
 from skimage.transform import resize
 from torch.utils.data import DataLoader
 
+from slice_segthor import paste_window_inplane
 from src.checkpoint import load_checkpoint
 from src.config import REPO, read_yaml
 from src.data import build_dataset, patient_of
@@ -50,15 +51,19 @@ def predict(net, cfg: dict, split: str, device, out_dir: Path) -> dict[str, np.n
 
 
 def stitch(slices: dict[int, np.ndarray], reference: nib.Nifti1Image, patient: str,
-           resampled: bool = False) -> np.ndarray:
+           resampled: bool = False, crop: dict | None = None) -> np.ndarray:
     """Inverse of slice_segthor.py: slice z of the volume was resized to 256x256 and saved as one PNG.
     With `resampled` (data.preprocess.resample) the slice count differs from the source volume's Z; the
-    stack is then mapped back onto the source grid, so scoring stays on the original GT and spacing."""
+    stack is then mapped back onto the source grid, so scoring stays on the original GT and spacing.
+    With `crop` (data.preprocess.crop, the patient's roi_crop/<id>.json) the slices are a window of the resampled
+    grid: it is pasted back into a background frame first, so anything outside the window is predicted background."""
     X, Y, Z = reference.shape
     n = len(slices)
     if sorted(slices) != list(range(n)) or (not resampled and n != Z):
         raise ValueError(f"{patient}: predicted {n} slices, volume has {Z}")
     stack = np.stack([slices[z] for z in range(n)], axis=-1)
+    if crop:
+        stack = paste_window_inplane(stack, crop["start"], crop["resampled_shape"][:2])
     return resize(stack, (X, Y, Z), order=0, preserve_range=True, anti_aliasing=False,
                   mode="constant").astype(np.uint8)
 
@@ -113,7 +118,9 @@ def evaluate(run_dir: Path, device: torch.device) -> dict:
             if patient in sliced_spacing and not np.allclose(sliced_spacing[patient], spacing):
                 log.warning("%s: spacing %s differs from spacing.pkl %s", patient, spacing,
                             sliced_spacing[patient])
-            vol = stitch(slices, ref, patient, resampled=bool((d.get("preprocess") or {}).get("resample")))
+            # a missing roi_crop file is an error, never a silent full-frame stitch (that would misplace every organ)
+            crop = read_json(REPO / d["root"] / "roi_crop" / f"{patient}.json") if (d.get("preprocess") or {}).get("crop") else None
+            vol = stitch(slices, ref, patient, resampled=bool((d.get("preprocess") or {}).get("resample")), crop=crop)
             out = run_dir / "volumes" / split / f"{patient}.nii.gz"
             out.parent.mkdir(parents=True, exist_ok=True)
             nib.save(nib.Nifti1Image(vol, ref.affine, ref.header), out)

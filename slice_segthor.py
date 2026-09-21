@@ -138,6 +138,85 @@ def resampled_affine(affine: np.ndarray, in_shape, out_shape) -> np.ndarray:
     return new
 
 
+ROI_BODY_HU = -500  # body vs air for the ROI window centre
+ROI_MASK_STEP = 2  # the body mask is computed on every 2nd voxel: the centre only needs ~2 px accuracy
+ROI_MARGIN, ROI_MULTIPLE = 15, 32  # voxels added on each side of the largest train requirement, then rounded up
+
+
+def largest_components(mask: np.ndarray, min_fraction: float = 1.0) -> np.ndarray:
+    """Union of the connected components at least `min_fraction` of the largest one (1.0 = largest only)."""
+    lab, n = ndimage.label(mask)
+    if n == 0:
+        return np.zeros_like(mask)
+    sizes = np.bincount(lab.ravel())[1:]
+    return np.isin(lab, np.flatnonzero(sizes >= min_fraction * sizes.max()) + 1)
+
+
+def body_mask(ct: np.ndarray) -> np.ndarray:
+    """Largest 3D component of HU > ROI_BODY_HU after an in-plane opening (drops thin couch rails and cables)."""
+    return largest_components(ndimage.binary_opening(ct > ROI_BODY_HU, structure=np.ones((3, 3, 1))))
+
+
+def inplane_extent(mask: np.ndarray, step: int = 1) -> tuple[np.ndarray, np.ndarray]:
+    """In-plane [lo, hi) of a 3D mask in voxels of the full grid (the mask may be subsampled by `step`)."""
+    lo, hi = [], []
+    for axis in (0, 1):
+        idx = np.flatnonzero(mask.any(axis=tuple(a for a in range(3) if a != axis)))
+        lo.append(idx[0] * step)
+        hi.append((idx[-1] + 1) * step)
+    return np.array(lo, dtype=float), np.array(hi, dtype=float)
+
+
+def roi_centre(ct: np.ndarray) -> np.ndarray:
+    """In-plane (x, y) centre, in voxels, of the body's bounding box. Takes the IMAGE only: there are no labels at
+    test time, so the window position must never depend on them (the labels only size the window, roi_required_size)."""
+    small = ct[::ROI_MASK_STEP, ::ROI_MASK_STEP, ::ROI_MASK_STEP]
+    mask = body_mask(small)
+    if not mask.any():
+        raise ValueError(f"no body voxels above {ROI_BODY_HU} HU (HU min/max {ct.min():.0f}/{ct.max():.0f})")
+    lo, hi = inplane_extent(mask, ROI_MASK_STEP)
+    return (lo + hi) / 2
+
+
+def roi_start(centre: np.ndarray, size: int) -> tuple[int, int]:
+    """Top-left corner of the size x size window centred on `centre` (negative when the window overruns the volume)."""
+    return tuple(int(round(c - size / 2)) for c in centre)
+
+
+def crop_pad_inplane(arr: np.ndarray, start: tuple[int, int], size: int, pad_value: float) -> np.ndarray:
+    """size x size in-plane window at `start`, all z kept. Parts of the window outside `arr` are `pad_value`."""
+    out = np.full((size, size) + arr.shape[2:], pad_value, dtype=arr.dtype)
+    src = [slice(max(s, 0), max(min(s + size, n), max(s, 0))) for s, n in zip(start, arr.shape[:2])]
+    out[src[0].start - start[0]:src[0].stop - start[0], src[1].start - start[1]:src[1].stop - start[1]] = arr[src[0], src[1]]
+    return out
+
+
+def paste_window_inplane(window: np.ndarray, start: tuple[int, int], shape: tuple[int, int]) -> np.ndarray:
+    """Inverse of crop_pad_inplane for labels/predictions: the window in a zero (background) frame of in-plane `shape`."""
+    out = np.zeros(tuple(shape) + window.shape[2:], dtype=window.dtype)
+    size = window.shape[0]
+    src = [slice(max(s, 0), max(min(s + size, n), max(s, 0))) for s, n in zip(start, shape)]
+    out[src[0], src[1]] = window[src[0].start - start[0]:src[0].stop - start[0], src[1].start - start[1]:src[1].stop - start[1]]
+    return out
+
+
+def roi_window_size(required: float, margin: int = ROI_MARGIN, multiple: int = ROI_MULTIPLE) -> int:
+    return int(np.ceil((required + 2 * margin) / multiple) * multiple)
+
+
+def roi_required_size(id_: str, source_path: Path, target_spacing: tuple[float, float, float]) -> float:
+    """Smallest square window (voxels of the resampled grid) around this patient's image-derived centre that contains
+    every label voxel: 2 x the largest distance from the centre to a label edge, over both in-plane axes."""
+    id_path: Path = source_path / "train" / id_
+    ct_nib = nib.load(str(id_path / f"{id_}.nii.gz"))
+    ct, gt = np.asarray(ct_nib.dataobj), np.asarray(nib.load(str(id_path / "GT.nii.gz")).dataobj)
+    spacing = ct_nib.header.get_zooms()[:3]
+    ct, gt = resample_image(ct, spacing, target_spacing), resample_label(gt, spacing, target_spacing)
+    centre = roi_centre(ct)
+    lo, hi = inplane_extent(gt > 0)
+    return float(2 * np.maximum(centre - lo, hi - centre).max())
+
+
 def foreground_hu(id_: str, source_path: Path,
                   target_spacing: tuple[float, float, float] | None = None) -> np.ndarray:
     """HU of the voxels with label > 0 of one training patient, on the same (resampled) grid that gets sliced."""
@@ -153,7 +232,8 @@ def foreground_hu(id_: str, source_path: Path,
 def slice_patient(id_: str, dest_path: Path, source_path: Path, shape: tuple[int, int],
                   test_mode: bool = False, gt_version: str | None = None,
                   target_spacing: tuple[float, float, float] | None = None,
-                  norm_stats: dict[str, float] | None = None) -> tuple[float, float, float]:
+                  norm_stats: dict[str, float] | None = None,
+                  crop_size: int | None = None) -> tuple[float, float, float]:
     id_path: Path = source_path / ("train" if not test_mode else "test") / id_
 
     ct_path: Path = (id_path / f"{id_}.nii.gz") if not test_mode else (source_path / "test" / f"{id_}.nii.gz")
@@ -193,6 +273,25 @@ def slice_patient(id_: str, dest_path: Path, source_path: Path, shape: tuple[int
             out_dir.mkdir(parents=True, exist_ok=True)
             nib.save(nib.Nifti1Image(ct, new_affine), str(out_dir / f"{id_}.nii.gz"))
             nib.save(nib.Nifti1Image(gt, new_affine), str(out_dir / "GT.nii.gz"))
+
+    if crop_size:  # in-plane ROI window on the resampled grid; `shape` is (crop_size, crop_size), so the slice resize below is a no-op
+        assert target_spacing is not None, "crop_size needs the resampled grid (--resample median)"
+        assert tuple(shape) == (crop_size, crop_size), (shape, crop_size)
+        centre = roi_centre(ct)  # image only: gt is never looked at to place the window
+        start = roi_start(centre, crop_size)
+        # Crop/pad BEFORE the intensity normalisation, padding the image with air: the padded voxels then get exactly
+        # the grey value real air gets (the window's low end, 0 in the PNG), instead of a value made up after scaling.
+        air = norm_stats["lo"] if norm_stats is not None else float(ct.min())
+        resampled_shape, fg_before = ct.shape, int((gt > 0).sum())
+        ct, gt = crop_pad_inplane(ct, start, crop_size, air), crop_pad_inplane(gt, start, crop_size, 0)
+        assert ct.shape == gt.shape == (crop_size, crop_size, z), (id_, ct.shape, gt.shape)
+        retained = int((gt > 0).sum()) / fg_before if fg_before else None
+        print(f"{id_}: ROI window {crop_size}x{crop_size} at {start} of {resampled_shape[:2]}, "
+              f"label voxels retained {'n/a' if retained is None else f'{100 * retained:.4f}%'}")
+        crop_dir = dest_path.parent / "roi_crop"  # read back by src/evaluate.py to paste predictions into the full frame
+        crop_dir.mkdir(parents=True, exist_ok=True)
+        (crop_dir / f"{id_}.json").write_text(json.dumps(
+            {"start": list(start), "size": crop_size, "resampled_shape": list(resampled_shape), "retained": retained}))
 
     # Intensity: per-volume min-max by default; with norm_stats the fixed train-set HU window (same for every patient)
     norm_ct: np.ndarray = norm_arr(ct) if norm_stats is None else window_arr(ct, norm_stats["lo"], norm_stats["hi"])
@@ -283,6 +382,19 @@ def main(args: argparse.Namespace):
             norm_stats | {"percentiles": [0.5, 99.5], "normalize": args.normalize, "n_foreground_voxels": int(pooled.size),
                           "train_patients": training_ids, "target_spacing": target_spacing}, indent=2))
 
+    crop_size: int | None = None
+    if args.crop:  # T from the training patients' labels only, the same T for train and val
+        required = Pool(args.process if args.process > 0 else None).starmap(
+            roi_required_size, [(i, src_path, target_spacing) for i in training_ids])
+        crop_size = roi_window_size(max(required))
+        print(f"ROI crop: train patients need a window of up to {max(required):.1f} px "
+              f"({training_ids[int(np.argmax(required))]}); + {ROI_MARGIN} px margin per side, rounded up to a multiple "
+              f"of {ROI_MULTIPLE} -> T = {crop_size} ({crop_size * target_spacing[0]:.0f} mm); slice shape is {crop_size}x{crop_size}")
+        dest_path.mkdir(parents=True, exist_ok=True)
+        (dest_path / "roi_crop.json").write_text(json.dumps(
+            {"size": crop_size, "margin": ROI_MARGIN, "multiple": ROI_MULTIPLE, "centre": "body bounding box (image only)",
+             "required_train": dict(zip(training_ids, required)), "target_spacing": target_spacing}, indent=2))
+
     resolution_dict: dict[str, tuple[float, float, float]] = {}
 
     split_ids: list[str]
@@ -293,11 +405,12 @@ def main(args: argparse.Namespace):
         pfun: Callable = partial(slice_patient,
                                  dest_path=dest_mode,
                                  source_path=src_path,
-                                 shape=tuple(args.shape),
+                                 shape=(crop_size, crop_size) if crop_size else tuple(args.shape),
                                  test_mode=mode == 'test',
                                  gt_version=args.gt_version,
                                  target_spacing=target_spacing,
-                                 norm_stats=norm_stats)
+                                 norm_stats=norm_stats,
+                                 crop_size=crop_size)
         resolutions: list[tuple[float, float, float]]
         iterator = tqdm_(split_ids)
         match args.process:
@@ -310,6 +423,16 @@ def main(args: argparse.Namespace):
 
         for key, val in zip(split_ids, resolutions):
             resolution_dict[key] = val
+
+    if crop_size:  # train patients were sized to fit (a miss is a bug); val is the out-of-sample check, only reported
+        retained = {i: json.loads((dest_path / "roi_crop" / f"{i}.json").read_text())["retained"]
+                    for i in training_ids + validation_ids}
+        assert all(retained[i] == 1.0 for i in training_ids), {i: retained[i] for i in training_ids if retained[i] != 1.0}
+        for i in validation_ids:
+            if retained[i] != 1.0:
+                print(f"WARNING: ROI window clips {i}: only {100 * retained[i]:.4f}% of its label voxels are retained")
+        print(f"ROI crop retention: train {min(retained[i] for i in training_ids):.4%} (min), "
+              f"val {min(retained[i] for i in validation_ids):.4%} (min)")
 
     with open(dest_path / "spacing.pkl", 'wb') as f:
         pickle.dump(resolution_dict, f, pickle.HIGHEST_PROTOCOL)
@@ -330,11 +453,16 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('--normalize', choices=list(NORMALIZE_MODES), default=None,
                         help="clip to the training foreground 0.5-99.5 percentile HU window and rescale to 0..255 "
                              "instead of per-volume min-max (default: off); _zscore also z-scores at load time")
+    parser.add_argument('--crop', choices=['roi'], default=None,
+                        help="in-plane crop/pad of every resampled volume to one TxT window centred on the body "
+                             "(image-derived), T from the training labels; replaces the resize to --shape (needs --resample)")
     parser.add_argument('--gt_version', choices=list(EXPECTED_LABELS), default=None,
                         help="SEGTHOR version of the GT; asserts every patient has exactly its labels (default: no check)")
     parser.add_argument('--process', '-p', type=int, default=1,
                         help="The number of cores to use for processing")
     args = parser.parse_args()
+    if args.crop and not args.resample:
+        parser.error("--crop needs --resample median: the window is a size in voxels of the common grid")
     random.seed(args.seed)
 
     print(args)
