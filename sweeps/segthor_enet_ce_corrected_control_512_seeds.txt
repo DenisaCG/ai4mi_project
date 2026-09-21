@@ -1,0 +1,12 @@
+# Resolution experiment, 512x512 arm: seeds 0-8 of segthor_enet_ce_corrected_control_512, the seeds of the 256x256 reference (seed 0 is submitted separately via train.job).
+# The 256x256 reference is the existing metrics/segthor_enet_ce_repro_corrected_fixed (9 seeds). Compare the metrics/ `eval` blocks.
+# sbatch --time=01:15:00 --array=1-8 --export=ALL,SWEEP=sweeps/segthor_enet_ce_corrected_control_512_seeds.txt jobsAndOutputs/pipeline/jobs/sweep.job
+configs/segthor_enet_ce_corrected_control_512.yaml seed=0
+configs/segthor_enet_ce_corrected_control_512.yaml seed=1
+configs/segthor_enet_ce_corrected_control_512.yaml seed=2
+configs/segthor_enet_ce_corrected_control_512.yaml seed=3
+configs/segthor_enet_ce_corrected_control_512.yaml seed=4
+configs/segthor_enet_ce_corrected_control_512.yaml seed=5
+configs/segthor_enet_ce_corrected_control_512.yaml seed=6
+configs/segthor_enet_ce_corrected_control_512.yaml seed=7
+configs/segthor_enet_ce_corrected_control_512.yaml seed=8
