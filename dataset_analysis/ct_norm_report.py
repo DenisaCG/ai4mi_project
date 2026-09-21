@@ -17,6 +17,8 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
+sys.path.insert(0, str(REPO / "tools"))
+from plot_style import BACKGROUND_COLOR, EARTH, apply_style, decorate, legend_below  # noqa: E402
 from src.config import load_config, resolve_preprocess  # noqa: E402
 from src.data import ensure_sliced  # noqa: E402
 
@@ -61,24 +63,27 @@ def main() -> None:
         print(f"{split}: {len(names)} GT PNGs, byte-different from control: {len(bad)}", bad[:3])
         assert not bad, "labels changed"
 
-    fig, axes = plt.subplots(1, 2, figsize=(13, 4.5), sharey=True)
+    apply_style()
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
     for ax, (title, root) in zip(axes, roots.items()):
         allv, fg = grey_values(root)
         p1, p99 = np.percentile(fg, [1, 99])
         print(f"{title}: foreground grey level p1-p99 = {p1:.0f}-{p99:.0f} (width {p99 - p1:.0f}/255), "
               f"all-voxel std {allv.std():.1f}, foreground mean {fg.mean():.1f} std {fg.std():.1f}")
         bins = np.arange(257) - 0.5
-        ax.hist(allv, bins=bins, density=True, alpha=.5, label="all voxels", color="#929292")
-        ax.hist(fg, bins=bins, density=True, alpha=.7, label="foreground (labels > 0)", color="#087F9D")
+        ax.hist(allv, bins=bins, density=True, alpha=.5, label="all voxels", color=BACKGROUND_COLOR)
+        ax.hist(fg, bins=bins, density=True, alpha=.7, label="foreground (labels > 0)", color=EARTH[1])
         ax.set_yscale("log")
-        ax.set_title(title)
+        ax.set_title(title, fontweight="bold")
         ax.set_xlabel("PNG grey level")
-    axes[0].set_ylabel("density (log)")
-    axes[0].legend()
+    axes[0].set_ylabel("Density (log scale)")
+    legend_below(axes[0], ncol=2)
     Path(args.out).mkdir(parents=True, exist_ok=True)
     path = Path(args.out) / f"{cfg['experiment']}_hist.png"
-    fig.tight_layout()
-    fig.savefig(path, dpi=150)
+    decorate(fig, "Input intensity before and after the fixed HU window",
+             f"{cfg['experiment']}  |  Grey level of the processed PNG slices, every {EVERY}th slice of the training split",
+             "Foreground = voxels with a label above 0. The ground-truth PNGs are byte-identical to the control, so only the input intensity changed.")
+    fig.savefig(path)
     print("saved", path)
 
 

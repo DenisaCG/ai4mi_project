@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import sys
 from datetime import datetime, timezone
 
 import nibabel as nib
@@ -17,7 +18,60 @@ import numpy as np
 from PIL import Image
 
 CLASSES = {1: "esophagus", 2: "heart", 3: "trachea", 4: "aorta"}
+NAMES = {k: name.capitalize() for k, name in CLASSES.items()}
 REPO = Path(__file__).resolve().parents[1]
+
+# Figures share the repo-wide theme in tools/plot_style.py, with its earthy organ colors.
+os.environ.setdefault("MPLCONFIGDIR", str(REPO / "dataset_analysis/results/.matplotlib"))
+import matplotlib  # noqa: E402
+matplotlib.use("Agg")
+sys.path.insert(0, str(REPO / "tools"))
+from plot_style import (BACKGROUND_COLOR as BACKGROUND, EARTH_LABEL_COLORS as COLORS,  # noqa: E402,F401
+                        FOOTNOTE_COLOR as MUTED, GRID_COLOR, apply_style, decorate, tint)
+
+INK = "#333333"
+FIGURES = ("class_distribution.png", "shape_descriptors_3d.png",
+           "shape_descriptors_summary.png", "target_area_through_scan.png",
+           "baseline_3d_dice_by_class.png", "baseline_dice_vs_target_size.png",
+           "baseline_dice_by_organ_position.png")
+OLD_FIGURES = ("original_class_frequency.png", "original_patient_volume_extent.png",
+               "original_normalized_extent.png", "processed_positive_area_distribution.png",
+               "processed_area_vs_z.png", "baseline_positive_dice_distribution.png",
+               "baseline_dice_vs_area_scatter.png", "baseline_dice_vs_area_binned.png",
+               "baseline_dice_vs_scan_z.png", "baseline_dice_vs_organ_z.png",
+               "baseline_patient_performance.png")
+
+
+def pyplot():
+    """matplotlib.pyplot with the shared theme applied."""
+    apply_style()
+    import matplotlib.pyplot as plt
+    return plt
+
+
+def clean_axis(ax, grid_axis: str = "y"):
+    """Only light reference lines along one axis; no ticks, box or competing color coding."""
+    ax.set_axisbelow(True)
+    ax.grid(False)
+    if grid_axis:
+        ax.grid(axis=grid_axis, color=GRID_COLOR, linewidth=.8)
+    ax.tick_params(length=0, pad=6)
+
+
+def save(fig, output: Path, name: str, plt):
+    if name not in FIGURES:
+        raise ValueError(f"Uncurated figure name: {name}")
+    fig.savefig(output / "plots" / name)
+    plt.close(fig)
+
+
+def remove_superseded(output: Path):
+    """Delete only named v1 generated graphics inside the selected result folder."""
+    for name in OLD_FIGURES:
+        (output / "plots" / name).unlink(missing_ok=True)
+    for name in ("esophagus_examples.png", "heart_examples.png", "trachea_examples.png"):
+        (output / "examples" / name).unlink(missing_ok=True)
+    (output / "tables/baseline_examples.csv").unlink(missing_ok=True)
 
 
 def parser(description: str) -> argparse.ArgumentParser:

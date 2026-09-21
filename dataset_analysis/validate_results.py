@@ -6,9 +6,8 @@ from pathlib import Path
 import nibabel as nib
 import numpy as np
 
-from style import FIGURES, COLORS
 from figures import select_shape_examples
-from utils import CLASSES, parser, paths, read_csv
+from utils import CLASSES, COLORS, FIGURES, parser, paths, read_csv
 
 
 def require(condition, message):

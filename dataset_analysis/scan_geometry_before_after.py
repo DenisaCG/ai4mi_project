@@ -13,8 +13,8 @@ The "after" values are therefore computed from the native geometry and the targe
 The target is the one the resampling step uses (slice_segthor.median_target_spacing on the training patients of
 the split, as in the config) and is checked against the one saved next to the built dataset.
 
-Same look as the profile_figures/scan_geometry.py figure (crest colours of its panels, red median triangle), but only
-needs matplotlib, numpy and nibabel headers: no patients.csv, pandas or seaborn.
+Colours come from the shared earth palette in tools/plot_style.py (one per panel, ink median triangle). Only needs
+matplotlib, numpy and nibabel headers: no patients.csv, pandas or seaborn.
 
 Usage (from the repo root):
     python dataset_analysis/scan_geometry_before_after.py \
@@ -38,13 +38,15 @@ import numpy as np
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
+sys.path.insert(0, str(REPO / "tools"))
+from plot_style import EARTH  # noqa: E402
 from slice_segthor import get_splits, median_target_spacing  # noqa: E402
 from src.config import load_config  # noqa: E402
 
-MEDIAN_COLOR = "#D1495B"
-# crest colours of the matching panels of scan_geometry.png (pixel size, slice spacing, image width, number of slices)
-COLORS = {"pixel": "#7dba91", "slice": "#59a590", "matrix": "#1c6488", "slices": "#287a8c"}
 INK, MUTED = "#171717", "#555555"
+MEDIAN_COLOR = INK  # no hue, so the target marker never shares a color with a panel
+# earth palette, one per panel (pixel size, slice spacing, image width, number of slices)
+COLORS = {"pixel": EARTH[1], "slice": EARTH[2], "matrix": EARTH[3], "slices": EARTH[0]}
 
 
 def native_geometry(data_dir: Path) -> dict[str, dict]:

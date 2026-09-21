@@ -3,7 +3,7 @@ from pathlib import Path
 
 import numpy as np
 
-from style import BACKGROUND, COLORS, NAMES, clean_axis, frame, pyplot, save
+from utils import BACKGROUND, COLORS, INK, MUTED, NAMES, clean_axis, decorate, pyplot, save
 
 
 def select_shape_examples(rows):
@@ -37,7 +37,7 @@ def shape_examples(output, original):
     from matplotlib.transforms import blended_transform_factory
     from utils import read_csv, write_csv
 
-    plt = pyplot(output)
+    plt = pyplot()
     selected = select_shape_examples(read_csv(output / 'tables/shape_descriptors_3d.csv'))
     records = []
     for row in selected:
@@ -58,13 +58,8 @@ def shape_examples(output, original):
         occupied = [np.flatnonzero(np.any(mask, axis=tuple(j for j in range(3) if j != a))) for a in range(3)]
         bounds = [(max(-.5, v[0] - 45 / spacing[a]), min(mask.shape[a] - .5, v[-1] + 45 / spacing[a]))
                   for a, v in enumerate(occupied)]
-        fig = frame(plt, f"{NAMES[k]} — {patient} — {row['category'].capitalize()} volume",
-            f"Volume: {float(row['volume_ml']):,.2f} mL  |  SI extent: {float(row['si_extent_mm']):.2f} mm  |  Normalized SI centroid: {float(row['normalized_si_centroid']):.3f}",
-            'Original CT + selected-organ ground truth only. White cross: projected 3D centroid; nearest voxel-centre planes.\n'
-            'Colored bracket: whole-organ SI span, including gaps (not just this plane). Coronal/sagittal views retain full scan SI coverage.\n'
-            'CT window: −160 to 240 HU (level 40, width 400). Transverse crops add 45 mm context; physical aspect is preserved.')
+        fig = plt.figure(figsize=(10.5, 5.4))
         axes = fig.subplots(1, 3)
-        fig.subplots_adjust(left=.045, right=.955, bottom=.19, top=.79, wspace=.18)
         # LPS index axes: i toward left, j posterior, k superior.
         for ax, (axis, horizontal, vertical, title, directions) in zip(axes, (
                 (2, 0, 1, 'Axial', ('R', 'L', 'A', 'P')),
@@ -87,10 +82,10 @@ def shape_examples(output, original):
                     '+', color='white', markersize=10, markeredgewidth=1.3)
             ax.set_xlim(np.array(bounds[horizontal]) * spacing[horizontal])
             ax.set_ylim((np.array(bounds[vertical]) * spacing[vertical]) if axis == 2 else extent[2:])
-            ax.set_title(title, pad=18)
+            ax.set_title(title, fontweight='bold', pad=8)
             ax.set_xticks([]); ax.set_yticks([])
             for label, x, y in zip(directions, [.025, .975, .5, .5], [.5, .5, .02, .98]):
-                ax.text(x, y, label, transform=ax.transAxes, color='white', fontsize=11,
+                ax.text(x, y, label, transform=ax.transAxes, color='white', fontsize=9,
                         weight='bold', ha='center', va='center', bbox=dict(facecolor='black', alpha=.45, pad=1, edgecolor='none'))
             if title == 'Coronal':
                 transform = blended_transform_factory(ax.transAxes, ax.transData)
@@ -98,7 +93,12 @@ def shape_examples(output, original):
                 ax.plot([.94, .94], [lo, hi], color=COLORS[k], linewidth=2, transform=transform)
                 for z in (lo, hi):
                     ax.plot([.915, .965], [z, z], color=COLORS[k], linewidth=2, transform=transform)
-        fig.savefig(output / 'examples' / row['filename'], dpi=220)
+        decorate(fig, f"{NAMES[k]} — {patient} — {row['category'].capitalize()} volume",
+            f"Volume: {float(row['volume_ml']):,.2f} mL  |  SI extent: {float(row['si_extent_mm']):.2f} mm  |  Normalized SI centroid: {float(row['normalized_si_centroid']):.3f}",
+            'Original CT + selected-organ ground truth only. White cross: projected 3D centroid; nearest voxel-centre planes. '
+            'Colored bracket: whole-organ SI span, including gaps (not just this plane). Coronal/sagittal views retain full scan SI coverage. '
+            'CT window: −160 to 240 HU (level 40, width 400). Transverse crops add 45 mm context; physical aspect is preserved.')
+        fig.savefig(output / 'examples' / row['filename'])
         plt.close(fig)
         records.append(dict(row, axial_index=indices[2], coronal_index=indices[1], sagittal_index=indices[0],
                             ct_window_min_hu=-160, ct_window_max_hu=240, organ_color=COLORS[k]))
@@ -113,84 +113,80 @@ def cohort(inventory):
 
 def class_distribution(output, frequency, inventory):
     """Two explicit denominators prevent background from hiding foreground differences."""
-    plt = pyplot(output)
+    plt = pyplot()
     rows = {r['class_id']: r for r in frequency if r['split'] == 'all'}
     total = sum(r['voxel_count'] for r in rows.values())
     foreground = sum(rows[k]['voxel_count'] for k in NAMES)
     fg_percent = 100 * foreground / total
-    fig = frame(plt, "Class distribution: background and annotated organs",
-        f"Original NIfTI ground truth  |  {cohort(inventory)}  |  Counts pooled across scans",
-        "Background means label 0, including unannotated anatomy.\n"
-        "The two panels use different denominators; counts are original voxels, not physical-volume totals.")
-    fig.text(.10, .81, f"{total:,} total scan voxels", fontsize=20, weight='bold')
-    fig.text(.10, .765, f"Background: {100 - fg_percent:.3f}%", color=BACKGROUND, fontsize=15, weight='bold')
-    fig.text(.57, .765, f"Annotated foreground: {fg_percent:.3f}%", fontsize=15, weight='bold')
-    ax = fig.add_axes([.10, .655, .81, .08])
-    ax.barh(0, 100 - fg_percent, color=BACKGROUND, height=.65)
-    ax.barh(0, fg_percent, left=100 - fg_percent, color='#202020', height=.65)
-    ax.set(xlim=(0, 100), yticks=[], xlabel="Share of all scan voxels (%)")
-    ax.spines['left'].set_visible(False)
-    ax.tick_params(length=0)
-    fig.text(.10, .535, f"{foreground:,} annotated foreground voxels", fontsize=22, weight='bold')
-    ax = fig.add_axes([.23, .205, .68, .285])
+    fig = plt.figure(figsize=(10, 6.4))
+    top, ax = fig.subplots(2, 1, gridspec_kw=dict(height_ratios=[1, 3.4], hspace=.9))
+    top.barh(0, 100 - fg_percent, color=BACKGROUND, height=.65)
+    top.barh(0, fg_percent, left=100 - fg_percent, color=INK, height=.65)
+    top.set(xlim=(0, 100), yticks=[], xlabel="Share of all scan voxels (%)")
+    top.set_title(f"{total:,} scan voxels: {100 - fg_percent:.3f}% background, {fg_percent:.3f}% annotated foreground",
+                  loc='left', fontsize=12, fontweight='bold')
+    clean_axis(top, None)
+    top.spines['left'].set_visible(False)
     positions = range(len(NAMES) - 1, -1, -1)
     for k, y in zip(NAMES, positions):
         fraction = 100 * rows[k]['voxel_count'] / foreground
         ax.barh(y, fraction, color=COLORS[k], height=.58)
-        ax.text(fraction + 1.7, y, f"{fraction:.2f}%\n{rows[k]['voxel_count']:,} voxels",
-                va='center', fontsize=14, weight='bold', linespacing=1.3)
-    ax.set(xlim=(0, 108), ylim=(-.55, len(NAMES) - 1 + .55), yticks=list(positions),
+        ax.text(fraction + 1.5, y, f"{fraction:.2f}%  ({rows[k]['voxel_count']:,} voxels)",
+                va='center', fontsize=11, fontweight='bold')
+    ax.set(xlim=(0, 118), ylim=(-.55, len(NAMES) - 1 + .55), yticks=list(positions),
            yticklabels=list(NAMES.values()), xlabel="Share of annotated foreground voxels (%)",
-           ylabel="Annotated organ", xticks=[0, 25, 50, 75, 100])
+           xticks=[0, 25, 50, 75, 100])
+    ax.set_title(f"{foreground:,} annotated foreground voxels", loc='left', fontsize=12, fontweight='bold')
+    clean_axis(ax, 'x')
     ax.spines['left'].set_visible(False)
-    ax.tick_params(length=0, pad=9)
+    decorate(fig, "Class distribution: background and annotated organs",
+        f"Original NIfTI ground truth  |  {cohort(inventory)}  |  Counts pooled across scans",
+        "Background means label 0, including unannotated anatomy. "
+        "The two panels use different denominators; counts are original voxels, not physical-volume totals.")
     save(fig, output, 'class_distribution.png', plt)
 
 
 def shape_scatter(output, shapes, inventory):
     """One physical size/extent/location view; each point is a patient–organ pair."""
-    plt = pyplot(output)
-    fig = frame(plt, "3D Shape Descriptor Space of Annotated SegTHOR Structures",
-        f"Original NIfTI ground truth  |  {cohort(inventory)}  |  One point = one patient × organ",
-        "SI = superior–inferior. Normalized centroid: 0 = inferior scan limit; 1 = superior scan limit.\n"
-        "Location is relative to each scan, not anatomical registration. Apparent separation is descriptive, not a clustering result.")
-    ax = fig.add_axes([.04, .20, .88, .65], projection='3d')
+    plt = pyplot()
+    fig = plt.figure(figsize=(10, 7.4))
+    ax = fig.add_subplot(111, projection='3d')
     for k in NAMES:
         rs = [r for r in shapes if r['class_id'] == k and r['voxel_count']]
         ax.scatter([r['volume_ml'] for r in rs], [r['si_extent_mm'] for r in rs],
-                   [r['normalized_si_centroid'] for r in rs], color=COLORS[k], s=65,
+                   [r['normalized_si_centroid'] for r in rs], color=COLORS[k], s=50,
                    edgecolors='white', linewidths=.6, alpha=.9, depthshade=False,
                    label=f"{NAMES[k]} ({len(rs)} points)")
     largest = max(shapes, key=lambda r: r['volume_ml'])
     ax.text(largest['volume_ml'], largest['si_extent_mm'], largest['normalized_si_centroid'] + .055,
-            f"{largest['patient_id']}\nlargest volume", fontsize=11, weight='bold')
+            f"{largest['patient_id']}\nlargest volume", fontsize=9, weight='bold')
     ax.set_xlabel("Organ volume (mL)", labelpad=16)
-    ax.set_ylabel("Superior–inferior extent (mm)", labelpad=16)
+    ax.set_ylabel("SI extent (mm)", labelpad=10)
     ax.set_zlabel("Normalized SI centroid (0–1)", labelpad=14)
     ax.set_zlim(0, 1)
     ax.set_xlim(left=0)
     ax.set_ylim(bottom=0)
-    ax.set_box_aspect((1.4, 1, 1), zoom=1.0)
+    ax.set_box_aspect((1.4, 1, 1), zoom=1.2)
     ax.view_init(elev=23, azim=-57)
     for axis in (ax.xaxis, ax.yaxis, ax.zaxis):
         axis.pane.fill = False
         axis.pane.set_edgecolor('#eeeeee')
         axis._axinfo['grid']['color'] = (.88, .88, .88, .45)
         axis._axinfo['grid']['linewidth'] = .6
-    ax.tick_params(labelsize=11, pad=2)
-    fig.legend(*ax.get_legend_handles_labels(), loc='upper right', bbox_to_anchor=(.955, .84),
-               fontsize=12, labelspacing=.8)
+    ax.tick_params(labelsize=10, pad=2)
+    ax.legend(loc='upper left', bbox_to_anchor=(.0, .92))
+    decorate(fig, "3D Shape Descriptor Space of Annotated SegTHOR Structures",
+        f"Original NIfTI ground truth  |  {cohort(inventory)}  |  One point = one patient × organ",
+        "SI = superior–inferior. Normalized centroid: 0 = inferior scan limit; 1 = superior scan limit. "
+        "Location is relative to each scan, not anatomical registration. Apparent separation is descriptive, not a clustering result.")
     save(fig, output, 'shape_descriptors_3d.png', plt)
 
 
 def shape_summary(output, shapes, inventory):
     """Three coordinated distributions make the 3D view quantitatively readable."""
-    plt = pyplot(output)
+    plt = pyplot()
     from matplotlib.ticker import ScalarFormatter, NullFormatter
-    fig = frame(plt, "Size, longitudinal extent and scan location differ by organ",
-        f"Original NIfTI ground truth  |  {cohort(inventory)}  |  Each dot is one patient",
-        "Boxes: median and middle 50% of patients; whiskers: 1.5 × interquartile range. All patient points are shown.\n"
-        "Volume uses a log scale. Normalized centroid runs from inferior (0) to superior (1) within each scan.")
+    fig = plt.figure(figsize=(13, 5.8))
     fields = [('volume_ml', 'Physical organ volume (mL)', 'Volume'),
               ('si_extent_mm', 'Superior–inferior extent (mm)', 'Extent'),
               ('normalized_si_centroid', 'Normalized SI centroid (0–1)', 'Location')]
@@ -200,13 +196,14 @@ def shape_summary(output, shapes, inventory):
             rs = sorted([r for r in shapes if r['class_id'] == k and r['voxel_count']], key=lambda r:r['patient_id'])
             values = [r[field] for r in rs]
             box = ax.boxplot([values], positions=[k], widths=.5, showfliers=False, patch_artist=True,
-                             medianprops={'color': COLORS[k], 'linewidth': 2.8},
+                             medianprops={'color': COLORS[k], 'linewidth': 2.2},
                              whiskerprops={'color':'#777777'}, capprops={'color':'#777777'})
             box['boxes'][0].set(facecolor=COLORS[k], alpha=.15, edgecolor=COLORS[k])
             ax.scatter(k + np.linspace(-.16, .16, len(rs)), values, color=COLORS[k],
-                       s=30, alpha=.8, edgecolors='white', linewidths=.4, zorder=3)
+                       s=24, alpha=.85, edgecolors='white', linewidths=.4, zorder=3)
         ax.set_xticks(list(NAMES), list(NAMES.values()), rotation=20, ha='right')
-        ax.set(title=title, xlabel='Annotated organ', ylabel=label)
+        ax.set_title(title, fontweight='bold')
+        ax.set(xlabel='Annotated organ', ylabel=label)
         if field == 'volume_ml':
             ax.set_yscale('log')
             ax.set_yticks([20, 50, 100, 200, 500, 1000, 2000])
@@ -217,78 +214,83 @@ def shape_summary(output, shapes, inventory):
         else:
             ax.set_ylim(bottom=0)
         clean_axis(ax)
+    decorate(fig, "Size, longitudinal extent and scan location differ by organ",
+        f"Original NIfTI ground truth  |  {cohort(inventory)}  |  Each dot is one patient",
+        "Boxes: median and middle 50% of patients; whiskers: 1.5 × interquartile range. All patient points are shown. "
+        "Volume uses a log scale. Normalized centroid runs from inferior (0) to superior (1) within each scan.")
     save(fig, output, 'shape_descriptors_summary.png', plt)
 
 
 def area_through_scan(output, trends, inventory):
     """Patient-weighted processed areas: zero slices included, one explicit percent unit."""
-    plt = pyplot(output)
-    fig = frame(plt, "The 2D model sees different target sizes along the scan",
-        f"Processed 256 × 256 ground-truth masks  |  {cohort(inventory)}  |  Empty slices included",
-        "Within each of 10 scan-position bins, average slices per patient, then take the median across patients.\n"
-        "Shading: middle 50% of patient means, not confidence intervals. Scan position does not align anatomy between patients.")
+    plt = pyplot()
+    fig = plt.figure(figsize=(14, 5))
     axes = fig.subplots(1, len(NAMES), sharex=True)
     for ax, k in zip(axes, NAMES):
         rs = [r for r in trends if r['split'] == 'all' and r['class_id'] == k]
         x = [r['z_midpoint'] for r in rs]
-        ax.plot(x, [100*r['median'] for r in rs], 'o-', color=COLORS[k], markersize=5)
+        ax.plot(x, [100*r['median'] for r in rs], 'o-', color=COLORS[k], markersize=4.5, linewidth=2)
         ax.fill_between(x, [100*r['p25'] for r in rs], [100*r['p75'] for r in rs], color=COLORS[k], alpha=.18)
-        ax.set(title=NAMES[k], xlim=(0,1), ylim=(0, None),
+        ax.set_title(NAMES[k], fontweight='bold')
+        ax.set(xlim=(0,1), ylim=(0, None),
                xlabel='Normalized scan position (0–1)', ylabel='Target area (% of slice)')
         ax.set_xticks([0,.25,.5,.75,1], ['0','.25','.50','.75','1'])
         clean_axis(ax)
-    fig.text(.50, .135, "0 = first / inferior slice     →     1 = last / superior slice     •     Vertical scales differ by organ",
-             ha='center', fontsize=12, weight='bold')
+    decorate(fig, "The 2D model sees different target sizes along the scan",
+        f"Processed 256 × 256 ground-truth masks  |  {cohort(inventory)}  |  Empty slices included",
+        "Within each of 10 scan-position bins, average slices per patient, then take the median across patients. "
+        "Shading: middle 50% of patient means, not confidence intervals. Scan position does not align anatomy between patients. "
+        "0 = first / inferior slice, 1 = last / superior slice; vertical scales differ by organ.")
     save(fig, output, 'target_area_through_scan.png', plt)
 
 
 def baseline_dice(output, patients):
     """All five patient scores and equal-patient class means on the original 3D grid."""
-    plt = pyplot(output)
+    plt = pyplot()
     n = len({r['patient_id'] for r in patients})
-    fig = frame(plt, "Baseline volumetric segmentation performance by organ",
-        f"Original ENet baseline  |  {n} validation patients  |  Reconstructed predictions vs original NIfTI ground truth",
-        "Each labeled dot is one patient; the thick horizontal mark is the equal-patient mean for that organ.\n"
-        "Dice = 2 × overlap / (ground-truth + predicted volume). These are full-volume scores, not averages of slice Dice.")
+    fig = plt.figure(figsize=(10, 6.4))
     ax = fig.add_subplot(111)
     for k in NAMES:
         rs = sorted([r for r in patients if r['class_id'] == k], key=lambda r:r['patient_id'])
         vals = np.array([r['dice_3d'] for r in rs], float)
         if not np.isfinite(vals).any():  # organ absent from this dataset's GT (aorta in the original release)
+            ax.text(k, .5, "no ground truth", ha='center', va='center', fontsize=11, color=MUTED)
             continue
         if not np.isfinite(vals).all():
             raise ValueError('The primary baseline figure requires defined 3D Dice for every patient-organ pair')
-        offsets = np.linspace(-.25,.25,len(rs))
+        offsets = np.linspace(-.3,.3,len(rs))
         for r, x in zip(rs, k+offsets):
-            ax.scatter(x, r['dice_3d'], s=90, color=COLORS[k], edgecolor='white', linewidth=1, zorder=4)
+            ax.scatter(x, r['dice_3d'], s=60, color=COLORS[k], edgecolor='white', linewidth=1, zorder=4)
             ax.annotate(r['patient_id'].replace('Patient_', 'P'), (x,r['dice_3d']),
                         xytext=(0, -16 if 0 < vals.mean() - r['dice_3d'] < .08 else 9),
-                        textcoords='offset points', ha='center', fontsize=11, weight='bold')
+                        textcoords='offset points', ha='center', fontsize=9, weight='bold')
         mean = vals.mean()
-        ax.hlines(mean,k-.36,k+.36,color=COLORS[k],linewidth=4,zorder=3)
-        ax.text(k,1.035,f"Mean {mean:.3f}",color=COLORS[k],ha='center',fontsize=17,weight='bold')
+        ax.hlines(mean,k-.36,k+.36,color=COLORS[k],linewidth=3,zorder=3)
+        ax.text(k,1.035,f"Mean {mean:.3f}",color=COLORS[k],ha='center',fontsize=13,weight='bold')
     ax.set(xlim=(min(NAMES)-.55,max(NAMES)+.55),ylim=(-.04,1.12),ylabel='Patient-level 3D Dice (0–1)',xlabel='Annotated organ')
     ax.set_xticks(list(NAMES), list(NAMES.values()))
     ax.set_yticks(np.arange(0,1.01,.2))
     clean_axis(ax)
+    decorate(fig, "Baseline volumetric segmentation performance by organ",
+        f"Original ENet baseline  |  {n} validation patients  |  Reconstructed predictions vs original NIfTI ground truth",
+        "Each labeled dot is one patient; the thick horizontal mark is the equal-patient mean for that organ. "
+        "Dice = 2 × overlap / (ground-truth + predicted volume). These are full-volume scores, not averages of slice Dice.")
     save(fig, output, 'baseline_3d_dice_by_class.png', plt)
 
 
 def no_ground_truth(ax, k):
     """Placeholder panel for an organ absent from this dataset's GT (aorta in the original release)."""
-    ax.set(title=NAMES[k], xticks=[], yticks=[])
-    ax.text(.5, .5, "No ground truth", transform=ax.transAxes, ha='center', va='center', fontsize=14, color='#666666')
+    ax.set_title(NAMES[k], fontweight='bold')
+    ax.set(xticks=[], yticks=[])
+    ax.text(.5, .5, "No ground truth", transform=ax.transAxes, ha='center', va='center', fontsize=11, color=MUTED)
 
 
 def baseline_size(output, bins, patients):
     """Class-specific area quintiles; patient mean/IQR, no raw-slice pseudo-replication."""
-    plt = pyplot(output)
+    plt = pyplot()
     from matplotlib.ticker import NullFormatter
     n = len({r['patient_id'] for r in patients})
-    fig = frame(plt, "Baseline Dice and target size, per organ",
-        f"Original ENet baseline  |  {n} validation patients  |  Processed 256 × 256 slices with the organ present in ground truth",
-        "Five area-quantile bins per organ. Average Dice within each patient/bin, then average those patient means equally.\n"
-        "Shading: middle 50% of patient means. n = contributing patients; composition differs by bin. Association is not causation.")
+    fig = plt.figure(figsize=(14, 5.6))
     axes = fig.subplots(1,len(NAMES),sharey=True)
     for ax,k in zip(axes,NAMES):
         rs = [r for r in bins if r['class_id']==k and r['bin_type']=='area_quantile']
@@ -296,32 +298,32 @@ def baseline_size(output, bins, patients):
             no_ground_truth(ax, k)
             continue
         x = [r['median_gt_area'] for r in rs]
-        ax.plot(x,[r['patient_mean_dice_mean'] for r in rs], 'o-', color=COLORS[k], markersize=7)
+        ax.plot(x,[r['patient_mean_dice_mean'] for r in rs], 'o-', color=COLORS[k], markersize=5.5, linewidth=2)
         ax.fill_between(x,[r['patient_mean_dice_p25'] for r in rs],
                         [r['patient_mean_dice_p75'] for r in rs],color=COLORS[k],alpha=.18)
         for xx,r in zip(x,rs):
             ax.annotate(f"n={r['num_patients']}",(xx,r['patient_mean_dice_mean']),
-                        xytext=(0,11),textcoords='offset points',ha='center',fontsize=10)
-        ax.set(xscale='log',title=NAMES[k],ylim=(-.03,1.13),
-               xlabel='')
-        ax.set_xticks(x,[f'{v:,.0f}' for v in x],rotation=40,ha='right')
+                        xytext=(0,9),textcoords='offset points',ha='center',fontsize=8.5,color=MUTED)
+        ax.set_title(NAMES[k], fontweight='bold')
+        ax.set(xscale='log',ylim=(-.03,1.13),xlabel='Target area (px, log scale)')
+        ax.set_xticks(x,[f'{v:,.0f}' for v in x],rotation=40,ha='right',fontsize=10)
         ax.xaxis.set_minor_formatter(NullFormatter())
         clean_axis(ax)
     axes[0].set_ylabel('Mean GT-positive slice Dice (0–1)')
     axes[0].set_yticks(np.arange(0,1.01,.2))
-    fig.text(.50,.155,'Ground-truth area in processed 256 × 256 slice (pixels; logarithmic scale)',ha='center',fontsize=14,weight='bold')
-    fig.text(.50,.115,'Horizontal coordinate = median target area within each bin; area ranges differ by organ.',ha='center',fontsize=11)
+    decorate(fig, "Baseline Dice and target size, per organ",
+        f"Original ENet baseline  |  {n} validation patients  |  Processed 256 × 256 slices with the organ present in ground truth",
+        "Five area-quantile bins per organ. Average Dice within each patient/bin, then average those patient means equally. "
+        "Shading: middle 50% of patient means. n = contributing patients; composition differs by bin. Association is not causation. "
+        "Horizontal coordinate = median ground-truth area (pixels) within each bin; area ranges differ by organ.")
     save(fig,output,'baseline_dice_vs_target_size.png',plt)
 
 
 def baseline_position(output,bins,patients):
     """Beginning/middle/end with clear labels and equal patient weights."""
-    plt=pyplot(output)
+    plt = pyplot()
     n=len({r['patient_id'] for r in patients})
-    fig=frame(plt,'Baseline Dice across the annotated organ extent',
-        f'Original ENet baseline  |  {n} validation patients  |  Processed slices with the organ present in ground truth',
-        'Position runs from the first to last organ-positive slice in each patient. Average slices per patient/region, then patients equally.\n'
-        'Shading: middle 50% of patient means. Size and position vary together; these descriptive differences are not causal effects.')
+    fig = plt.figure(figsize=(14, 5.6))
     axes=fig.subplots(1,len(NAMES),sharey=True)
     for ax,k in zip(axes,NAMES):
         rs=[r for r in bins if r['class_id']==k and r['bin_type']=='organ_z']
@@ -330,21 +332,24 @@ def baseline_position(output,bins,patients):
             continue
         x=[r['bin_id'] for r in rs]
         y=[r['patient_mean_dice_mean'] for r in rs]
-        ax.plot(x,y,'o-',color=COLORS[k],markersize=8)
+        ax.plot(x,y,'o-',color=COLORS[k],markersize=6,linewidth=2)
         ax.fill_between(x,[r['patient_mean_dice_p25'] for r in rs],
                         [r['patient_mean_dice_p75'] for r in rs],color=COLORS[k],alpha=.18)
         for xx,yy in zip(x,y):
             ax.annotate(f'{yy:.2f}',(xx,yy),xytext=(0,12),textcoords='offset points',
-                        ha='center',weight='bold',fontsize=14,color=COLORS[k])
-        ax.set(title=NAMES[k],ylim=(-.03,1.04),xlim=(-.2,2.2),
-               xlabel='')
+                        ha='center',weight='bold',fontsize=11,color=COLORS[k])
+        ax.set_title(NAMES[k], fontweight='bold')
+        ax.set(ylim=(-.03,1.04),xlim=(-.2,2.2),xlabel='Position in organ')
         ax.set_xticks([0,1,2],['Beginning\nFirst 20%','Middle\nMiddle 60%','End\nLast 20%'])
-        ax.tick_params(axis='x',labelsize=11)
+        ax.tick_params(axis='x',labelsize=10)
         clean_axis(ax)
     axes[0].set_ylabel('Mean GT-positive slice Dice (0–1)')
     axes[0].set_yticks(np.arange(0,1.01,.2))
-    fig.text(.50,.155,'Position within annotated organ extent',ha='center',fontsize=14,weight='bold')
-    fig.text(.50,.115,'Normalized organ position: [0, 0.2) beginning   •   [0.2, 0.8) middle   •   [0.8, 1] end',ha='center',fontsize=11)
+    decorate(fig, 'Baseline Dice across the annotated organ extent',
+        f'Original ENet baseline  |  {n} validation patients  |  Processed slices with the organ present in ground truth',
+        'Position runs from the first to last organ-positive slice in each patient. Average slices per patient/region, then patients equally. '
+        'Shading: middle 50% of patient means. Size and position vary together; these descriptive differences are not causal effects. '
+        'Normalized organ position: [0, 0.2) beginning, [0.2, 0.8) middle, [0.8, 1] end.')
     save(fig,output,'baseline_dice_by_organ_position.png',plt)
 
 

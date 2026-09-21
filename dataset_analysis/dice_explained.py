@@ -7,11 +7,9 @@ from matplotlib.colors import LinearSegmentedColormap, to_rgb
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 
-from style import COLORS, INK, NAMES, pyplot
-from utils import read_csv
+from utils import BACKGROUND, COLORS, INK, MUTED, NAMES, decorate, pyplot, read_csv, tint
 
-MUTED = "#494949"
-EMPTY, FALSE_POSITIVE = "#DCDCDC", "#3B3B3B"
+EMPTY, FALSE_POSITIVE = BACKGROUND, INK
 SMOOTH = 1e-8  # the course dice_coef smoothing: both empty -> 1.0
 
 
@@ -35,7 +33,7 @@ def patient_dice(g, p, i):
 
 
 def slice_strip(g, p, i, ramp):
-    """One colour per slice: light gray = empty in both, dark = false alarm, ramp = Dice where the organ is present."""
+    """One colour per slice: sand = empty in both, dark = false alarm, ramp = Dice where the organ is present."""
     row = np.zeros((1, len(g), 3))
     for n in range(len(g)):
         if g[n] == 0 and p[n] == 0:
@@ -59,65 +57,61 @@ def main():
     patients = sorted({p for p, _ in slices})
     k = args.organ
     n_slices = sum(len(slices[p, k][0]) for p in patients)
-    plt = pyplot(args.output.parent)
-    fig = plt.figure(figsize=(16, 9))
-    fig.text(.05, .965, "Same predictions, two Dice scores", fontsize=28, weight="bold", va="top")
-    fig.text(.05, .893, "45–78% of slices contain no organ. The legacy score counts them as perfect; the patient-level score does not.",
-             fontsize=16, weight="bold", va="top")
-    fig.text(.05, .848, f"{args.run_label}  |  {len(patients)} validation patients, {n_slices} slices per organ  |  scored slice by slice on the 256 × 256 grid",
-             fontsize=13, va="top", color=MUTED)
+    plt = pyplot()
+    fig = plt.figure(figsize=(13, 6.8))
+    ax, bx = fig.subplots(1, 2, gridspec_kw=dict(width_ratios=[1.3, 1]))
 
     # Left: one organ, every slice of every patient.
-    ax = fig.add_axes([.075, .30, .40, .42])
-    tint = np.array(to_rgb(COLORS[k])) * .12 + .88
-    ramp = LinearSegmentedColormap.from_list("organ", [tuple(tint), COLORS[k]])
+    ramp = LinearSegmentedColormap.from_list("organ", [tint(COLORS[k], .12), COLORS[k]])
     for row, patient in enumerate(patients):
         g, p, i = slices[patient, k]
         ax.imshow(slice_strip(g, p, i, ramp), extent=(0, 1, row + .4, row - .4), aspect="auto", interpolation="nearest")
         slice_avg = legacy_dice(g, p, i).mean()
-        ax.text(1.03, row, f"{slice_avg:.2f}", transform=ax.get_yaxis_transform(), va="center", fontsize=15, color=INK)
-        ax.text(1.24, row, f"{patient_dice(g, p, i):.2f}", transform=ax.get_yaxis_transform(), va="center",
-                fontsize=15, weight="bold", color=INK)
-    ax.text(1.03, -.85, "Slice\naverage", transform=ax.get_yaxis_transform(), va="bottom", fontsize=12, color=MUTED)
-    ax.text(1.24, -.85, "Patient\nDice", transform=ax.get_yaxis_transform(), va="bottom", fontsize=12, color=MUTED, weight="bold")
+        ax.text(1.04, row, f"{slice_avg:.2f}", transform=ax.get_yaxis_transform(), va="center", fontsize=12, color=INK)
+        ax.text(1.26, row, f"{patient_dice(g, p, i):.2f}", transform=ax.get_yaxis_transform(), va="center",
+                fontsize=12, weight="bold", color=INK)
+    ax.text(1.04, -.75, "Slice\naverage", transform=ax.get_yaxis_transform(), va="bottom", fontsize=10, color=MUTED)
+    ax.text(1.26, -.75, "Patient\nDice", transform=ax.get_yaxis_transform(), va="bottom", fontsize=10, color=MUTED, weight="bold")
     ax.set(xlim=(0, 1), ylim=(len(patients) - .5, -.5), yticks=range(len(patients)),
            yticklabels=[p.replace("Patient_", "P") for p in patients], xticks=[0, 1], xticklabels=["first slice", "last slice"])
-    ax.tick_params(length=0, pad=6, labelsize=14)
+    ax.grid(False)
+    ax.tick_params(length=0, pad=6)
     for side in ax.spines.values():
         side.set_visible(False)
-    ax.set_title(f"{NAMES[k]}: every slice of every patient", fontsize=17, weight="bold", loc="left", pad=40)
+    ax.set_title(f"{NAMES[k]}: every slice of every patient", fontsize=13, weight="bold", loc="left", pad=34)
+    ax.legend(handles=[Patch(facecolor=EMPTY, label="organ absent, none predicted: legacy scores 1.0"),
+                       Patch(facecolor=FALSE_POSITIVE, label="organ absent, but predicted: 0"),
+                       Patch(facecolor=COLORS[k], label="organ present: that slice's Dice (light = 0, dark = 1)")],
+              loc="upper left", bbox_to_anchor=(-.12, -.09), ncol=1, fontsize=10)
 
     # Right: all organs, both scores, plus the score of a model that predicts nothing.
-    bx = fig.add_axes([.665, .30, .31, .42])
     for c in sorted(NAMES):
         gs, ps, is_ = (np.concatenate(v) for v in zip(*(slices[p, c] for p in patients)))
         legacy = legacy_dice(gs, ps, is_).mean()
         patient = np.nanmean([patient_dice(*slices[p, c]) for p in patients])
         nothing = (gs == 0).mean()  # legacy score of an all-background prediction
-        bx.bar(c - .2, legacy, width=.36, facecolor="white", edgecolor=COLORS[c], linewidth=2.5)
+        bx.bar(c - .2, legacy, width=.36, facecolor="white", edgecolor=COLORS[c], linewidth=2)
         bx.bar(c + .2, patient, width=.36, color=COLORS[c])
-        bx.text(c - .2, legacy + .02, f"{legacy:.2f}", ha="center", fontsize=13, color=INK)
-        bx.text(c + .2, patient + .02, f"{patient:.2f}", ha="center", fontsize=13, weight="bold", color=INK)
-        bx.hlines(nothing, c - .40, c - .06, color=INK, linewidth=2.5, linestyles=(0, (3, 2)), zorder=4)
+        bx.text(c - .2, legacy + .02, f"{legacy:.2f}", ha="center", fontsize=10, color=INK)
+        bx.text(c + .2, patient + .02, f"{patient:.2f}", ha="center", fontsize=10, weight="bold", color=INK)
+        bx.hlines(nothing, c - .40, c - .06, color=INK, linewidth=2, linestyles=(0, (3, 2)), zorder=4)
     bx.set(ylim=(0, 1.08), xlim=(.4, max(NAMES) + .6), yticks=np.arange(0, 1.01, .2), xticks=list(NAMES),
            xticklabels=list(NAMES.values()))
-    bx.grid(axis="y", color="#E7E7E7", linewidth=.7)
     bx.set_axisbelow(True)
-    bx.tick_params(length=0, pad=6, labelsize=13)
-    bx.spines["left"].set_visible(False)
-    bx.set_title("Same run, all organs", fontsize=17, weight="bold", loc="left", pad=40)
+    bx.tick_params(length=0, pad=6)
+    bx.set_title("Same run, all organs", fontsize=13, weight="bold", loc="left", pad=34)
+    bx.legend(handles=[Patch(facecolor="white", edgecolor=MUTED, linewidth=2, label="Legacy: average over all slices"),
+                       Patch(facecolor=MUTED, label="Patient-level: one Dice per patient, then average"),
+                       Line2D([], [], color=INK, linewidth=2, linestyle=(0, (3, 2)), label="Legacy score of a model that predicts nothing")],
+              loc="upper left", bbox_to_anchor=(-.05, -.09), ncol=1, fontsize=10)
 
-    fig.legend(handles=[Patch(facecolor=EMPTY, label="organ absent, none predicted: legacy scores 1.0"),
-                        Patch(facecolor=FALSE_POSITIVE, label="organ absent, but predicted: 0"),
-                        Patch(facecolor=COLORS[k], label="organ present: that slice's Dice (light = 0, dark = 1)")],
-               loc="upper left", bbox_to_anchor=(.07, .225), ncol=1, fontsize=12.5)
-    fig.legend(handles=[Patch(facecolor="white", edgecolor=MUTED, linewidth=2.5, label="Legacy: average over all slices"),
-                        Patch(facecolor=MUTED, label="Patient-level: one Dice per patient, then average"),
-                        Line2D([], [], color=INK, linewidth=2.5, linestyle=(0, (3, 2)), label="Legacy score of a model that predicts nothing")],
-               loc="upper left", bbox_to_anchor=(.60, .225), ncol=1, fontsize=12.5)
-    fig.text(.05, .045, "Legacy (course) metric: Dice of every slice, averaged over all slices, so empty slices count.\n"
-                        "Patient-level metric: per patient, add up overlap and volume over all slices, compute one Dice, then average the patients.",
-             fontsize=12, color=MUTED, va="bottom", linespacing=1.5)
+    decorate(fig, "Same predictions, two Dice scores",
+             "45–78% of slices contain no organ: the legacy score counts them as perfect, the patient-level score does not  |  "
+             f"{args.run_label}  |  {len(patients)} validation patients, {n_slices} slices per organ  |  scored slice by slice on the 256 × 256 grid",
+             "Legacy (course) metric: Dice of every slice, averaged over all slices, so empty slices count. "
+             "Patient-level metric: per patient, add up overlap and volume over all slices, compute one Dice, then average the patients.")
+    # The per-axes legends hang below the plots: make room for them above the footnote.
+    fig.subplots_adjust(bottom=fig.subplotpars.bottom + .045, wspace=.75)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(args.output)
     plt.close(fig)

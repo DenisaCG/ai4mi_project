@@ -6,11 +6,10 @@ import nibabel as nib
 from PIL import Image
 
 from utils import (CLASSES, discover, distribution, extent, load_original,
-                   load_png, normalized_z, parser, paths, provenance, write_csv)
+                   load_png, normalized_z, parser, paths, provenance, remove_superseded, write_csv)
 
 from shape import shape_descriptor
 from figures import dataset_figures, shape_examples
-from style import remove_superseded
 
 
 def original_stats(patient, split, nii, data):
