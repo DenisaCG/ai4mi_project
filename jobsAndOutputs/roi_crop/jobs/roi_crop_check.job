@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH --job-name=roi_crop_check
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=6
+#SBATCH --mem=48G
+#SBATCH --time=00:30:00
+#SBATCH --output=jobsAndOutputs/roi_crop/outputs/%x_%j.out
+
+# Feasibility check for an in-plane ROI crop + pad (candidate preprocessing step 3): compares image-only window-centre
+# rules and reports the fixed window T needed on the train patients, and what it retains on the val patients.
+# Read-only on the raw data; writes dataset_analysis/results/roi_crop_check/.
+# Dry run: sbatch --export=ALL,EXTRA="--limit 2 --out_dir dataset_analysis/results/roi_crop_check_dry" <this file>
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+python -B dataset_analysis/roi_crop_check.py --process "$SLURM_CPUS_PER_TASK" ${EXTRA:-}
+echo "[$(date -Is)] done"

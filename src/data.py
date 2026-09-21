@@ -38,7 +38,8 @@ def ensure_sliced(cfg: dict) -> None:
                     "--shape", *map(str, p["shape"]), "--retains", str(p["retains"]),
                     "--fold", str(p["fold"]), "--seed", str(p["seed"]),
                     "--gt_version", p["gt_version"]] + (["--resample", p["resample"]] if p.get("resample") else [])
-                   + (["--normalize", p["normalize"]] if p.get("normalize") else []),
+                   + (["--normalize", p["normalize"]] if p.get("normalize") else [])
+                   + (["--crop", p["crop"]] if p.get("crop") else []),
                    cwd=REPO, check=True)
     tmp.rename(root)
 

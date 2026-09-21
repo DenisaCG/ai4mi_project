@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH --job-name=roi_crop_oracle
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=00:20:00
+#SBATCH --output=jobsAndOutputs/roi_crop/outputs/%x_%j.out
+
+# Oracle check: stitch each dataset's val GT PNGs back onto the original grid like src/evaluate.py does and score them, i.e.
+# the 3D Dice a perfect model would get with that preprocessing. Verifies the crop paste-back on real val patients and
+# shows the ceiling each preprocessing allows. Needs the datasets of the four configs built. No model, no GPU.
+# Usage: sbatch jobsAndOutputs/roi_crop/jobs/roi_crop_oracle.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+python -B dataset_analysis/roi_crop_oracle.py
+echo "[$(date -Is)] done"

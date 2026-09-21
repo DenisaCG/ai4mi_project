@@ -1,0 +1,18 @@
+#!/bin/bash
+#SBATCH --job-name=test_roi_crop
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=00:20:00
+#SBATCH --output=jobsAndOutputs/roi_crop/outputs/%x_%j.out
+
+# ROI crop tests (synthetic 512x512x135 patients, no dataset needed) plus the suites for the steps it sits on
+# (normalization, resampling, config, stitch), so a regression of steps 1 and 2 shows up here.
+# Usage: sbatch jobsAndOutputs/roi_crop/jobs/test_roi_crop.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+python -m unittest tests.test_roi_crop tests.test_ct_norm tests.test_resample tests.test_config tests.test_stitch -v
