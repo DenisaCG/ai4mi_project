@@ -1,0 +1,19 @@
+# As segthor_enet_ce_corrected_ct_window.yaml, plus z-score (train foreground mean/std) applied in the loader.
+# Differs from ct_window only in that z-score, so the pair separates windowing from z-scoring.
+experiment: segthor_enet_ce_corrected_ct_window_zscore
+notes: ENet + CE, corrected labels, native spacing, HU window + load-time z-score
+
+data:
+  preprocess: {source_dir: data/segthor_part1_corrected, gt_version: corrected, retains: 5, fold: 0, seed: 0, normalize: ct_window_zscore}
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: cross_entropy
+  kwargs: {idk: [0, 1, 2, 3, 4]}
+
+eval:
+  classes: [1, 2, 3, 4]

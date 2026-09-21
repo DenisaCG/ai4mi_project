@@ -1,0 +1,19 @@
+# Median-spacing resampling, then the HU window (stats computed on the resampled foreground).
+# Differs from segthor_enet_ce_corrected_median_spacing.yaml only in `normalize`, and from ct_window.yaml only in `resample`.
+experiment: segthor_enet_ce_corrected_ct_window_median_spacing
+notes: ENet + CE, corrected labels, median-spacing resampling + HU window
+
+data:
+  preprocess: {source_dir: data/segthor_part1_corrected, gt_version: corrected, retains: 5, fold: 0, seed: 0, resample: median, normalize: ct_window}
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: cross_entropy
+  kwargs: {idk: [0, 1, 2, 3, 4]}
+
+eval:
+  classes: [1, 2, 3, 4]

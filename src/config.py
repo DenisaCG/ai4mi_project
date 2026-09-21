@@ -82,6 +82,8 @@ def resolve_preprocess(cfg: dict) -> None:
         raise ValueError("data.preprocess needs `source_dir`")
     if p.get("gt_version") not in ("original", "corrected"):
         raise ValueError("data.preprocess.gt_version must be 'original' or 'corrected'")
+    if p.get("normalize") not in (None, "ct_window", "ct_window_zscore"):
+        raise ValueError("data.preprocess.normalize must be 'ct_window' or 'ct_window_zscore'")
     p = cfg["data"]["preprocess"] = PREPROCESS_DEFAULTS | p
     cfg["data"]["root"] = f"data/sliced_{hashlib.sha256(json.dumps(p, sort_keys=True).encode()).hexdigest()[:8]}"
 

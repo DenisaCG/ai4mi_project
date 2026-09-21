@@ -6,6 +6,7 @@ Extension point — online augmentation: register a factory under kind "augment"
 Augmentations run on the train split only. Offline preprocessing (HU windowing, resampling, ...)
 belongs in the slicing step: write a new sliced dataset and point `data.root` at it.
 """
+import json
 import random
 import re
 import shutil
@@ -36,13 +37,19 @@ def ensure_sliced(cfg: dict) -> None:
     subprocess.run([sys.executable, "slice_segthor.py", "--source_dir", p["source_dir"], "--dest_dir", str(tmp),
                     "--shape", *map(str, p["shape"]), "--retains", str(p["retains"]),
                     "--fold", str(p["fold"]), "--seed", str(p["seed"]),
-                    "--gt_version", p["gt_version"]] + (["--resample", p["resample"]] if p.get("resample") else []),
+                    "--gt_version", p["gt_version"]] + (["--resample", p["resample"]] if p.get("resample") else [])
+                   + (["--normalize", p["normalize"]] if p.get("normalize") else []),
                    cwd=REPO, check=True)
     tmp.rename(root)
 
 
-def img_transform(img: Image.Image) -> torch.Tensor:
+def img_transform(img: Image.Image, zscore: dict | None = None) -> torch.Tensor:
     arr = np.array(img.convert("L"))[np.newaxis, ...] / 255  # (1, H, W) in [0, 1]
+    if zscore is not None:
+        # Branch taken for data.preprocess.normalize == ct_window_zscore: the PNG is the clipped HU window rescaled
+        # to 0..255 (slice_segthor.py), so de-quantize to HU and apply the train-set foreground mean/std. Applied
+        # here only, and only on this path: the PNGs never hold z-scores, so nothing is normalized twice.
+        arr = (zscore["lo"] + arr * (zscore["hi"] - zscore["lo"]) - zscore["mean"]) / zscore["std"]
     return torch.tensor(arr, dtype=torch.float32)
 
 
@@ -74,7 +81,10 @@ def seed_worker(worker_id: int) -> None:
 
 def build_dataset(cfg: dict, split: str) -> Dataset:
     d = cfg["data"]
-    dataset = SliceDataset(split, REPO / d["root"], img_transform=img_transform,
+    zscore = None
+    if (d["preprocess"] or {}).get("normalize") == "ct_window_zscore":
+        zscore = json.loads((REPO / d["root"] / "ct_norm_stats.json").read_text())  # same numbers for every split
+    dataset = SliceDataset(split, REPO / d["root"], img_transform=partial(img_transform, zscore=zscore),
                            gt_transform=partial(gt_transform, d["num_classes"], d["label_scale"]))
     if cfg["train"]["debug_samples"]:
         dataset.files = dataset.files[:cfg["train"]["debug_samples"]]

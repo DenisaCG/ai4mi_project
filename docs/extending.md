@@ -157,13 +157,13 @@ data:
   preprocess: {source_dir: data/segthor_part1_corrected, gt_version: corrected, shape: [256, 256], retains: 5, fold: 0, seed: 0}
 ```
 
-Configurable: slice shape, the patient split and `resample: median` (below); a new
+Configurable: slice shape, the patient split, `resample: median` and `normalize` (below); a new
 step needs a new argument in `slice_segthor.py` and a matching key here. Keep `retains`/`fold`/`seed`
 identical across variants so they share one train/val split.
 
 **Spacing normalisation** (`resample: median`): before slicing, every CT and GT volume is resampled to one
 target spacing: the per-axis median over the *training* patients (if max/min of the target is >= 3, the coarsest
-axis takes its 10th percentile instead, as in nnU-Net). The same target is used for train and val and is printed
+axis takes its 10th percentile instead). The same target is used for train and val and is printed
 in the build log. CT uses cubic interpolation (order 3), labels nearest neighbour (order 0), and nothing else changes
 (no crop, no HU clip, same min-max scaling; the log shows each patient's HU min/max before and after). The resampled
 volumes are also written to `data/sliced_<hash>/resampled/train/<patient>/` for geometry checks. Evaluation maps
@@ -173,6 +173,43 @@ Known limit: the 256x256 resize still makes mm/pixel depend on each scan's FOV (
 To test the effect use the pair `configs/segthor_enet_ce_corrected_control.yaml` /
 `..._median_spacing.yaml` (identical except `resample`). Build each dataset once on CPU, then train:
 `sbatch --export=ALL,CONFIG=<config> jobsAndOutputs/pipeline/jobs/build_dataset.job`.
+
+**CT intensity normalisation** (`normalize: ct_window` or `ct_window_zscore`): by default each volume is min-max
+scaled to 0..255 on its own, so the same HU gets a different grey value per patient and a bright outlier (bone,
+metal) squashes the soft tissue. With `normalize`, the slicing step instead:
+
+1. pools the HU of all foreground voxels (label > 0) of the *training* patients (after resampling, if `resample` is set),
+2. takes `lo`/`hi` = the 0.5th/99.5th percentile of that pool, and `mean`/`std` = mean/std of the pool clipped to `[lo, hi]`,
+3. clips every voxel of every patient (train and val) to `[lo, hi]` and rescales that window to 0..255.
+
+The four numbers are computed once, printed in the build log and saved to `data/sliced_<hash>/ct_norm_stats.json`
+(with the training patients and voxel count); train and val use the same ones. Labels are not touched: the GT PNGs
+are byte-identical to the un-normalised dataset. Order is load, resample, normalise, slice.
+
+Images are stored as uint8 PNGs, which cannot hold z-scored floats, so the window is what gets stored. The two values differ only at load time:
+
+| `normalize` | stored PNG | what the network gets |
+|---|---|---|
+| `ct_window` | HU window `[lo, hi]` -> 0..255 | grey level / 255, in [0, 1] |
+| `ct_window_zscore` | same PNGs | grey level de-quantised to HU, then `(HU - mean) / std` (`img_transform` in `src/data.py`) |
+
+Applying the z-score only in the loader means nothing is normalised twice. `normalize` is a key of `data.preprocess`,
+so it changes the `data/sliced_<hash>` directory and the run hash only for configs that set it.
+
+Configs (each differs from its neighbour in one key; the first is the control):
+
+| config | `resample` | `normalize` |
+|---|---|---|
+| `segthor_enet_ce_corrected_control.yaml` | - | - |
+| `segthor_enet_ce_corrected_ct_window.yaml` | - | `ct_window` |
+| `segthor_enet_ce_corrected_ct_window_zscore.yaml` | - | `ct_window_zscore` |
+| `segthor_enet_ce_corrected_median_spacing.yaml` | `median` | - |
+| `segthor_enet_ce_corrected_ct_window_median_spacing.yaml` | `median` | `ct_window` |
+
+Before training, `sbatch --export=ALL,CONFIG=<config> jobsAndOutputs/pipeline/jobs/ct_norm_report.job` builds the
+dataset and its un-normalised twin, prints the four numbers, checks the labels are byte-identical, and saves
+before/after intensity histograms to `dataset_analysis/results/ct_norm/`. Unit tests:
+`sbatch jobsAndOutputs/pipeline/jobs/test_ct_norm.job`.
 
 **When the final dataset arrives:** slice it the same way into e.g. `data/SEGTHOR_final`, then set
 in `configs/base.yaml` (so every experiment follows):

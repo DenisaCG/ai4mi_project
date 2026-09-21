@@ -1,0 +1,20 @@
+# CT intensity normalization: clip to the training-foreground 0.5-99.5 percentile HU window, rescale to 0..255 PNGs
+# (instead of per-volume min-max). Everything else is identical to segthor_enet_ce_corrected_control.yaml, so any
+# difference is due to `normalize`.
+experiment: segthor_enet_ce_corrected_ct_window
+notes: ENet + CE, corrected labels, native spacing, HU window (no z-score)
+
+data:
+  preprocess: {source_dir: data/segthor_part1_corrected, gt_version: corrected, retains: 5, fold: 0, seed: 0, normalize: ct_window}
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: cross_entropy
+  kwargs: {idk: [0, 1, 2, 3, 4]}
+
+eval:
+  classes: [1, 2, 3, 4]

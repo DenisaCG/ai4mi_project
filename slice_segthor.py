@@ -22,6 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import json
 import pickle
 import random
 import argparse
@@ -50,6 +51,21 @@ def norm_arr(img: np.ndarray) -> np.ndarray:
     assert res.max() == 255, res.max()
 
     return res.astype(np.uint8)
+
+
+def window_arr(img: np.ndarray, lo: float, hi: float) -> np.ndarray:
+    """Fixed HU window [lo, hi] -> [0, 255]. Unlike norm_arr the mapping is the same for every patient."""
+    lo, hi = np.float32(lo), np.float32(hi)
+    res = (np.clip(img.astype(np.float32), lo, hi) - lo) / (hi - lo) * 255
+    return np.rint(res).astype(np.uint8)
+
+
+def ct_norm_stats(foreground_hu: np.ndarray) -> dict[str, float]:
+    """CTNormalization stats of pooled foreground HU: clip window = 0.5th/99.5th percentile,
+    mean/std of the foreground after clipping to that window."""
+    lo, hi = np.percentile(foreground_hu, [0.5, 99.5])
+    clipped = np.clip(foreground_hu, lo, hi)
+    return {"lo": float(lo), "hi": float(hi), "mean": float(clipped.mean()), "std": float(clipped.std())}
 
 
 def sanity_ct(ct, x, y, z, dx, dy, dz) -> bool:
@@ -81,6 +97,11 @@ def sanity_gt(gt, ct) -> bool:
 
 # Labels every patient must contain, per SEGTHOR version (see --gt_version)
 EXPECTED_LABELS: dict[str, set[int]] = {"original": {0, 1, 2, 3}, "corrected": {0, 1, 2, 3, 4}}
+# --normalize modes. Images are stored as uint8 PNGs, so z-scored floats can't be saved: both modes store the
+# clipped [lo, hi] window rescaled to 0..255; `ct_window_zscore` also z-scores at load time (src/data.py).
+NORMALIZE_MODES = ("ct_window", "ct_window_zscore")
+NORM_STATS_FILE = "ct_norm_stats.json"
+EXPECTED_WINDOW = (-991, 248)  # nnU-Net p0.5/p99.5 seen on this data during EDA, used only as a sanity check
 
 
 resize_: Callable = partial(resize, mode="constant", preserve_range=True, anti_aliasing=False)
@@ -117,9 +138,22 @@ def resampled_affine(affine: np.ndarray, in_shape, out_shape) -> np.ndarray:
     return new
 
 
+def foreground_hu(id_: str, source_path: Path,
+                  target_spacing: tuple[float, float, float] | None = None) -> np.ndarray:
+    """HU of the voxels with label > 0 of one training patient, on the same (resampled) grid that gets sliced."""
+    id_path: Path = source_path / "train" / id_
+    ct_nib = nib.load(str(id_path / f"{id_}.nii.gz"))
+    ct, gt = np.asarray(ct_nib.dataobj), np.asarray(nib.load(str(id_path / "GT.nii.gz")).dataobj)
+    if target_spacing is not None:
+        spacing = ct_nib.header.get_zooms()[:3]
+        ct, gt = resample_image(ct, spacing, target_spacing), resample_label(gt, spacing, target_spacing)
+    return ct[gt > 0].astype(np.float32)
+
+
 def slice_patient(id_: str, dest_path: Path, source_path: Path, shape: tuple[int, int],
                   test_mode: bool = False, gt_version: str | None = None,
-                  target_spacing: tuple[float, float, float] | None = None) -> tuple[float, float, float]:
+                  target_spacing: tuple[float, float, float] | None = None,
+                  norm_stats: dict[str, float] | None = None) -> tuple[float, float, float]:
     id_path: Path = source_path / ("train" if not test_mode else "test") / id_
 
     ct_path: Path = (id_path / f"{id_}.nii.gz") if not test_mode else (source_path / "test" / f"{id_}.nii.gz")
@@ -160,7 +194,8 @@ def slice_patient(id_: str, dest_path: Path, source_path: Path, shape: tuple[int
             nib.save(nib.Nifti1Image(ct, new_affine), str(out_dir / f"{id_}.nii.gz"))
             nib.save(nib.Nifti1Image(gt, new_affine), str(out_dir / "GT.nii.gz"))
 
-    norm_ct: np.ndarray = norm_arr(ct)
+    # Intensity: per-volume min-max by default; with norm_stats the fixed train-set HU window (same for every patient)
+    norm_ct: np.ndarray = norm_arr(ct) if norm_stats is None else window_arr(ct, norm_stats["lo"], norm_stats["hi"])
 
     to_slice_ct = norm_ct
     to_slice_gt = gt
@@ -234,6 +269,20 @@ def main(args: argparse.Namespace):
         print(f"Resampling every volume to target spacing {np.round(target_spacing, 4).tolist()} mm "
               f"(median of {len(training_ids)} training patients)")
 
+    norm_stats: dict[str, float] | None = None
+    if args.normalize:  # stats from the training patients only (after resampling), reused unchanged for val/test
+        pooled = np.concatenate(Pool(args.process if args.process > 0 else None).starmap(
+            foreground_hu, [(i, src_path, target_spacing) for i in training_ids]))
+        norm_stats = ct_norm_stats(pooled)
+        print(f"CT normalization ({args.normalize}) from {pooled.size} foreground voxels of {len(training_ids)} "
+              f"training patients: " + ", ".join(f"{k}={v:.3f}" for k, v in norm_stats.items()))
+        if not (abs(norm_stats["lo"] - EXPECTED_WINDOW[0]) < 100 and abs(norm_stats["hi"] - EXPECTED_WINDOW[1]) < 100):
+            print(f"WARNING: lo/hi far from the expected ~{EXPECTED_WINDOW}, check the data version")
+        dest_path.mkdir(parents=True, exist_ok=True)
+        (dest_path / NORM_STATS_FILE).write_text(json.dumps(
+            norm_stats | {"percentiles": [0.5, 99.5], "normalize": args.normalize, "n_foreground_voxels": int(pooled.size),
+                          "train_patients": training_ids, "target_spacing": target_spacing}, indent=2))
+
     resolution_dict: dict[str, tuple[float, float, float]] = {}
 
     split_ids: list[str]
@@ -247,7 +296,8 @@ def main(args: argparse.Namespace):
                                  shape=tuple(args.shape),
                                  test_mode=mode == 'test',
                                  gt_version=args.gt_version,
-                                 target_spacing=target_spacing)
+                                 target_spacing=target_spacing,
+                                 norm_stats=norm_stats)
         resolutions: list[tuple[float, float, float]]
         iterator = tqdm_(split_ids)
         match args.process:
@@ -277,6 +327,9 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('--fold', type=int, default=0)
     parser.add_argument('--resample', choices=['median'], default=None,
                         help="resample every volume to the median training spacing before slicing (default: off)")
+    parser.add_argument('--normalize', choices=list(NORMALIZE_MODES), default=None,
+                        help="clip to the training foreground 0.5-99.5 percentile HU window and rescale to 0..255 "
+                             "instead of per-volume min-max (default: off); _zscore also z-scores at load time")
     parser.add_argument('--gt_version', choices=list(EXPECTED_LABELS), default=None,
                         help="SEGTHOR version of the GT; asserts every patient has exactly its labels (default: no check)")
     parser.add_argument('--process', '-p', type=int, default=1,
