@@ -1,7 +1,6 @@
 """Before/after comparison of the SEGTHOR label correction, from two finished analysis folders."""
 import argparse
 import json
-import re
 from pathlib import Path
 
 import numpy as np
@@ -187,10 +186,6 @@ def swarm_levels(values, gap):
     return levels
 
 
-def slug(label):
-    return re.sub(r"\W+", "_", label.lower()).strip("_")
-
-
 def glow_star(ax, x, y, color):
     """A star in the organ colour with a soft halo (a few large, faint discs behind it)."""
     for size, alpha in ((1000, .07), (640, .12), (380, .20)):
@@ -201,12 +196,11 @@ def glow_star(ax, x, y, color):
 def metrics_by_organ(plt, out, before_run, after_run, nnunet=None):
     """Dice, HD95 and ASSD for every organ: one dot per validation patient (after), diamond = mean before.
 
-    `nnunet` maps a legend label to a folder with eval/metrics_3d.csv; each gets a glowing star at its mean,
-    on its own vertical lane so variants with near-identical means do not sit on top of each other.
+    `nnunet` is an optional (label, folder with eval/metrics_3d.csv) pair, drawn as a glowing star at its mean.
+    The black bars and their numbers are always the corrected-label baseline run only.
     """
     before, after = run_metrics(before_run), run_metrics(after_run)
-    nnunet = {label: run_metrics(run) for label, run in (nnunet or {}).items()}
-    lanes = np.linspace(.38, -.38, len(nnunet)) if len(nnunet) > 1 else [0.]
+    nnunet_label, nnunet_scores = (nnunet[0], run_metrics(nnunet[1])) if nnunet else (None, None)
     ks = sorted(NAMES)
     n_patients = max(len(after[k]["dice"]) for k in ks)
     fig = plt.figure(figsize=(14, 8.2))
@@ -214,7 +208,7 @@ def metrics_by_organ(plt, out, before_run, after_run, nnunet=None):
     rows, dropped = [], 0
     for j, (metric, title, direction, fmt) in enumerate(METRICS):
         shown = ([finite(after[k][metric]) for k in ks] + [finite(before[k][metric]) for k in ks if before[k]["annotated"]]
-                 + [finite(n[k][metric]) for n in nnunet.values() for k in ks])
+                 + ([finite(nnunet_scores[k][metric]) for k in ks] if nnunet_scores else []))
         top = 1.0 if metric == "dice" else max([float(a.max()) for a in shown if len(a)] or [1.0])
         span = 1.09 * top
         axes[-1][j].set_xlim(-.04 * top, 1.05 * top)
@@ -239,22 +233,10 @@ def metrics_by_organ(plt, out, before_run, after_run, nnunet=None):
             if before_mean is not None:
                 ax.scatter(before_mean, 0, s=110, marker="D", facecolor="none", edgecolor=MUTED,
                            linewidth=2.2, zorder=5)
-                if i == 0 and j == 0:
-                    ax.annotate("before correction", (before_mean, 0), xytext=(12, 0), textcoords="offset points",
-                                ha="left", va="center", fontsize=10, color=MUTED)
-            nnunet_means = {}
-            for lane, (label, scores) in zip(lanes, nnunet.items()):
-                scored = finite(scores[k][metric])
-                if not len(scored):
-                    continue
-                nnunet_means[label] = float(scored.mean())
-                glow_star(ax, nnunet_means[label], lane, COLORS[k])
-                if i == 0 and j == 0:  # name the stars once, in the first panel, like the diamond
-                    left, right = axes[-1][j].get_xlim()
-                    above = lane >= 0
-                    ax.annotate(label, (nnunet_means[label], lane), xytext=(0, 17 if above else -17),
-                                textcoords="offset points", va="bottom" if above else "top", fontsize=10, color=MUTED,
-                                ha="right" if (nnunet_means[label] - left) / (right - left) > .7 else "center")
+            nnunet_mean = None
+            if nnunet_scores and len(finite(nnunet_scores[k][metric])):
+                nnunet_mean = float(finite(nnunet_scores[k][metric]).mean())
+                glow_star(ax, nnunet_mean, 0, COLORS[k])
             if j == 0 and not before[k]["annotated"]:
                 ax.text(.02, .08, f"no {NAMES[k].lower()} label before correction", transform=ax.transAxes,
                         ha="left", va="bottom", fontsize=10, color=MUTED)
@@ -267,28 +249,28 @@ def metrics_by_organ(plt, out, before_run, after_run, nnunet=None):
             if i % 2 == 0:
                 ax.set_facecolor(tint(BACKGROUND, .3))
             if j == 0:
-                ax.set_ylabel(NAMES[k], color=COLORS[k], fontsize=17, fontweight="bold",
+                ax.set_ylabel(NAMES[k], color=COLORS[k], fontsize=14, fontweight="bold",
                               rotation=0, ha="right", va="center", labelpad=16)
             if i == 0:
-                ax.set_title(title, fontsize=17, fontweight="bold", pad=26)
+                ax.set_title(title, fontsize=14, fontweight="bold", pad=20)
                 ax.text(.5, 1.03, direction, transform=ax.transAxes, ha="center", va="bottom",
                         fontsize=10.5, color=MUTED)
             rows.append({"class_id": k, "class_name": NAMES[k], "metric": metric,
                          "n_patients_after": len(values), "mean_after": mean,
                          "n_patients_before": len(before_values), "mean_before": before_mean,
-                         **{f"mean_{slug(label)}": nnunet_means.get(label) for label in nnunet}})
+                         "mean_nnunet": nnunet_mean})
     if dropped:
         print(f"Metrics figure: {dropped} undefined patient values (empty prediction) left out of dots and means")
     decorate(fig, "Baseline Results: All Metrics, All Organs",
         f"Each dot is one of the {n_patients} validation patients, the black bar is the mean, "
         "the hollow diamond is the mean before label correction"
-        + (", the glowing star is the nnU-Net mean." if nnunet else "."),
+        + (f", the glowing star is the {nnunet_label} mean." if nnunet else "."),
         f"After: {after_run.parent.name}/{after_run.name} (corrected labels). Before: {before_run.parent.name}/{before_run.name} "
         "(original labels). 3D metrics on the original CT grid against original-grid ground truth. "
         "Patients with an undefined distance (empty prediction) are left out of that dot and mean. "
         "Esophagus is not like-for-like: its old ground truth also contained the aorta, which had no label before the correction."
-        + (" nnU-Net: 2D, 100 epochs, fold 0, corrected labels, same validation patients, scored with the same 3D metric code."
-           if nnunet else ""))
+        + (f" Star: {nnunet_label}, 100 epochs, fold 0, corrected labels, same validation patients, scored with the "
+           "same 3D metric code." if nnunet else ""))
     fig.savefig(out / "plots/before_after_metrics_by_organ.png")
     plt.close(fig)
     return rows
@@ -360,13 +342,16 @@ def main():
                    help="the one pipeline run shown per patient in the metrics figure, original labels (median run)")
     p.add_argument("--after-run", type=Path, required=True,
                    help="the one pipeline run shown per patient in the metrics figure, corrected labels (median run)")
-    p.add_argument("--nnunet", action="append", default=[], metavar="LABEL=DIR",
-                   help="optional, repeatable: add a glowing star for an nnU-Net variant; DIR is a folder with "
+    p.add_argument("--nnunet", metavar="LABEL=DIR",
+                   help="optional: add a glowing star for one nnU-Net variant; DIR is a folder with "
                         "eval/metrics_3d.csv (see score_nnunet.py), e.g. 'nnU-Net 2D (TTA)=dataset_analysis/results/nnunet/2d_tta'")
     args = p.parse_args()
-    nnunet = {label: Path(path) for label, _, path in (item.partition("=") for item in args.nnunet)}
-    if len(nnunet) != len(args.nnunet) or not all(nnunet.values()):
-        p.error("--nnunet must be LABEL=DIR, with a distinct label each")
+    nnunet = None
+    if args.nnunet:
+        label, _, path = args.nnunet.partition("=")
+        if not label or not path:
+            p.error("--nnunet must be LABEL=DIR")
+        nnunet = (label, Path(path))
     out = args.output_dir
     (out / "plots").mkdir(parents=True, exist_ok=True)
     (out / "tables").mkdir(exist_ok=True)
