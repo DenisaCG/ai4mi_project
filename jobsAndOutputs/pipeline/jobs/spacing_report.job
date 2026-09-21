@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH --job-name=spacing_report
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=00:30:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Native vs median-spacing volumes of a config: per-patient spacing/shape table, overview and example figures.
+# Reuses the datasets built by build_dataset.job (builds them on CPU if missing).
+# Usage: sbatch --export=ALL,CONFIG=configs/segthor_enet_ce_corrected_median_spacing.yaml \
+#               jobsAndOutputs/pipeline/jobs/spacing_report.job
+set -euo pipefail
+CONFIG="${CONFIG:?set CONFIG=configs/<experiment>.yaml via --export}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+python -B dataset_analysis/spacing_report.py --config "$CONFIG"
+echo "[$(date -Is)] done"
