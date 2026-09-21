@@ -1,0 +1,23 @@
+# Resolution experiment: segthor_enet_ce_corrected_control at 512x512 instead of 256x256 (no downsampling of the axial slices).
+# Everything is identical to segthor_enet_ce_corrected_control.yaml (same model, loss, optimizer, seed, fold, epochs,
+# batch size, native spacing, per-volume min-max intensity), so any difference is due to `shape`. All 20 volumes are
+# 512x512 in-plane, so 512 keeps the native grid. Compare against the 256x256 runs on the same validation patients:
+# metrics/segthor_enet_ce_repro_corrected_fixed (9 seeds), with metrics/segthor_enet_ce_corrected_control/seed0 as a
+# pipeline sanity check. Slices into its own data/sliced_<hash>; touches no other dataset.
+experiment: segthor_enet_ce_corrected_control_512
+notes: ENet + CE, corrected labels, native spacing, 512x512 slices (control for the 256x256 downsampling)
+
+data:
+  preprocess: {source_dir: data/segthor_part1_corrected, gt_version: corrected, shape: [512, 512], retains: 5, fold: 0, seed: 0}
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: cross_entropy
+  kwargs: {idk: [0, 1, 2, 3, 4]}
+
+eval:
+  classes: [1, 2, 3, 4]
