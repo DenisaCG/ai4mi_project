@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "started": "2026-09-21T01:29:27",
+  "config_hash": "fbfb0e199dee",
+  "smoke": false,
+  "user": "scur0049",
+  "host": "gcn6.local.snellius.surf.nl",
+  "slurm_job_id": "26964108",
+  "python": "3.11.16",
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "git_commit": "01eb944772ead96d143f559279e60e7cf1f345ac",
+  "git_branch": "standardized_pipeline",
+  "git_dirty": true,
+  "command": "/gpfs/home5/scur0049/ai4mi_project/src/train.py --config configs/segthor_enet_ce_corrected_control.yaml --set",
+  "finished": "2026-09-21T01:38:24"
+}
