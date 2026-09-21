@@ -1,0 +1,27 @@
+# Full preprocessing stack (median spacing, HU window + z-score, ROI crop/pad to T x T) with the CE (all classes) + soft Dice (foreground) loss.
+# Differs from ct_window_zscore_median_spacing_roi_crop.yaml only in `loss` (and W&B off), and from dice_ce_all_corrected.yaml only in `data.preprocess`.
+# The preprocessing dict is identical to the crop config's, so it reuses that dataset (same data/sliced_<hash>, no rebuild).
+experiment: segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop
+notes: ENet + CE (all classes) + soft Dice (foreground), corrected labels, median spacing + HU window + z-score + ROI crop/pad
+
+data:
+  preprocess: {source_dir: data/segthor_part1_corrected, gt_version: corrected, retains: 5, fold: 0, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled

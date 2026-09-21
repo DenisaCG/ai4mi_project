@@ -1,0 +1,14 @@
+# Full preprocessing stack + CE (all classes) + Dice (foreground). Stage 1 = lines 0-2 (seeds 0-2, the same seeds as the CE crop arm
+# metrics/segthor_enet_ce_corrected_ct_window_zscore_median_spacing_roi_crop). Stage 2 (optional) = lines 3-8, seeds 3-8, to reach 9 seeds like the baseline.
+# Arms to compare: baseline CE (9 seeds), dice_ce_all on native preprocessing (3), full stack + CE (3), and this run.
+# sbatch --time=00:30:00 --array=0-0 --export=ALL,SWEEP=sweeps/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop_seeds.txt jobsAndOutputs/pipeline/jobs/sweep.job
+# then --array=1-2 (stage 1) and, only if wanted, --array=3-8 (stage 2)
+configs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop.yaml seed=0
+configs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop.yaml seed=1
+configs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop.yaml seed=2
+configs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop.yaml seed=3
+configs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop.yaml seed=4
+configs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop.yaml seed=5
+configs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop.yaml seed=6
+configs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop.yaml seed=7
+configs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop.yaml seed=8

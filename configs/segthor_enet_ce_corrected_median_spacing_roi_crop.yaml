@@ -1,0 +1,21 @@
+# Median-spacing resampling + in-plane ROI crop/pad to a fixed T x T window, with the original per-volume min-max intensity
+# (no HU window, no z-score): the closest test of the crop "alone", since the crop needs the common resampled grid.
+# Differs from median_spacing.yaml only in `crop: roi`. Caveat: min-max now runs on the cropped window, so a bright
+# outlier outside the window no longer sets the scale; part of any difference may come from that.
+experiment: segthor_enet_ce_corrected_median_spacing_roi_crop
+notes: ENet + CE, corrected labels, median-spacing resampling + ROI crop/pad to a fixed window (min-max intensity)
+
+data:
+  preprocess: {source_dir: data/segthor_part1_corrected, gt_version: corrected, retains: 5, fold: 0, seed: 0, resample: median, crop: roi}
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: cross_entropy
+  kwargs: {idk: [0, 1, 2, 3, 4]}
+
+eval:
+  classes: [1, 2, 3, 4]
