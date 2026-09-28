@@ -8,13 +8,14 @@ Re-running the same command resumes an interrupted run, or exits if it already f
 """
 import argparse
 import csv
+import copy
 import traceback
 from pathlib import Path
 
 import torch
 
 from src.checkpoint import seed_everything
-from src.config import config_hash, load_config
+from src.config import REPO, config_hash, load_config, resolve_preprocess
 from src.data import ensure_sliced
 from src.engine import fit
 from src.plots import plot_curves
@@ -49,7 +50,26 @@ def main(argv: list[str] | None = None) -> None:
 
     overrides = list(args.set) + ([f"device={args.device}"] if args.device else [])
     cfg = load_config(args.config, overrides, smoke=args.smoke)
-    prepared = prepare_run_dir(cfg, force=args.force, smoke=args.smoke)
+    p = cfg["data"]["preprocess"]
+    # Saved per-fold configs already contain num_folds and must run only that fold.
+    if p and p["fold"] > 1 and p.get("num_folds") is None:
+        from src.splits import validate_split
+        num_folds = p["fold"]
+        patients = list((REPO / p["source_dir"] / "train").glob("Patient_*"))
+        validate_split(len(patients), p["retains"], 0, num_folds)
+        for fold in range(num_folds):
+            fold_cfg = copy.deepcopy(cfg)
+            fold_cfg["experiment"] = f"{cfg['experiment']}_fold{fold}"
+            fold_cfg["data"]["preprocess"].update(fold=fold, num_folds=num_folds)
+            resolve_preprocess(fold_cfg)
+            train_one(fold_cfg, force=args.force, smoke=args.smoke)
+    else:
+        train_one(cfg, force=args.force, smoke=args.smoke)
+
+
+def train_one(cfg: dict, force: bool = False, smoke: bool = False) -> None:
+    """Train or resume one split with its own model, optimizer and outputs."""
+    prepared = prepare_run_dir(cfg, force=force, smoke=smoke)
     if prepared is None:
         print(f"{cfg['experiment']} seed {cfg['seed']} already finished; use --force to re-run")
         return
@@ -63,7 +83,7 @@ def main(argv: list[str] | None = None) -> None:
                                    resumes=manifest.get("resumes", []) + [environment(device) | {"at": now()}])
     else:
         manifest = update_manifest(run_dir, status="running", started=now(), config_hash=config_hash(cfg),
-                                   smoke=args.smoke, **environment(device))
+                                   smoke=smoke, **environment(device))
     log.info("%s %s -> %s on %s", "resuming" if resume else "starting", cfg["experiment"], run_dir, device)
 
     wb = WandbLogger(cfg, run_dir, run_name=f"{cfg['experiment']}/seed{cfg['seed']}",

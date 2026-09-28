@@ -253,3 +253,23 @@ warning and continues with local files only. Nothing ever blocks on it. To uploa
   same values = same split); keep them identical across variants you want to compare.
 - `python -O` (used in the jobs) disables the course code's many `assert`s for speed; the pipeline
   does not rely on asserts.
+
+### Cross-validation
+
+In a config with `data.preprocess`, set `fold: 5` and `retains: 4` for five-fold
+cross-validation on 20 patients. Run the usual `python -m src.train --config ...`
+command. `retains * fold` must equal the patient count; invalid combinations fail
+before training. Folds have equal sizes and every patient is held out exactly once.
+The preprocessing seed stays fixed across folds.
+
+`fold: 0` and `fold: 1` preserve the existing single-holdout behavior. Values greater
+than one now request that many folds instead of selecting one split index. Each
+fold has a separate dataset cache and experiment name (`<experiment>_fold0`, etc.),
+with fresh model/optimizer state. Repeating the command skips completed runs and
+resumes interrupted runs; `--force` applies to every fold. Evaluation remains a
+separate `src.evaluate` command for each run.
+
+Generated configs record `num_folds` and use `fold` as the current index; rerunning
+one of those configs trains only that split. The standalone slicer likewise takes
+`--num_folds` plus a zero-based `--fold`, and checks `retains * num_folds` against
+the patient count.
