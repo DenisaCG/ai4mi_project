@@ -10,6 +10,8 @@ notes: ""                 # free text, copied to the manifest and W&B
 data:
   root: data/SEGTHOR      # sliced dataset: <root>/{train,val[,test]}/{img,gt}/*.png
                           # "switching preprocessing" = pointing this at a differently sliced copy
+  # fold: 0/1 = single holdout index; >1 = CV fold count. retains * fold must equal patient count.
+  # Generated per-fold configs store num_folds and use fold as the zero-based index.
   preprocess: null        # {source_dir, gt_version, shape, retains, fold, seed}: slice source_dir on first use into
                           # data/sliced_<hash> and use that as root (overrides root); null = use root as-is
   num_classes: 5

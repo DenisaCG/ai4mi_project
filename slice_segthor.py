@@ -39,6 +39,7 @@ from skimage.io import imsave
 from skimage.transform import resize
 
 from utils import map_, tqdm_
+from src.splits import validate_split
 
 
 def norm_arr(img: np.ndarray) -> np.ndarray:
@@ -326,11 +327,11 @@ def slice_patient(id_: str, dest_path: Path, source_path: Path, shape: tuple[int
     return dx, dy, dz
 
 
-def get_splits(src_path: Path, retains: int, fold: int) -> tuple[list[str], list[str], list[str]]:
+def get_splits(src_path: Path, retains: int, fold: int, num_folds: int | None = None) -> tuple[list[str], list[str], list[str]]:
     ids: list[str] = sorted(map_(lambda p: p.name, (src_path / 'train').glob('Patient_*')))
     print(f"Founds {len(ids)} in the id list")
     print(ids[:10])
-    assert len(ids) > retains
+    validate_split(len(ids), retains, fold, num_folds)
 
     random.shuffle(ids)  # Shuffle before to avoid any problem if the patients are sorted in any way
     validation_slice = slice(fold * retains, (fold + 1) * retains)
@@ -358,7 +359,7 @@ def main(args: argparse.Namespace):
     training_ids: list[str]
     validation_ids: list[str]
     test_ids: list[str]
-    training_ids, validation_ids, test_ids = get_splits(src_path, args.retains, args.fold)
+    training_ids, validation_ids, test_ids = get_splits(src_path, args.retains, args.fold, getattr(args, "num_folds", None))
 
     target_spacing: tuple[float, float, float] | None = None
     if args.resample == "median":  # training patients only, then the same target for train and val
@@ -447,7 +448,9 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('--shape', type=int, nargs="+", default=[256, 256])
     parser.add_argument('--retains', type=int, default=25, help="Number of retained patient for the validation data")
     parser.add_argument('--seed', type=int, default=0)
-    parser.add_argument('--fold', type=int, default=0)
+    parser.add_argument('--fold', type=int, default=0, help='Zero-based split index')
+    parser.add_argument('--num_folds', type=int, default=None,
+                        help='CV fold count; retains * num_folds must equal the patient count')
     parser.add_argument('--resample', choices=['median'], default=None,
                         help="resample every volume to the median training spacing before slicing (default: off)")
     parser.add_argument('--normalize', choices=list(NORMALIZE_MODES), default=None,

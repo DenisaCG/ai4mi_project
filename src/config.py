@@ -89,6 +89,15 @@ def resolve_preprocess(cfg: dict) -> None:
     if p.get("crop") and p.get("resample") != "median":
         raise ValueError("data.preprocess.crop needs resample: median (the window is a size in voxels of the common grid)")
     p = cfg["data"]["preprocess"] = PREPROCESS_DEFAULTS | p
+    if type(p["fold"]) is not int or p["fold"] < 0:
+        raise ValueError("data.preprocess.fold must be a non-negative integer")
+    if type(p["retains"]) is not int or p["retains"] < 1:
+        raise ValueError("data.preprocess.retains must be a positive integer")
+    if p.get("num_folds") is not None:
+        if type(p["num_folds"]) is not int or p["num_folds"] < 2:
+            raise ValueError("data.preprocess.num_folds must be an integer >= 2")
+        if p["fold"] >= p["num_folds"]:
+            raise ValueError("data.preprocess.fold index must be smaller than num_folds")
     cfg["data"]["root"] = f"data/sliced_{hashlib.sha256(json.dumps(p, sort_keys=True).encode()).hexdigest()[:8]}"
 
 
