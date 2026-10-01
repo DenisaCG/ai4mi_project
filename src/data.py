@@ -89,7 +89,7 @@ def build_dataset(cfg: dict, split: str) -> Dataset:
     dataset = SliceDataset(split, REPO / d["root"], img_transform=partial(img_transform, zscore=zscore),
                            gt_transform=partial(gt_transform, d["num_classes"], d["label_scale"]))
     if cfg["train"]["debug_samples"]:
-        dataset.files = dataset.files[:cfg["train"]["debug_samples"]]
+        dataset.files = random.Random(cfg["seed"]).sample(dataset.files, cfg["train"]["debug_samples"])
     if split == "train" and d["augment"]:
         dataset = Augmented(dataset, [build("augment", a["name"], **a.get("kwargs", {}))
                                       for a in d["augment"]])
