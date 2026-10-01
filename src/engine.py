@@ -18,6 +18,7 @@ from src.checkpoint import load_checkpoint, rng_state, save_checkpoint, set_rng_
 from src.data import build_loader
 from src.metrics import epoch_metrics, slice_counts
 from src.registry import build
+from src.class_weights import compute_class_weights
 from utils import tqdm_
 
 LOG = logging.getLogger("ai4mi")
@@ -100,8 +101,15 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
     scheduler = build("scheduler", cfg["scheduler"]["name"], optimizer=optimizer,
                       epochs=cfg["train"]["epochs"], **cfg["scheduler"]["kwargs"])
     loaders = {split: build_loader(cfg, split, device) for split in ("train", "val")}
+    loss_kwargs = dict(cfg["loss"]["kwargs"])
+    if cfg["loss"]["name"] == "weighted_ce":
+        loss_kwargs["weights"] = compute_class_weights(
+            loaders["train"].dataset,
+            num_classes=cfg["data"]["num_classes"],
+        )
+        LOG.info("Class weights: %s", loss_kwargs["weights"])
     loss_fn = build("loss", cfg["loss"]["name"], num_classes=cfg["data"]["num_classes"],
-                    **cfg["loss"]["kwargs"])
+                    **loss_kwargs)
     LOG.info("model %s: %.2fM parameters | train %d slices, val %d slices", cfg["model"]["name"],
              sum(p.numel() for p in net.parameters()) / 1e6,
              len(loaders["train"].dataset), len(loaders["val"].dataset))
