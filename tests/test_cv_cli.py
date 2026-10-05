@@ -61,6 +61,21 @@ class CliTests(unittest.TestCase):
             forced, [("cli_test_fold1", True, False)]
         )  # --force never touches the other folds
 
+    def test_a_failing_fold_stops_the_loop_but_not_a_separate_fold_run(self):
+        started = []
+
+        def flaky(cfg, **kwargs):
+            started.append(cfg["experiment"])
+            if cfg["experiment"].endswith("fold1"):
+                raise RuntimeError("fold 1 failed")
+
+        with mock.patch("src.train.train_one", side_effect=flaky):
+            with self.assertRaises(RuntimeError):
+                train_main(["--config", str(self.cv)])
+            self.assertEqual(started, ["cli_test_fold0", "cli_test_fold1"])
+            train_main(["--config", str(self.cv), "--fold", "2"])
+        self.assertEqual(started[-1], "cli_test_fold2")
+
     def test_train_smoke_runs_fold_zero_only(self):
         self.assertEqual(
             self.trained("--config", str(self.cv), "--smoke"),
