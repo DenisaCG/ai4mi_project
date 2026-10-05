@@ -3,21 +3,22 @@
     python -O -m src.train --config configs/segthor_enet_ce.yaml
     python -O -m src.train --config configs/segthor_enet_ce.yaml --set seed=1 optim.kwargs.lr=0.001
     python -m src.train --config configs/segthor_enet_ce.yaml --smoke     # 2 epochs, 16 slices
+    python -O -m src.train --config configs/full_cv4_enet_ce.yaml --fold 2   # one fold of a CV config
 
 Re-running the same command resumes an interrupted run, or exits if it already finished.
 """
 import argparse
 import csv
-import copy
 import traceback
 from pathlib import Path
 
 import torch
 
 from src.checkpoint import seed_everything
-from src.config import REPO, config_hash, load_config, resolve_preprocess
+from src.config import config_hash, load_config
 from src.data import ensure_sliced
 from src.engine import fit
+from src.folds import run_configs
 from src.plots import plot_curves
 from src.run import (copy_back, environment, now, prepare_run_dir, read_json, resolve_device,
                      setup_logging, update_manifest, write_json)
@@ -46,25 +47,14 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--smoke", action="store_true", help="tiny run to catch errors before using GPU time")
     parser.add_argument("--force", action="store_true", help="move an existing run aside and start over")
     parser.add_argument("--device", choices=("cuda", "cpu"), help="override the config's `device`")
+    parser.add_argument("--fold", type=int, help="run only this zero-based fold of a cross-validation config")
     args = parser.parse_args(argv)
 
     overrides = list(args.set) + ([f"device={args.device}"] if args.device else [])
     cfg = load_config(args.config, overrides, smoke=args.smoke)
-    p = cfg["data"]["preprocess"]
-    # Saved per-fold configs already contain num_folds and must run only that fold.
-    if p and p["fold"] > 1 and p.get("num_folds") is None:
-        from src.splits import validate_split
-        num_folds = p["fold"]
-        patients = list((REPO / p["source_dir"] / "train").glob("Patient_*"))
-        validate_split(len(patients), p["retains"], 0, num_folds)
-        for fold in range(num_folds):
-            fold_cfg = copy.deepcopy(cfg)
-            fold_cfg["experiment"] = f"{cfg['experiment']}_fold{fold}"
-            fold_cfg["data"]["preprocess"].update(fold=fold, num_folds=num_folds)
-            resolve_preprocess(fold_cfg)
-            train_one(fold_cfg, force=args.force, smoke=args.smoke)
-    else:
-        train_one(cfg, force=args.force, smoke=args.smoke)
+    # a cross-validation config (data.preprocess.fold > 1) runs its folds one after another, or only --fold
+    for run_cfg in run_configs(cfg, args.fold, args.smoke):
+        train_one(run_cfg, force=args.force, smoke=args.smoke)
 
 
 def train_one(cfg: dict, force: bool = False, smoke: bool = False) -> None:
