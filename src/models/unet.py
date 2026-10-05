@@ -3,6 +3,7 @@ upsampling, instance norm and leaky ReLU. Plain double-conv stages by default; `
 switches to the residual encoder."""
 
 import torch
+import torch.nn.functional as F
 from torch import nn
 
 from src.registry import register
@@ -78,6 +79,24 @@ def residual_stage(
     )
 
 
+class AttentionGate(nn.Module):
+    """Additive attention gate (Oktay et al. 2018, arXiv:1804.03999) on a skip connection.
+
+    The skip and the gating signal go through 1x1 convs, are added, passed through ReLU, a 1x1 conv to
+    one channel and a sigmoid; the result scales the skip per pixel. Here the gating signal is the
+    upsampled decoder feature, so both inputs already have the same height and width.
+    """
+
+    def __init__(self, skip_channels: int, gate_channels: int, inter_channels: int):
+        super().__init__()
+        self.w_x = nn.Conv2d(skip_channels, inter_channels, 1)
+        self.w_g = nn.Conv2d(gate_channels, inter_channels, 1)
+        self.psi = nn.Conv2d(inter_channels, 1, 1)
+
+    def forward(self, skip: torch.Tensor, gate: torch.Tensor) -> torch.Tensor:
+        return skip * torch.sigmoid(self.psi(F.relu(self.w_x(skip) + self.w_g(gate))))
+
+
 class UNet(nn.Module):
     """U-Net with `n_stages` stages; input height and width must be divisible by 2 ** (n_stages - 1).
 
@@ -89,6 +108,7 @@ class UNet(nn.Module):
         max_features: Upper bound on the feature maps of any stage.
         block: "plain" for two convs per stage in the encoder and the decoder, or "residual" for a stem
             conv, `RESIDUAL_BLOCKS` residual blocks per encoder stage and one conv per decoder stage.
+        attention: Whether to put an attention gate on every skip connection.
     """
 
     def __init__(
@@ -99,6 +119,7 @@ class UNet(nn.Module):
         base_features: int = 32,
         max_features: int = 512,
         block: str = "plain",
+        attention: bool = False,
     ):
         super().__init__()
         if block not in ("plain", "residual"):
@@ -137,6 +158,11 @@ class UNet(nn.Module):
         decoder_stage = double_conv if block == "plain" else conv_block
         self.decoder = nn.ModuleList(decoder_stage(2 * f, f) for f in skips)
         self.head = nn.Conv2d(self.features[0], num_classes, 1)
+        self.gates = (
+            nn.ModuleList(AttentionGate(f, f, f // 2) for f in skips)
+            if attention
+            else None
+        )
         for m in self.modules():
             if isinstance(m, (nn.Conv2d, nn.ConvTranspose2d)):
                 nn.init.kaiming_normal_(m.weight, a=0.01)
@@ -154,8 +180,11 @@ class UNet(nn.Module):
             x = stage(x)
             skips.append(x)
         skips.pop()  # the bottleneck output feeds the decoder directly
-        for up, stage in zip(reversed(self.upsample), reversed(self.decoder)):
-            x = stage(torch.cat([skips.pop(), up(x)], dim=1))
+        for i in reversed(range(len(self.decoder))):
+            up, skip = self.upsample[i](x), skips.pop()
+            if self.gates is not None:
+                skip = self.gates[i](skip, up)
+            x = self.decoder[i](torch.cat([skip, up], dim=1))
         return self.head(x)
 
 
@@ -167,6 +196,7 @@ def build_unet(
     base_features: int = 32,
     max_features: int = 512,
     block: str = "plain",
+    attention: bool = False,
 ) -> nn.Module:
     """Builds the U-Net; see `UNet`."""
     return UNet(
@@ -176,4 +206,5 @@ def build_unet(
         base_features=base_features,
         max_features=max_features,
         block=block,
+        attention=attention,
     )

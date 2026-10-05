@@ -5,7 +5,7 @@ import torch
 from torch import nn
 
 import src.models  # noqa: F401  registers models
-from src.models.unet import RESIDUAL_BLOCKS, ResidualBlock, UNet
+from src.models.unet import RESIDUAL_BLOCKS, AttentionGate, ResidualBlock, UNet
 from src.registry import build
 
 K = 5
@@ -130,6 +130,61 @@ class ResidualEncoderTests(unittest.TestCase):
 
     def test_pickle_roundtrip(self):
         net = residual_net(base_features=4).eval()
+        clone = pickle.loads(pickle.dumps(net)).eval()
+        x = torch.randn(1, 1, 64, 64)
+        with torch.no_grad():
+            self.assertTrue(torch.equal(net(x), clone(x)))
+
+
+class AttentionGateTests(unittest.TestCase):
+    def test_gate_scales_the_skip_by_a_sigmoid_coefficient(self):
+        gate = AttentionGate(4, 4, 2)
+        for p in gate.psi.parameters():
+            nn.init.zeros_(p)  # sigmoid(0) = 0.5 everywhere
+        skip = torch.randn(1, 4, 8, 8)
+        with torch.no_grad():
+            self.assertTrue(
+                torch.allclose(gate(skip, torch.randn(1, 4, 8, 8)), 0.5 * skip)
+            )
+
+    def test_gate_is_built_from_1x1_convs(self):
+        gate = AttentionGate(8, 8, 4)
+        for conv in (gate.w_x, gate.w_g, gate.psi):
+            self.assertEqual(conv.kernel_size, (1, 1))
+        self.assertEqual(
+            (gate.w_x.out_channels, gate.w_g.out_channels, gate.psi.out_channels),
+            (4, 4, 1),
+        )
+
+    def test_one_gate_per_skip_connection(self):
+        for block in ("plain", "residual"):
+            net = build(
+                "model",
+                "unet",
+                in_channels=1,
+                num_classes=K,
+                base_features=4,
+                block=block,
+                attention=True,
+            )
+            self.assertEqual(len(net.gates), len(net.features) - 1)
+            with torch.no_grad():
+                self.assertEqual(net(torch.randn(1, 1, 64, 64)).shape, (1, K, 64, 64))
+
+    def test_off_by_default(self):
+        net = build("model", "unet", in_channels=1, num_classes=K, base_features=4)
+        self.assertIsNone(net.gates)
+        self.assertFalse(any(isinstance(m, AttentionGate) for m in net.modules()))
+
+    def test_pickle_roundtrip(self):
+        net = build(
+            "model",
+            "unet",
+            in_channels=1,
+            num_classes=K,
+            base_features=4,
+            attention=True,
+        ).eval()
         clone = pickle.loads(pickle.dumps(net)).eval()
         x = torch.randn(1, 1, 64, 64)
         with torch.no_grad():
