@@ -109,6 +109,9 @@ class UNet(nn.Module):
         block: "plain" for two convs per stage in the encoder and the decoder, or "residual" for a stem
             conv, `RESIDUAL_BLOCKS` residual blocks per encoder stage and one conv per decoder stage.
         attention: Whether to put an attention gate on every skip connection.
+        deep_supervision: Whether, in train mode, to return the logits of every decoder stage as a list
+            (full resolution first, then half, a quarter, ...). Eval mode returns the full-resolution
+            logits only.
     """
 
     def __init__(
@@ -120,8 +123,13 @@ class UNet(nn.Module):
         max_features: int = 512,
         block: str = "plain",
         attention: bool = False,
+        deep_supervision: bool = False,
     ):
         super().__init__()
+        if deep_supervision and n_stages < 3:
+            raise ValueError(
+                f"deep supervision needs at least 3 stages, got n_stages={n_stages}"
+            )
         if block not in ("plain", "residual"):
             raise ValueError(f"block must be 'plain' or 'residual', got {block!r}")
         self.multiple = 2 ** (n_stages - 1)
@@ -158,6 +166,13 @@ class UNet(nn.Module):
         decoder_stage = double_conv if block == "plain" else conv_block
         self.decoder = nn.ModuleList(decoder_stage(2 * f, f) for f in skips)
         self.head = nn.Conv2d(self.features[0], num_classes, 1)
+        self.aux_heads = (
+            nn.ModuleList(
+                nn.Conv2d(f, num_classes, 1) for f in self.features[1 : n_stages - 1]
+            )
+            if deep_supervision
+            else None
+        )
         self.gates = (
             nn.ModuleList(AttentionGate(f, f, f // 2) for f in skips)
             if attention
@@ -168,8 +183,11 @@ class UNet(nn.Module):
                 nn.init.kaiming_normal_(m.weight, a=0.01)
                 nn.init.zeros_(m.bias)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Maps (B, in_channels, H, W) to logits (B, num_classes, H, W)."""
+    def forward(self, x: torch.Tensor) -> torch.Tensor | list[torch.Tensor]:
+        """Maps (B, in_channels, H, W) to logits (B, num_classes, H, W).
+
+        With deep supervision in train mode it returns a list of such logits at decreasing resolution.
+        """
         if x.shape[-2] % self.multiple or x.shape[-1] % self.multiple:
             raise ValueError(
                 f"input size {tuple(x.shape[-2:])} must be divisible by {self.multiple} "
@@ -180,12 +198,17 @@ class UNet(nn.Module):
             x = stage(x)
             skips.append(x)
         skips.pop()  # the bottleneck output feeds the decoder directly
+        features = []
         for i in reversed(range(len(self.decoder))):
             up, skip = self.upsample[i](x), skips.pop()
             if self.gates is not None:
                 skip = self.gates[i](skip, up)
             x = self.decoder[i](torch.cat([skip, up], dim=1))
-        return self.head(x)
+            features.append(x)
+        logits = self.head(x)
+        if self.aux_heads is None or not self.training:
+            return logits
+        return [logits] + [head(f) for head, f in zip(self.aux_heads, features[-2::-1])]
 
 
 @register("model", "unet")
@@ -197,6 +220,7 @@ def build_unet(
     max_features: int = 512,
     block: str = "plain",
     attention: bool = False,
+    deep_supervision: bool = False,
 ) -> nn.Module:
     """Builds the U-Net; see `UNet`."""
     return UNet(
@@ -207,4 +231,5 @@ def build_unet(
         max_features=max_features,
         block=block,
         attention=attention,
+        deep_supervision=deep_supervision,
     )

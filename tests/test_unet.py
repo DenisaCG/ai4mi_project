@@ -1,3 +1,4 @@
+import itertools
 import pickle
 import unittest
 
@@ -189,6 +190,109 @@ class AttentionGateTests(unittest.TestCase):
         x = torch.randn(1, 1, 64, 64)
         with torch.no_grad():
             self.assertTrue(torch.equal(net(x), clone(x)))
+
+
+class DeepSupervisionTests(unittest.TestCase):
+    def test_train_mode_returns_a_list_from_full_resolution_down(self):
+        net = build(
+            "model",
+            "unet",
+            in_channels=1,
+            num_classes=K,
+            base_features=4,
+            deep_supervision=True,
+        ).train()
+        with torch.no_grad():
+            out = net(torch.randn(2, 1, 64, 64))
+        self.assertIsInstance(out, list)
+        self.assertEqual([o.shape[-1] for o in out], [64, 32, 16, 8, 4])
+        self.assertTrue(all(o.shape[:2] == (2, K) for o in out))
+
+    def test_eval_mode_returns_full_resolution_logits_only(self):
+        net = build(
+            "model",
+            "unet",
+            in_channels=1,
+            num_classes=K,
+            base_features=4,
+            deep_supervision=True,
+        ).eval()
+        with torch.no_grad():
+            self.assertEqual(net(torch.randn(1, 1, 64, 64)).shape, (1, K, 64, 64))
+
+    def test_full_resolution_logits_do_not_depend_on_the_mode(self):
+        net = build(
+            "model",
+            "unet",
+            in_channels=1,
+            num_classes=K,
+            base_features=4,
+            deep_supervision=True,
+        )
+        x = torch.randn(1, 1, 64, 64)
+        with torch.no_grad():
+            train_logits = net.train()(x)[0]
+            eval_logits = net.eval()(x)
+        self.assertTrue(torch.allclose(train_logits, eval_logits, atol=1e-5))
+
+    def test_off_by_default_even_in_train_mode(self):
+        net = build(
+            "model", "unet", in_channels=1, num_classes=K, base_features=4
+        ).train()
+        self.assertIsNone(net.aux_heads)
+        self.assertIsInstance(net(torch.randn(2, 1, 64, 64)), torch.Tensor)
+
+    def test_needs_at_least_three_stages(self):
+        with self.assertRaisesRegex(ValueError, "at least 3 stages"):
+            build(
+                "model",
+                "unet",
+                in_channels=1,
+                num_classes=K,
+                n_stages=2,
+                deep_supervision=True,
+            )
+
+    def test_every_head_receives_gradient(self):
+        net = build(
+            "model",
+            "unet",
+            in_channels=1,
+            num_classes=K,
+            base_features=4,
+            deep_supervision=True,
+        ).train()
+        sum(o.mean() for o in net(torch.randn(2, 1, 64, 64))).backward()
+        for head in (net.head, *net.aux_heads):
+            self.assertIsNotNone(head.weight.grad)
+
+
+class OptionCombinationTests(unittest.TestCase):
+    def test_every_combination_builds_and_keeps_the_input_size(self):
+        for block, attention, deep_supervision in itertools.product(
+            ("plain", "residual"), (False, True), (False, True)
+        ):
+            with self.subTest(
+                block=block, attention=attention, deep_supervision=deep_supervision
+            ):
+                net = build(
+                    "model",
+                    "unet",
+                    in_channels=3,
+                    num_classes=K,
+                    base_features=4,
+                    block=block,
+                    attention=attention,
+                    deep_supervision=deep_supervision,
+                )
+                x = torch.randn(1, 3, 64, 64)
+                with torch.no_grad():
+                    self.assertEqual(net.eval()(x).shape, (1, K, 64, 64))
+                    out = net.train()(x)
+                self.assertEqual(
+                    out[0].shape if deep_supervision else out.shape, (1, K, 64, 64)
+                )
+                self.assertEqual(isinstance(out, list), deep_supervision)
 
 
 if __name__ == "__main__":
