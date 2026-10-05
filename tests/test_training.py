@@ -1,5 +1,6 @@
 """End-to-end checks on real data, CPU, a few slices. Needs data/SEGTHOR; run inside a Slurm job."""
 import csv
+import random
 import tempfile
 import unittest
 from argparse import Namespace
@@ -9,6 +10,7 @@ from unittest import mock
 import numpy as np
 import torch
 
+import src.data
 import src.engine
 from src import train
 from src.checkpoint import seed_everything
@@ -17,6 +19,16 @@ from src.run import read_json
 
 CFG = "configs/segthor_enet_ce.yaml"
 HAS_DATA = (REPO / "data" / "SEGTHOR" / "train").is_dir()
+
+
+class FirstN:
+    """Stands in for random.Random in src.data: the debug-sample draw keeps the first N slices, as main.py does."""
+
+    def __init__(self, seed: int):
+        pass
+
+    def sample(self, population, k: int):
+        return population[:k]
 
 
 def run_args(root: str, *extra: str) -> list[str]:
@@ -38,7 +50,10 @@ class TrainingTests(unittest.TestCase):
             seed_everything(0)
             legacy.runTraining(Namespace(epochs=2, dataset="SEGTHOR", mode="full", dest=Path(tmp) / "legacy",
                                          gpu=False, debug=True))
-            train.main(run_args(tmp, "train.epochs=2", "data.num_workers=5"))
+            # random.seed (used by the DataLoader workers) keeps working: only the Random class is replaced
+            first_n = mock.Mock(wraps=random, Random=FirstN)
+            with mock.patch.object(src.data, "random", first_n):
+                train.main(run_args(tmp, "train.epochs=2", "data.num_workers=5"))
             rows = read_rows(Path(tmp) / "runs" / "segthor_enet_ce" / "seed0" / "epochs.csv")
             for name, column, reduce in (("loss_tra", "train_loss", lambda a: a.mean(1)),
                                          ("loss_val", "val_loss", lambda a: a.mean(1)),
