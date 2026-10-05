@@ -1,4 +1,4 @@
-# Same 4-fold cross-validation as full_cv4_enet_ce.yaml (40 patients, 30 train / 10 val per fold, split seed 0, run seed 0),
+# Same 4-fold cross-validation as full_cv4_enet_ce.yaml (40 patients, 30 train / 10 val per fold, split seed 0, run seeds 0-2 from cv.job),
 # with the current recipe: ENet + CE (all classes) + soft Dice (foreground) and the full preprocessing stack (median spacing,
 # HU window + z-score, ROI crop/pad). The window size T comes from each fold's 30 training patients, so it can differ per fold
 # (see <dataset>/roi_crop.json). Runs as full_cv4_enet_dice_ce_fold0..3. Needs the dice_ce loss (src/losses/diceCE.py).
