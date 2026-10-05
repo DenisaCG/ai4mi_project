@@ -1,0 +1,15 @@
+#!/bin/bash
+#SBATCH --job-name=test_losses
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=00:10:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Loss unit tests only (no data needed). Usage: sbatch jobsAndOutputs/pipeline/jobs/test_losses.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+python -m unittest tests.test_losses -v
