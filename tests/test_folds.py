@@ -2,16 +2,20 @@
 
 import contextlib
 import io
+import json
 import random
 import tempfile
 import unittest
 from pathlib import Path
+from typing import ClassVar
 from unittest import mock
+
+from PIL import Image
 
 from slice_segthor import get_splits
 from src.config import load_config
 from src.data import ensure_sliced
-from src.folds import is_cv, run_configs, slice_command
+from src.folds import check_dataset, is_cv, run_configs, slice_command
 
 PATIENTS, RETAINS, NUM_FOLDS = 40, 10, 4
 FULL_PREPROCESSING = "resample: median, normalize: ct_window_zscore, crop: roi"
@@ -157,6 +161,82 @@ class FoldTests(unittest.TestCase):
                 dest_at = used.index("--dest_dir") + 1
                 used[dest_at] = "DEST"
                 self.assertEqual(used, command[:-2])
+
+
+class CheckDatasetTests(unittest.TestCase):
+    """check_dataset on a miniature sliced dataset: 6 patients, 2 of them validation, 8x8 slices."""
+
+    TRAIN, VAL = (
+        ["Patient_01", "Patient_02", "Patient_03", "Patient_04"],
+        ["Patient_05", "Patient_06"],
+    )
+    P: ClassVar[dict] = {"retains": 2, "shape": [8, 8]}
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.everyone = set(self.TRAIN + self.VAL)
+        for split, patients in (("train", self.TRAIN), ("val", self.VAL)):
+            for kind in ("img", "gt"):
+                (self.root / split / kind).mkdir(parents=True)
+                for patient in patients:
+                    for z in range(3):
+                        Image.new("L", (8, 8)).save(
+                            self.root / split / kind / f"{patient}_{z:04d}.png"
+                        )
+
+    def write(self, name: str, content: dict):
+        (self.root / name).write_text(json.dumps(content))
+
+    def test_consistent_dataset_returns_the_validation_patients(self):
+        self.write("ct_norm_stats.json", {"train_patients": self.TRAIN})
+        self.write(
+            "roi_crop.json",
+            {"size": 8, "required_train": dict.fromkeys(self.TRAIN, 1.0)},
+        )
+        p = self.P | {"crop": "roi"}
+        self.assertEqual(check_dataset(self.root, p, self.everyone), set(self.VAL))
+        self.assertEqual(check_dataset(self.root, self.P, self.everyone), set(self.VAL))
+
+    def test_statistics_from_a_validation_patient_are_rejected(self):
+        self.write(
+            "ct_norm_stats.json", {"train_patients": [*self.TRAIN, "Patient_05"]}
+        )
+        with self.assertRaisesRegex(ValueError, "ct_norm_stats.json.*Patient_05"):
+            check_dataset(self.root, self.P, self.everyone)
+
+    def test_roi_window_from_a_validation_patient_is_rejected(self):
+        self.write(
+            "roi_crop.json",
+            {
+                "size": 8,
+                "required_train": dict.fromkeys([*self.TRAIN, "Patient_06"], 1.0),
+            },
+        )
+        with self.assertRaisesRegex(ValueError, "roi_crop.json.*Patient_06"):
+            check_dataset(self.root, self.P | {"crop": "roi"}, self.everyone)
+
+    def test_patient_in_both_splits_is_rejected(self):
+        for kind in ("img", "gt"):
+            Image.new("L", (8, 8)).save(
+                self.root / "val" / kind / "Patient_01_0000.png"
+            )
+        with self.assertRaisesRegex(ValueError, "both train and val"):
+            check_dataset(self.root, self.P | {"retains": 3}, self.everyone)
+
+    def test_wrong_validation_size_or_missing_patient_is_rejected(self):
+        with self.assertRaises(ValueError):
+            check_dataset(self.root, self.P | {"retains": 3}, self.everyone)
+        with self.assertRaises(ValueError):
+            check_dataset(self.root, self.P, self.everyone | {"Patient_07"})
+
+    def test_slice_size_and_label_mismatch_are_rejected(self):
+        with self.assertRaisesRegex(ValueError, "expected 16x16"):
+            check_dataset(self.root, self.P | {"shape": [16, 16]}, self.everyone)
+        (self.root / "val" / "gt" / "Patient_06_0002.png").unlink()
+        with self.assertRaisesRegex(ValueError, "differ"):
+            check_dataset(self.root, self.P, self.everyone)
 
 
 if __name__ == "__main__":
