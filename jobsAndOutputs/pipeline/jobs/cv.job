@@ -1,0 +1,45 @@
+#!/bin/bash
+#SBATCH --job-name=cv
+#SBATCH --partition=gpu_a100
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --gpus=1
+#SBATCH --time=00:45:00
+#SBATCH --array=0-11
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%A_%a.out
+
+# Train one (fold, seed) run per array task of a cross-validation config, then evaluate it in 3D. The split seed is fixed by the
+# config (preprocess.seed), so every run seed sees the same folds. Task t is fold t % FOLDS of seed t / FOLDS, seed-major:
+# with the default FOLDS=4, tasks 0-3 are seed 0 (folds 0-3), 4-7 seed 1, 8-11 seed 2. Use --array=0-0 first, then 1-11;
+# --array=6 redoes fold 2 of seed 1. Resubmitting resumes a crashed or timed-out run and is a no-op for a finished one.
+# 45 min: ENet took ~9 min for 15 training patients incl. 3D eval (~1 min for 5 val patients), so ~20 min for 30 and 10.
+# The folds must be built first (build_cv_folds.job): slicing 30 patients inside a GPU job would use one core and run out of time.
+# Usage: sbatch --job-name=full_cv4_enet_ce --array=0-0 --export=ALL,CONFIG=configs/full_cv4_enet_ce.yaml \
+#               jobsAndOutputs/pipeline/jobs/cv.job
+#        add SET="optim.kwargs.lr=1e-3" to --export for overrides (split on spaces; the seed always comes from the array index)
+set -euo pipefail
+CONFIG="${CONFIG:?set CONFIG=configs/<experiment>.yaml via --export}"
+SET="${SET:-}"
+FOLDS="${FOLDS:-4}"
+FOLD=$((SLURM_ARRAY_TASK_ID % FOLDS))
+SEED=$((SLURM_ARRAY_TASK_ID / FOLDS))
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv
+echo "task $SLURM_ARRAY_TASK_ID: fold $FOLD, seed $SEED"
+
+python - "$CONFIG" "$FOLD" $SET seed=$SEED <<'PY'
+import sys
+from src.config import REPO, load_config
+from src.folds import run_configs
+
+(cfg,) = run_configs(load_config(sys.argv[1], sys.argv[3:]), int(sys.argv[2]))
+root = REPO / cfg["data"]["root"]
+if not root.exists():
+    sys.exit(f"{root} is missing: run build_cv_folds.job for this config first")
+print(f"{cfg['experiment']} seed {cfg['seed']}: data {root}")
+PY
+python -O -m src.train --config "$CONFIG" --fold "$FOLD" --set $SET seed=$SEED
+RUN_DIR=$(python -m src.run --config "$CONFIG" --fold "$FOLD" --set $SET seed=$SEED)
+[ -f "$RUN_DIR/eval/.done" ] || python -O -m src.evaluate --run "$RUN_DIR"
+echo "[$(date -Is)] done: $RUN_DIR"
