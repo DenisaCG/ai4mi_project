@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --job-name=loss_landscapes
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=00:20:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Toy loss-landscape figure for every loss approach (tools/plot_loss_landscapes.py); CPU only, no data needed.
+# Usage: sbatch jobsAndOutputs/pipeline/jobs/plot_loss_landscapes.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+python tools/plot_loss_landscapes.py

@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH --job-name=ll_enet_smoke
+#SBATCH --partition=gpu_a100
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=9
+#SBATCH --gpus=1
+#SBATCH --time=00:10:00
+#SBATCH --output=jobsAndOutputs/loss_landscape/outputs/%x_%j.out
+
+# 5x5 grid on 16 slices, one ENet (segthor_enet_ce_repro_corrected_fixed/seed0) under all 6 losses: checks the checkpoint loads,
+# the losses run on perturbed weights, and gives per-row timing to size the full job. Writes results/loss_landscape_enet_smoke/.
+# Usage: sbatch jobsAndOutputs/loss_landscape/jobs/loss_landscape_smoke.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv
+
+python tools/loss_landscape_enet.py --smoke
+echo "[$(date -Is)] smoke done"

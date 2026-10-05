@@ -1,0 +1,21 @@
+#!/bin/bash
+#SBATCH --job-name=ll_enet
+#SBATCH --partition=gpu_a100
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=9
+#SBATCH --gpus=1
+#SBATCH --time=00:20:00
+#SBATCH --output=jobsAndOutputs/loss_landscape/outputs/%x_%j.out
+
+# 41x41 grid on 256 train slices, one ENet (segthor_enet_ce_repro_corrected_fixed/seed0) under all 6 losses
+# (tools/loss_landscape_enet.py). Writes results/loss_landscape_enet/landscape.npz.
+# Resumable: the surfaces are saved after every grid row, so resubmitting the same job continues where it stopped.
+# --time is a guess: set it from the per-row timing of the smoke job before submitting (billed on requested time).
+# Usage: sbatch jobsAndOutputs/loss_landscape/jobs/loss_landscape.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv
+
+python tools/loss_landscape_enet.py
+echo "[$(date -Is)] done"
