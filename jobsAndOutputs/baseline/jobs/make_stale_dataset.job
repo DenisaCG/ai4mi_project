@@ -1,0 +1,36 @@
+#!/bin/bash
+#SBATCH --job-name=make_stale_dataset
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=4G
+#SBATCH --time=00:20:00
+#SBATCH --output=jobsAndOutputs/baseline/outputs/make_stale_dataset_%j.out
+
+# Diagnostic only: copy data/SEGTHOR_corrected and put the 219 pre-fix (stale) Patient_02/Patient_15 gt PNGs
+# back, to test whether those stale labels changed how well the esophagus is learned.
+# The stale files come from the backup made by check_processed_gt.job (job 26927745).
+set -euo pipefail
+PROJECT_DIR="$HOME/ai4mi_project"
+cd "$PROJECT_DIR"
+
+BACKUP="/scratch-shared/$USER/ai4mi_project/check_processed_gt_26927745/backup"
+SRC="data/SEGTHOR_corrected"
+DST="data/SEGTHOR_corrected_stale"
+[ -d "$BACKUP/train/gt" ] && [ -d "$BACKUP/val/gt" ] || { echo "backup missing: $BACKUP"; exit 1; }
+[ -e "$DST" ] && { echo "$DST already exists, refusing to overwrite"; exit 1; }
+
+cp -a "$SRC" "$DST"
+cp -a "$BACKUP/train/gt/." "$DST/train/gt/"
+cp -a "$BACKUP/val/gt/." "$DST/val/gt/"
+
+# Exactly the 219 restored gt slices must differ from the fixed data, and nothing else.
+diff -rq "$SRC" "$DST" > "$DST.diff.txt" || true
+N=$(grep -c "differ" "$DST.diff.txt")
+NON_GT=$(grep "differ" "$DST.diff.txt" | grep -vc "/gt/" || true)
+echo "differing files: $N (expected 219), outside gt/: $NON_GT (expected 0)"
+grep "differ" "$DST.diff.txt" | sed -E 's#.*/(Patient_[0-9]+)_[0-9]+\.png.*#\1#' | sort | uniq -c
+[ "$N" = "219" ] && [ "$NON_GT" = "0" ]
+rm -f "$DST.diff.txt"
+echo "stale copy ready: $DST"

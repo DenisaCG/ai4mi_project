@@ -1,0 +1,18 @@
+#!/bin/bash
+#SBATCH --job-name=compare_losses
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=00:15:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Tables + 5 figures comparing the loss variants, from metrics/ (and runs/ for the overlay). CPU only.
+# Usage: sbatch jobsAndOutputs/pipeline/jobs/compare_losses.job
+#        add ARGS="--seeds 0 1 2" to --export to restrict the seeds, or --out=<dir> style options
+set -euo pipefail
+ARGS="${ARGS:-}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+python dataset_analysis/compare_losses.py $ARGS

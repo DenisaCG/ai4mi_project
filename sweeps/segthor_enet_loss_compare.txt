@@ -1,0 +1,31 @@
+# Loss comparison on the corrected data: 4 losses x seeds 0-4. One array task per line (order: seed-major, so
+# stage 1 = lines 0-11 = seeds 0-2 for every loss, stage 2 = lines 12-19 = seeds 3-4).
+# Smoke test each config first (smoke.job), then a single task:
+#   sbatch --time=00:20:00 --array=0-0  --export=ALL,SWEEP=sweeps/segthor_enet_loss_compare.txt jobsAndOutputs/pipeline/jobs/sweep.job
+#   sbatch --time=00:20:00 --array=1-11 --export=ALL,SWEEP=sweeps/segthor_enet_loss_compare.txt jobsAndOutputs/pipeline/jobs/sweep.job
+#   sbatch --time=00:20:00 --array=12-19 --export=ALL,SWEEP=sweeps/segthor_enet_loss_compare.txt jobsAndOutputs/pipeline/jobs/sweep.job
+configs/segthor_enet_dice_fg_corrected.yaml seed=0
+configs/segthor_enet_dice_ce_all_corrected.yaml seed=0
+configs/segthor_enet_dice_ce_fg_corrected.yaml seed=0
+configs/segthor_enet_ce_fg_corrected.yaml seed=0
+configs/segthor_enet_dice_fg_corrected.yaml seed=1
+configs/segthor_enet_dice_ce_all_corrected.yaml seed=1
+configs/segthor_enet_dice_ce_fg_corrected.yaml seed=1
+configs/segthor_enet_ce_fg_corrected.yaml seed=1
+configs/segthor_enet_dice_fg_corrected.yaml seed=2
+configs/segthor_enet_dice_ce_all_corrected.yaml seed=2
+configs/segthor_enet_dice_ce_fg_corrected.yaml seed=2
+configs/segthor_enet_ce_fg_corrected.yaml seed=2
+configs/segthor_enet_dice_fg_corrected.yaml seed=3
+configs/segthor_enet_dice_ce_all_corrected.yaml seed=3
+configs/segthor_enet_dice_ce_fg_corrected.yaml seed=3
+configs/segthor_enet_ce_fg_corrected.yaml seed=3
+configs/segthor_enet_dice_fg_corrected.yaml seed=4
+configs/segthor_enet_dice_ce_all_corrected.yaml seed=4
+configs/segthor_enet_dice_ce_fg_corrected.yaml seed=4
+configs/segthor_enet_ce_fg_corrected.yaml seed=4
+configs/segthor_enet_dice_all_corrected.yaml seed=0
+configs/segthor_enet_dice_all_corrected.yaml seed=1
+configs/segthor_enet_dice_all_corrected.yaml seed=2
+# Added after stage 1 (Dice over fg only collapses): lines 20-22 = soft Dice incl. background, seeds 0-2.
+# Two Dice-only style runs were slow in the 3D eval (over-predicted volumes): use --time=00:30:00 for lines 12 and 16.
