@@ -17,10 +17,12 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
+sys.path.insert(0, str(REPO / "tools"))
+from plot_style import EARTH  # noqa: E402
 from src.config import load_config, resolve_preprocess  # noqa: E402
 from src.data import ensure_sliced  # noqa: E402
 
-TRAIN, VAL, MED = "#087F9D", "#D9822B", "#171717"
+TRAIN, VAL, MED = EARTH[1], EARTH[2], "#171717"  # earth palette: teal train, ochre val, ink target line
 VIEW = (-200, 300)  # display window only, not used for training
 
 

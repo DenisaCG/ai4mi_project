@@ -10,14 +10,18 @@ import csv
 import json
 from pathlib import Path
 
+import sys
+
 import matplotlib
 import numpy as np
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-SURFACE, INK, INK_2 = "#fcfcfb", "#0b0b0b", "#52514e"
-COLORS = {"original": "#2a78d6", "pipeline": "#eb6834"}
+sys.path.insert(0, str(Path(__file__).resolve().parent / "tools"))
+from plot_style import EARTH, apply_style, decorate  # noqa: E402
+
+COLORS = {"original": EARTH[1], "pipeline": EARTH[0]}
 STYLES = {"original": "-", "pipeline": "--"}
 QUANTITIES = (("val_legacy", "Legacy val Dice (higher = better)"),
               ("train_loss", "Train loss"), ("val_loss", "Val loss"))
@@ -91,36 +95,34 @@ def main():
 
     x = np.arange(epochs)
 
+    apply_style()
+
     def draw(ax, key, label, legend):
-        ax.set_facecolor(SURFACE)
         for name, runs in (("original", orig), ("pipeline", pipe)):
             m, lo, hi = band(runs, key)
             ax.fill_between(x, lo, hi, color=COLORS[name], alpha=0.16, linewidth=0)
             ax.plot(x, m, STYLES[name], color=COLORS[name], linewidth=2, label=f"{name} (n={len(runs)})")
-        ax.set_title(label, color=INK, fontsize=12, loc="left")
-        ax.set_xlabel("epoch", color=INK_2)
-        ax.grid(axis="y", color="#e7e7e7", linewidth=0.7)
-        ax.tick_params(colors=INK_2, length=0)
-        for s in ("top", "right", "left"):
-            ax.spines[s].set_visible(False)
-        ax.spines["bottom"].set_color("#999999")
+        ax.set_title(label, fontweight="bold", loc="left")
+        ax.set_xlabel("Epoch")
+        ax.tick_params(length=0)
+        ax.spines["left"].set_visible(False)
         if "loss" in key:
             ax.set_yscale("log")
         if legend:
-            ax.legend(frameon=False, labelcolor=INK, loc="upper right" if "loss" in key else "lower right")
+            ax.legend(loc="upper right" if "loss" in key else "lower right")
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.6), facecolor=SURFACE)
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5.2))
     for ax, (key, label) in zip(axes, QUANTITIES):
         draw(ax, key, label, legend=key == "val_legacy")
-    fig.suptitle("Original main.py vs standardized pipeline: line = mean, band = min-max over runs", color=INK_2, fontsize=11, x=0.01, ha="left")
-    fig.tight_layout()
-    fig.savefig(a.out / "repro_curves.png", dpi=160, facecolor=SURFACE)
+    decorate(fig, "Original main.py vs standardized pipeline",
+             f"{len(orig)} original vs {len(pipe)} pipeline runs  |  line = mean, band = min–max over runs")
+    fig.savefig(a.out / "repro_curves.png")
     plt.close(fig)
     for key, label in QUANTITIES:
-        fig, ax = plt.subplots(figsize=(5.2, 4.2), facecolor=SURFACE)
+        fig, ax = plt.subplots(figsize=(6, 4.6))
         draw(ax, key, label, legend=True)
-        fig.tight_layout()
-        fig.savefig(a.out / f"repro_{key}.png", dpi=160, facecolor=SURFACE)
+        decorate(fig, None)
+        fig.savefig(a.out / f"repro_{key}.png")
         plt.close(fig)
 
     (a.out / "repro_summary.md").write_text("\n".join(lines) + "\n")

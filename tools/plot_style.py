@@ -1,6 +1,5 @@
 """
-Shared matplotlib style for this project's figures, matched to the look used
-in the user's other data-analysis figures: bold declarative titles (state the
+Shared matplotlib style for this project's figures, with a consistent look: bold declarative titles (state the
 finding, not the axis), a light subtitle line, despined axes with horizontal
 gridlines only, a below-plot legend with no frame (queued via legend_below(), drawn by
 decorate() in figure coordinates), and a muted qualitative color palette.
@@ -13,7 +12,7 @@ Usage:
     ...
     decorate(fig, "Heart Dominates the Foreground",
               subtitle="Voxel share of the 4 labeled organs (log scale)",
-              footnote_text="Class 4 (esophagus) is unlabeled in this partial release.")
+              footnote_text="Class 4 (aorta) is unlabeled in this release.")
     fig.savefig(...)
 
 `decorate()` wraps title/subtitle/footnote to the actual figure width and
