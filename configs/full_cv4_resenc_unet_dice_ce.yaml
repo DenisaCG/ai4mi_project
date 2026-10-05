@@ -1,0 +1,29 @@
+# Same 4-fold cross-validation, preprocessing and loss as full_cv4_unet_dice_ce.yaml (40 patients, 30 train / 10 val per fold,
+# split seed 0, run seeds 0-2 from cv.job); only the model changes: U-Net with a residual encoder (stem conv, 1/3/4/6/6/6 residual
+# blocks per stage, one conv per decoder stage).
+# Runs as full_cv4_resenc_unet_dice_ce_fold0..3.
+experiment: full_cv4_resenc_unet_dice_ce
+notes: residual-encoder 2D U-Net (stem conv, 1/3/4/6/6/6 residual blocks per encoder stage, 1 conv per decoder stage, ResNet-D skips) + CE (all classes) + soft Dice (foreground), full preprocessing (median spacing + HU window + z-score + ROI crop/pad), 4-fold CV on the full 40-patient SEGTHOR train set
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+
+model:
+  name: unet
+  kwargs: {block: residual}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled
