@@ -9,6 +9,8 @@ comparison.md       : one row per experiment, mean ± std over seeds, paste-read
 Cross-validation experiments (runs named `<experiment>_fold<k>`) also get, per `<experiment>`:
 cv_summary.md                    : per fold, overall and fold-to-fold mean ± std for Dice, HD95 and ASSD, with completeness.
 cv_pooled_<experiment>.csv       : every patient x organ, averaged over the seeds, with its fold.
+Both are rewritten on every run from the runs that pass --filter, so a filtered run replaces the
+other experiments' section in cv_summary.md. Use the unfiltered command to get all of them in one file.
 """
 import argparse
 import csv
@@ -151,12 +153,19 @@ def cv_section(
             cells = [f"{name} ({len(group)} runs)"]
             for organ in [*organs, "fg"]:
                 values = [found[k][f"eval.val_{key}_{organ}"] for k in group]
-                nans = sum(
-                    row[key] != row[key]
-                    for k in group
-                    for row in patient_rows[k]
-                    if row["class_name"] == organ
-                )
+                if organ == "fg":  # organ values missing from the runs' fg means
+                    nans = sum(
+                        math.isnan(found[k][f"eval.val_{key}_{o}"])
+                        for k in group
+                        for o in organs
+                    )
+                else:
+                    nans = sum(
+                        row[key] != row[key]
+                        for k in group
+                        for row in patient_rows[k]
+                        if row["class_name"] == organ
+                    )
                 cells.append(fmt(values, digits) + (f" ({nans} NaN)" if nans else ""))
             lines.append("| " + " | ".join(cells) + " |")
         fold_cells = ["std of fold means"]
@@ -212,6 +221,7 @@ def write_cv_results(runs: list[dict], metrics_dir: Path) -> str:
         "\n\nmean ± std over the runs of a fold (seeds) or over all runs; `std of fold means` is the std of the "
         "per-fold means. Values are 3D, best checkpoint, foreground (fg) = eval.classes. NaN = patients whose "
         "HD95/ASSD is undefined (empty prediction or GT); they are left out of the mean and counted per organ. "
+        "In the fg column the count is the number of organ values (run x organ) missing from the fg means. "
         "Pooled CSV: each patient's value averaged over its seeds.\n"
     )
     report = "\n\n".join(sections) + note
