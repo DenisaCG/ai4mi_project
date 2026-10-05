@@ -21,7 +21,7 @@ Results live in three folders under `results/`:
 | `repro_corrected_seed0/` | Analysis of the corrected labels against pipeline seed 7, the median run, trained on the repaired data ("after"). Folder names keep `seed0` for history |
 | `before_after/` | Direct before/after comparison figures and tables |
 
-Colors are fixed per organ in every figure: esophagus purple, heart blue, trachea teal, aorta orange, background gray. The baseline figures are titled "Original ENet baseline" in both folders; that wording predates the correction and refers to the ENet recipe, not the label version.
+Colors are fixed per organ in every figure and come from the shared theme in `tools/plot_style.py` (earth palette): esophagus teal, heart brick, trachea ochre, aorta olive, background sand. The baseline figures are titled "Original ENet baseline" in both folders; that wording predates the correction and refers to the ENet recipe, not the label version.
 
 ## Before vs After
 
@@ -38,7 +38,13 @@ Colors are fixed per organ in every figure: esophagus purple, heart blue, trache
 <td colspan="2"><img src="results/before_after/plots/before_after_example_slice.png" width="60%"></td>
 </tr>
 <tr>
-<td colspan="2"><b>One example slice (Patient_01, axial slice 145, largest aorta cross-section).</b> Left: in the original labels the whole aorta carries label 1 (purple). Middle: the corrected labels. Right: exactly the voxels whose label changed, coloured by their new label; here all of them become aorta.</td>
+<td colspan="2"><b>One example slice (Patient_01, axial slice 145, largest aorta cross-section).</b> Left: in the original labels the whole aorta carries label 1 (drawn in the esophagus color). Middle: the corrected labels. Right: exactly the voxels whose label changed, coloured by their new label; here all of them become aorta.</td>
+</tr>
+<tr>
+<td colspan="2"><img src="results/before_after/plots/before_after_metrics_by_experiment_solid.png" width="100%"></td>
+</tr>
+<tr>
+<td colspan="2"><b>Dice, HD95 and ASSD for every experiment, absolute values (mean over the 5 validation patients and the experiment's seeds).</b> One row per experiment, one dot per organ and a black line for the overall (the mean over organs, its value printed on top); the grey line spans the organs. Rows: the uncorrected labels (9 seeds, no aorta), the corrected-label baseline (9 seeds; Dice 0.18 / 0.78 / 0.29 / 0.49, HD95 41 / 35 / 72 / 33 mm, ASSD 10.5 / 8.6 / 20.0 / 8.1 mm for esophagus / heart / trachea / aorta), the loss variants (row names coloured by whether the loss covers the foreground only or foreground + background), preprocessing, 512x512 (native slices instead of 256x256, same cross-entropy over all classes) and nnU-Net 2D and 3D. The baseline and 512 row names state their loss. A row without finished runs is drawn faded with a dotted line at invented placeholder values and switches to real values once its runs have <code>eval/metrics_3d.csv</code>. <code>before_after_metrics_by_experiment_shaded.png</code> is the same figure with the organ dots and lines shaded so the overall line stands out. Esophagus is not like-for-like across label versions. The right-hand column counts collapsed organ-seeds (an organ with 3D Dice below 0.1 in a seed) out of organs x seeds. All values are in <code>before_after/tables/metrics_3d_by_experiment.csv</code>.</td>
 </tr>
 </table>
 
@@ -165,6 +171,7 @@ In `results/before_after/tables/`:
 
 - `label_changes.csv`: per patient, esophagus voxels before/after, aorta voxels, and how many changed voxels are not a split of old label 1.
 - `dice_3d_before_after.csv`: per organ, the number of runs, mean / min / max 3D Dice, and the number of runs at exactly 0, before and after.
+- `metrics_3d_by_experiment.csv`: per organ (and overall) and metric (Dice, HD95, ASSD), the mean for the corrected-label baseline and for every experiment marker, with its number of seeds and whether the value is a placeholder (blank mean = organ had no ground truth).
 
 ## Run and Validation
 
@@ -173,7 +180,7 @@ Submit the CPU-only workflows from the repository root, in this order:
 ```bash
 sbatch jobsAndOutputs/baseline/jobs/dataset_analysis_before_after.job   # both label versions (ONLY=corrected or ONLY=original runs one)
 sbatch jobsAndOutputs/baseline/jobs/baseline_median_runs.job          # baseline stage from the median pipeline runs (run after the job above)
-sbatch jobsAndOutputs/baseline/jobs/compare_before_after.job            # the before/after figures (uses all runs listed in the job)
+sbatch jobsAndOutputs/baseline/jobs/compare_before_after.job            # the before/after figures (all seeds; the --compare lines in the job list the experiment rows of the metrics figure)
 ```
 
 The first job stitches each run's validation predictions to 3D, then runs numerical
