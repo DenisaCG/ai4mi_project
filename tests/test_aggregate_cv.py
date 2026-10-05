@@ -11,6 +11,7 @@ import csv
 import io
 import json
 import math
+import shutil
 import statistics
 import tempfile
 import unittest
@@ -213,6 +214,43 @@ class CrossValidationSummaryTests(unittest.TestCase):
         self.assertAlmostEqual(
             float(row["hd95"]), 14.5
         )  # seeds 1 and 2 only: 11 + 2 + (1 + 2) / 2
+
+    def test_fg_counts_organ_values_missing_from_the_fg_mean(self):
+        # every HD95 of the heart is NaN in fold 1 seed 0, so that run's heart value is NaN and fg is the esophagus only
+        write_cv_experiment(self.metrics, "exp")
+        run_dir = self.metrics / "exp_fold1" / "seed0"
+        rows = patient_rows(1, 0, None)
+        for row in rows:
+            if row["class_name"] == "heart":
+                row["hd95"] = float("nan")
+        shutil.rmtree(run_dir)
+        write_run(self.metrics, "exp_fold1", 0, rows)
+        run_aggregate(self.metrics)
+        hd95 = table_rows(
+            (self.metrics / "cv_summary.md").read_text(), "exp", "HD95 mm"
+        )
+        self.assertEqual(
+            hd95["fold 1 (3 runs)"][1], "14.5 ± 0.7 (2 NaN)"
+        )  # the two heart patients
+        self.assertEqual(
+            hd95["fold 1 (3 runs)"][2], "13.3 ± 1.3 (1 NaN)"
+        )  # fg = esophagus alone in that run
+        self.assertEqual(hd95["fold 0 (3 runs)"][2], "11.5 ± 1.0")
+        self.assertEqual(hd95["all runs (12 runs)"][2], "14.5 ± 2.5 (1 NaN)")
+
+    def test_filtered_run_replaces_cv_summary_and_unfiltered_run_has_all(self):
+        write_cv_experiment(self.metrics, "exp_a")
+        write_cv_experiment(self.metrics, "exp_b")
+        for name_filter in ("exp_a", "exp_b"):
+            with contextlib.redirect_stdout(io.StringIO()):
+                main(["--metrics-dir", str(self.metrics), "--filter", name_filter])
+        report = (self.metrics / "cv_summary.md").read_text()
+        self.assertIn("## exp_b\n", report)
+        self.assertNotIn("## exp_a\n", report)
+        run_aggregate(self.metrics)
+        report = (self.metrics / "cv_summary.md").read_text()
+        self.assertIn("## exp_a\n", report)
+        self.assertIn("## exp_b\n", report)
 
     def test_non_cv_experiment_output_is_unchanged(self):
         for seed in SEEDS:
