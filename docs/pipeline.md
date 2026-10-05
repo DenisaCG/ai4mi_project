@@ -256,20 +256,50 @@ warning and continues with local files only. Nothing ever blocks on it. To uploa
 
 ### Cross-validation
 
-In a config with `data.preprocess`, set `fold: 5` and `retains: 4` for five-fold
-cross-validation on 20 patients. Run the usual `python -m src.train --config ...`
-command. `retains * fold` must equal the patient count; invalid combinations fail
-before training. Folds have equal sizes and every patient is held out exactly once.
-The preprocessing seed stays fixed across folds.
+In a config with `data.preprocess`, `fold: N` with `N > 1` asks for N-fold cross-validation, and `retains` is the
+number of validation patients per fold: `retains * N` must equal the patient count (invalid combinations fail before
+anything runs). Folds have equal sizes and every patient is validated in exactly one of them. `fold: 0` and `fold: 1`
+keep the single-holdout behaviour, so `fold: 2` is "two folds", not "holdout split 2". The split seed is
+`preprocess.seed` (0), never the run seed, so every run seed sees the same folds.
 
-`fold: 0` and `fold: 1` preserve the existing single-holdout behavior. Values greater
-than one now request that many folds instead of selecting one split index. Each
-fold has a separate dataset cache and experiment name (`<experiment>_fold0`, etc.),
-with fresh model/optimizer state. Repeating the command skips completed runs and
-resumes interrupted runs; `--force` applies to every fold. Evaluation remains a
-separate `src.evaluate` command for each run.
+Each fold is its own experiment, `<experiment>_fold<k>`, with its own sliced dataset (`data/sliced_<hash>`, the hash
+includes the fold), run directory and `metrics/` directory. The spacing, intensity and ROI-window statistics of a
+fold come from its training patients only. Run seeds add a level below: `runs/<experiment>_fold<k>/seed<s>`.
 
-Generated configs record `num_folds` and use `fold` as the current index; rerunning
-one of those configs trains only that split. The standalone slicer likewise takes
-`--num_folds` plus a zero-based `--fold`, and checks `retains * num_folds` against
-the patient count.
+The 40-patient configs are `configs/full_cv4_enet_ce.yaml` (no preprocessing) and
+`configs/full_cv4_enet_dice_ce.yaml` (full preprocessing, Dice+CE): 4 folds of 30 train / 10 val patients, 3 run seeds,
+so 12 runs each. Name new CV configs `<dataset>_<protocol>_<model>_<loss>.yaml` with `experiment` equal to the file name.
+
+```bash
+# 0. tests
+sbatch jobsAndOutputs/pipeline/jobs/test.job
+
+# 1. build the fold datasets on CPU (scratch, linked into data/); also checks the splits and the statistics
+sbatch --export=ALL,CONFIG=configs/full_cv4_enet_ce.yaml jobsAndOutputs/pipeline/jobs/build_cv_folds.job
+
+# 2. smoke test: fold 0 only
+sbatch --export=ALL,CONFIG=configs/full_cv4_enet_ce.yaml jobsAndOutputs/pipeline/jobs/smoke.job
+
+# 3. full runs: one array task per (fold, seed); task t = fold t % 4 of seed t / 4. One task first, then the rest
+sbatch --job-name=full_cv4_enet_ce --array=0-0  --export=ALL,CONFIG=configs/full_cv4_enet_ce.yaml jobsAndOutputs/pipeline/jobs/cv.job
+sbatch --job-name=full_cv4_enet_ce --array=1-11 --export=ALL,CONFIG=configs/full_cv4_enet_ce.yaml jobsAndOutputs/pipeline/jobs/cv.job
+```
+
+The fold datasets are built under `/scratch-shared/$USER/ai4mi_project/sliced_<hash>` and linked as `data/sliced_<hash>`,
+so `keepalive_scratch.job` covers them. The hash is computed from the `data.preprocess` block, which makes the block the
+dataset's identity: to reuse the same folds and preprocessing in another config, copy the `data.preprocess` block of
+`full_cv4_enet_ce` (no preprocessing) or `full_cv4_enet_dice_ce` (full preprocessing) exactly. Any other value, including a
+different `retains`, `fold` or `seed`, or one extra key, is a different dataset and builds again. A dataset is stored once per
+account: run `build_cv_folds.job` once on yours, with either config or any config that has the same block.
+
+`cv.job` trains and then evaluates its run in 3D (like `train.job`). `eval.job` re-evaluates one run
+(`RUN=runs/<experiment>_fold<k>/seed<s>`). Resubmitting an array resumes the runs that did not finish and skips the finished ones.
+Without `--fold`, `python -m src.train --config <cv config>` trains all folds one after another; with `--fold k` it trains
+only fold k, and `python -m src.run --config <cv config> --fold k` prints that run's directory. `--smoke` runs fold 0 only.
+`train.job` and `sweep.job` do not know about folds: use `cv.job` for CV configs.
+
+Each finished run leaves `metrics/<experiment>_fold<k>/seed<s>/` with the per-patient `metrics_3d.csv` of that fold's
+validation patients; the best weights and the 3D predictions stay in the run directory on scratch (kept alive by
+`keepalive_scratch.job`). The generated per-fold configs record `num_folds` and use `fold` as the index; rerunning
+one of those configs trains only that split. The standalone slicer likewise takes `--num_folds` plus a zero-based
+`--fold` and checks `retains * num_folds` against the patient count.
