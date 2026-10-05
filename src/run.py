@@ -144,9 +144,14 @@ def copy_back(run_dir: Path, cfg: dict) -> Path | None:
 if __name__ == "__main__":  # print where a config's run lives: python -m src.run --config X [--set ..]
     import argparse
     from src.config import load_config
+    from src.folds import run_configs
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--set", nargs="*", default=[])
     parser.add_argument("--smoke", action="store_true")
+    parser.add_argument("--fold", type=int, help="zero-based fold of a cross-validation config (smoke: fold 0)")
     args = parser.parse_args()
-    print(run_dir_for(load_config(args.config, args.set, smoke=args.smoke)))
+    configs = run_configs(load_config(args.config, args.set, smoke=args.smoke), args.fold, args.smoke)
+    if len(configs) != 1:
+        parser.error("this is a cross-validation config: pass --fold k")
+    print(run_dir_for(configs[0]))
