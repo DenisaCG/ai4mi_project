@@ -1,7 +1,8 @@
 # 4-fold cross-validation (30 train / 10 val patients per fold) on the full 40-patient SEGTHOR train set (labels 0-4).
 # Starter model: ENet + cross-entropy over all classes on the course-default slices (256x256, per-volume min-max;
 # no resampling, intensity normalisation or ROI crop). `fold: 4` means "4 folds": they run as full_cv4_enet_ce_fold0..3
-# (runs/ and metrics/), each with its own sliced dataset. Split seed 0 (`preprocess.seed`), run seed 0.
+# (runs/ and metrics/), each with its own sliced dataset. Split seed 0 (`preprocess.seed`) for every run; run seeds 0, 1, 2
+# come from cv.job (`seed: 0` below is only the default), so there are 12 runs: fold_k/seed_s.
 experiment: full_cv4_enet_ce
 notes: ENet + CE (all classes), no preprocessing (course-default 256x256 slices), 4-fold CV on the full 40-patient SEGTHOR train set
 seed: 0
