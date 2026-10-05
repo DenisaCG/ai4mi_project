@@ -37,7 +37,7 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(read_yaml("lr: 1e-4\nb: [0.9, 1.5E+2]\nname: e5"), {"lr": 1e-4, "b": [0.9, 150.0], "name": "e5"})
 
     def test_unregistered_component_fails_before_the_run_starts(self):
-        for override in ("model.name=unet", "loss.name=dice", "optim.name=lamb", "scheduler.name=poly"):
+        for override in ("model.name=no_such_model", "loss.name=dice", "optim.name=lamb", "scheduler.name=poly"):
             with self.assertRaises(ValueError, msg=override) as caught:
                 load_config(CFG, [override])
             self.assertIn("available:", str(caught.exception))
