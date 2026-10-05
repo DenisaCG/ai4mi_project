@@ -1,0 +1,22 @@
+# Loss comparison, variant 4: cross-entropy over the FOREGROUND classes only, on the CORRECTED labels.
+# Same model/optimizer/data as segthor_enet_ce_corrected; only idk differs (background excluded).
+experiment: segthor_enet_ce_fg_corrected
+notes: ENet + cross-entropy (foreground only), corrected SEGTHOR labels
+
+data:
+  root: data/SEGTHOR_corrected
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: cross_entropy
+  kwargs: {idk: [1, 2, 3, 4]}   # background pixels contribute nothing, so false positives are not penalised
+
+eval:
+  classes: [1, 2, 3, 4]   # aorta now has GT
+
+wandb:
+  mode: disabled

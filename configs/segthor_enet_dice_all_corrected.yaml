@@ -1,0 +1,23 @@
+# Loss comparison, variant 5 (added after stage 1): soft Dice over ALL classes incl. background, corrected labels.
+# Stage 1 showed Dice over the foreground only (segthor_enet_dice_fg_corrected) collapses: nothing supervises background.
+# Same model/optimizer/data as segthor_enet_ce_corrected; only the loss differs.
+experiment: segthor_enet_dice_all_corrected
+notes: ENet + soft Dice (all classes incl. background), corrected SEGTHOR labels
+
+data:
+  root: data/SEGTHOR_corrected
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: soft_dice
+  kwargs: {idk: [0, 1, 2, 3, 4]}   # background included in the mean
+
+eval:
+  classes: [1, 2, 3, 4]   # aorta now has GT
+
+wandb:
+  mode: disabled

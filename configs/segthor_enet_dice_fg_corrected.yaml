@@ -1,0 +1,22 @@
+# Loss comparison, variant 1: soft Dice over the foreground classes only, on the CORRECTED labels.
+# Same model/optimizer/data as segthor_enet_ce_corrected; only the loss differs.
+experiment: segthor_enet_dice_fg_corrected
+notes: ENet + soft Dice (foreground classes), corrected SEGTHOR labels
+
+data:
+  root: data/SEGTHOR_corrected
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: soft_dice
+  kwargs: {idk: [1, 2, 3, 4]}   # foreground only; background is not in the loss
+
+eval:
+  classes: [1, 2, 3, 4]   # aorta now has GT
+
+wandb:
+  mode: disabled

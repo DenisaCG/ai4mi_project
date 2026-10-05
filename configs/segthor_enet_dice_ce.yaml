@@ -1,0 +1,15 @@
+# Baseline settings with cross-entropy + soft Dice (equal weights).
+experiment: segthor_enet_dice_ce
+notes: ENet + CE + soft Dice, course baseline settings
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: dice_ce
+  kwargs: 
+    ce_idk: [1, 2, 3, 4] # CE and Dice over the foreground only
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0   

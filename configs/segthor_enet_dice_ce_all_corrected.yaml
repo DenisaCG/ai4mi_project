@@ -1,0 +1,26 @@
+# Loss comparison, variant 2: CE over ALL classes (incl. background) + soft Dice over the foreground, corrected labels.
+# Same model/optimizer/data as segthor_enet_ce_corrected; only the loss differs.
+experiment: segthor_enet_dice_ce_all_corrected
+notes: ENet + CE (all classes) + soft Dice (foreground), corrected SEGTHOR labels
+
+data:
+  root: data/SEGTHOR_corrected
+  source_pattern: data/segthor_part1_corrected/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+eval:
+  classes: [1, 2, 3, 4]   # aorta now has GT
+
+wandb:
+  mode: disabled

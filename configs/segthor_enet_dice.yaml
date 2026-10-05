@@ -1,0 +1,11 @@
+# Baseline settings with the soft Dice loss instead of cross-entropy (Dice over the foreground classes).
+experiment: segthor_enet_dice
+notes: ENet + soft Dice, course baseline settings
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: soft_dice
+  kwargs: {}                       # idk defaults to the foreground classes 1..K-1
