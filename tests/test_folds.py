@@ -16,6 +16,7 @@ from slice_segthor import get_splits
 from src.config import load_config
 from src.data import ensure_sliced
 from src.folds import check_dataset, is_cv, run_configs, slice_command
+from src.run import run_dir_for
 
 PATIENTS, RETAINS, NUM_FOLDS = 40, 10, 4
 FULL_PREPROCESSING = "resample: median, normalize: ct_window_zscore, crop: roi"
@@ -102,6 +103,22 @@ class FoldTests(unittest.TestCase):
         roots = [c["data"]["root"] for c in run_configs(self.config())]
         seeded = [c["data"]["root"] for c in run_configs(self.config("seed=3"))]
         self.assertEqual(roots, seeded)
+
+    def test_twelve_fold_seed_runs_never_share_a_directory(self):
+        runs = set()
+        metrics = set()
+        for seed in range(3):
+            for c in run_configs(self.config(f"seed={seed}")):
+                runs.add(run_dir_for(c))
+                metrics.add((c["paths"]["metrics_dir"], c["experiment"], c["seed"]))
+        self.assertEqual((len(runs), len(metrics)), (12, 12))
+        # one dataset per fold, shared by the three run seeds
+        roots = {
+            c["data"]["root"]
+            for s in range(3)
+            for c in run_configs(self.config(f"seed={s}"))
+        }
+        self.assertEqual(len(roots), NUM_FOLDS)
 
     def test_fold_selects_exactly_one(self):
         (only,) = run_configs(self.config(), fold=2)
