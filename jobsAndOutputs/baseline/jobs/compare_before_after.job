@@ -13,11 +13,11 @@
 set -euo pipefail
 PROJECT_DIR="$HOME/ai4mi_project"
 
-# The nnU-Net stars in the metrics figure need score_nnunet.job to have run first (fails loudly if not).
-# The one run per label version shown patient by patient in the metrics figure: the median run of 9
-# (same runs as baseline_median_runs.job).
-BEFORE_RUN="${BEFORE_RUN:-runs/segthor_enet_ce_repro/seed2}"
-AFTER_RUN="${AFTER_RUN:-runs/segthor_enet_ce_repro_corrected_fixed/seed7}"
+# Metrics figure: one row per experiment (uncorrected, corrected baseline, then the --compare lines in order), each value
+# the mean over its seeds. A --compare pattern with no finished run (or an empty one) is drawn as a faded placeholder, so an experiment
+# switches to real values by itself once its runs have eval/metrics_3d.csv. nnU-Net folders come from score_nnunet.job.
+# The loss rows (foreground-only losses first, then the one whose CE also sees the background) read only the loss_compare sweep (4 losses x seeds 0-4); the old seed-0 dice_corrected and dice_ce_corrected
+# runs are superseded by it and left out.
 
 module purge
 module load 2024
@@ -40,7 +40,26 @@ python -B -u dataset_analysis/compare_before_after.py \
     --output-dir "$RESULTS/before_after" \
     --before-runs runs/segthor_enet_ce_repro/seed* \
     --after-runs runs/segthor_enet_ce_repro_corrected_fixed/seed* \
-    --before-run "$BEFORE_RUN" \
-    --after-run "$AFTER_RUN" \
-    --nnunet "nnU-Net 2D (TTA)=$RESULTS/nnunet/2d_tta" \
+    --compare "Dice loss=runs/segthor_enet_dice_fg_corrected/seed*" \
+    --compare "CE (foreground only)=runs/segthor_enet_ce_fg_corrected/seed*" \
+    --compare "Dice + CE (foreground only)=runs/segthor_enet_dice_ce_fg_corrected/seed*" \
+    --compare "Dice + CE (all classes)=runs/segthor_enet_dice_ce_all_corrected/seed*" \
+    --compare "Preprocessing=" \
+    --compare "512 x 512=runs/segthor_enet_ce_corrected_control_512/seed*" \
+    --compare "nnU-Net 2D (TTA)=$RESULTS/nnunet/2d_tta" \
+    --compare "nnU-Net 3D (TTA)=$RESULTS/nnunet/3d_tta" \
+    --group "Loss on foreground only=Dice loss" \
+    --group "Loss on foreground only=CE (foreground only)" \
+    --group "Loss on foreground only=Dice + CE (foreground only)" \
+    --group "Loss on foreground + background=Uncorrected labels" \
+    --group "Loss on foreground + background=Corrected labels (baseline)" \
+    --group "Loss on foreground + background=Dice + CE (all classes)" \
+    --group "Loss on foreground + background=512 x 512" \
+    --group "Loss on foreground + background=nnU-Net 2D (TTA)" \
+    --group "Loss on foreground + background=nnU-Net 3D (TTA)" \
+    --note "Uncorrected labels=CE over all classes, 256 x 256 slices" \
+    --note "Corrected labels (baseline)=CE over all classes, 256 x 256 slices" \
+    --note "512 x 512=CE over all classes, native slices, no downsampling" \
+    --note "nnU-Net 2D (TTA)=nnU-Net default loss: Dice + CE (all classes)" \
+    --note "nnU-Net 3D (TTA)=nnU-Net default loss: Dice + CE (all classes)" \
     --example-patient Patient_01

@@ -1,9 +1,13 @@
 """Before/after comparison of the SEGTHOR label correction, from two finished analysis folders."""
 import argparse
+import glob
 import json
+import textwrap
+import zlib
 from pathlib import Path
 
 import numpy as np
+from matplotlib.lines import Line2D
 from matplotlib.ticker import MaxNLocator
 
 from figures import orthogonal_plane
@@ -175,104 +179,207 @@ def finite(values):
     return a[np.isfinite(a)]
 
 
-def swarm_levels(values, gap):
-    """Row level (0, 1, -1, 2, ...) per value, so dots closer than `gap` on the x axis never overlap."""
-    n = len(values)
-    order = sorted(range(-n, n + 1), key=lambda level: (abs(level), -level))
-    levels = []
-    for i, v in enumerate(values):
-        levels.append(next(level for level in order
-                           if all(level != levels[j] or abs(v - values[j]) >= gap for j in range(i))))
-    return levels
+UNCORRECTED = "Uncorrected labels"
+BASELINE = "Corrected labels (baseline)"
+OVERALL_HALF = .26  # half-height of the black overall line, in rows
+GROUP_COLORS = ("#D45F00", INK)  # row-name colour per --group in order of first use: dark orange (not an organ colour), then black
+COLLAPSE_BELOW = .1  # an organ whose 3D Dice in a seed (mean over the validation patients) is below this has collapsed; same as compare_losses.py
 
 
-def glow_star(ax, x, y, color):
-    """A star in the organ colour with a soft halo (a few large, faint discs behind it)."""
-    for size, alpha in ((1000, .07), (640, .12), (380, .20)):
-        ax.scatter(x, y, s=size, marker="o", color=color, alpha=alpha, linewidths=0, zorder=5, clip_on=False)
-    ax.scatter(x, y, s=420, marker="*", color=color, edgecolor="white", linewidth=1.3, zorder=6, clip_on=False)
+def find_runs(patterns):
+    """Pipeline run folders matching the glob patterns that have finished evaluating (eval/metrics_3d.csv)."""
+    found = sorted({Path(match) for pattern in patterns if pattern for match in glob.glob(pattern)})
+    done = [run for run in found if (run / "eval/metrics_3d.csv").is_file()]
+    if len(done) < len(found):
+        print(f"  skipping {len(found) - len(done)} run(s) without eval/metrics_3d.csv (still running?): {patterns}")
+    return done
 
 
-def metrics_by_organ(plt, out, before_run, after_run, nnunet=None):
-    """Dice, HD95 and ASSD for every organ: one dot per validation patient (after), diamond = mean before.
+def with_overall(means):
+    """Add the "overall" entry: per metric, the mean over the organs that have a value."""
+    means["overall"] = {}
+    for metric, *_ in METRICS:
+        organs = [means[k][metric] for k in NAMES if means[k][metric] is not None]
+        means["overall"][metric] = float(np.mean(organs)) if organs else None
+    return means
 
-    `nnunet` is an optional (label, folder with eval/metrics_3d.csv) pair, drawn as a glowing star at its mean.
-    The black bars and their numbers are always the corrected-label baseline run only.
+
+def experiment_means(runs):
+    """{class_id or "overall": {metric: value or None}} for one experiment, plus the undefined values left out.
+
+    A value is the mean over the validation patients within each seed, then over seeds. `means["collapsed"]` holds,
+    per organ, how many seeds collapsed (Dice below COLLAPSE_BELOW) out of the seeds scored. An organ with no
+    ground truth in the experiment's label version has no value, so "overall" averages 3 organs for the
+    original labels (no aorta) and 4 otherwise.
     """
-    before, after = run_metrics(before_run), run_metrics(after_run)
-    nnunet_label, nnunet_scores = (nnunet[0], run_metrics(nnunet[1])) if nnunet else (None, None)
-    ks = sorted(NAMES)
-    n_patients = max(len(after[k]["dice"]) for k in ks)
-    fig = plt.figure(figsize=(14, 8.2))
-    axes = fig.subplots(len(ks), len(METRICS), sharex="col")
-    rows, dropped = [], 0
+    per_run = [run_metrics(run) for run in runs]
+    means, dropped, collapsed = {k: {} for k in NAMES}, 0, {}
+    for k in NAMES:
+        for metric, *_ in METRICS:
+            seed_means = []
+            for run in per_run:
+                if not run[k]["annotated"]:
+                    continue
+                values = finite(run[k][metric])
+                dropped += len(run[k][metric]) - len(values)
+                if len(values):
+                    seed_means.append(float(values.mean()))
+            means[k][metric] = float(np.mean(seed_means)) if seed_means else None
+            if metric == "dice":
+                collapsed[k] = (sum(m < COLLAPSE_BELOW for m in seed_means), len(seed_means))  # (collapsed, scored) organ-seeds
+    means["collapsed"] = collapsed
+    return with_overall(means), dropped
+
+
+def placeholder_means(label, baseline):
+    """Invented values for an experiment with no results yet: the baseline moved by up to +-25 %, seeded by the label."""
+    rng = np.random.default_rng(zlib.crc32(label.encode()))
+    means = {k: {} for k in NAMES}
+    for k in NAMES:
+        for metric, *_ in METRICS:
+            value = baseline[k][metric] * (1 + rng.uniform(-.25, .25))
+            means[k][metric] = min(value, 1.0) if metric == "dice" else value
+    means["collapsed"] = None  # nothing was run, so nothing collapsed
+    return with_overall(means)
+
+
+def draw_experiments(plt, path, experiments, n_patients, organ_alpha, groups, notes):
+    """One figure: a row per experiment with a dot per organ, a grey line across the organs and a black line for the overall.
+
+    `organ_alpha` is the opacity of the organ dots and their grey line; the black overall line is always fully opaque.
+    Placeholder rows are drawn fainter still, with a dotted line. `groups` maps a row label to a group name; those
+    row names are coloured by group and the groups are listed in a legend. `notes` maps a row label to a small line
+    under its name. Row names, title, subtitle, legend and footnote are placed here (decorate() can only centre them).
+    """
+    n = len(experiments)
+    height = .55 * n + 2.65
+    group_color = {g: GROUP_COLORS[i % len(GROUP_COLORS)] for i, g in enumerate(dict.fromkeys(groups.values()))}
+    fig = plt.figure(figsize=(14, height))
+    axes = fig.subplots(1, len(METRICS), sharey=True)
+    fig.subplots_adjust(left=.30, top=1 - 1.7 / height, right=.90, bottom=.95 / height, wspace=.07)
     for j, (metric, title, direction, fmt) in enumerate(METRICS):
-        shown = ([finite(after[k][metric]) for k in ks] + [finite(before[k][metric]) for k in ks if before[k]["annotated"]]
-                 + ([finite(nnunet_scores[k][metric]) for k in ks] if nnunet_scores else []))
-        top = 1.0 if metric == "dice" else max([float(a.max()) for a in shown if len(a)] or [1.0])
-        span = 1.09 * top
-        axes[-1][j].set_xlim(-.04 * top, 1.05 * top)
+        ax = axes[j]
+        shown = [e["means"][key][metric] for e in experiments for key in (*NAMES, "overall") if e["means"][key][metric] is not None]
+        top = 1.0 if metric == "dice" else max(shown)  # the axis fits the means
+        ax.set_xlim(-.03 * top, 1.04 * top)
+        ax.set_ylim(n - .5, -.5)
+        ax.set_yticks(range(n))
         if metric == "dice":
-            axes[-1][j].set_xticks(np.arange(0, 1.01, .2))
+            ax.set_xticks(np.arange(0, 1.01, .2))
         else:
-            axes[-1][j].xaxis.set_major_locator(MaxNLocator(nbins=5, steps=[1, 2, 5, 10], min_n_ticks=3))
-        for i, k in enumerate(ks):
-            ax = axes[i][j]
-            values = np.sort(finite(after[k][metric]))
-            dropped += len(after[k][metric]) - len(values)
-            mean = float(values.mean()) if len(values) else None
-            before_values = finite(before[k][metric]) if before[k]["annotated"] else []
-            before_mean = float(np.mean(before_values)) if len(before_values) else None
-            if before[k]["annotated"]:
-                dropped += len(before[k][metric]) - len(before_values)
-            ax.scatter(values, [.26 * level for level in swarm_levels(values, .055 * span)], s=110,
-                       color=COLORS[k], edgecolor="white", linewidth=1.2, zorder=3, clip_on=False)
-            if mean is not None:
-                ax.vlines(mean, -.55, .55, color=INK, linewidth=3.5, zorder=4)
-                ax.text(mean, .72, fmt.format(mean), ha="center", va="bottom", fontsize=14, weight="bold", color=INK)
-            if before_mean is not None:
-                ax.scatter(before_mean, 0, s=110, marker="D", facecolor="none", edgecolor=MUTED,
-                           linewidth=2.2, zorder=5)
-            nnunet_mean = None
-            if nnunet_scores and len(finite(nnunet_scores[k][metric])):
-                nnunet_mean = float(finite(nnunet_scores[k][metric]).mean())
-                glow_star(ax, nnunet_mean, 0, COLORS[k])
-            if j == 0 and not before[k]["annotated"]:
-                ax.text(.02, .08, f"no {NAMES[k].lower()} label before correction", transform=ax.transAxes,
-                        ha="left", va="bottom", fontsize=10, color=MUTED)
-            ax.set_ylim(-1, 1.35)
-            ax.set_yticks([])
-            clean_axis(ax, "x")
-            ax.spines["left"].set_visible(False)
-            if i < len(ks) - 1:
-                ax.spines["bottom"].set_visible(False)
-            if i % 2 == 0:
-                ax.set_facecolor(tint(BACKGROUND, .3))
-            if j == 0:
-                ax.set_ylabel(NAMES[k], color=COLORS[k], fontsize=14, fontweight="bold",
-                              rotation=0, ha="right", va="center", labelpad=16)
-            if i == 0:
-                ax.set_title(title, fontsize=14, fontweight="bold", pad=20)
-                ax.text(.5, 1.03, direction, transform=ax.transAxes, ha="center", va="bottom",
-                        fontsize=10.5, color=MUTED)
-            rows.append({"class_id": k, "class_name": NAMES[k], "metric": metric,
-                         "n_patients_after": len(values), "mean_after": mean,
-                         "n_patients_before": len(before_values), "mean_before": before_mean,
-                         "mean_nnunet": nnunet_mean})
-    if dropped:
-        print(f"Metrics figure: {dropped} undefined patient values (empty prediction) left out of dots and means")
-    decorate(fig, "Baseline Results: All Metrics, All Organs",
-        f"Each dot is one of the {n_patients} validation patients, the black bar is the mean, "
-        "the hollow diamond is the mean before label correction"
-        + (f", the glowing star is the {nnunet_label} mean." if nnunet else "."),
-        f"After: {after_run.parent.name}/{after_run.name} (corrected labels). Before: {before_run.parent.name}/{before_run.name} "
-        "(original labels). 3D metrics on the original CT grid against original-grid ground truth. "
-        "Patients with an undefined distance (empty prediction) are left out of that dot and mean. "
-        "Esophagus is not like-for-like: its old ground truth also contained the aorta, which had no label before the correction."
-        + (f" Star: {nnunet_label}, 100 epochs, fold 0, corrected labels, same validation patients, scored with the "
-           "same 3D metric code." if nnunet else ""))
-    fig.savefig(out / "plots/before_after_metrics_by_organ.png")
+            ax.xaxis.set_major_locator(MaxNLocator(nbins=5, steps=[1, 2, 5, 10], min_n_ticks=3))
+        clean_axis(ax, "x")
+        ax.spines["left"].set_visible(False)
+        for i, e in enumerate(experiments):
+            if e["label"] == BASELINE:
+                ax.axhspan(i - .5, i + .5, color=tint(BACKGROUND, .55), zorder=.2, linewidth=0)
+            elif i % 2 == 0:
+                ax.axhspan(i - .5, i + .5, color=tint(BACKGROUND, .3), zorder=.2, linewidth=0)
+            faded = e["placeholder"]
+            organs = {k: e["means"][k][metric] for k in NAMES if e["means"][k][metric] is not None}
+            if len(organs) > 1:
+                ax.hlines(i, min(organs.values()), max(organs.values()), color=BACKGROUND, linewidth=4.5,
+                          linestyle=":" if faded else "-", alpha=organ_alpha * (.8 if faded else 1), zorder=2)
+            for key, value in organs.items():
+                ax.scatter(value, i, s=150, color=COLORS[key], edgecolor="white", linewidth=1.5,
+                           alpha=organ_alpha * (.4 if faded else 1), zorder=3, clip_on=False)
+            overall = e["means"]["overall"][metric]
+            ax.vlines(overall, i - OVERALL_HALF, i + OVERALL_HALF, color=INK, linewidth=3.5, alpha=.4 if faded else 1, zorder=5)
+            ax.text(overall, i - OVERALL_HALF - .03, fmt.format(overall), ha="center", va="bottom", fontsize=10, weight="bold",
+                    color=INK, alpha=.4 if faded else 1, zorder=5)
+        ax.set_title(title, loc="left", fontsize=14, fontweight="bold", pad=24)
+        ax.annotate(direction, (0, 1), xycoords="axes fraction", xytext=(0, 6), textcoords="offset points",
+                    ha="left", va="bottom", fontsize=10.5, color=MUTED)
+    for i, e in enumerate(experiments):
+        note = notes.get(e["label"])
+        in_group = e["label"] in groups
+        color = group_color[groups[e["label"]]] if in_group else MUTED if e["placeholder"] else INK
+        alpha = .6 if e["placeholder"] and in_group else 1
+        axes[0].annotate(e["label"] + ("  [placeholder]" if e["placeholder"] else ""), (0, i), xycoords=axes[0].get_yaxis_transform(),
+                         xytext=(-8, 6 if note else 0), textcoords="offset points", ha="right", va="center", fontsize=12,
+                         fontweight="bold" if e["label"] == BASELINE else "normal", style="italic" if e["placeholder"] else "normal",
+                         color=color, alpha=alpha, annotation_clip=False)
+        if note:
+            axes[0].annotate(note, (0, i), xycoords=axes[0].get_yaxis_transform(), xytext=(-8, -8), textcoords="offset points",
+                             ha="right", va="center", fontsize=9.5, color=MUTED, alpha=.6 if e["placeholder"] else 1,
+                             annotation_clip=False)
+    for ax in axes:
+        ax.tick_params(labelleft=False)
+    last = axes[-1]  # text column to the right of the last panel: collapsed organ-seeds / organ-seeds scored
+    last.annotate("Collapsed", (1, 1), xycoords="axes fraction", xytext=(14, 24), textcoords="offset points",
+                  ha="left", va="baseline", fontsize=14, fontweight="bold", annotation_clip=False)
+    last.annotate("organ-seeds", (1, 1), xycoords="axes fraction", xytext=(14, 6), textcoords="offset points",
+                  ha="left", va="bottom", fontsize=10.5, color=MUTED, annotation_clip=False)
+    for i, e in enumerate(experiments):
+        counts = e["means"]["collapsed"]
+        if counts is None:
+            text, color, weight, alpha = "–", MUTED, "normal", .6
+        else:
+            hits, scored = (sum(c[n] for c in counts.values()) for n in (0, 1))
+            text, color, weight, alpha = f"{hits} / {scored}", INK if hits else MUTED, "bold" if hits else "normal", 1
+        last.annotate(text, (1, i), xycoords=last.get_yaxis_transform(), xytext=(14, 0), textcoords="offset points",
+                      ha="left", va="center", fontsize=12, color=color, fontweight=weight, alpha=alpha, annotation_clip=False)
+
+    fig.text(.015, 1 - .12 / height, "All Experiments, Absolute Values", fontsize=22, fontweight="bold", ha="left", va="top")
+    fig.text(.015, 1 - .62 / height, "One row per experiment, a dot per organ, a black line for the overall. "
+             "Dotted lines and faded dots = runs not finished.", fontsize=13.5, color=INK, ha="left", va="top")
+    handles = [Line2D([], [], marker="o", linestyle="", markersize=11, color=COLORS[k], markeredgecolor="white", label=NAMES[k])
+               for k in sorted(NAMES)]
+    handles.append(Line2D([], [], marker="|", linestyle="", markersize=14, markeredgewidth=3.5, color=INK, label="Overall"))
+    fig.legend(handles=handles, loc="center right", bbox_to_anchor=(.985, 1 - .98 / height), ncol=len(handles), frameon=False,
+               fontsize=12, handletextpad=.3, columnspacing=1.6)
+    if group_color:
+        fig.legend(handles=[Line2D([], [], marker="s", linestyle="", markersize=10, color=color, label=group)
+                            for group, color in group_color.items()],
+                   loc="center left", bbox_to_anchor=(.015, 1 - .98 / height), ncol=len(group_color), frameon=False,
+                   fontsize=12, handletextpad=.3, columnspacing=1.6)
+    fig.text(.015, .12 / height, textwrap.fill(
+        f"Means over the {n_patients} validation patients and each experiment's seeds. Faded rows are invented placeholders, not results. "
+        "Uncorrected labels have no aorta (their overall averages 3 organs) and their esophagus is not like-for-like. "
+        "Empty predictions are left out of the distance means. Collapsed = an organ with 3D Dice below "
+        f"{COLLAPSE_BELOW:g} in a seed, counted over organs x seeds.", width=215),
+        fontsize=9, style="italic", color=MUTED, ha="left", va="bottom")
+    fig.savefig(path)
     plt.close(fig)
+
+
+def metrics_by_experiment(plt, out, before_runs, after_runs, compare=None, groups=None, notes=None):
+    """Dice, HD95 and ASSD, one row per experiment, drawn twice: with solid organ dots and with shaded ones.
+
+    Rows are the uncorrected labels (`before_runs`), the corrected-label baseline (`after_runs`), then `compare`
+    (label -> run glob patterns) in the order given. Every value is the mean over the validation patients and
+    the experiment's seeds. An experiment with no finished runs gets invented placeholder values and is drawn
+    faded. `groups` (row label -> group name) colours row names; `notes` (row label -> text) adds a line under a name. Returns the long table (one row per experiment, organ or overall, and metric).
+    """
+    baseline, dropped = experiment_means(after_runs)
+    n_patients = len(run_metrics(after_runs[0])[min(NAMES)]["dice"])
+    specs = ([(UNCORRECTED, list(before_runs)), (BASELINE, None)]
+             + [(label, find_runs(patterns)) for label, patterns in (compare or {}).items()])
+    experiments = []
+    for label, runs in specs:
+        if runs is None:  # the corrected-label baseline, already computed
+            means, runs = baseline, list(after_runs)
+        elif runs:
+            means, undefined = experiment_means(runs)
+            dropped += undefined
+        else:
+            means = placeholder_means(label, baseline)
+        experiments.append({"label": label, "means": means, "n_seeds": len(runs), "placeholder": not runs})
+        print(f"  {label}: " + (f"{len(runs)} run(s)" if runs else "no finished runs, placeholder values"))
+    if dropped:
+        print(f"Metrics figure: {dropped} undefined patient values (empty prediction) left out of the means")
+    for version, organ_alpha in (("solid", 1.0), ("shaded", .45)):
+        draw_experiments(plt, out / f"plots/before_after_metrics_by_experiment_{version}.png", experiments, n_patients, organ_alpha, groups or {}, notes or {})
+    rows = []
+    for metric, *_ in METRICS:
+        for e in experiments:
+            for key in (*NAMES, "overall"):
+                counts = e["means"]["collapsed"]
+                pairs = None if metric != "dice" or counts is None else list(counts.values()) if key == "overall" else [counts[key]]
+                rows.append({"experiment": e["label"], "class_name": NAMES.get(key, "Overall"), "metric": metric,
+                             "n_seeds": e["n_seeds"], "placeholder": e["placeholder"], "mean": e["means"][key][metric],
+                             "collapsed_seeds": None if pairs is None else sum(c for c, _ in pairs),
+                             "seeds_scored": None if pairs is None else sum(n for _, n in pairs)})
     return rows
 
 
@@ -338,20 +445,37 @@ def main():
     p.add_argument("--example-patient", default="Patient_01")
     p.add_argument("--before-runs", type=Path, nargs="+", required=True, help="pipeline run folders, original labels")
     p.add_argument("--after-runs", type=Path, nargs="+", required=True, help="pipeline run folders, corrected labels")
-    p.add_argument("--before-run", type=Path, required=True,
-                   help="the one pipeline run shown per patient in the metrics figure, original labels (median run)")
-    p.add_argument("--after-run", type=Path, required=True,
-                   help="the one pipeline run shown per patient in the metrics figure, corrected labels (median run)")
-    p.add_argument("--nnunet", metavar="LABEL=DIR",
-                   help="optional: add a glowing star for one nnU-Net variant; DIR is a folder with "
-                        "eval/metrics_3d.csv (see score_nnunet.py), e.g. 'nnU-Net 2D (TTA)=dataset_analysis/results/nnunet/2d_tta'")
+    p.add_argument("--compare", action="append", default=[], metavar="LABEL=PATTERN",
+                   help="optional, repeatable, in row order after the two baselines: one row for an experiment; PATTERN is a "
+                        "glob of folders with eval/metrics_3d.csv (pipeline runs, or nnU-Net folders from score_nnunet.py), e.g. "
+                        "'Dice loss=runs/segthor_enet_dice_fg_corrected/seed*'. Repeat a LABEL to add more runs. "
+                        "No finished run (or an empty PATTERN) draws a faded placeholder row instead.")
+    p.add_argument("--group", action="append", default=[], metavar="GROUP=LABEL",
+                   help="optional, repeatable: colour the name of row LABEL by GROUP (one colour per GROUP, in order of first use) "
+                        "and list the groups in a legend, e.g. 'Loss on foreground only=Dice loss'")
+    p.add_argument("--note", action="append", default=[], metavar="LABEL=TEXT",
+                   help="optional, repeatable: a small line under the name of row LABEL, e.g. 'Dice loss=soft Dice on the foreground'")
     args = p.parse_args()
-    nnunet = None
-    if args.nnunet:
-        label, _, path = args.nnunet.partition("=")
-        if not label or not path:
-            p.error("--nnunet must be LABEL=DIR")
-        nnunet = (label, Path(path))
+    compare = {}
+    for item in args.compare:
+        label, sep, pattern = item.partition("=")
+        if not label or not sep:
+            p.error(f"--compare must be LABEL=PATTERN (PATTERN may be empty for a placeholder): {item!r}")
+        compare.setdefault(label, []).append(pattern)
+    groups = {}
+    for item in args.group:
+        group, sep, label = item.partition("=")
+        if not group or not sep:
+            p.error(f"--group must be GROUP=LABEL: {item!r}")
+        if label not in {UNCORRECTED, BASELINE, *compare}:
+            p.error(f"--group label {label!r} is not a row; rows are {[UNCORRECTED, BASELINE, *compare]}")
+        groups[label] = group
+    notes = {}
+    for item in args.note:
+        label, sep, text = item.partition("=")
+        if not label or not sep or label not in {UNCORRECTED, BASELINE, *compare}:
+            p.error(f"--note must be LABEL=TEXT with LABEL one of the rows {[UNCORRECTED, BASELINE, *compare]}: {item!r}")
+        notes[label] = text
     out = args.output_dir
     (out / "plots").mkdir(parents=True, exist_ok=True)
     (out / "tables").mkdir(exist_ok=True)
@@ -369,7 +493,8 @@ def main():
               dice_comparison(plt, out,
                               run_dice(args.before_runs, {k: before_counts[k][0] > 0 for k in NAMES}),
                               run_dice(args.after_runs, {k: after_counts[k][0] > 0 for k in NAMES})))
-    write_csv(out / "tables/metrics_3d_median_runs.csv", metrics_by_organ(plt, out, args.before_run, args.after_run, nnunet))
+    write_csv(out / "tables/metrics_3d_by_experiment.csv",
+              metrics_by_experiment(plt, out, args.before_runs, args.after_runs, compare, groups, notes))
     example_slice(plt, out, args.original_data, args.corrected_data, args.example_patient)
     print(f"Comparison written -> {out}")
 
