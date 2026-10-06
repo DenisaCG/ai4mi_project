@@ -17,6 +17,7 @@ import src.optim  # noqa: F401  registers optimizers / schedulers
 from src.checkpoint import load_checkpoint, rng_state, save_checkpoint, set_rng_state
 from src.data import build_loader
 from src.metrics import epoch_metrics, slice_counts
+from src.presence import presence_loss
 from src.registry import build
 from src.class_weights import compute_class_weights
 from utils import tqdm_
@@ -60,6 +61,8 @@ def run_epoch(split: str, net: nn.Module, loader, loss_fn, optimizer, device, cf
                 if training:
                     optimizer.zero_grad()
                 loss, probs = supervised_loss(net(img), gt, loss_fn)
+                if cfg["train"]["presence_weight"]:
+                    loss = loss + cfg["train"]["presence_weight"] * presence_loss(net.presence_logits, gt)
                 if training:
                     loss.backward()
                     optimizer.step()

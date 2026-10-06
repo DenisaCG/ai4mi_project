@@ -25,7 +25,8 @@ import yaml
 from src.config import REPO, config_hash
 
 LOG = logging.getLogger("ai4mi")
-COPY_BACK = ["config.yaml", "manifest.json", "summary.json", "epochs.csv", "eval/metrics_3d.csv"]
+COPY_BACK = ["config.yaml", "manifest.json", "summary.json", "epochs.csv", "eval/metrics_3d.csv",
+             "eval/metrics_3d_gated.csv", "eval/presence.csv"]
 
 
 class RunConflict(RuntimeError):

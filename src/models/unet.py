@@ -112,6 +112,9 @@ class UNet(nn.Module):
         deep_supervision: Whether, in train mode, to return the logits of every decoder stage as a list
             (full resolution first, then half, a quarter, ...). Eval mode returns the full-resolution
             logits only.
+        slice_presence: Whether to add a linear head on the global average of the bottleneck features with one
+            logit per foreground class; the latest logits, shape (B, num_classes - 1), are kept in
+            `presence_logits` after every forward pass.
     """
 
     def __init__(
@@ -124,6 +127,7 @@ class UNet(nn.Module):
         block: str = "plain",
         attention: bool = False,
         deep_supervision: bool = False,
+        slice_presence: bool = False,
     ):
         super().__init__()
         if deep_supervision and n_stages < 3:
@@ -173,6 +177,10 @@ class UNet(nn.Module):
             if deep_supervision
             else None
         )
+        self.presence = (
+            nn.Linear(self.features[-1], num_classes - 1) if slice_presence else None
+        )
+        self.presence_logits: torch.Tensor | None = None
         self.gates = (
             nn.ModuleList(AttentionGate(f, f, f // 2) for f in skips)
             if attention
@@ -197,6 +205,8 @@ class UNet(nn.Module):
         for stage in self.encoder:
             x = stage(x)
             skips.append(x)
+        if self.presence is not None:
+            self.presence_logits = self.presence(x.mean(dim=(2, 3)))
         skips.pop()  # the bottleneck output feeds the decoder directly
         features = []
         for i in reversed(range(len(self.decoder))):
@@ -221,6 +231,7 @@ def build_unet(
     block: str = "plain",
     attention: bool = False,
     deep_supervision: bool = False,
+    slice_presence: bool = False,
 ) -> nn.Module:
     """Builds the U-Net; see `UNet`."""
     return UNet(
@@ -232,4 +243,5 @@ def build_unet(
         block=block,
         attention=attention,
         deep_supervision=deep_supervision,
+        slice_presence=slice_presence,
     )

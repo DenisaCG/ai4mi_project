@@ -118,6 +118,8 @@ def validate(cfg: dict) -> None:
         raise ValueError(f"data.context must be an integer >= 0, got {context!r}")
     if in_channels != 2 * context + 1:
         raise ValueError(f"data.in_channels={in_channels} must equal 2*data.context+1={2 * context + 1} (data.context={context})")
+    if bool(cfg["train"]["presence_weight"]) != bool(cfg["model"]["kwargs"].get("slice_presence")):
+        raise ValueError("train.presence_weight > 0 and model.kwargs.slice_presence: true go together")
     validate_component_names(cfg)
 
 
@@ -141,4 +143,6 @@ def config_hash(cfg: dict) -> str:
     # data.context == 0 is the plain 2D input and is left out, so runs from before the key existed keep their hash
     relevant["data"] = {k: v for k, v in cfg["data"].items()
                         if (k != "num_workers" or cfg["data"]["augment"]) and (k != "context" or v != 0)}
+    # train.presence_weight == 0 (no presence head) is left out, so runs from before the key existed keep their hash
+    relevant["train"] = {k: v for k, v in cfg["train"].items() if k != "presence_weight" or v}
     return hashlib.sha256(json.dumps(relevant, sort_keys=True).encode()).hexdigest()[:12]
