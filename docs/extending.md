@@ -131,6 +131,43 @@ data:
 Spatial transforms must move image and gt together and keep the gt one-hot (use nearest
 interpolation for the gt).
 
+The built-in `random_rotation`, `random_scaling` and `gaussian_noise` factories live in
+`src/augment.py`. Each takes an explicit application probability `p` in `kwargs`;
+rotation also takes `degrees: [min, max]`, scaling takes `scales: [min, max]`, and noise
+takes `sigma` in the intensity units delivered to the model. Rotation and scaling also
+take `fill`; in the Full40 configs, `fill: ct_window_low` resolves to `(lo - mean) / std`
+from that fold's `ct_norm_stats.json`, the same statistics used by `img_transform`.
+Rotation and scaling sample once per slice and apply the same centred, in-plane affine transform to image
+and GT. The output keeps its input H x W. The CT uses bilinear interpolation, with
+the configured normalized lower clipping endpoint filling newly exposed corners; the one-hot GT uses
+nearest-neighbour interpolation, with background filling those corners. Gaussian
+noise adds `sigma * torch.randn_like(image)` to the CT only; it does not clamp the
+result or modify the GT.
+
+These functions run after the cached PNG has been loaded and `img_transform` has
+applied any configured z-score. With `ct_window_zscore`, `sigma` is therefore in
+z-scored units, not `[0, 1]` PNG units or HU. The four existing Full40 fold caches
+have training-foreground HU standard deviations of about 176–181 HU; these
+put their training-foreground intensities near mean 0 and standard deviation 1
+before PNG quantisation. Their clipped full-slice ranges are approximately
+[-5.7, 1.5] after loading. The Full40 ablations use `p: 0.7` each; rotation uses
+[-10.0, 10.0] degrees, scaling uses [0.9, 1.1], and Gaussian noise uses `sigma: 0.05`.
+This is a conservative normalized perturbation, approximately 8.8–9.0 HU given
+those fold standard deviations; it is not measured scanner noise. Noise perturbs
+the whole image, including air and padded pixels, rather than only foreground.
+
+The factories reject unset `p` or `sigma` values.
+
+`random.random` decides whether to apply each transform and `random.uniform` samples
+its angle or scale. Gaussian noise uses the worker's Torch RNG. The pipeline seeds
+Python and Torch from the run seed, then seeds each DataLoader worker, so the same
+fold, training seed and augmentation config follow the existing reproducibility
+rules. The `Augmented` wrapper in `src/data.py` is constructed for `train` only;
+validation and test use the unaugmented slices.
+
+As with other online augmentations, interpolation can thin small structures such
+as the esophagus or trachea; inspect overlays before interpreting an ablation.
+
 ## Change the dataset or the preprocessing
 
 Preprocessing (HU windowing, resampling, cropping, a different slice size...) happens **offline**

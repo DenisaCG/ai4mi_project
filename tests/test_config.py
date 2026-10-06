@@ -57,6 +57,12 @@ class ConfigTests(unittest.TestCase):
         for override in (["seed=1"], ["train.epochs=5"], ["data.batch_size=4"], ["optim.kwargs.lr=0.01"]):
             self.assertNotEqual(config_hash(a), config_hash(load_config(CFG, override)), override)
 
+    def test_augmented_run_hash_includes_worker_count(self):
+        a = load_config(CFG, ["data.augment=[{name: random_rotation, kwargs: {p: 1, degrees: [-10, 10], fill: 0.0}}]"])
+        b = load_config(CFG, ["data.augment=[{name: random_rotation, kwargs: {p: 1, degrees: [-10, 10], fill: 0.0}}]",
+                              "data.num_workers=0"])
+        self.assertNotEqual(config_hash(a), config_hash(b))
+
 
 if __name__ == "__main__":
     unittest.main()

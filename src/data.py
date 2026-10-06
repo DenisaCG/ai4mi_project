@@ -20,6 +20,7 @@ from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 
 from dataset import SliceDataset
+import src.augment  # noqa: F401  registers online augmentations
 from src.config import REPO
 from src.registry import build
 from utils import class2one_hot
@@ -88,13 +89,20 @@ def build_dataset(cfg: dict, split: str) -> Dataset:
         zscore = json.loads((REPO / d["root"] / "ct_norm_stats.json").read_text())  # same numbers for every split
     dataset = SliceDataset(split, REPO / d["root"], img_transform=partial(img_transform, zscore=zscore),
                            gt_transform=partial(gt_transform, d["num_classes"], d["label_scale"]))
-    if cfg["train"]["debug_samples"]:
-        dataset.files = random.Random(cfg["seed"]).sample(dataset.files, cfg["train"]["debug_samples"])
     if split == "train" and cfg["train"].get("train_patients"):
         dataset.files = keep_patients(dataset.files, d["patient_regex"], cfg["train"]["train_patients"])
+    if cfg["train"]["debug_samples"]:
+        dataset.files = random.Random(cfg["seed"]).sample(dataset.files, cfg["train"]["debug_samples"])
     if split == "train" and d["augment"]:
-        dataset = Augmented(dataset, [build("augment", a["name"], **a.get("kwargs", {}))
-                                      for a in d["augment"]])
+        augments = []
+        for a in d["augment"]:
+            kwargs = dict(a.get("kwargs", {}))
+            if kwargs.get("fill") == "ct_window_low":
+                if zscore is None:
+                    raise ValueError("ct_window_low fill requires ct_window_zscore normalization")
+                kwargs["fill"] = (zscore["lo"] - zscore["mean"]) / zscore["std"]
+            augments.append(build("augment", a["name"], **kwargs))
+        dataset = Augmented(dataset, augments)
     return dataset
 
 

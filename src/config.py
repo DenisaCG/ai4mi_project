@@ -131,8 +131,8 @@ def validate_component_names(cfg: dict) -> None:
 
 
 def config_hash(cfg: dict) -> str:
-    """Identity of a run's settings. `notes`, `wandb`, `paths`, `device` and `data.num_workers`
-    don't change results, so they're excluded and a run stays resumable when they differ."""
+    """Identity of a run's settings. Ignore worker count only without random online augmentation."""
     relevant = {k: v for k, v in cfg.items() if k not in IGNORED_BY_HASH}
-    relevant["data"] = {k: v for k, v in cfg["data"].items() if k != "num_workers"}
+    relevant["data"] = {k: v for k, v in cfg["data"].items()
+                        if k != "num_workers" or cfg["data"]["augment"]}
     return hashlib.sha256(json.dumps(relevant, sort_keys=True).encode()).hexdigest()[:12]
