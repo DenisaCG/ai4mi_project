@@ -283,7 +283,7 @@ def progress_figure(plt, sections, organs, metric, n_patients, out) -> None:
                 heading,
                 ((xs[0] + xs[-1]) / 2, 1),
                 xycoords=top.get_xaxis_transform(),
-                xytext=(0, 6),
+                xytext=(0, 26),  # above the organ title, on a row of its own
                 textcoords="offset points",
                 ha="center",
                 va="bottom",
