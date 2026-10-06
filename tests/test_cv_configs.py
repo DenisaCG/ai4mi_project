@@ -7,6 +7,8 @@ from src.folds import is_cv, run_configs
 
 CONFIGS = REPO / "configs"
 STARTER, CURRENT = "full_cv4_enet_ce", "full_cv4_enet_dice_ce"
+AUGMENTED = ("full_cv4_enet_dice_ce_rotation", "full_cv4_enet_dice_ce_scaling",
+             "full_cv4_enet_dice_ce_gaussian_noise")
 HAS_DATA = (REPO / "data" / "segthor_train_full" / "train").is_dir()
 
 
@@ -56,6 +58,18 @@ class CvConfigTests(unittest.TestCase):
             (loss["name"], loss["kwargs"]), ("cross_entropy", {"idk": [0, 1, 2, 3, 4]})
         )
 
+    def test_augmentation_ablations_keep_the_current_cv_recipe(self):
+        current = load(CURRENT)
+        for name in AUGMENTED:
+            cfg = load(name)
+            self.assertEqual(cfg["experiment"], name)
+            self.assertTrue(is_cv(cfg))
+            for key in ("preprocess", "source_pattern"):
+                self.assertEqual(cfg["data"][key], current["data"][key])
+            for key in ("model", "loss", "optim", "scheduler", "train", "eval"):
+                self.assertEqual(cfg[key], current[key])
+            self.assertEqual(len(cfg["data"]["augment"]), 1)
+
     def test_only_preprocessing_loss_and_names_differ(self):
         starter, current = load(STARTER), load(CURRENT)
         different = {k for k in starter if starter[k] != current[k]}
@@ -89,7 +103,7 @@ class CvConfigTests(unittest.TestCase):
 class ExistingConfigTests(unittest.TestCase):
     def test_non_cv_configs_are_untouched_by_the_fold_logic(self):
         for path in sorted(CONFIGS.glob("*.yaml")):
-            if path.stem in (STARTER, CURRENT) or path.name == "base.yaml":
+            if path.stem.startswith("full_cv4_") or path.name == "base.yaml":
                 continue
             cfg = load_config(path)
             self.assertFalse(is_cv(cfg), path.name)

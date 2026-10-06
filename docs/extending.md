@@ -135,26 +135,19 @@ The built-in `random_rotation`, `random_scaling` and `gaussian_noise` factories 
 `src/augment.py`. Each takes an explicit application probability `p` in `kwargs`;
 rotation also takes `degrees: [min, max]`, scaling takes `scales: [min, max]`, and noise
 takes `sigma` in the intensity units delivered to the model. Rotation and scaling also
-take `fill`; in the Full40 configs, `fill: ct_window_low` resolves to `(lo - mean) / std`
+take `fill`; `fill: ct_window_low` resolves to `(lo - mean) / std`
 from that fold's `ct_norm_stats.json`, the same statistics used by `img_transform`.
 Rotation and scaling sample once per slice and apply the same centred, in-plane affine transform to image
 and GT. The output keeps its input H x W. The CT uses bilinear interpolation, with
-the configured normalized lower clipping endpoint filling newly exposed corners; the one-hot GT uses
+the configured fill value in newly exposed corners; the one-hot GT uses
 nearest-neighbour interpolation, with background filling those corners. Gaussian
 noise adds `sigma * torch.randn_like(image)` to the CT only; it does not clamp the
 result or modify the GT.
 
 These functions run after the cached PNG has been loaded and `img_transform` has
-applied any configured z-score. With `ct_window_zscore`, `sigma` is therefore in
-z-scored units, not `[0, 1]` PNG units or HU. The four existing Full40 fold caches
-have training-foreground HU standard deviations of about 176–181 HU; these
-put their training-foreground intensities near mean 0 and standard deviation 1
-before PNG quantisation. Their clipped full-slice ranges are approximately
-[-5.7, 1.5] after loading. The Full40 ablations use `p: 0.7` each; rotation uses
-[-10.0, 10.0] degrees, scaling uses [0.9, 1.1], and Gaussian noise uses `sigma: 0.05`.
-This is a conservative normalized perturbation, approximately 8.8–9.0 HU given
-those fold standard deviations; it is not measured scanner noise. Noise perturbs
-the whole image, including air and padded pixels, rather than only foreground.
+applied any configured z-score, so `sigma` uses the intensity units delivered to the model.
+The Full40 experiment's parameter choices and normalization differences are in
+[data_augmentation.md](data_augmentation.md).
 
 The factories reject unset `p` or `sigma` values.
 

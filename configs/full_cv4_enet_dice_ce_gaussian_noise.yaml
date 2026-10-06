@@ -1,0 +1,28 @@
+# Full40 CE(all)+Dice(fg) reference recipe; only online CT noise differs.
+experiment: full_cv4_enet_dice_ce_gaussian_noise
+notes: Full40 upgraded ENet Dice+CE with training-slice Gaussian CT noise only
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+  augment:
+    - {name: gaussian_noise, kwargs: {p: 0.5, sigma: 0.05}}  # conservative normalized perturbation (~8.8-9.0 HU), not measured scanner noise
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled

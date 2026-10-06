@@ -1,0 +1,24 @@
+# Full40 BASE ENet+CE reference recipe; only online rotation differs.
+experiment: full_cv4_enet_ce_rotation
+notes: Full40 BASE ENet+CE with mild training-slice rotation only
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+  augment:
+    - {name: random_rotation, kwargs: {p: 0.5, degrees: [-10.0, 10.0], fill: 0.0}}  # BASE per-volume min-max lower endpoint
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: cross_entropy
+  kwargs: {idk: [0, 1, 2, 3, 4]}
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled

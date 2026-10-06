@@ -217,7 +217,10 @@ What happens when you (re)submit the same config:
 
 "Same config" means the same hash of the resolved config. Settings that cannot change results are
 excluded, so a run stays resumable across them: `notes`, `wandb`, `paths`, `device` and
-`data.num_workers` (i.e. resubmitting with a different `--cpus-per-task`, or on CPU, still resumes).
+`data.num_workers` when no online augmentation is configured (i.e. resubmitting an
+unaugmented run with a different worker count still resumes). With online
+augmentation, changing worker count changes the random stream seen by slices,
+so it changes the run hash.
 Changing code without changing the config does **not** create a new run, so use `--force` or a new
 experiment name when you re-run after a code change. `manifest.json` records the git commit either way.
 
@@ -247,6 +250,8 @@ warning and continues with local files only. Nothing ever blocks on it. To uploa
 - Seeds: python, numpy, torch and CUDA are seeded from `seed`; DataLoader workers derive theirs from it.
   On CPU a run is bit-exact; on GPU cuDNN / ENet's max-unpooling are not deterministic, so expect
   small run-to-run differences. That is why the tables report mean ± std over seeds.
+- Online augmentation uses each worker's seeded Python and Torch RNGs. Keep
+  `data.num_workers` fixed across compared runs; augmented run hashes include it.
 - Data split: the train/val patient split is fixed at slicing time (`slice_segthor.py --retain 5`,
   seed 0; val = Patient_01, 11, 15, 17, 19), so all experiments on the same `data.root` share it.
   With `data.preprocess` the split comes from its `retains`/`fold`/`seed` instead (shuffled patient ids,
@@ -269,6 +274,11 @@ fold come from its training patients only. Run seeds add a level below: `runs/<e
 The 40-patient configs are `configs/full_cv4_enet_ce.yaml` (no preprocessing) and
 `configs/full_cv4_enet_dice_ce.yaml` (full preprocessing, Dice+CE): 4 folds of 30 train / 10 val patients, 3 run seeds,
 so 12 runs each. Name new CV configs `<dataset>_<protocol>_<model>_<loss>.yaml` with `experiment` equal to the file name.
+
+The six Full40 online augmentation arms use the same `cv.job` fold × seed layout
+and cached folds as their corresponding BASE or improved references. See
+[data_augmentation.md](data_augmentation.md) for their configs, parameters,
+controls and submission status.
 
 ```bash
 # 0. tests
