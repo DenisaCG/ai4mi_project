@@ -1,0 +1,31 @@
+# Same as full_cv4_resenc_ds_unet_dice_ce.yaml (model, preprocessing, folds, optimizer, 25 epochs); only the loss changes: the
+# boundary loss of Kervadec et al. (arXiv:1812.07032) is added to the deep-supervised Dice+CE. Runs as
+# full_cv4_resenc_ds_unet_dice_ce_boundary_fold0..3.
+experiment: full_cv4_resenc_ds_unet_dice_ce_boundary
+notes: boundary loss (mean of softmax prob * signed distance map of the GT, foreground classes, full-resolution output only) combined as alpha * (Dice + CE) + (1 - alpha) * boundary, alpha linear 1.0 -> 0.1 over the epochs; residual-encoder 2D U-Net (stem conv, 1/3/4/6/6/6 residual blocks per encoder stage, 1 conv per decoder stage, ResNet-D skips) with deep supervision (auxiliary heads at the decoder stages, weights 1, 1/2, 1/4, ..., lowest resolution 0) + CE (all classes) + soft Dice (foreground), constant LR, full preprocessing (median spacing + HU window + z-score + ROI crop/pad), 4-fold CV on the full 40-patient SEGTHOR train set
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+
+model:
+  name: unet
+  kwargs: {block: residual, deep_supervision: true}
+
+loss:
+  name: boundary_dice_ce
+  kwargs:
+    alpha_start: 1.0          # weight of Dice+CE in epoch 0 (the paper starts with the boundary weight at 0.01, raised 0.01/epoch)
+    alpha_end: 0.1            # ... and in the last epoch; linear in between, rescaled from the paper's long run to train.epochs
+    boundary_idk: [1, 2, 3, 4]
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled

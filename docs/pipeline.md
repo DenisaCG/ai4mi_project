@@ -268,7 +268,9 @@ fold come from its training patients only. Run seeds add a level below: `runs/<e
 
 The 40-patient configs are `configs/full_cv4_enet_ce.yaml` (no preprocessing) and
 `configs/full_cv4_enet_dice_ce.yaml` (full preprocessing, Dice+CE): 4 folds of 30 train / 10 val patients, 3 run seeds,
-so 12 runs each. Name new CV configs `<dataset>_<protocol>_<model>_<loss>.yaml` with `experiment` equal to the file name.
+so 12 runs each. `configs/full_cv4_resenc_ds_unet_dice_ce_boundary.yaml` is the residual-encoder, deep-supervision U-Net
+(`full_cv4_resenc_ds_unet_dice_ce`) with only the loss changed to `boundary_dice_ce` (see [extending.md](extending.md#add-a-loss));
+it reuses that config's `data.preprocess` block, so it needs no new `build_cv_folds.job`. Name new CV configs `<dataset>_<protocol>_<model>_<loss>.yaml` with `experiment` equal to the file name.
 
 ```bash
 # 0. tests

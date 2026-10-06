@@ -98,6 +98,20 @@ def build_soft_dice(num_classes: int, idk: list[int] | None = None, eps: float =
 Then `from . import dice` in `src/losses/__init__.py`, and `loss: {name: soft_dice}` in a config.
 A combined loss is just another factory that builds two losses and returns their weighted sum.
 
+`boundary_dice_ce` (`src/losses/boundary.py`) is the one loss that needs more than `(probs, target)`: the boundary term of
+Kervadec et al. (arXiv:1812.07032), mean over pixels of softmax probability x signed distance map of the GT (negative inside
+the organ, positive outside, in pixels; foreground classes only). Combined as `alpha * (Dice + CE) + (1 - alpha) * boundary`
+with `alpha` linear from `alpha_start` to `alpha_end` over `train.epochs` (the paper raises the boundary weight 0.01 per
+epoch over a much longer run, so the schedule is rescaled; the paper's weight on the boundary is `1 - alpha` here).
+Details that differ from a plain loss:
+- `src.data.WithDistMaps` adds `dist_maps` to every batch, computed per slice from the (augmented) GT on the training grid.
+  A class absent from a slice gets an all-zero map, as in the reference code, so a stray blob of that class on that slice
+  is not penalised by the boundary term (Dice + CE still see it).
+- The loss is called per deep-supervision scale as plain Dice + CE (`__call__`); `combine` then adds the boundary term on the
+  full-resolution probabilities only, after the deep-supervision sum. `set_epoch` is called by the training loop each epoch.
+- Validation loss uses the same alpha of that epoch, so train and val losses are comparable; checkpoints are still selected by
+  `val_dice_fg`.
+
 ## Add an online augmentation
 
 Create `src/augment.py`, import it at the top of `src/data.py` (`import src.augment  # noqa: F401`),

@@ -23,6 +23,7 @@ from torch.utils.data import DataLoader, Dataset
 from dataset import SliceDataset
 import src.augment  # noqa: F401  registers online augmentations
 from src.config import REPO
+from src.losses.boundary import foreground_dist_maps
 from src.registry import build
 from utils import class2one_hot
 
@@ -114,6 +115,21 @@ class Augmented(Dataset):
         return item
 
 
+class WithDistMaps(Dataset):
+    """Adds the boundary loss's signed distance maps of the GT, computed after augmentation so they match the trained grid."""
+
+    def __init__(self, base: Dataset):
+        self.base = base
+
+    def __len__(self):
+        return len(self.base)
+
+    def __getitem__(self, index):
+        item = self.base[index]
+        item["dist_maps"] = foreground_dist_maps(item["gts"])
+        return item
+
+
 def seed_worker(worker_id: int) -> None:
     # torch seeds each worker deterministically; propagate that to numpy/random for augmentations
     seed = torch.initial_seed() % 2**32
@@ -146,6 +162,8 @@ def build_dataset(cfg: dict, split: str) -> Dataset:
                 kwargs["fill"] = (zscore["lo"] - zscore["mean"]) / zscore["std"]
             augments.append(build("augment", a["name"], **kwargs))
         dataset = Augmented(dataset, augments)
+    if cfg.get("loss", {}).get("name") == "boundary_dice_ce":  # partial configs in tests have no loss section
+        dataset = WithDistMaps(dataset)
     return dataset
 
 

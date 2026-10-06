@@ -7,6 +7,7 @@ from src.folds import is_cv, run_configs
 
 CONFIGS = REPO / "configs"
 STARTER, CURRENT = "full_cv4_enet_ce", "full_cv4_enet_dice_ce"
+BASELINE, BOUNDARY = "full_cv4_resenc_ds_unet_dice_ce", "full_cv4_resenc_ds_unet_dice_ce_boundary"
 HAS_DATA = (REPO / "data" / "segthor_train_full" / "train").is_dir()
 
 
@@ -64,6 +65,17 @@ class CvConfigTests(unittest.TestCase):
             {k for k in starter["data"] if starter["data"][k] != current["data"][k]},
             {"preprocess", "root"},
         )
+
+    def test_boundary_config_differs_from_its_baseline_only_in_the_loss(self):
+        base, cfg = load(BASELINE), load(BOUNDARY)
+        self.assertEqual(cfg["experiment"], BOUNDARY)
+        self.assertTrue(is_cv(cfg))
+        self.assertEqual({k for k in base if base[k] != cfg[k]}, {"experiment", "notes", "loss"})
+        self.assertEqual(cfg["loss"]["name"], "boundary_dice_ce")
+        shared = {k: v for k, v in cfg["loss"]["kwargs"].items() if k in base["loss"]["kwargs"]}
+        self.assertEqual(shared, base["loss"]["kwargs"])
+        self.assertEqual((cfg["loss"]["kwargs"]["alpha_start"], cfg["loss"]["kwargs"]["alpha_end"]), (1.0, 0.1))
+        self.assertEqual(cfg["loss"]["kwargs"]["boundary_idk"], [1, 2, 3, 4])
 
     @unittest.skipUnless(HAS_DATA, "data/segthor_train_full is not on this machine")
     def test_folds_expand_to_distinct_datasets_and_runs(self):

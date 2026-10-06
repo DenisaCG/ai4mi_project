@@ -60,6 +60,8 @@ def run_epoch(split: str, net: nn.Module, loader, loss_fn, optimizer, device, cf
                 if training:
                     optimizer.zero_grad()
                 loss, probs = supervised_loss(net(img), gt, loss_fn)
+                if "dist_maps" in batch:  # boundary loss: full-resolution output only, after the deep-supervision sum
+                    loss = loss_fn.combine(loss, probs, batch["dist_maps"].to(device))
                 if training:
                     loss.backward()
                     optimizer.step()
@@ -126,6 +128,8 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
             num_classes=cfg["data"]["num_classes"],
         )
         LOG.info("Class weights: %s", loss_kwargs["weights"])
+    if cfg["loss"]["name"] == "boundary_dice_ce":
+        loss_kwargs["epochs"] = cfg["train"]["epochs"]  # the alpha schedule spans the whole run
     loss_fn = build("loss", cfg["loss"]["name"], num_classes=cfg["data"]["num_classes"],
                     **loss_kwargs)
     LOG.info("model %s: %.2fM parameters | train %d slices, val %d slices", cfg["model"]["name"],
@@ -150,6 +154,8 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
 
     for epoch in range(start, cfg["train"]["epochs"]):
         t0 = time.time()
+        if hasattr(loss_fn, "set_epoch"):
+            loss_fn.set_epoch(epoch)
         lr = optimizer.param_groups[0]["lr"]
         row = {"epoch": epoch}
         for split, opt in (("train", optimizer), ("val", None)):
