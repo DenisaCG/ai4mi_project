@@ -46,6 +46,7 @@ train:
   select_metric: val_dice_fg        # checkpoint selection; val_dice_fg or val_dice_legacy_fg
   max_failed_batches: 5             # per epoch; a failing batch is logged and skipped up to this many
   debug_samples: 0                  # >0 keeps only the first N slices per split (smoke tests)
+  train_patients: 0                 # >0 trains on the slices of N patients only (nested subsets, fixed shuffle); 0 = all
 
 eval:
   classes: [1, 2, 3]      # classes averaged into *_fg metrics; aorta (4) has no GT in segthor_part1

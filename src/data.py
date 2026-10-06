@@ -90,6 +90,8 @@ def build_dataset(cfg: dict, split: str) -> Dataset:
                            gt_transform=partial(gt_transform, d["num_classes"], d["label_scale"]))
     if cfg["train"]["debug_samples"]:
         dataset.files = random.Random(cfg["seed"]).sample(dataset.files, cfg["train"]["debug_samples"])
+    if split == "train" and cfg["train"].get("train_patients"):
+        dataset.files = keep_patients(dataset.files, d["patient_regex"], cfg["train"]["train_patients"])
     if split == "train" and d["augment"]:
         dataset = Augmented(dataset, [build("augment", a["name"], **a.get("kwargs", {}))
                                       for a in d["augment"]])
@@ -108,3 +110,16 @@ def patient_of(stem: str, regex: str) -> str:
     if match is None:
         raise ValueError(f"slice '{stem}' does not match data.patient_regex '{regex}'")
     return match.group(1)
+
+
+def keep_patients(files: list, regex: str, n: int) -> list:
+    """Keeps the slices of the first `n` patients of a fixed shuffle, so smaller sets nest in larger ones.
+
+    The shuffle is seeded with 0, not with the run seed: every run sees the same patients.
+    """
+    patients = sorted({patient_of(img.stem, regex) for img, _ in files})
+    if n > len(patients):
+        raise ValueError(f"train.train_patients={n} but the split has only {len(patients)} patients")
+    random.Random(0).shuffle(patients)
+    keep = set(patients[:n])
+    return [f for f in files if patient_of(f[0].stem, regex) in keep]
