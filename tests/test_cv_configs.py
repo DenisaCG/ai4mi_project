@@ -7,6 +7,7 @@ from src.folds import is_cv, run_configs
 
 CONFIGS = REPO / "configs"
 STARTER, CURRENT = "full_cv4_enet_ce", "full_cv4_enet_dice_ce"
+BASELINE, TVERSKY = "full_cv4_resenc_ds_unet_dice_ce", "full_cv4_resenc_ds_unet_tversky_ce"
 HAS_DATA = (REPO / "data" / "segthor_train_full" / "train").is_dir()
 
 
@@ -56,6 +57,18 @@ class CvConfigTests(unittest.TestCase):
             (loss["name"], loss["kwargs"]), ("cross_entropy", {"idk": [0, 1, 2, 3, 4]})
         )
 
+    def test_tversky_config_differs_from_the_baseline_only_in_the_loss(self):
+        baseline, tversky = load(BASELINE), load(TVERSKY)
+        self.assertEqual(tversky["experiment"], TVERSKY)
+        self.assertTrue(is_cv(tversky))
+        different = {k for k in baseline if baseline[k] != tversky[k]}
+        self.assertEqual(different, {"experiment", "notes", "loss"})
+        self.assertEqual(tversky["loss"]["name"], "tversky_ce")
+        kwargs = tversky["loss"]["kwargs"]
+        self.assertEqual((kwargs["alpha"], kwargs["beta"]), (0.3, 0.7))
+        self.assertEqual(kwargs["ce_idk"], baseline["loss"]["kwargs"]["ce_idk"])
+        self.assertEqual(kwargs["tversky_idk"], baseline["loss"]["kwargs"]["dice_idk"])
+
     def test_only_preprocessing_loss_and_names_differ(self):
         starter, current = load(STARTER), load(CURRENT)
         different = {k for k in starter if starter[k] != current[k]}
@@ -89,7 +102,7 @@ class CvConfigTests(unittest.TestCase):
 class ExistingConfigTests(unittest.TestCase):
     def test_non_cv_configs_are_untouched_by_the_fold_logic(self):
         for path in sorted(CONFIGS.glob("*.yaml")):
-            if path.stem in (STARTER, CURRENT) or path.name == "base.yaml":
+            if path.stem.startswith("full_cv4_") or path.name == "base.yaml":
                 continue
             cfg = load_config(path)
             self.assertFalse(is_cv(cfg), path.name)

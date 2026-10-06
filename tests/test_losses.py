@@ -83,6 +83,38 @@ class LossTests(unittest.TestCase):
             opt.step()
         self.assertLess(loss_fn(F.softmax(logits, dim=1), gt).item(), first)
 
+    def test_tversky_with_equal_weights_is_dice(self):
+        probs, gt, _ = batch(6)
+        dice = build("loss", "soft_dice", num_classes=K)(probs, gt)
+        tversky = build("loss", "soft_tversky", num_classes=K, alpha=0.5, beta=0.5)(probs, gt)
+        torch.testing.assert_close(tversky, dice)
+
+    def test_tversky_with_beta_above_alpha_punishes_missed_foreground(self):
+        """Two foreground classes with the same TP; one misses 2 pixels, the other adds 2."""
+
+        def scores(alpha: float, beta: float) -> tuple[float, float]:
+            loss_fn = build("loss", "soft_tversky", num_classes=2, alpha=alpha, beta=beta)
+
+            def line(n: int) -> torch.Tensor:  # one-hot map (1, 2, 1, 16) with n foreground pixels
+                fg = (torch.arange(16) < n).float().reshape(1, 1, 1, 16)
+                return torch.cat([1 - fg, fg], dim=1)
+
+            missed = loss_fn(line(6), line(8)).item()  # TP 6, FN 2, FP 0
+            extra = loss_fn(line(8), line(6)).item()  # TP 6, FN 0, FP 2
+            return missed, extra
+
+        missed, extra = scores(0.5, 0.5)
+        self.assertAlmostEqual(missed, extra, places=5)
+        missed, extra = scores(0.3, 0.7)
+        self.assertGreater(missed, extra)
+
+    def test_tversky_ce_is_the_sum_of_its_terms(self):
+        probs, gt, _ = batch(8)
+        ce = build("loss", "cross_entropy", num_classes=K)(probs, gt)
+        tversky = build("loss", "soft_tversky", num_classes=K, alpha=0.3, beta=0.7)(probs, gt)
+        combined = build("loss", "tversky_ce", num_classes=K, alpha=0.3, beta=0.7)(probs, gt)
+        torch.testing.assert_close(combined, ce + tversky)
+
 
 if __name__ == "__main__":
     unittest.main()
