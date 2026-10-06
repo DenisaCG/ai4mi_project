@@ -113,6 +113,11 @@ def validate(cfg: dict) -> None:
         raise ValueError(f"train.epochs must be >= 1, got {cfg['train']['epochs']}")
     if cfg["train"]["select_metric"] not in ("val_dice_fg", "val_dice_legacy_fg"):
         raise ValueError(f"unknown train.select_metric {cfg['train']['select_metric']}")
+    context, in_channels = cfg["data"]["context"], cfg["data"]["in_channels"]
+    if type(context) is not int or context < 0:
+        raise ValueError(f"data.context must be an integer >= 0, got {context!r}")
+    if in_channels != 2 * context + 1:
+        raise ValueError(f"data.in_channels={in_channels} must equal 2*data.context+1={2 * context + 1} (data.context={context})")
     validate_component_names(cfg)
 
 
@@ -133,6 +138,7 @@ def validate_component_names(cfg: dict) -> None:
 def config_hash(cfg: dict) -> str:
     """Identity of a run's settings. Ignore worker count only without random online augmentation."""
     relevant = {k: v for k, v in cfg.items() if k not in IGNORED_BY_HASH}
+    # data.context == 0 is the plain 2D input and is left out, so runs from before the key existed keep their hash
     relevant["data"] = {k: v for k, v in cfg["data"].items()
-                        if k != "num_workers" or cfg["data"]["augment"]}
+                        if (k != "num_workers" or cfg["data"]["augment"]) and (k != "context" or v != 0)}
     return hashlib.sha256(json.dumps(relevant, sort_keys=True).encode()).hexdigest()[:12]

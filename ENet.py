@@ -184,7 +184,9 @@ class ENet(nn.Module):
                 #                          conv_block)
 
                 # Initial operations
-                self.conv0 = nn.Conv2d(in_dim, K - 1, kernel_size=3, stride=2, padding=1)
+                assert K > in_dim, f"ENet needs kernels > in_dim to keep a conv branch (kernels={K}, in_dim={in_dim})"
+                # conv0 + maxpool0 (which keeps in_dim channels) are concatenated into K channels; in_dim=1 gives K - 1 as before
+                self.conv0 = nn.Conv2d(in_dim, K - in_dim, kernel_size=3, stride=2, padding=1)
                 self.maxpool0 = nn.MaxPool2d(2, return_indices=False, ceil_mode=False)
 
                 # Downsampling half

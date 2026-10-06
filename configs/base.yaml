@@ -19,6 +19,7 @@ data:
   label_scale: 63         # grey value per class index in the gt PNGs (63 for SEGTHOR, 255 for TOY2)
   patient_regex: "(Patient_\\d+)_\\d{4}"   # group 1 = patient id; groups slices into volumes
   in_channels: 1
+  context: 0              # 2.5D: neighbouring slices per side stacked as channels; requires in_channels = 2*context+1
   batch_size: 8
   num_workers: 5
   augment: []             # EXTENSION POINT: list of {name: <registered augment>, kwargs: {...}}, train only
