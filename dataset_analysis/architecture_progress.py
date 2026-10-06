@@ -4,7 +4,7 @@
         --experiments "ENet CE=full_cv4_enet_ce" "ENet Dice+CE=full_cv4_enet_dice_ce" "U-Net=full_cv4_unet_dice_ce" \\
         --compare "ENet Dice+CE" "U-Net" [--out figures/architecture]
 
---experiments gives the steps in order as LABEL=EXPERIMENT; every experiment needs all 12 runs (4 folds x 3 seeds).
+--experiments gives the steps in order as LABEL=EXPERIMENT (a literal \\n in LABEL breaks the line); every experiment needs all 12 runs (4 folds x 3 seeds).
 The numbers are those of `python -m src.aggregate`: the per-run values come from each run's summary.json (eval block),
 the per-patient values from its metrics_3d.csv, averaged over the seeds as in cv_pooled_<experiment>.csv.
 
@@ -65,13 +65,18 @@ class Step:
         tuple[int, int], list[dict]
     ]  # (fold, seed) -> metrics_3d.csv rows
 
+    @property
+    def name(self) -> str:
+        """The label on one line, for titles, legends, file names and --compare."""
+        return " ".join(self.label.split())
+
 
 def step_spec(text: str) -> tuple[str, str]:
-    """Splits LABEL=EXPERIMENT."""
+    """Splits LABEL=EXPERIMENT; a literal \\n in the label is a line break in the figure."""
     label, sep, experiment = text.rpartition("=")
     if not (sep and label and experiment):
         raise argparse.ArgumentTypeError(f"{text!r} is not LABEL=EXPERIMENT")
-    return label, experiment
+    return label.replace("\\n", "\n"), experiment
 
 
 def load_steps(metrics_dir: Path, specs: list[tuple[str, str]]) -> list[Step]:
@@ -115,6 +120,13 @@ def nan_patients(step: Step, key: str, organ: str) -> int:
         for row in rows
         if row["class_name"] == organ
     )
+
+
+def tighten(fig, top_in: float, bottom_in: float) -> None:
+    """Wins back white space that decorate() reserves above the first panel and between the axes and the legend."""
+    h = fig.get_size_inches()[1]
+    pars = fig.subplotpars
+    fig.subplots_adjust(top=pars.top + top_in / h, bottom=pars.bottom - bottom_in / h)
 
 
 def save(plt, fig, out: Path, name: str) -> None:
@@ -206,7 +218,7 @@ def progress_figure(plt, steps, organs, metric, n_patients, out) -> None:
     legend_below(bottom, ncol=2)
     footnote = (
         f"{label}, 3D on the original CT grid, best checkpoint; each run's value is the mean over the patients "
-        "of its validation fold."
+        "of its validation fold. Y-axes differ per organ."
     )
     if any_nan:
         footnote += " k NaN: patient values undefined (empty prediction or ground truth), left out of the means."
@@ -216,6 +228,8 @@ def progress_figure(plt, steps, organs, metric, n_patients, out) -> None:
         subtitle=f"{CV_FOLDS}-fold cross-validation × {CV_SEEDS} seeds, {n_patients} patients",
         footnote_text=footnote,
     )
+    tighten(fig, 0.45, 0.3)
+    fig.subplots_adjust(hspace=0.55)
     save(plt, fig, out, f"architecture_progress_{key}")
 
 
@@ -254,32 +268,36 @@ def patient_figure(plt, a: Step, b: Step, organs, out: Path) -> None:
         ax.set_title(organ.capitalize(), loc="left", fontsize=11, fontweight="bold")
         ax.set_xlabel("Dice")
         clean_axis(ax, "x")
-    first, last = axes[0, 0], axes[0, -1]
+    first = axes[0, 0]
     first.set_yticks(y, [p for _, p in patients], fontsize=7)
     first.invert_yaxis()
     for fold in range(CV_FOLDS):
         rows = [yi for yi, (f, _) in zip(y, patients) if f == fold]
-        last.text(
-            1.02,
-            np.mean(rows),
+        first.annotate(
             f"fold {fold}",
-            transform=last.get_yaxis_transform(),
+            (0, np.mean(rows)),
+            xycoords=first.get_yaxis_transform(),
+            xytext=(-58, 0),
+            textcoords="offset points",
+            ha="right",
             va="center",
             fontsize=9,
-            color=MUTED,
+            fontweight="bold",
+            color=INK,
         )
     first.scatter(
-        [], [], s=22, facecolor="white", edgecolor=INK, linewidths=1.2, label=a.label
+        [], [], s=22, facecolor="white", edgecolor=INK, linewidths=1.2, label=a.name
     )
-    first.scatter([], [], s=22, color=INK, label=b.label)
+    first.scatter([], [], s=22, color=INK, label=b.name)
     legend_below(first, ncol=2)
     decorate(
         fig,
-        f"Per-patient Dice, {a.label} and {b.label}",
+        f"Per-patient Dice, {a.name} and {b.name}",
         subtitle=f"{len(patients)} patients, one row each, grouped by fold ({CV_FOLDS}-fold cross-validation)",
         footnote_text=f"Each patient's 3D Dice (best checkpoint) averaged over {CV_SEEDS} seeds.",
     )
-    slug = [re.sub(r"\W+", "_", s.label).strip("_").lower() for s in (a, b)]
+    tighten(fig, 0.45, 0.3)
+    slug = [re.sub(r"\W+", "_", s.name).strip("_").lower() for s in (a, b)]
     save(plt, fig, out, f"architecture_per_patient_{slug[0]}_vs_{slug[1]}")
 
 
@@ -305,7 +323,7 @@ def main(argv: list[str] | None = None) -> None:
     args = parser.parse_args(argv)
 
     steps = load_steps(args.metrics_dir, args.experiments)
-    by_label = {s.label: s for s in steps}
+    by_label = {s.name: s for s in steps}
     if args.compare and not set(args.compare) <= set(by_label):
         raise SystemExit(
             f"--compare {args.compare} must be labels among {list(by_label)}"
@@ -328,7 +346,7 @@ def main(argv: list[str] | None = None) -> None:
                 table.append(
                     {
                         "metric": key,
-                        "step": step.label,
+                        "step": step.name,
                         "experiment": step.experiment,
                         "organ": organ,
                         "n_runs": int(np.isfinite(values).sum()),

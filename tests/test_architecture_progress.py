@@ -27,7 +27,7 @@ EXPERIMENTS = {
 }  # name -> improvement step in the fake values
 STEPS = [
     "Zeta=exp_c",
-    "Alpha=exp_a",
+    "Alpha\\nfirst=exp_a",
     "Mid=exp_b",
 ]  # neither alphabetical nor creation order
 NAN_HD95 = (1, 0, "Patient_11", "heart")  # fold, seed, patient, organ: in exp_b only
@@ -118,7 +118,7 @@ class ArchitectureProgressTests(unittest.TestCase):
 
     def test_steps_follow_the_order_of_experiments(self):
         steps = list(dict.fromkeys(row["step"] for row in self.table()))
-        self.assertEqual(steps, ["Zeta", "Alpha", "Mid"])
+        self.assertEqual(steps, ["Zeta", "Alpha first", "Mid"])
 
     def test_marker_means_and_nan_counts_equal_the_aggregate(self):
         by_key = {(r["metric"], r["experiment"], r["organ"]): r for r in self.table()}
