@@ -29,6 +29,20 @@ class DinoUNetTests(unittest.TestCase):
                     out = net(torch.randn(1, channels, size, size))
                 self.assertEqual(out.shape, (1, K, size, size))
 
+    def test_without_stem_output_shape_and_no_stem_weights(self):
+        net = build(
+            "model", "dino_unet", in_channels=1, num_classes=K, stem=False
+        ).eval()
+        with torch.no_grad():
+            out = net(torch.randn(1, 1, 288, 320))
+        self.assertEqual(out.shape, (1, K, 288, 320))
+        self.assertIsNone(net.stem)
+        self.assertEqual(len(net.decoder), 3)
+        self.assertLess(
+            sum(p.numel() for p in net.parameters() if p.requires_grad),
+            sum(p.numel() for p in self.nets[1].parameters() if p.requires_grad),
+        )
+
     def test_registered(self):
         self.assertIsInstance(self.nets[1], DinoUNet)
 

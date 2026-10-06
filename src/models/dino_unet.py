@@ -55,11 +55,18 @@ class DinoUNet(nn.Module):
     Args:
         in_channels: Number of input channels (stacked slices for 2.5D input).
         num_classes: Number of output classes.
+        stem: Whether to add the conv stem with the full- and half-resolution skips. Without it the
+            decoder uses only the ViT pyramid and ends at stride 2; the logits are then bilinearly
+            upsampled to the input size.
         torch_home: Torch cache with the DINOv2 repo and weights; see `cache_dir`.
     """
 
     def __init__(
-        self, in_channels: int, num_classes: int, torch_home: str | None = None
+        self,
+        in_channels: int,
+        num_classes: int,
+        stem: bool = True,
+        torch_home: str | None = None,
     ):
         super().__init__()
         self.to_rgb = nn.Conv2d(in_channels, 3, 1)
@@ -67,19 +74,24 @@ class DinoUNet(nn.Module):
             nn.Conv2d(VIT_CHANNELS, width, 1) for width in WIDTHS[1:]
         )
         # full- and half-resolution stem on the raw input
-        self.stem = nn.ModuleList(
-            [
-                conv_block(in_channels, WIDTHS[0]),
-                conv_block(WIDTHS[0], WIDTHS[1], stride=2),
-            ]
+        self.stem = (
+            nn.ModuleList(
+                [
+                    conv_block(in_channels, WIDTHS[0]),
+                    conv_block(WIDTHS[0], WIDTHS[1], stride=2),
+                ]
+            )
+            if stem
+            else None
         )
-        skips = WIDTHS[:-1]
+        lowest = 0 if stem else 1  # the stem adds the stride-1 decoder stage
+        skips = WIDTHS[lowest:-1]
         self.upsample = nn.ModuleList(
             nn.ConvTranspose2d(below, f, kernel_size=2, stride=2)
-            for below, f in zip(WIDTHS[1:], skips)
+            for below, f in zip(WIDTHS[lowest + 1 :], skips)
         )
         self.decoder = nn.ModuleList(double_conv(2 * f, f) for f in skips)
-        self.head = nn.Conv2d(WIDTHS[0], num_classes, 1)
+        self.head = nn.Conv2d(WIDTHS[lowest], num_classes, 1)
         for m in (
             self.modules()
         ):  # before the encoder exists, so its weights stay pretrained
@@ -114,18 +126,31 @@ class DinoUNet(nn.Module):
             )
             for i, (proj, f) in enumerate(zip(self.projections, features))
         ]
-        full = self.stem[0](x)
-        half = self.stem[1](full)
-        skips = [full, half + pyramid[0], pyramid[1], pyramid[2]]
+        if self.stem is None:
+            skips = pyramid[:3]
+        else:
+            full = self.stem[0](x)
+            half = self.stem[1](full)
+            skips = [full, half + pyramid[0], pyramid[1], pyramid[2]]
         x = pyramid[3]
-        for i in reversed(range(len(self.decoder))):
-            x = self.decoder[i](torch.cat([skips[i], self.upsample[i](x)], dim=1))
-        return self.head(x)
+        for up, decoder, skip in reversed(
+            list(zip(self.upsample, self.decoder, skips))
+        ):
+            x = decoder(torch.cat([skip, up(x)], dim=1))
+        logits = self.head(x)
+        if self.stem is None:
+            logits = F.interpolate(
+                logits, size=(h, w), mode="bilinear", align_corners=False
+            )
+        return logits
 
 
 @register("model", "dino_unet")
 def build_dino_unet(
-    in_channels: int, num_classes: int, torch_home: str | None = None
+    in_channels: int,
+    num_classes: int,
+    stem: bool = True,
+    torch_home: str | None = None,
 ) -> nn.Module:
     """Builds the DINOv2 U-Net; see `DinoUNet`."""
-    return DinoUNet(in_channels, num_classes, torch_home=torch_home)
+    return DinoUNet(in_channels, num_classes, stem=stem, torch_home=torch_home)
