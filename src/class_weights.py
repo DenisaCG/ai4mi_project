@@ -5,7 +5,7 @@ from PIL import Image
 from torch.utils.data import Dataset
 
 from dataset import SliceDataset
-from src.data import Augmented
+from src.data import Augmented, SliceStack
 
 
 def compute_class_weights(dataset: Dataset, num_classes: int) -> list[float]:
@@ -13,13 +13,13 @@ def compute_class_weights(dataset: Dataset, num_classes: int) -> list[float]:
 
     Pass the current fold's training dataset, never validation or test data.
     Read each mask once using its configured label transform, bypassing online
-    augmentation and image loading. Absent classes receive zero weight; an
+    augmentation, 2.5D stacking and image loading. Absent classes receive zero weight; an
     empty dataset raises ValueError. Returns the natural logarithm of inverse
     frequency weights, adding 1 to each weight to avoid negative weights.
     """
     if num_classes < 1:
         raise ValueError("num_classes must be positive")
-    while isinstance(dataset, Augmented):
+    while isinstance(dataset, (Augmented, SliceStack)):
         dataset = dataset.base
     if not isinstance(dataset, SliceDataset):
         raise TypeError("Expected a SliceDataset or an Augmented SliceDataset")

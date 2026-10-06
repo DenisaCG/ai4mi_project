@@ -109,7 +109,7 @@ def overlay_samples(net: nn.Module, dataset, device, n: int = 4):
         img = torch.stack([it["images"] for it in items]).to(device)
         pred = net(img).argmax(dim=1).cpu().numpy()
     gts = torch.stack([it["gts"] for it in items]).argmax(dim=1).numpy()
-    return img[:, 0].cpu().numpy(), gts, pred, [it["stems"] for it in items]
+    return img[:, img.shape[1] // 2].cpu().numpy(), gts, pred, [it["stems"] for it in items]
 
 
 def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int:
