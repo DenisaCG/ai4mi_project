@@ -1,0 +1,30 @@
+# Same as full_cv4_resenc_ds_unet_dice_ce.yaml (residual-encoder U-Net, deep supervision, Dice+CE, full preprocessing, 4-fold CV,
+# constant LR, 25 epochs); only the optimizer changes: AdamW with weight decay 0.01 instead of Adam without weight decay.
+# Runs as full_cv4_resenc_ds_unet_dice_ce_adamw_fold0..3.
+experiment: full_cv4_resenc_ds_unet_dice_ce_adamw
+notes: residual-encoder 2D U-Net with deep supervision + CE (all classes) + soft Dice (foreground), full preprocessing, 4-fold CV on the full 40-patient SEGTHOR train set; optimizer changed to AdamW (lr 5e-4, betas 0.9/0.999, weight decay 0.01), constant LR, 25 epochs
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+
+model:
+  name: unet
+  kwargs: {block: residual, deep_supervision: true}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+optim: {name: adamw, kwargs: {lr: 0.0005, betas: [0.9, 0.999], weight_decay: 0.01}}
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled
