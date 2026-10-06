@@ -2,19 +2,24 @@
 
     python dataset_analysis/architecture_progress.py \\
         --experiments "ENet CE=full_cv4_enet_ce" "ENet Dice+CE=full_cv4_enet_dice_ce" "U-Net=full_cv4_unet_dice_ce" \\
+        --sections "sequence:ENet CE,ENet Dice+CE,U-Net" "U-Net + one change:U-Net + attention gates" \\
         --compare "ENet Dice+CE" "U-Net" [--out figures/architecture]
 
 --experiments gives the steps in order as LABEL=EXPERIMENT (a literal \\n in LABEL breaks the line); every experiment needs all 12 runs (4 folds x 3 seeds).
+--sections groups the steps as HEADING:LABEL,LABEL,... (labels without line breaks); without it all steps form one section.
+The first section is the sequence: its means are joined by a line. In every later section the steps are not joined, and a
+dashed line per organ marks the mean of the last step of the first section, which is what those steps are compared with.
 The numbers are those of `python -m src.aggregate`: the per-run values come from each run's summary.json (eval block),
 the per-patient values from its metrics_3d.csv, averaged over the seeds as in cv_pooled_<experiment>.csv.
 
 Writes, as .png + .pdf: architecture_progress_{dice,hd95,assd} (one panel per organ, the 12 runs of every step as
-points, their mean as a marker joined across steps) and, with --compare A B, architecture_per_patient_<A>_vs_<B>
+points, their mean as a marker) and, with --compare A B, architecture_per_patient_<A>_vs_<B>
 (Dice of every patient in A and B, grouped by fold). Also architecture_progress.csv with the plotted means and the
 number of undefined (NaN) patient values per step and organ.
 """
 
 import argparse
+import itertools
 import math
 import re
 import sys
@@ -55,6 +60,12 @@ from src.aggregate import (
 
 ORGAN_COLOR = {name: COLORS[label] for label, name in CLASSES.items()}
 FOLD_GAP = 0.6  # extra rows between folds in the per-patient figure
+SECTION_GAP = 0.7  # extra x distance between sections in the progress figures
+
+
+def flat(text: str) -> str:
+    """A step label on one line, with a literal \\n or a line break read as a space."""
+    return " ".join(text.replace("\\n", " ").split())
 
 
 @dataclass
@@ -69,7 +80,7 @@ class Step:
     @property
     def name(self) -> str:
         """The label on one line, for titles, legends, file names and --compare."""
-        return " ".join(self.label.split())
+        return flat(self.label)
 
 
 def step_spec(text: str) -> tuple[str, str]:
@@ -78,6 +89,35 @@ def step_spec(text: str) -> tuple[str, str]:
     if not (sep and label and experiment):
         raise argparse.ArgumentTypeError(f"{text!r} is not LABEL=EXPERIMENT")
     return label.replace("\\n", "\n"), experiment
+
+
+def section_spec(text: str) -> tuple[str, list[str]]:
+    """Splits HEADING:LABEL,LABEL,... into the heading and the one-line step labels."""
+    heading, sep, labels = text.partition(":")
+    if not (sep and labels):
+        raise argparse.ArgumentTypeError(f"{text!r} is not HEADING:LABEL,LABEL")
+    return heading.strip(), [flat(label) for label in labels.split(",")]
+
+
+def group_steps(
+    sections: list[tuple[str, list[str]]] | None, steps: list[Step]
+) -> list[tuple[str, list[Step]]]:
+    """The steps grouped into the sections, or one unnamed section with every step.
+
+    Raises:
+        SystemExit: If a section names an unknown step or a step is in no section.
+    """
+    if not sections:
+        return [("", steps)]
+    by_name = {s.name: s for s in steps}
+    named = [name for _, names in sections for name in names]
+    if unknown := set(named) - set(by_name):
+        raise SystemExit(
+            f"--sections names unknown steps {sorted(unknown)}; known: {list(by_name)}"
+        )
+    if unused := set(by_name) - set(named):
+        raise SystemExit(f"steps {sorted(unused)} are in no section")
+    return [(heading, [by_name[n] for n in names]) for heading, names in sections]
 
 
 def load_steps(metrics_dir: Path, specs: list[tuple[str, str]]) -> list[Step]:
@@ -136,10 +176,22 @@ def save(plt, fig, out: Path, name: str) -> None:
     plt.close(fig)
 
 
-def progress_figure(plt, steps, organs, metric, n_patients, out) -> None:
-    """One metric: a panel per organ, the runs of each step as points and their mean joined across steps."""
+def progress_figure(plt, sections, organs, metric, n_patients, out) -> None:
+    """One metric: a panel per organ, the runs of each step as points and their mean as a marker.
+
+    The means of the first section are joined by a line. Each later section starts after a vertical separator, its
+    means are not joined, and a dashed line marks the last step of the first section.
+    """
     label, key, digits = metric
-    x = np.arange(len(steps))
+    steps = [s for _, group in sections for s in group]
+    positions, start = [], 0.0
+    for _, group in sections:
+        positions.append(start + np.arange(len(group)))
+        start = positions[-1][-1] + 1 + SECTION_GAP
+    x = np.concatenate(positions)
+    reference = (
+        len(sections[0][1]) - 1
+    )  # index of the step the later sections are compared with
     jitter = np.random.default_rng(0).uniform(
         -0.14, 0.14, (len(steps), len(steps[0].runs))
     )
@@ -147,7 +199,7 @@ def progress_figure(plt, steps, organs, metric, n_patients, out) -> None:
         len(organs),
         1,
         sharex=True,
-        figsize=(max(9, 1.6 * len(steps) + 1.4), 1.9 * len(organs) + 1.2),
+        figsize=(max(9, 1.6 * (x[-1] + 1) + 1.4), 1.9 * len(organs) + 1.2),
         squeeze=False,
     )
     any_nan = False
@@ -164,9 +216,31 @@ def progress_figure(plt, steps, organs, metric, n_patients, out) -> None:
             linewidths=0,
             zorder=3,
         )
-        ax.plot(
-            x, means, "-o", color=color, lw=1.8, ms=8, mec="white", mew=1.2, zorder=4
-        )
+        first = 0
+        for i, xs in enumerate(positions):
+            group_means = means[first : first + len(xs)]
+            first += len(xs)
+            ax.plot(
+                xs,
+                group_means,
+                "-o" if i == 0 else "o",
+                color=color,
+                lw=1.8,
+                ms=8,
+                mec="white",
+                mew=1.2,
+                zorder=4,
+            )
+            if i:
+                ax.hlines(
+                    means[reference],
+                    xs[0] - 0.45,
+                    xs[-1] + 0.45,
+                    color=color,
+                    linestyles="--",
+                    linewidth=1,
+                    zorder=2,
+                )
         for xi, mean, step in zip(x, means, steps):
             if not math.isnan(mean):
                 ax.annotate(
@@ -178,8 +252,8 @@ def progress_figure(plt, steps, organs, metric, n_patients, out) -> None:
                     fontsize=9,
                     fontweight="bold",
                     color=INK,
-                    zorder=5,
-                    path_effects=[withStroke(linewidth=3, foreground="white")],
+                    zorder=6,
+                    path_effects=[withStroke(linewidth=2.5, foreground="white")],
                 )
             n_nan = nan_patients(step, key, organ)
             if n_nan:
@@ -194,11 +268,28 @@ def progress_figure(plt, steps, organs, metric, n_patients, out) -> None:
                     fontsize=8,
                     color=MUTED,
                 )
-        ax.margins(x=0.07, y=0.2)
+        for before, after in itertools.pairwise(positions):
+            ax.axvline(
+                (before[-1] + after[0]) / 2, color=MUTED, linewidth=0.8, alpha=0.6
+            )
+        ax.margins(x=0.04, y=0.2)
         ax.set_title(organ.capitalize(), loc="left", fontsize=11, fontweight="bold")
         ax.set_ylabel(label)
         clean_axis(ax)
-    bottom = axes[-1, 0]
+    top, bottom = axes[0, 0], axes[-1, 0]
+    for (heading, _), xs in zip(sections, positions):
+        if heading:
+            top.annotate(
+                heading,
+                ((xs[0] + xs[-1]) / 2, 1),
+                xycoords=top.get_xaxis_transform(),
+                xytext=(0, 6),
+                textcoords="offset points",
+                ha="center",
+                va="bottom",
+                fontsize=11,
+                color=INK,
+            )
     bottom.set_xticks(
         x,
         [
@@ -227,7 +318,11 @@ def progress_figure(plt, steps, organs, metric, n_patients, out) -> None:
         mew=1.2,
         label=f"mean of the {len(steps[0].runs)} runs",
     )
-    legend_below(bottom, ncol=2)
+    if len(sections) > 1:
+        bottom.plot(
+            [], [], "--", color=INK, lw=1, label=f"mean of {steps[reference].name}"
+        )
+    legend_below(bottom, ncol=3)
     footnote = (
         f"{label}, 3D on the original CT grid, best checkpoint; each run's value is the mean over the patients "
         "of its validation fold. Y-axes differ per organ."
@@ -330,12 +425,20 @@ def main(argv: list[str] | None = None) -> None:
         metavar=("A", "B"),
         help="labels of two steps for the per-patient figure",
     )
+    parser.add_argument(
+        "--sections",
+        nargs="+",
+        type=section_spec,
+        metavar="HEADING:LABEL,LABEL",
+        help="group the steps into sections; the first is the sequence, the others are compared with its last step",
+    )
     parser.add_argument("--metrics-dir", type=Path, default=REPO / "metrics")
     parser.add_argument("--out", type=Path, default=REPO / "figures/architecture")
     args = parser.parse_args(argv)
 
     steps = load_steps(args.metrics_dir, args.experiments)
     by_label = {s.name: s for s in steps}
+    sections = group_steps(args.sections, steps)
     if args.compare and not set(args.compare) <= set(by_label):
         raise SystemExit(
             f"--compare {args.compare} must be labels among {list(by_label)}"
@@ -351,13 +454,14 @@ def main(argv: list[str] | None = None) -> None:
     table = []
     for metric in CV_METRICS:
         _, key, _ = metric
-        progress_figure(plt, steps, organs, metric, n_patients, args.out)
-        for step in steps:
-            for organ in organs:
+        progress_figure(plt, sections, organs, metric, n_patients, args.out)
+        for heading, group in sections:
+            for step, organ in itertools.product(group, organs):
                 values = run_values(step, key, organ)
                 table.append(
                     {
                         "metric": key,
+                        "section": heading,
                         "step": step.name,
                         "experiment": step.experiment,
                         "organ": organ,

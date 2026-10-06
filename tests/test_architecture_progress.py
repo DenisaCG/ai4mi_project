@@ -30,6 +30,7 @@ STEPS = [
     "Alpha\\nfirst=exp_a",
     "Mid=exp_b",
 ]  # neither alphabetical nor creation order
+SECTIONS = ["--sections", "Sequence:Zeta,Alpha first", "One change:Mid"]
 NAN_HD95 = (1, 0, "Patient_11", "heart")  # fold, seed, patient, organ: in exp_b only
 
 
@@ -87,7 +88,14 @@ class ArchitectureProgressTests(unittest.TestCase):
                     )
         fake.run_aggregate(cls.metrics)
         cls.result = cls.run_script(
-            "--experiments", *STEPS, "--compare", "Zeta", "Mid", "--out", str(cls.out)
+            "--experiments",
+            *STEPS,
+            *SECTIONS,
+            "--compare",
+            "Zeta",
+            "Mid",
+            "--out",
+            str(cls.out),
         )
         cls.report = (cls.metrics / "cv_summary.md").read_text()
 
@@ -119,6 +127,24 @@ class ArchitectureProgressTests(unittest.TestCase):
     def test_steps_follow_the_order_of_experiments(self):
         steps = list(dict.fromkeys(row["step"] for row in self.table()))
         self.assertEqual(steps, ["Zeta", "Alpha first", "Mid"])
+
+    def test_table_records_the_section_of_every_step(self):
+        sections = {row["step"]: row["section"] for row in self.table()}
+        self.assertEqual(
+            sections,
+            {"Zeta": "Sequence", "Alpha first": "Sequence", "Mid": "One change"},
+        )
+
+    def test_sections_must_cover_the_steps_exactly(self):
+        for sections, message in (
+            (["Sequence:Zeta,Nope", "Rest:Alpha first,Mid"], "unknown steps ['Nope']"),
+            (["Sequence:Zeta,Alpha first"], "steps ['Mid'] are in no section"),
+        ):
+            result = self.run_script(
+                "--experiments", *STEPS, "--sections", *sections, "--out", str(self.out)
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(message, result.stderr)
 
     def test_marker_means_and_nan_counts_equal_the_aggregate(self):
         by_key = {(r["metric"], r["experiment"], r["organ"]): r for r in self.table()}
