@@ -1,3 +1,4 @@
 # Importing a module registers its models. Add one line per new architecture file.
 from . import baseline  # noqa: F401  enet, shallow_cnn
 from . import unet  # noqa: F401  unet
+from . import dino_unet  # noqa: F401  dino_unet
