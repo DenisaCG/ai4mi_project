@@ -1,0 +1,21 @@
+#!/bin/bash
+#SBATCH --job-name=gating_oracle
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=00:30:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Oracle for a slice-presence head, on CPU: scores per-slice GT gating, a 3D largest connected component per organ and both on the
+# stitched val predictions of a finished CV experiment (read-only; results go to results/gating_oracle). 120 volumes x 4 variants x
+# 4 organs, spread over the CPUs; src.evaluate scores 10 volumes in about a minute, so a few minutes in total.
+# Usage: sbatch --export=ALL,EXPERIMENT=full_cv4_resenc_ds_unet_dice_ce jobsAndOutputs/pipeline/jobs/gating_oracle.job
+set -euo pipefail
+EXPERIMENT="${EXPERIMENT:?set EXPERIMENT=<cv experiment without _fold<k>> via --export}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=1
+python -m unittest tests.test_gating_oracle
+python -O -m tools.gating_oracle --experiment "$EXPERIMENT" --seeds 0 1 2 --workers "$SLURM_CPUS_PER_TASK"
+echo "[$(date -Is)] done: results/gating_oracle"
