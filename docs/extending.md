@@ -168,6 +168,26 @@ validation and test use the unaugmented slices.
 As with other online augmentations, interpolation can thin small structures such
 as the esophagus or trachea; inspect overlays before interpreting an ablation.
 
+## 2.5D input
+
+`data.context: c` (default 0, plain 2D) stacks slices z-c ... z+c of the same patient as channels, so a sample's
+`images` is `(2c+1, H, W)`. Set `data.in_channels: 2*c + 1` too; the config is rejected otherwise. The target stays the
+**centre slice only** (`gts` is `(K, H, W)`), so there is still one prediction per stem and metrics, `evaluate.predict`,
+`stitch()` and the 3D metrics are unchanged.
+
+- Neighbours come from the same sliced PNGs (no new on-disk format) and go through the same `img_transform`, so z-score
+  is applied per channel.
+- At the first and last slice of a volume the edge slice is repeated (z is clamped); nothing is zero-padded and nothing
+  is taken from another patient.
+- The neighbour lookup is built from the split's full file list, so `train.debug_samples` and `train.train_patients`
+  still find their neighbours.
+- `SliceStack` wraps the dataset before `Augmented`, so augmentations receive the whole `(C, H, W)` stack and must apply
+  identical geometry to every channel (the built-in ones do). Models need no change except ENet, whose first block is
+  sized `kernels - in_channels`; the U-Net and DINO U-Net already take `in_channels`.
+- `data.context: 0` leaves the data path, RNG order and `config_hash` of existing runs unchanged.
+
+Example: `configs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop_25d_c1.yaml`.
+
 ## Change the dataset or the preprocessing
 
 Preprocessing (HU windowing, resampling, cropping, a different slice size...) happens **offline**

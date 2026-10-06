@@ -1,0 +1,29 @@
+#!/bin/bash
+#SBATCH --job-name=25d_smoke_full40
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+#SBATCH --time=00:15:00
+#SBATCH --output=jobsAndOutputs/25d_context/outputs/%x_%j.out
+
+# CPU smoke run of the Full40 2.5D config: fold 0 only, 2 epochs on 16 slices (--smoke), written to runs/_smoke.
+# Aborts instead of slicing if a fold dataset is missing: the folds must already exist (build_cv_folds.job).
+# Usage: sbatch jobsAndOutputs/25d_context/jobs/smoke_full40.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+CONFIG=configs/full_cv4_enet_dice_ce_25d_c1.yaml
+python - "$CONFIG" <<'PY'
+import sys
+from src.config import REPO, load_config
+from src.folds import run_configs
+
+for cfg in run_configs(load_config(sys.argv[1])):
+    root = REPO / cfg["data"]["root"]
+    print(cfg["experiment"], root, "exists" if root.exists() else "MISSING")
+    if not root.exists():
+        sys.exit(f"{root} is missing: run build_cv_folds.job for this config first")
+PY
+python -m src.train --config "$CONFIG" --smoke --device cpu
+echo "[$(date -Is)] done"

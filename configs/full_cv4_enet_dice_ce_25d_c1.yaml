@@ -1,0 +1,31 @@
+# 2.5D version of full_cv4_enet_dice_ce.yaml: each sample stacks the slice and its +-1 neighbours (same patient, edge slices repeated)
+# as 3 input channels and still predicts only the centre slice. Differs from that config only in `experiment`, `notes` and
+# `data.context` / `data.in_channels`. The preprocessing block is identical, so it reuses the same fold datasets (build_cv_folds.job
+# is not needed again). Runs as full_cv4_enet_dice_ce_25d_c1_fold0..3; compare with full_cv4_enet_dice_ce via src/aggregate.py.
+experiment: full_cv4_enet_dice_ce_25d_c1
+notes: 2.5D (3 slices as channels, centre-slice target) ENet + CE (all classes) + soft Dice (foreground), full preprocessing (median spacing + HU window + z-score + ROI crop/pad), 4-fold CV on the full 40-patient SEGTHOR train set
+seed: 0
+
+data:
+  context: 1
+  in_channels: 3
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled
