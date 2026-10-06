@@ -1,0 +1,21 @@
+#!/bin/bash
+#SBATCH --job-name=25d_test_smoke
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=00:20:00
+#SBATCH --output=jobsAndOutputs/25d_context/outputs/%x_%j.out
+
+# CPU only: the whole unit-test suite, then a --smoke run of the 2.5D config on CPU (needs data/sliced_<hash> to exist),
+# then the run directory the 2.5D config resolves to next to the 2D baseline's.
+# Usage: sbatch jobsAndOutputs/25d_context/jobs/test_and_smoke.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+CFG=configs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop
+python -B -m unittest discover -s tests -v 2>&1 | tail -40
+python -m src.train --config ${CFG}_25d_c1.yaml --smoke --device cpu
+python -m src.run --config ${CFG}_25d_c1.yaml --set seed=0
+python -m src.run --config ${CFG}.yaml --set seed=0
+echo "[$(date -Is)] done"
