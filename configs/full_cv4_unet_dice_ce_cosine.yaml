@@ -1,0 +1,30 @@
+# Same 4-fold cross-validation, preprocessing, model and loss as full_cv4_unet_dice_ce.yaml (40 patients, 30 train / 10 val per fold,
+# split seed 0, run seeds 0-2 from cv.job); only the learning-rate schedule changes: cosine annealing over the 25 epochs instead of constant.
+# Runs as full_cv4_unet_dice_ce_cosine_fold0..3.
+experiment: full_cv4_unet_dice_ce_cosine
+notes: plain 2D U-Net + CE (all classes) + soft Dice (foreground), cosine LR schedule (CosineAnnealingLR, T_max = 25 epochs, eta_min = 0.0 default, stepped per epoch from the base lr 5e-4), full preprocessing (median spacing + HU window + z-score + ROI crop/pad), 4-fold CV on the full 40-patient SEGTHOR train set
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+
+model:
+  name: unet
+
+scheduler:
+  name: cosine
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled
