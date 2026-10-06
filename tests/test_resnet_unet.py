@@ -62,6 +62,19 @@ class ResNetUNetTests(unittest.TestCase):
                 build_net(pretrained=True)
             build_net(pretrained=False)
 
+    def test_random_init_needs_no_weights_cache(self):
+        """Evaluation builds with pretrained=False and loads a checkpoint, so no cache may be needed."""
+        source = build_net(pretrained=False)
+        with (
+            tempfile.TemporaryDirectory() as empty,
+            mock.patch.dict(os.environ, {"TORCH_HOME": empty}),
+        ):
+            self.assertFalse(weights_path().exists())
+            net = build_net(pretrained=False)
+            net.load_state_dict(source.state_dict())
+        for a, b in zip(net.state_dict().values(), source.state_dict().values()):
+            self.assertTrue(torch.equal(a, b))
+
 
 @unittest.skipUnless(CACHED, f"ResNet34 weights not cached at {weights_path()}")
 class PretrainedWeightsTests(unittest.TestCase):
