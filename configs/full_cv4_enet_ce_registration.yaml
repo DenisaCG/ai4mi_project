@@ -1,0 +1,25 @@
+# Full40 BASE CE with train-only offline 3D registration. The real fold cache and
+# validation remain identical to full_cv4_enet_ce.yaml. Build synthetic data first.
+experiment: full_cv4_enet_ce_registration
+notes: ENet + CE (all classes), course-default preprocessing, 30 train-only registered volumes per fold
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0}
+  registration: {root: data/registration_full40, pairing_seed: 42}
+  patient_regex: '((?:Patient_\d+|Synthetic_f\d+_\d+))_\d{4}'
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: cross_entropy
+  kwargs: {idk: [0, 1, 2, 3, 4]}
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled
