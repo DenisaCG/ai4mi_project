@@ -16,6 +16,6 @@ EXPERIMENT="${EXPERIMENT:?set EXPERIMENT=<cv experiment without _fold<k>> via --
 source jobsAndOutputs/pipeline/jobs/env_setup.sh
 
 export OMP_NUM_THREADS=1
-python -m unittest tests.test_gating_oracle
+python -m unittest tests.test_gating_oracle tests.test_postprocess_filters
 python -O -m tools.gating_oracle --experiment "$EXPERIMENT" --seeds 0 1 2 --workers "$SLURM_CPUS_PER_TASK"
 echo "[$(date -Is)] done: results/gating_oracle"
