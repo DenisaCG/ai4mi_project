@@ -1,0 +1,7 @@
+# 2.5D (context 1, 3 channels) twin of segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop_seeds.txt: seeds 0-2, the same seeds as the 2D baseline.
+# Compare with: python -m src.aggregate against metrics/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop (3D val Dice fg ~0.802, esophagus ~0.613).
+# sbatch --time=00:30:00 --array=0-2 --export=ALL,SWEEP=sweeps/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop_25d_c1_seeds.txt jobsAndOutputs/pipeline/jobs/sweep.job
+# first --array=0-0 as a check, then --array=1-2
+configs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop_25d_c1.yaml seed=0
+configs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop_25d_c1.yaml seed=1
+configs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop_25d_c1.yaml seed=2
