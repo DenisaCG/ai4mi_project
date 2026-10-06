@@ -153,7 +153,9 @@ class ArchitectureProgressTests(unittest.TestCase):
                 cells = fake.table_rows(self.report, experiment, label)[
                     "all runs (12 runs)"
                 ]
-                for organ, cell in zip(ORGANS, cells):
+                for organ, cell in zip(
+                    (*ORGANS, "fg"), cells
+                ):  # the table ends with the fg column
                     row = by_key[key, experiment, organ]
                     mean, _, nan = (
                         cell.partition(" ± ")[0],

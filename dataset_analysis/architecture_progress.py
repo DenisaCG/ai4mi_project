@@ -12,7 +12,7 @@ dashed line per organ marks the mean of the last step of the first section, whic
 The numbers are those of `python -m src.aggregate`: the per-run values come from each run's summary.json (eval block),
 the per-patient values from its metrics_3d.csv, averaged over the seeds as in cv_pooled_<experiment>.csv.
 
-Writes, as .png + .pdf: architecture_progress_{dice,hd95,assd} (one panel per organ, the 12 runs of every step as
+Writes, as .png + .pdf: architecture_progress_{dice,hd95,assd} (one panel per organ and one for the mean over the organs, the 12 runs of every step as
 points, their mean as a marker) and, with --compare A B, architecture_per_patient_<A>_vs_<B>
 (Dice of every patient in A and B, grouped by fold). Also architecture_progress.csv with the plotted means and the
 number of undefined (NaN) patient values per step and organ.
@@ -59,6 +59,8 @@ from src.aggregate import (
 )
 
 ORGAN_COLOR = {name: COLORS[label] for label, name in CLASSES.items()}
+FG = "fg"  # the eval key of the mean over the organs of a run
+FG_COLOR = "#555555"  # neutral, not an organ colour
 FOLD_GAP = 0.6  # extra rows between folds in the per-patient figure
 SECTION_GAP = 0.7  # extra x distance between sections in the progress figures
 
@@ -154,7 +156,17 @@ def run_values(step: Step, key: str, organ: str) -> np.ndarray:
 
 
 def nan_patients(step: Step, key: str, organ: str) -> int:
-    """Patient values of the metric that are undefined, summed over the runs (as counted by src.aggregate)."""
+    """Undefined values of the metric, summed over the runs, as counted by src.aggregate.
+
+    For an organ these are patient values; for the fg mean, organ values missing from a run's mean.
+    """
+    if organ == FG:
+        return sum(
+            math.isnan(run[f"eval.val_{key}_{name}"])
+            for run in step.runs.values()
+            for name in CLASSES.values()
+            if f"eval.val_{key}_{name}" in run
+        )
     return sum(
         math.isnan(row[key])
         for rows in step.patient_rows.values()
@@ -183,6 +195,7 @@ def progress_figure(plt, sections, organs, metric, n_patients, out) -> None:
     means are not joined, and a dashed line marks the last step of the first section.
     """
     label, key, digits = metric
+    panels = [*organs, FG]
     steps = [s for _, group in sections for s in group]
     positions, start = [], 0.0
     for _, group in sections:
@@ -196,15 +209,15 @@ def progress_figure(plt, sections, organs, metric, n_patients, out) -> None:
         -0.14, 0.14, (len(steps), len(steps[0].runs))
     )
     fig, axes = plt.subplots(
-        len(organs),
+        len(panels),
         1,
         sharex=True,
-        figsize=(max(9, 1.6 * (x[-1] + 1) + 1.4), 1.9 * len(organs) + 1.2),
+        figsize=(max(9, 1.6 * (x[-1] + 1) + 1.4), 1.9 * len(panels) + 1.2),
         squeeze=False,
     )
     any_nan = False
-    for ax, organ in zip(axes[:, 0], organs):
-        color = ORGAN_COLOR[organ]
+    for ax, organ in zip(axes[:, 0], panels):
+        color = ORGAN_COLOR.get(organ, FG_COLOR)
         values = np.array([run_values(s, key, organ) for s in steps])
         means = [nan_free_mean(list(v)) for v in values]
         ax.scatter(
@@ -273,7 +286,12 @@ def progress_figure(plt, sections, organs, metric, n_patients, out) -> None:
                 (before[-1] + after[0]) / 2, color=MUTED, linewidth=0.8, alpha=0.6
             )
         ax.margins(x=0.04, y=0.2)
-        ax.set_title(organ.capitalize(), loc="left", fontsize=11, fontweight="bold")
+        ax.set_title(
+            "All organs (mean)" if organ == FG else organ.capitalize(),
+            loc="left",
+            fontsize=11,
+            fontweight="bold",
+        )
         ax.set_ylabel(label)
         clean_axis(ax)
     top, bottom = axes[0, 0], axes[-1, 0]
@@ -325,7 +343,7 @@ def progress_figure(plt, sections, organs, metric, n_patients, out) -> None:
     legend_below(bottom, ncol=3)
     footnote = (
         f"{label}, 3D on the original CT grid, best checkpoint; each run's value is the mean over the patients "
-        "of its validation fold. Y-axes differ per organ."
+        f"of its validation fold. All organs = mean of the {len(organs)} organs per run. Y-axes differ per organ."
     )
     if any_nan:
         footnote += " k NaN: patient values undefined (empty prediction or ground truth), left out of the means."
@@ -456,7 +474,7 @@ def main(argv: list[str] | None = None) -> None:
         _, key, _ = metric
         progress_figure(plt, sections, organs, metric, n_patients, args.out)
         for heading, group in sections:
-            for step, organ in itertools.product(group, organs):
+            for step, organ in itertools.product(group, [*organs, FG]):
                 values = run_values(step, key, organ)
                 table.append(
                     {
