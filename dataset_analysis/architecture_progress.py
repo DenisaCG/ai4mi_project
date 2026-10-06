@@ -18,6 +18,7 @@ import argparse
 import math
 import re
 import sys
+import textwrap
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -143,7 +144,11 @@ def progress_figure(plt, steps, organs, metric, n_patients, out) -> None:
         -0.14, 0.14, (len(steps), len(steps[0].runs))
     )
     fig, axes = plt.subplots(
-        len(organs), 1, sharex=True, figsize=(9, 1.9 * len(organs) + 1.2), squeeze=False
+        len(organs),
+        1,
+        sharex=True,
+        figsize=(max(9, 1.6 * len(steps) + 1.4), 1.9 * len(organs) + 1.2),
+        squeeze=False,
     )
     any_nan = False
     for ax, organ in zip(axes[:, 0], organs):
@@ -194,7 +199,14 @@ def progress_figure(plt, steps, organs, metric, n_patients, out) -> None:
         ax.set_ylabel(label)
         clean_axis(ax)
     bottom = axes[-1, 0]
-    bottom.set_xticks(x, [s.label for s in steps])
+    bottom.set_xticks(
+        x,
+        [
+            "\n".join(textwrap.fill(line, 16) for line in s.label.split("\n"))
+            for s in steps
+        ],
+        fontsize=10,
+    )
     bottom.scatter(
         [],
         [],
