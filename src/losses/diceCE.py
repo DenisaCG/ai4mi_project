@@ -13,6 +13,10 @@ class DiceCE:
                  dice_weight: float = 1.0, eps: float = 1e-6):
         self.ce, self.dice = CrossEntropy(idk=ce_idk), SoftDice(dice_idk, eps)
         self.ce_weight, self.dice_weight = ce_weight, dice_weight
+        print(
+        f"Initialized DiceCE with ce_idk={ce_idk}, dice_idk={dice_idk}, "
+        f"ce_weight={ce_weight}, dice_weight={dice_weight}"
+        )
 
     def __call__(self, probs: Tensor, target: Tensor) -> Tensor:
         return self.ce_weight * self.ce(probs, target) + self.dice_weight * self.dice(probs, target)

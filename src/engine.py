@@ -120,7 +120,7 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
                       epochs=cfg["train"]["epochs"], **cfg["scheduler"]["kwargs"])
     loaders = {split: build_loader(cfg, split, device) for split in ("train", "val")}
     loss_kwargs = dict(cfg["loss"]["kwargs"])
-    if cfg["loss"]["name"] == "weighted_ce":
+    if cfg["loss"]["name"] in ("weighted_ce", "weighted_ce_dice"):
         loss_kwargs["weights"] = compute_class_weights(
             loaders["train"].dataset,
             num_classes=cfg["data"]["num_classes"],
