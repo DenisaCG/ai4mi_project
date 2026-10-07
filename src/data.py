@@ -21,6 +21,7 @@ from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 
 from dataset import SliceDataset
+from src.distance_maps import WithDistanceMaps
 import src.augment  # noqa: F401  registers online augmentations
 from src.config import REPO
 from src.registry import build
@@ -146,6 +147,9 @@ def build_dataset(cfg: dict, split: str) -> Dataset:
                 kwargs["fill"] = (zscore["lo"] - zscore["mean"]) / zscore["std"]
             augments.append(build("augment", a["name"], **kwargs))
         dataset = Augmented(dataset, augments)
+    if split != "test" and cfg.get("loss", {}).get("name") in ("boundary", "ce_dice_boundary", "weighted_ce_dice_boundary"):
+        classes = cfg["loss"]["kwargs"].get("boundary_idk")
+        dataset = WithDistanceMaps(dataset, list(range(1, d["num_classes"])) if classes is None else classes)
     return dataset
 
 

@@ -6,6 +6,7 @@ from torch.utils.data import Dataset
 
 from dataset import SliceDataset
 from src.data import Augmented, SliceStack
+from src.distance_maps import WithDistanceMaps
 
 
 def compute_class_weights(dataset: Dataset, num_classes: int) -> list[float]:
@@ -19,7 +20,7 @@ def compute_class_weights(dataset: Dataset, num_classes: int) -> list[float]:
     """
     if num_classes < 1:
         raise ValueError("num_classes must be positive")
-    while isinstance(dataset, (Augmented, SliceStack)):
+    while isinstance(dataset, (Augmented, SliceStack, WithDistanceMaps)):
         dataset = dataset.base
     if not isinstance(dataset, SliceDataset):
         raise TypeError("Expected a SliceDataset or an Augmented SliceDataset")

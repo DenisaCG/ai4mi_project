@@ -4,4 +4,5 @@ from . import dice  # noqa: F401
 from . import diceCE  # noqa: F401
 from . import weighted_cross_entropy  # noqa: F401
 from . import weightedCEdice
+from . import boundary
 

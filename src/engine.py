@@ -29,22 +29,28 @@ def build_model(cfg: dict, device: torch.device) -> nn.Module:
                  num_classes=cfg["data"]["num_classes"], **cfg["model"]["kwargs"]).to(device)
 
 
-def supervised_loss(out: torch.Tensor | list[torch.Tensor], gt: torch.Tensor, loss_fn) -> tuple[torch.Tensor, torch.Tensor]:
+def supervised_loss(out: torch.Tensor | list[torch.Tensor], gt: torch.Tensor, loss_fn, dist_maps=None) -> tuple[torch.Tensor, torch.Tensor]:
     """Loss and full-resolution probabilities of a model output.
 
     A tensor is supervised as is. A list (deep supervision, full resolution first) is supervised per
     scale against the nearest-neighbour downsampled one-hot GT, with weights 1, 1/2, 1/4, ... except the
     lowest-resolution scale, which gets 0, normalised to sum to 1.
     """
+    def apply_loss(probs, target):
+        if getattr(loss_fn, "requires_distance_maps", False):
+            maps = dist_maps if dist_maps is not None and dist_maps.shape == target.shape else None
+            return loss_fn(probs, target, maps)
+        return loss_fn(probs, target)
+
     if not isinstance(out, list):
         probs = F.softmax(out, dim=1)
-        return loss_fn(probs, gt), probs
+        return apply_loss(probs, gt), probs
     weights = [0.5**i for i in range(len(out) - 1)]
     total = sum(weights)
     loss = 0
     for logits, weight in zip(out, weights):
         target = F.interpolate(gt.float(), size=logits.shape[-2:], mode="nearest").to(gt.dtype)
-        loss = loss + weight / total * loss_fn(F.softmax(logits, dim=1), target)
+        loss = loss + weight / total * apply_loss(F.softmax(logits, dim=1), target)
     return loss, F.softmax(out[0], dim=1)
 
 
@@ -59,7 +65,10 @@ def run_epoch(split: str, net: nn.Module, loader, loss_fn, optimizer, device, cf
                 img, gt = batch["images"].to(device), batch["gts"].to(device)
                 if training:
                     optimizer.zero_grad()
-                loss, probs = supervised_loss(net(img), gt, loss_fn)
+                dist_maps = batch.get("dist_maps")
+                if dist_maps is not None:
+                    dist_maps = dist_maps.to(device)
+                loss, probs = supervised_loss(net(img), gt, loss_fn, dist_maps)
                 if training:
                     loss.backward()
                     optimizer.step()
@@ -120,7 +129,7 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
                       epochs=cfg["train"]["epochs"], **cfg["scheduler"]["kwargs"])
     loaders = {split: build_loader(cfg, split, device) for split in ("train", "val")}
     loss_kwargs = dict(cfg["loss"]["kwargs"])
-    if cfg["loss"]["name"] in ("weighted_ce", "weighted_ce_dice"):
+    if cfg["loss"]["name"] in ("weighted_ce", "weighted_ce_dice", "weighted_ce_dice_boundary"):
         loss_kwargs["weights"] = compute_class_weights(
             loaders["train"].dataset,
             num_classes=cfg["data"]["num_classes"],
