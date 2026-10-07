@@ -9,6 +9,11 @@ dice,,2.5D (3 slices: ±1),full_cv4_enet_dice_ce_25d_c1,heart,12,0,0.92374822975
 dice,,2.5D (3 slices: ±1),full_cv4_enet_dice_ce_25d_c1,trachea,12,0,0.8673361384481018
 dice,,2.5D (3 slices: ±1),full_cv4_enet_dice_ce_25d_c1,aorta,12,0,0.8767135991766999
 dice,,2.5D (3 slices: ±1),full_cv4_enet_dice_ce_25d_c1,fg,12,0,0.8373337027004337
+dice,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,esophagus,12,0,0.6728728897015622
+dice,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,heart,12,0,0.9197112727828037
+dice,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,trachea,12,0,0.8708292730083712
+dice,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,aorta,12,0,0.8731728263138482
+dice,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,fg,12,0,0.8341465654516463
 hd95,,2D baseline (1 slice),full_cv4_enet_dice_ce,esophagus,12,0,13.22695395128499
 hd95,,2D baseline (1 slice),full_cv4_enet_dice_ce,heart,12,0,13.363248480386492
 hd95,,2D baseline (1 slice),full_cv4_enet_dice_ce,trachea,12,0,18.402842879301545
@@ -19,6 +24,11 @@ hd95,,2.5D (3 slices: ±1),full_cv4_enet_dice_ce_25d_c1,heart,12,0,11.8011124294
 hd95,,2.5D (3 slices: ±1),full_cv4_enet_dice_ce_25d_c1,trachea,12,0,12.605385696547057
 hd95,,2.5D (3 slices: ±1),full_cv4_enet_dice_ce_25d_c1,aorta,12,0,18.359975344668765
 hd95,,2.5D (3 slices: ±1),full_cv4_enet_dice_ce_25d_c1,fg,12,0,13.878978188268206
+hd95,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,esophagus,12,0,12.941039936875015
+hd95,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,heart,12,0,12.904707743047673
+hd95,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,trachea,12,0,14.284210096772817
+hd95,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,aorta,12,0,13.705914269199893
+hd95,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,fg,12,0,13.45896801147385
 assd,,2D baseline (1 slice),full_cv4_enet_dice_ce,esophagus,12,0,2.9317465048268536
 assd,,2D baseline (1 slice),full_cv4_enet_dice_ce,heart,12,0,3.119888492520206
 assd,,2D baseline (1 slice),full_cv4_enet_dice_ce,trachea,12,0,2.127528918226222
@@ -29,3 +39,8 @@ assd,,2.5D (3 slices: ±1),full_cv4_enet_dice_ce_25d_c1,heart,12,0,2.99684950164
 assd,,2.5D (3 slices: ±1),full_cv4_enet_dice_ce_25d_c1,trachea,12,0,1.7382318062488926
 assd,,2.5D (3 slices: ±1),full_cv4_enet_dice_ce_25d_c1,aorta,12,0,2.589446392500383
 assd,,2.5D (3 slices: ±1),full_cv4_enet_dice_ce_25d_c1,fg,12,0,2.5420635797570017
+assd,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,esophagus,12,0,2.8145583019705778
+assd,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,heart,12,0,3.242968547089095
+assd,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,trachea,12,0,1.9244021220786747
+assd,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,aorta,12,0,2.373712443937486
+assd,,2.5D (5 slices: ±2),full_cv4_enet_dice_ce_25d_c2,fg,12,0,2.5889103537689584
