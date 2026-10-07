@@ -3,7 +3,7 @@
     python dataset_analysis/architecture_progress.py \\
         --experiments "ENet CE=full_cv4_enet_ce" "ENet Dice+CE=full_cv4_enet_dice_ce" "U-Net=full_cv4_unet_dice_ce" \\
         --sections "sequence:ENet CE,ENet Dice+CE,U-Net" "U-Net + one change:U-Net + attention gates" \\
-        --compare "ENet Dice+CE" "U-Net" [--out figures/architecture]
+        --compare "ENet Dice+CE" "U-Net" [--out figures/architecture] [--title "{metric} ..."] [--note "..."]
 
 --experiments gives the steps in order as LABEL=EXPERIMENT (a literal \\n in LABEL breaks the line); every experiment needs all 12 runs (4 folds x 3 seeds).
 --sections groups the steps as HEADING:LABEL,LABEL,... (labels without line breaks); without it all steps form one section.
@@ -63,6 +63,7 @@ FG = "fg"  # the eval key of the mean over the organs of a run
 FG_COLOR = "#555555"  # neutral, not an organ colour
 FOLD_GAP = 0.6  # extra rows between folds in the per-patient figure
 SECTION_GAP = 0.7  # extra x distance between sections in the progress figures
+DEFAULT_TITLE = "{metric} per organ at each architecture step"
 
 
 def flat(text: str) -> str:
@@ -188,7 +189,7 @@ def save(plt, fig, out: Path, name: str) -> None:
     plt.close(fig)
 
 
-def progress_figure(plt, sections, organs, metric, n_patients, out) -> None:
+def progress_figure(plt, sections, organs, metric, n_patients, out, title=DEFAULT_TITLE, note="") -> None:
     """One metric: a panel per organ, the runs of each step as points and their mean as a marker.
 
     The means of the first section are joined by a line. Each later section starts after a vertical separator, its
@@ -349,8 +350,8 @@ def progress_figure(plt, sections, organs, metric, n_patients, out) -> None:
         footnote += " k NaN: patient values undefined (empty prediction or ground truth), left out of the means."
     decorate(
         fig,
-        f"{label.split()[0]} per organ at each architecture step",
-        subtitle=f"{CV_FOLDS}-fold cross-validation × {CV_SEEDS} seeds, {n_patients} patients",
+        title.format(metric=label.split()[0]),
+        subtitle=f"{CV_FOLDS}-fold cross-validation × {CV_SEEDS} seeds, {n_patients} patients" + (f". {note}" if note else ""),
         footnote_text=footnote,
     )
     tighten(fig, 0.45, 0.3)
@@ -358,7 +359,7 @@ def progress_figure(plt, sections, organs, metric, n_patients, out) -> None:
     save(plt, fig, out, f"architecture_progress_{key}")
 
 
-def patient_figure(plt, a: Step, b: Step, organs, out: Path) -> None:
+def patient_figure(plt, a: Step, b: Step, organs, out: Path, note: str = "") -> None:
     """Dice of every patient in step a (open marker) and step b (filled), one row per patient, grouped by fold."""
     pooled_a = {
         (r["patient"], r["class_name"]): r for r in pool_patients(a.patient_rows)
@@ -418,7 +419,7 @@ def patient_figure(plt, a: Step, b: Step, organs, out: Path) -> None:
     decorate(
         fig,
         f"Per-patient Dice, {a.name} and {b.name}",
-        subtitle=f"{len(patients)} patients, one row each, grouped by fold ({CV_FOLDS}-fold cross-validation)",
+        subtitle=f"{len(patients)} patients, one row each, grouped by fold ({CV_FOLDS}-fold cross-validation)" + (f". {note}" if note else ""),
         footnote_text=f"Each patient's 3D Dice (best checkpoint) averaged over {CV_SEEDS} seeds.",
     )
     tighten(fig, 0.45, 0.3)
@@ -452,6 +453,8 @@ def main(argv: list[str] | None = None) -> None:
     )
     parser.add_argument("--metrics-dir", type=Path, default=REPO / "metrics")
     parser.add_argument("--out", type=Path, default=REPO / "figures/architecture")
+    parser.add_argument("--title", default=DEFAULT_TITLE, help="progress figure title; {metric} is the metric name")
+    parser.add_argument("--note", default="", help="sentence appended to every figure subtitle (dataset, preprocessing, loss)")
     args = parser.parse_args(argv)
 
     steps = load_steps(args.metrics_dir, args.experiments)
@@ -472,7 +475,7 @@ def main(argv: list[str] | None = None) -> None:
     table = []
     for metric in CV_METRICS:
         _, key, _ = metric
-        progress_figure(plt, sections, organs, metric, n_patients, args.out)
+        progress_figure(plt, sections, organs, metric, n_patients, args.out, args.title, args.note)
         for heading, group in sections:
             for step, organ in itertools.product(group, [*organs, FG]):
                 values = run_values(step, key, organ)
@@ -491,7 +494,7 @@ def main(argv: list[str] | None = None) -> None:
     write_csv(args.out / "architecture_progress.csv", table)
     if args.compare:
         patient_figure(
-            plt, by_label[args.compare[0]], by_label[args.compare[1]], organs, args.out
+            plt, by_label[args.compare[0]], by_label[args.compare[1]], organs, args.out, args.note
         )
     print(f"{len(steps)} steps -> {args.out}")
 

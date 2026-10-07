@@ -1,0 +1,27 @@
+#!/bin/bash
+#SBATCH --job-name=aggregate_25d
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=00:20:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# CPU only. Tests of the aggregation and the plot script, then src.aggregate over every run in metrics/ (rewrites comparison_runs.csv,
+# comparison.md, cv_summary.md, cv_pooled_*.csv), then the 2D vs 2.5D figures in figures/context_25d (read-only on metrics/).
+# Both experiments are the 40-patient SEGTHOR train set (corrected GT), 4 folds x 3 seeds, with the same preprocessing and loss.
+# Usage: sbatch jobsAndOutputs/pipeline/jobs/aggregate_25d.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=1 MPLBACKEND=Agg
+python -m unittest tests.test_aggregate_cv tests.test_architecture_progress
+python -m src.aggregate
+
+python dataset_analysis/architecture_progress.py \
+    --experiments "2D baseline\n(1 slice)=full_cv4_enet_dice_ce" "2.5D\n(3 slices: ±1)=full_cv4_enet_dice_ce_25d_c1" \
+    --compare "2D baseline (1 slice)" "2.5D (3 slices: ±1)" \
+    --title "{metric}: 2.5D context (3 slices) vs the 2D baseline" \
+    --note "ENet, 40-patient SEGTHOR train set (corrected labels), median spacing + HU window + z-score + ROI crop, CE + soft Dice loss. 2.5D = slice ±1 neighbour as 3 input channels, centre slice predicted" \
+    --out figures/context_25d
+echo "[$(date -Is)] done: metrics/cv_summary.md, figures/context_25d"
