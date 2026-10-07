@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH --job-name=plot_25d_all
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=00:10:00
+#SBATCH --output=jobsAndOutputs/25d_context/outputs/%x_%j.out
+
+# CPU only. One figure per metric (dice, hd95, assd) with ENet (2D, 2.5D 3 slices, 2.5D 5 slices) and the residual-encoder
+# deep-supervision U-Net (2D, 2.5D 3 slices) side by side, in figures/context_25d_all (read-only on metrics/).
+# Usage: sbatch jobsAndOutputs/25d_context/jobs/plot_25d_all.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=1 MPLBACKEND=Agg
+python dataset_analysis/architecture_progress.py \
+    --experiments "ENet 2D\n(1 slice)=full_cv4_enet_dice_ce" "ENet 2.5D\n(3 slices)=full_cv4_enet_dice_ce_25d_c1" "ENet 2.5D\n(5 slices)=full_cv4_enet_dice_ce_25d_c2" \
+                  "U-Net 2D\n(1 slice)=full_cv4_resenc_ds_unet_dice_ce" "U-Net 2.5D\n(3 slices)=full_cv4_resenc_ds_unet_dice_ce_25d_c1" \
+    --sections "ENet:ENet 2D (1 slice),ENet 2.5D (3 slices),ENet 2.5D (5 slices)" "Residual-encoder U-Net:U-Net 2D (1 slice),U-Net 2.5D (3 slices)" \
+    --no-reference --join-sections \
+    --title "{metric}: 2D vs 2.5D context, ENet and residual-encoder U-Net" \
+    --note "40-patient SEGTHOR train set (corrected labels), 4 folds x 3 seeds, median spacing + HU window + z-score + ROI crop, CE + soft Dice loss. U-Net has deep supervision. 2.5D = the slice and its ±k neighbours as 2k+1 input channels, centre slice predicted" \
+    --out figures/context_25d_all
+echo "[$(date -Is)] done: figures/context_25d_all"

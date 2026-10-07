@@ -189,11 +189,13 @@ def save(plt, fig, out: Path, name: str) -> None:
     plt.close(fig)
 
 
-def progress_figure(plt, sections, organs, metric, n_patients, out, title=DEFAULT_TITLE, note="") -> None:
+def progress_figure(
+    plt, sections, organs, metric, n_patients, out, title=DEFAULT_TITLE, note="", show_reference=True, join_sections=False
+) -> None:
     """One metric: a panel per organ, the runs of each step as points and their mean as a marker.
 
     The means of the first section are joined by a line. Each later section starts after a vertical separator, its
-    means are not joined, and a dashed line marks the last step of the first section.
+    means are not joined, and a dashed line marks the last step of the first section (unless show_reference is False); join_sections joins the later sections too.
     """
     label, key, digits = metric
     panels = [*organs, FG]
@@ -237,7 +239,7 @@ def progress_figure(plt, sections, organs, metric, n_patients, out, title=DEFAUL
             ax.plot(
                 xs,
                 group_means,
-                "-o" if i == 0 else "o",
+                "-o" if i == 0 or join_sections else "o",
                 color=color,
                 lw=1.8,
                 ms=8,
@@ -245,7 +247,7 @@ def progress_figure(plt, sections, organs, metric, n_patients, out, title=DEFAUL
                 mew=1.2,
                 zorder=4,
             )
-            if i:
+            if i and show_reference:
                 ax.hlines(
                     means[reference],
                     xs[0] - 0.45,
@@ -337,7 +339,7 @@ def progress_figure(plt, sections, organs, metric, n_patients, out, title=DEFAUL
         mew=1.2,
         label=f"mean of the {len(steps[0].runs)} runs",
     )
-    if len(sections) > 1:
+    if len(sections) > 1 and show_reference:
         bottom.plot(
             [], [], "--", color=INK, lw=1, label=f"mean of {steps[reference].name}"
         )
@@ -451,6 +453,16 @@ def main(argv: list[str] | None = None) -> None:
         metavar="HEADING:LABEL,LABEL",
         help="group the steps into sections; the first is the sequence, the others are compared with its last step",
     )
+    parser.add_argument(
+        "--no-reference",
+        action="store_true",
+        help="omit the dashed line that carries the last step of the first section into the later sections",
+    )
+    parser.add_argument(
+        "--join-sections",
+        action="store_true",
+        help="join the means of every section by a line, not only those of the first",
+    )
     parser.add_argument("--metrics-dir", type=Path, default=REPO / "metrics")
     parser.add_argument("--out", type=Path, default=REPO / "figures/architecture")
     parser.add_argument("--title", default=DEFAULT_TITLE, help="progress figure title; {metric} is the metric name")
@@ -475,7 +487,9 @@ def main(argv: list[str] | None = None) -> None:
     table = []
     for metric in CV_METRICS:
         _, key, _ = metric
-        progress_figure(plt, sections, organs, metric, n_patients, args.out, args.title, args.note)
+        progress_figure(
+            plt, sections, organs, metric, n_patients, args.out, args.title, args.note, not args.no_reference, args.join_sections
+        )
         for heading, group in sections:
             for step, organ in itertools.product(group, [*organs, FG]):
                 values = run_values(step, key, organ)

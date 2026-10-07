@@ -1,0 +1,31 @@
+#!/bin/bash
+#SBATCH --job-name=aggregate_unet_25d
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=00:20:00
+#SBATCH --output=jobsAndOutputs/25d_context/outputs/%x_%j.out
+
+# CPU only. src.aggregate over every run in metrics/ (rewrites comparison_runs.csv, comparison.md, cv_summary.md, cv_pooled_*.csv),
+# then 2D vs 2.5D (3 slices) figures for the residual-encoder deep-supervision U-Net in figures/context_25d_unet (read-only on metrics/).
+# Needs the 12 runs of both experiments (4 folds x 3 seeds); copy fold0/seed2 of the 2.5D runs into metrics/ before submitting.
+# Usage: sbatch jobsAndOutputs/25d_context/jobs/aggregate_unet_25d.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=1 MPLBACKEND=Agg
+python -m src.aggregate
+
+NOTE="Residual-encoder U-Net with deep supervision, 40-patient SEGTHOR train set (corrected labels), median spacing + HU window + z-score + ROI crop, CE + soft Dice loss. 2.5D = the slice and its ±1 neighbours as 3 input channels, centre slice predicted"
+EXPS=("2D baseline\n(1 slice)=full_cv4_resenc_ds_unet_dice_ce" "2.5D\n(3 slices: ±1)=full_cv4_resenc_ds_unet_dice_ce_25d_c1")
+python dataset_analysis/architecture_progress.py \
+    --experiments "${EXPS[@]}" \
+    --title "{metric}: 2.5D context (3 slices) vs the 2D baseline, residual-encoder U-Net" \
+    --note "$NOTE" --out figures/context_25d_unet \
+    --compare "2D baseline (1 slice)" "2.5D (3 slices: ±1)"
+python dataset_analysis/seed_variability.py \
+    --experiments "${EXPS[@]}" \
+    --title "Dice per seed and fold, residual-encoder U-Net: 2D vs 2.5D" \
+    --note "$NOTE" --out figures/context_25d_unet
+echo "[$(date -Is)] done: metrics/cv_summary.md, figures/context_25d_unet"

@@ -1,0 +1,34 @@
+{
+  "status": "completed",
+  "started": "2026-10-07T15:42:01",
+  "config_hash": "e44eeeeace17",
+  "smoke": false,
+  "user": "scur0049",
+  "host": "gcn103.local.snellius.surf.nl",
+  "slurm_job_id": "27717598",
+  "python": "3.11.16",
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA H100",
+  "git_commit": "e81a959e7d7f0f7acd93082600dc2503d7f1a1df",
+  "git_branch": "standardized_pipeline",
+  "git_dirty": true,
+  "command": "/gpfs/home5/scur0049/ai4mi_project/src/train.py --config configs/full_cv4_resenc_ds_unet_dice_ce_25d_c1.yaml --fold 0 --set seed=2",
+  "resumes": [
+    {
+      "user": "scur0049",
+      "host": "gcn156.local.snellius.surf.nl",
+      "slurm_job_id": "27742785",
+      "python": "3.11.16",
+      "torch": "2.14.0+cu130",
+      "cuda": "13.0",
+      "gpu": "NVIDIA H100",
+      "git_commit": "f6df5ab67a9f47d230a86a2aa98d5f30b4c094d1",
+      "git_branch": "standardized_pipeline",
+      "git_dirty": true,
+      "command": "/gpfs/home5/scur0049/ai4mi_project/src/train.py --config configs/full_cv4_resenc_ds_unet_dice_ce_25d_c1.yaml --fold 0 --set seed=2",
+      "at": "2026-10-07T21:05:34"
+    }
+  ],
+  "finished": "2026-10-07T21:10:27"
+}

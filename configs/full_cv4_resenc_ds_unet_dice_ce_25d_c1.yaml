@@ -1,0 +1,32 @@
+# 2.5D version of full_cv4_resenc_ds_unet_dice_ce.yaml: each sample stacks the slice and its +-1 neighbours (same patient, edge slices
+# repeated) as 3 input channels and still predicts only the centre slice. Differs from that config only in `experiment`, `notes` and
+# `data.context` / `data.in_channels`: same model (residual-encoder U-Net, deep supervision), loss, optimizer and preprocessing, so it
+# reuses the same fold datasets (build_cv_folds.job is not needed again). Runs as full_cv4_resenc_ds_unet_dice_ce_25d_c1_fold0..3;
+# compare with full_cv4_resenc_ds_unet_dice_ce via src/aggregate.py.
+experiment: full_cv4_resenc_ds_unet_dice_ce_25d_c1
+notes: 2.5D (3 slices as channels, centre-slice target) residual-encoder U-Net (stem conv, 1/3/4/6/6/6 residual blocks per encoder stage, 1 conv per decoder stage, ResNet-D skips) with deep supervision (auxiliary heads at the decoder stages, weights 1, 1/2, 1/4, ..., lowest resolution 0) + CE (all classes) + soft Dice (foreground), constant LR, full preprocessing (median spacing + HU window + z-score + ROI crop/pad), 4-fold CV on the full 40-patient SEGTHOR train set
+seed: 0
+
+data:
+  context: 1
+  in_channels: 3
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+
+model:
+  name: unet
+  kwargs: {block: residual, deep_supervision: true}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled
