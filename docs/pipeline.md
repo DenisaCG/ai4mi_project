@@ -230,9 +230,11 @@ Smoke runs go to `runs/_smoke/...`, always start fresh and are never copied to `
 
 Two channels, both automatic:
 
-1. **`metrics/<experiment>/seed<seed>/`** (git-tracked, a few KB): `config.yaml`, `manifest.json`,
+1. **`metrics/<experiment>/seed<seed>/`** for controls, or
+   **`metrics/augmentation_metrics/<category>/<experiment>/seed<seed>/`** for augmentation
+   (git-tracked, a few KB): `config.yaml`, `manifest.json`,
    `summary.json`, `epochs.csv`, `metrics_3d.csv`, copied at the end of training and again after
-   evaluation. Commit these with your code change (`git add metrics/<experiment>`); every run has a
+   evaluation. Commit these with your code change; every run has a
    unique path, so teammates never conflict. `python -m src.aggregate` turns all of them into
    `metrics/comparison.md` (mean ± std over seeds, paste-ready) and `metrics/comparison_runs.csv`.
 2. **Weights & Biases**: project `ai4mi-segthor`, one run per experiment/seed, grouped by `experiment`
@@ -268,15 +270,18 @@ keep the single-holdout behaviour, so `fold: 2` is "two folds", not "holdout spl
 `preprocess.seed` (0), never the run seed, so every run seed sees the same folds.
 
 Each fold is its own experiment, `<experiment>_fold<k>`, with its own sliced dataset (`data/sliced_<hash>`, the hash
-includes the fold), run directory and `metrics/` directory. The spacing, intensity and ROI-window statistics of a
+includes the fold), run directory and metrics directory. The spacing, intensity and ROI-window statistics of a
 fold come from its training patients only. Run seeds add a level below: `runs/<experiment>_fold<k>/seed<s>`.
 
 The 40-patient configs are `configs/full_cv4_enet_ce.yaml` (no preprocessing) and
 `configs/full_cv4_enet_dice_ce.yaml` (full preprocessing, Dice+CE): 4 folds of 30 train / 10 val patients, 3 run seeds,
 so 12 runs each. Name new CV configs `<dataset>_<protocol>_<model>_<loss>.yaml` with `experiment` equal to the file name.
 
-The six Full40 online augmentation arms use the same `cv.job` fold × seed layout
-and cached folds as their corresponding BASE or improved references. See
+The six Full40 online augmentation arms use the same `cv.job` fold × seed implementation
+through `jobsAndOutputs/augmentation/jobs/online/cv.job`, which directs their Slurm
+logs to `jobsAndOutputs/augmentation/outputs/online/`. The generic `cv.job` remains
+the entry point for non-augmentation controls. Augmentation arms reuse the cached
+folds of their corresponding BASE or improved references. See
 [data_augmentation.md](data_augmentation.md) for their configs, parameters,
 controls and submission status.
 
@@ -308,7 +313,9 @@ Without `--fold`, `python -m src.train --config <cv config>` trains all folds on
 only fold k, and `python -m src.run --config <cv config> --fold k` prints that run's directory. `--smoke` runs fold 0 only.
 `train.job` and `sweep.job` do not know about folds: use `cv.job` for CV configs.
 
-Each finished run leaves `metrics/<experiment>_fold<k>/seed<s>/` with the per-patient `metrics_3d.csv` of that fold's
+Each finished control run leaves `metrics/<experiment>_fold<k>/seed<s>/`; an augmentation
+run leaves `metrics/augmentation_metrics/<category>/<experiment>_fold<k>/seed<s>/`.
+Each contains the per-patient `metrics_3d.csv` of that fold's
 validation patients; the best weights and the 3D predictions stay in the run directory on scratch (kept alive by
 `keepalive_scratch.job`). The generated per-fold configs record `num_folds` and use `fold` as the index; rerunning
 one of those configs trains only that split. The standalone slicer likewise takes `--num_folds` plus a zero-based

@@ -1,0 +1,101 @@
+============================================================================================== 
+Warning! Mixing Conda and module environments may lead to corruption of the
+user environment. 
+We do not recommend users mixing those two environments unless absolutely
+necessary. Note that 
+SURF does not provide any support for Conda environment.
+For more information, please refer to our software policy page:
+https://servicedesk.surf.nl/wiki/display/WIKI/Software+policy+Snellius#SoftwarepolicySnellius-UseofAnacondaandMinicondaenvironmentsonSnellius 
+
+Remember that many packages have already been installed on the system and can
+be loaded using 
+the 'module load <package__name>' command. If you are uncertain if a package is
+already available 
+on the system, please use 'module avail' or 'module spider' to search for it.
+============================================================================================== 
+[2026-10-06T18:31:01+02:00] job 27679823 on tcn539.local.snellius.surf.nl, python /home/scur0049/.conda/envs/ai4mi/bin/python, commit 4c1ace9
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_147eb592')
+>> Created train dataset with 5453 images...
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_147eb592')
+>> Created val dataset with 1967 images...
+full_cv4_enet_ce_rotation 0 data/sliced_147eb592 OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_62a8ba12')
+>> Created train dataset with 5692 images...
+full_cv4_enet_ce_rotation 1 data/sliced_62a8ba12 OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_3dd20a1d')
+>> Created train dataset with 5563 images...
+full_cv4_enet_ce_rotation 2 data/sliced_3dd20a1d OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_bc0ac1cf')
+>> Created train dataset with 5552 images...
+full_cv4_enet_ce_rotation 3 data/sliced_bc0ac1cf OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_147eb592')
+>> Created train dataset with 5453 images...
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_147eb592')
+>> Created val dataset with 1967 images...
+full_cv4_enet_ce_scaling 0 data/sliced_147eb592 OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_62a8ba12')
+>> Created train dataset with 5692 images...
+full_cv4_enet_ce_scaling 1 data/sliced_62a8ba12 OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_3dd20a1d')
+>> Created train dataset with 5563 images...
+full_cv4_enet_ce_scaling 2 data/sliced_3dd20a1d OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_bc0ac1cf')
+>> Created train dataset with 5552 images...
+full_cv4_enet_ce_scaling 3 data/sliced_bc0ac1cf OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_147eb592')
+>> Created train dataset with 5453 images...
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_147eb592')
+>> Created val dataset with 1967 images...
+full_cv4_enet_ce_gaussian_noise 0 data/sliced_147eb592 OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_62a8ba12')
+>> Created train dataset with 5692 images...
+full_cv4_enet_ce_gaussian_noise 1 data/sliced_62a8ba12 OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_3dd20a1d')
+>> Created train dataset with 5563 images...
+full_cv4_enet_ce_gaussian_noise 2 data/sliced_3dd20a1d OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_bc0ac1cf')
+>> Created train dataset with 5552 images...
+full_cv4_enet_ce_gaussian_noise 3 data/sliced_bc0ac1cf OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_12749947')
+>> Created train dataset with 5110 images...
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_12749947')
+>> Created val dataset with 1793 images...
+full_cv4_enet_dice_ce_rotation 0 data/sliced_12749947 OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_d27e8eea')
+>> Created train dataset with 5175 images...
+full_cv4_enet_dice_ce_rotation 1 data/sliced_d27e8eea OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_6f81632c')
+>> Created train dataset with 5210 images...
+full_cv4_enet_dice_ce_rotation 2 data/sliced_6f81632c OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_e5985fec')
+>> Created train dataset with 5214 images...
+full_cv4_enet_dice_ce_rotation 3 data/sliced_e5985fec OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_12749947')
+>> Created train dataset with 5110 images...
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_12749947')
+>> Created val dataset with 1793 images...
+full_cv4_enet_dice_ce_scaling 0 data/sliced_12749947 OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_d27e8eea')
+>> Created train dataset with 5175 images...
+full_cv4_enet_dice_ce_scaling 1 data/sliced_d27e8eea OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_6f81632c')
+>> Created train dataset with 5210 images...
+full_cv4_enet_dice_ce_scaling 2 data/sliced_6f81632c OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_e5985fec')
+>> Created train dataset with 5214 images...
+full_cv4_enet_dice_ce_scaling 3 data/sliced_e5985fec OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_12749947')
+>> Created train dataset with 5110 images...
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_12749947')
+>> Created val dataset with 1793 images...
+full_cv4_enet_dice_ce_gaussian_noise 0 data/sliced_12749947 OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_d27e8eea')
+>> Created train dataset with 5175 images...
+full_cv4_enet_dice_ce_gaussian_noise 1 data/sliced_d27e8eea OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_6f81632c')
+>> Created train dataset with 5210 images...
+full_cv4_enet_dice_ce_gaussian_noise 2 data/sliced_6f81632c OK
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_e5985fec')
+>> Created train dataset with 5214 images...
+full_cv4_enet_dice_ce_gaussian_noise 3 data/sliced_e5985fec OK
+PASS: 6 configs, 24 fold resolutions, 24 train augmentation constructions; validation unaugmented

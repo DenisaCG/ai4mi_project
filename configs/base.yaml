@@ -64,3 +64,4 @@ wandb:
 paths:
   run_root: runs          # symlink to /scratch-shared/$USER/ai4mi_project/runs (docs/pipeline.md)
   metrics_dir: metrics    # git-tracked copy of small per-run results, shared with the team
+  metrics_category: null # screening | joint | registration; routes augmentation metric copies

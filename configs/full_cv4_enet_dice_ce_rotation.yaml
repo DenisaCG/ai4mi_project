@@ -26,3 +26,6 @@ eval:
 
 wandb:
   mode: disabled
+
+paths:
+  metrics_category: screening

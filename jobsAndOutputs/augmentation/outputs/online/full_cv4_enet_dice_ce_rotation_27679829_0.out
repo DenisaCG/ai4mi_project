@@ -1,0 +1,72 @@
+============================================================================================== 
+Warning! Mixing Conda and module environments may lead to corruption of the
+user environment. 
+We do not recommend users mixing those two environments unless absolutely
+necessary. Note that 
+SURF does not provide any support for Conda environment.
+For more information, please refer to our software policy page:
+https://servicedesk.surf.nl/wiki/display/WIKI/Software+policy+Snellius#SoftwarepolicySnellius-UseofAnacondaandMinicondaenvironmentsonSnellius 
+
+Remember that many packages have already been installed on the system and can
+be loaded using 
+the 'module load <package__name>' command. If you are uncertain if a package is
+already available 
+on the system, please use 'module avail' or 'module spider' to search for it.
+============================================================================================== 
+[2026-10-06T18:32:06+02:00] job 27679829 on gcn54.local.snellius.surf.nl, python /home/scur0049/.conda/envs/ai4mi/bin/python, commit 4c1ace9
+name, driver_version, memory.total [MiB]
+NVIDIA A100-SXM4-40GB, 615.71.09, 40960 MiB
+task 0: fold 0, seed 0
+full_cv4_enet_dice_ce_rotation_fold0 seed 0: data /gpfs/home5/scur0049/ai4mi_project/data/sliced_12749947
+2026-10-06 18:32:18 INFO starting full_cv4_enet_dice_ce_rotation_fold0 -> /gpfs/home5/scur0049/ai4mi_project/runs/full_cv4_enet_dice_ce_rotation_fold0/seed0 on cuda
+> Initialized ENet (in_dim=1->out_dim=5) with {'kernels': 8, 'factor': 2}
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_12749947')
+>> Created train dataset with 5110 images...
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_12749947')
+>> Created val dataset with 1793 images...
+Initialized CrossEntropy with {'idk': [0, 1, 2, 3, 4]}
+2026-10-06 18:32:18 INFO model enet: 0.28M parameters | train 5110 slices, val 1793 slices
+2026-10-06 18:33:31 INFO epoch   0 | train loss 1.5978 | val loss 1.1290 | val dice fg 0.1761 (legacy 0.5778)  *best* | 72s
+2026-10-06 18:34:10 INFO epoch   1 | train loss 0.8612 | val loss 0.9152 | val dice fg 0.3787 (legacy 0.7491)  *best* | 39s
+2026-10-06 18:34:49 INFO epoch   2 | train loss 0.5181 | val loss 0.8350 | val dice fg 0.6545 (legacy 0.7884)  *best* | 39s
+2026-10-06 18:35:28 INFO epoch   3 | train loss 0.4396 | val loss 0.8541 | val dice fg 0.6359 (legacy 0.8080) | 39s
+2026-10-06 18:36:08 INFO epoch   4 | train loss 0.4098 | val loss 0.7888 | val dice fg 0.6695 (legacy 0.8207)  *best* | 39s
+2026-10-06 18:36:46 INFO epoch   5 | train loss 0.2873 | val loss 0.7547 | val dice fg 0.8079 (legacy 0.8841)  *best* | 39s
+2026-10-06 18:37:26 INFO epoch   6 | train loss 0.2382 | val loss 0.7628 | val dice fg 0.8178 (legacy 0.8911)  *best* | 40s
+2026-10-06 18:38:05 INFO epoch   7 | train loss 0.2107 | val loss 0.7376 | val dice fg 0.8410 (legacy 0.9029)  *best* | 39s
+2026-10-06 18:38:45 INFO epoch   8 | train loss 0.2080 | val loss 0.7255 | val dice fg 0.8472 (legacy 0.8962)  *best* | 39s
+2026-10-06 18:39:23 INFO epoch   9 | train loss 0.1920 | val loss 0.7352 | val dice fg 0.8436 (legacy 0.8990) | 38s
+2026-10-06 18:40:02 INFO epoch  10 | train loss 0.1788 | val loss 0.7268 | val dice fg 0.8524 (legacy 0.8974)  *best* | 39s
+2026-10-06 18:40:41 INFO epoch  11 | train loss 0.1838 | val loss 0.7321 | val dice fg 0.8499 (legacy 0.9111) | 38s
+2026-10-06 18:41:19 INFO epoch  12 | train loss 0.1772 | val loss 0.7373 | val dice fg 0.8464 (legacy 0.9002) | 38s
+2026-10-06 18:41:58 INFO epoch  13 | train loss 0.1689 | val loss 0.7278 | val dice fg 0.8531 (legacy 0.9091)  *best* | 39s
+2026-10-06 18:42:37 INFO epoch  14 | train loss 0.1740 | val loss 0.7305 | val dice fg 0.8347 (legacy 0.8616) | 38s
+2026-10-06 18:43:15 INFO epoch  15 | train loss 0.1726 | val loss 0.7425 | val dice fg 0.8468 (legacy 0.9154) | 38s
+2026-10-06 18:43:54 INFO epoch  16 | train loss 0.1730 | val loss 0.7445 | val dice fg 0.8454 (legacy 0.9112) | 38s
+2026-10-06 18:44:32 INFO epoch  17 | train loss 0.1654 | val loss 0.7411 | val dice fg 0.8521 (legacy 0.9148) | 38s
+2026-10-06 18:45:11 INFO epoch  18 | train loss 0.1595 | val loss 0.7287 | val dice fg 0.8544 (legacy 0.9116)  *best* | 38s
+2026-10-06 18:45:49 INFO epoch  19 | train loss 0.1672 | val loss 0.7375 | val dice fg 0.8497 (legacy 0.9150) | 38s
+2026-10-06 18:46:28 INFO epoch  20 | train loss 0.1525 | val loss 0.7307 | val dice fg 0.8471 (legacy 0.9047) | 38s
+2026-10-06 18:47:06 INFO epoch  21 | train loss 0.1563 | val loss 0.7406 | val dice fg 0.8490 (legacy 0.9173) | 38s
+2026-10-06 18:47:45 INFO epoch  22 | train loss 0.1637 | val loss 0.7346 | val dice fg 0.8524 (legacy 0.9128) | 38s
+2026-10-06 18:48:23 INFO epoch  23 | train loss 0.1591 | val loss 0.7544 | val dice fg 0.8425 (legacy 0.9156) | 38s
+2026-10-06 18:49:02 INFO epoch  24 | train loss 0.1524 | val loss 0.7201 | val dice fg 0.8639 (legacy 0.9188)  *best* | 38s
+2026-10-06 18:49:03 INFO done: best epoch 24, val dice fg 0.8639; results in /gpfs/home5/scur0049/ai4mi_project/runs/full_cv4_enet_dice_ce_rotation_fold0/seed0, copied to /gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_rotation_fold0/seed0
+> Initialized ENet (in_dim=1->out_dim=5) with {'kernels': 8, 'factor': 2}
+2026-10-06 18:49:12 INFO evaluating /gpfs/scratch1/shared/scur0049/ai4mi_project/runs/full_cv4_enet_dice_ce_rotation_fold0/seed0, best epoch 24, on cuda
+> root=PosixPath('/gpfs/home5/scur0049/ai4mi_project/data/sliced_12749947')
+>> Created val dataset with 1793 images...
+2026-10-06 18:49:18 INFO val: predicted 1793 slices -> /gpfs/scratch1/shared/scur0049/ai4mi_project/runs/full_cv4_enet_dice_ce_rotation_fold0/seed0/predictions/val
+2026-10-06 18:49:18 INFO val Patient_01: shape (512, 512, 229), spacing [0.977, 0.977, 2.0] mm, orientation LPS
+2026-10-06 18:49:25 INFO val Patient_02: shape (512, 512, 246), spacing [0.977, 0.977, 2.5] mm, orientation LPS
+2026-10-06 18:49:31 INFO val Patient_13: shape (512, 512, 228), spacing [0.977, 0.977, 2.0] mm, orientation LPS
+2026-10-06 18:49:37 INFO val Patient_16: shape (512, 512, 166), spacing [0.977, 0.977, 2.5] mm, orientation LPS
+2026-10-06 18:49:41 INFO val Patient_21: shape (512, 512, 158), spacing [0.977, 0.977, 2.5] mm, orientation LPS
+2026-10-06 18:49:45 INFO val Patient_22: shape (512, 512, 181), spacing [0.977, 0.977, 2.5] mm, orientation LPS
+2026-10-06 18:49:49 INFO val Patient_28: shape (512, 512, 179), spacing [0.977, 0.977, 2.5] mm, orientation LPS
+2026-10-06 18:49:53 INFO val Patient_30: shape (512, 512, 171), spacing [0.977, 0.977, 2.5] mm, orientation LPS
+2026-10-06 18:49:58 INFO val Patient_35: shape (512, 512, 181), spacing [1.367, 1.367, 2.0] mm, orientation LPS
+2026-10-06 18:50:02 INFO val Patient_39: shape (512, 512, 228), spacing [0.977, 0.977, 2.0] mm, orientation LPS
+2026-10-06 18:50:09 INFO 3D val_dice_fg 0.8638 | val_hd95_fg 14.5080 | val_assd_fg 2.4122
+2026-10-06 18:50:09 INFO copied results to /gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_rotation_fold0/seed0
+[2026-10-06T18:50:09+02:00] done: /gpfs/home5/scur0049/ai4mi_project/runs/full_cv4_enet_dice_ce_rotation_fold0/seed0

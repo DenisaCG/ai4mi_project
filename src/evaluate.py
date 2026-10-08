@@ -7,7 +7,7 @@ Writes into the run directory:
   volumes/<split>/<patient>.nii.gz   predictions stitched back onto the original CT grid
   eval/metrics_3d.csv                one row per (patient, class): dice, hd95, assd
   eval/<split>/{dice,hd95,assd}.npz  submission format: patient -> (K,) array, background = NaN
-then adds an `eval` block to summary.json and W&B, and refreshes the metrics/ copy.
+then adds an `eval` block to summary.json and W&B, and refreshes the configured metrics copy.
 The val split is scored against `data.source_pattern` volumes; the test split (if
 `data.test_source_pattern` is set and <data.root>/test exists) is only predicted and stitched.
 """

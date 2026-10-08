@@ -133,12 +133,29 @@ def copy_back(run_dir: Path, cfg: dict) -> Path | None:
     """Copy the small result files into the git-tracked metrics dir so they survive scratch purges."""
     if read_json(run_dir / "manifest.json").get("smoke"):
         return None
-    dest = REPO / cfg["paths"]["metrics_dir"] / cfg["experiment"] / f"seed{cfg['seed']}"
+    dest = metrics_dir_for(cfg) / cfg["experiment"] / f"seed{cfg['seed']}"
     dest.mkdir(parents=True, exist_ok=True)
     for name in COPY_BACK:
         if (run_dir / name).exists():
             shutil.copy2(run_dir / name, dest / Path(name).name)
     return dest
+
+
+def metrics_dir_for(cfg: dict) -> Path:
+    """Route augmentation metric copies by category, including older saved run configs."""
+    root = REPO / cfg["paths"]["metrics_dir"]
+    category = cfg["paths"].get("metrics_category")
+    if category is None:
+        data = cfg["data"]
+        if data.get("registration"):
+            category = "registration"
+        elif data.get("augment"):
+            category = "joint" if len(data["augment"]) > 1 else "screening"
+    if category is None:
+        return root
+    if category not in ("screening", "joint", "registration"):
+        raise ValueError(f"unknown metrics category {category!r}")
+    return root / "augmentation_metrics" / category
 
 
 if __name__ == "__main__":  # print where a config's run lives: python -m src.run --config X [--set ..]

@@ -1,8 +1,8 @@
 """Offline, fold-specific 3D registration augmentation for corrected Full40 SegTHOR.
 
-Build with both arm configs so one set of synthetic NIfTIs is sliced twice:
-python -m src.registration --configs configs/full_cv4_enet_ce_registration.yaml \
-    configs/full_cv4_enet_dice_ce_registration.yaml --fold 0 --limit 1 --visualize
+Build with both final arm configs so one set of synthetic NIfTIs and slices is shared:
+python -m src.registration --configs configs/full_cv4_enet_dice_ce_registration.yaml \
+    configs/full_cv4_resenc_ds_unet_dice_ce_registration.yaml --fold 0 --limit 1 --visualize
 Omit --limit to complete a fold; completed pairs are reused on a restart.
 """
 

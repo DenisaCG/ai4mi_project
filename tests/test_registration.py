@@ -22,8 +22,8 @@ from src.registration import (check_pair, cyclic_pairs, expected_manifest,
                               synthetic_slice_files, warp_pair)
 
 
-BASE = REPO / "configs" / "full_cv4_enet_ce_registration.yaml"
 IMPROVED = REPO / "configs" / "full_cv4_enet_dice_ce_registration.yaml"
+RESENC = REPO / "configs" / "full_cv4_resenc_ds_unet_dice_ce_registration.yaml"
 
 
 class RegistrationPlanTests(unittest.TestCase):
@@ -63,7 +63,7 @@ class RegistrationPlanTests(unittest.TestCase):
         self.assertFalse({first["source_patient"], first["target_patient"]} & set(val))
 
     def test_training_seed_does_not_change_registration_source(self):
-        for config in (BASE, IMPROVED):
+        for config in (IMPROVED, RESENC):
             a = run_configs(load_config(config), fold=0)[0]
             b = run_configs(load_config(config, ["seed=2"]), fold=0)[0]
             self.assertEqual(fold_plan(a), fold_plan(b))
@@ -71,24 +71,31 @@ class RegistrationPlanTests(unittest.TestCase):
             self.assertEqual(processed_root(a), processed_root(b))
 
     def test_null_registration_keeps_existing_run_hash(self):
-        cfg = load_config(REPO / "configs/full_cv4_enet_ce.yaml")
+        cfg = load_config(REPO / "configs/full_cv4_enet_dice_ce.yaml")
         previous = dict(cfg)
         previous["data"] = {k: v for k, v in cfg["data"].items() if k != "registration"}
         self.assertEqual(config_hash(cfg), config_hash(previous))
 
     def test_both_arms_share_niftis_and_keep_reference_settings(self):
         for fold in range(4):
-            base = run_configs(load_config(BASE), fold=fold)[0]
             improved = run_configs(load_config(IMPROVED), fold=fold)[0]
-            base_reference = run_configs(load_config(REPO / "configs/full_cv4_enet_ce.yaml"), fold=fold)[0]
+            resenc = run_configs(load_config(RESENC), fold=fold)[0]
             improved_reference = run_configs(load_config(REPO / "configs/full_cv4_enet_dice_ce.yaml"), fold=fold)[0]
-            self.assertEqual(fold_root(base), fold_root(improved))
-            self.assertNotEqual(processed_root(base), processed_root(improved))
-            self.assertEqual(fold_plan(base), fold_plan(improved))
-            for augmented, reference in ((base, base_reference), (improved, improved_reference)):
-                self.assertEqual(augmented["data"]["root"], reference["data"]["root"])
-                self.assertEqual(augmented["data"]["preprocess"], reference["data"]["preprocess"])
-                self.assertEqual(augmented["data"]["source_pattern"], reference["data"]["source_pattern"])
+            resenc_reference = run_configs(load_config(REPO / "configs/full_cv4_resenc_ds_unet_dice_ce.yaml"), fold=fold)[0]
+            self.assertEqual(fold_root(improved), fold_root(resenc))
+            self.assertEqual(processed_root(improved), processed_root(resenc))
+            self.assertEqual(fold_plan(improved), fold_plan(resenc))
+            self.assertEqual(improved["data"]["registration"], resenc["data"]["registration"])
+            train, val, pairs = fold_plan(improved)
+            self.assertEqual((len(train), len(val), len(pairs)), (30, 10, 30))
+            self.assertFalse({p["source_patient"] for p in pairs} & set(val))
+            self.assertFalse({p["target_patient"] for p in pairs} & set(val))
+            for augmented, reference in ((improved, improved_reference), (resenc, resenc_reference)):
+                self.assertEqual({k for k in augmented if augmented[k] != reference[k]},
+                                 {"experiment", "notes", "data"})
+                self.assertEqual({k for k in augmented["data"]
+                                  if augmented["data"][k] != reference["data"][k]},
+                                 {"registration", "patient_regex"})
                 for key in ("model", "loss", "optim", "scheduler", "train", "eval"):
                     self.assertEqual(augmented[key], reference[key])
                 self.assertEqual(augmented["data"]["augment"], [])
@@ -97,13 +104,19 @@ class RegistrationPlanTests(unittest.TestCase):
                 ))
 
     def test_partial_registration_fold_cannot_be_used_for_training(self):
-        cfg = load_config(BASE)
-        cfg["data"]["preprocess"]["source_dir"] = str(self.source)
-        fold_cfg = run_configs(cfg, fold=0)[0]
-        manifest = expected_manifest(fold_cfg)
-        with mock.patch("src.registration.load_manifest", return_value=manifest):
-            with self.assertRaisesRegex(ValueError, "incomplete"):
-                synthetic_slice_files(fold_cfg)
+        for config in (IMPROVED, RESENC):
+            cfg = load_config(config)
+            cfg["data"]["preprocess"]["source_dir"] = str(self.source)
+            fold_cfg = run_configs(cfg, fold=0)[0]
+            manifest = expected_manifest(fold_cfg)
+            cache_key = Path(fold_cfg["data"]["root"]).name
+            for entry in manifest["pairs"][:29]:
+                entry["registration_status"] = "complete"
+                entry["processed"][cache_key] = "complete"
+            with mock.patch("src.registration.load_manifest", return_value=manifest), \
+                    mock.patch("pathlib.Path.is_file", return_value=True):
+                with self.assertRaisesRegex(ValueError, r"incomplete \(1/30\)"):
+                    synthetic_slice_files(fold_cfg)
 
 
 class RegistrationWarpTests(unittest.TestCase):

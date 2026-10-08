@@ -13,6 +13,7 @@
 # config (preprocess.seed), so every run seed sees the same folds. Task t is fold t % FOLDS of seed t / FOLDS, seed-major:
 # with the default FOLDS=4, tasks 0-3 are seed 0 (folds 0-3), 4-7 seed 1, 8-11 seed 2. Use --array=0-0 first, then 1-11;
 # --array=6 redoes fold 2 of seed 1. Resubmitting resumes a crashed or timed-out run and is a no-op for a finished one.
+# For augmentation configs, submit the wrapper in jobsAndOutputs/augmentation/jobs/online/ or registration/ so Slurm logs route there.
 # 45 min: ENet took ~9 min for 15 training patients incl. 3D eval (~1 min for 5 val patients), so ~20 min for 30 and 10.
 # The folds must be built first (build_cv_folds.job): slicing 30 patients inside a GPU job would use one core and run out of time.
 # Usage: sbatch --job-name=full_cv4_enet_ce --array=0-0 --export=ALL,CONFIG=configs/full_cv4_enet_ce.yaml \

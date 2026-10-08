@@ -1,4 +1,4 @@
-"""Build comparison tables from every run copied into metrics/.
+"""Build comparison tables from control and categorized augmentation metrics.
 
     python -m src.aggregate                 # -> metrics/comparison_runs.csv, metrics/comparison.md
     python -m src.aggregate --filter enet   # only experiments whose name contains "enet"
@@ -8,7 +8,7 @@ comparison.md       : one row per experiment, mean ± std over seeds, paste-read
 
 Cross-validation experiments (runs named `<experiment>_fold<k>`) also get, per `<experiment>`:
 cv_summary.md                    : per fold, overall and fold-to-fold mean ± std for Dice, HD95 and ASSD, with completeness.
-cv_pooled_<experiment>.csv       : every patient x organ, averaged over the seeds, with its fold.
+cv_pooled_<experiment>.csv       : beside each experiment's run folders; every patient x organ, averaged over seeds.
 Both are rewritten on every run from the runs that pass --filter, so a filtered run replaces the
 other experiments' section in cv_summary.md. Use the unfiltered command to get all of them in one file.
 """
@@ -48,7 +48,18 @@ def flatten(d: dict, prefix: str = "") -> dict:
 
 
 def load_runs(metrics_dir: Path, name_filter: str) -> list[dict]:
-    runs = [flatten(json.loads(p.read_text())) for p in sorted(metrics_dir.glob("*/*/summary.json"))]
+    paths = sorted(metrics_dir.glob("*/*/summary.json")) + sorted(
+        metrics_dir.glob("augmentation_metrics/*/*/*/summary.json")
+    )
+    runs = []
+    seen = set()
+    for p in paths:
+        run = flatten(json.loads(p.read_text()))
+        key = (run["experiment"], run["run"])
+        if key in seen:
+            raise ValueError(f"duplicate metrics for {key}: {p}")
+        seen.add(key)
+        runs.append(run)
     return [r for r in runs if name_filter in r["experiment"]]
 
 
@@ -83,9 +94,21 @@ def cv_runs(runs: list[dict]) -> dict[str, dict[tuple[int, int], dict]]:
     return groups
 
 
+def run_metrics_dir(metrics_dir: Path, run: dict) -> Path:
+    relative = Path(run["experiment"]) / run["run"]
+    candidates = [metrics_dir / relative] + [
+        metrics_dir / "augmentation_metrics" / category / relative
+        for category in ("screening", "joint", "registration")
+    ]
+    found = [path for path in candidates if (path / "summary.json").is_file()]
+    if len(found) != 1:
+        raise ValueError(f"expected one metrics directory for {relative}, found {found}")
+    return found[0]
+
+
 def read_patient_rows(metrics_dir: Path, run: dict) -> list[dict]:
     """The per-patient, per-organ rows of a run's metrics_3d.csv, with the metrics as floats."""
-    with (metrics_dir / run["experiment"] / run["run"] / "metrics_3d.csv").open() as f:
+    with (run_metrics_dir(metrics_dir, run) / "metrics_3d.csv").open() as f:
         return [
             row | {key: float(row[key]) for _, key, _ in CV_METRICS}
             for row in csv.DictReader(f)
@@ -192,13 +215,17 @@ def write_cv_results(runs: list[dict], metrics_dir: Path) -> str:
 
     Args:
         runs: Flattened summaries from `load_runs`.
-        metrics_dir: Directory holding `<experiment>/seed<s>/` and receiving the output files.
+        metrics_dir: Root holding control and categorized augmentation run metrics.
 
     Returns:
         The markdown written to cv_summary.md, or "" when `runs` has no cross-validation experiment.
     """
     sections = []
     for experiment, found in sorted(cv_runs(runs).items()):
+        output_dirs = {run_metrics_dir(metrics_dir, r).parent for r in found.values()}
+        if len(output_dirs) != 1:
+            raise ValueError(f"{experiment}: runs span multiple metrics categories")
+        output_dir = output_dirs.pop()
         patient_rows = {
             key: read_patient_rows(metrics_dir, r) for key, r in found.items()
         }
@@ -210,7 +237,7 @@ def write_cv_results(runs: list[dict], metrics_dir: Path) -> str:
             "n_seeds",
             *(key for _, key, _ in CV_METRICS),
         ]
-        with (metrics_dir / f"cv_pooled_{experiment}.csv").open("w", newline="") as f:
+        with (output_dir / f"cv_pooled_{experiment}.csv").open("w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=columns)
             writer.writeheader()
             writer.writerows(pooled)
@@ -265,7 +292,7 @@ def main(argv: list[str] | None = None) -> None:
     if cv_report:
         print(
             f"\n{cv_report}\ncross-validation -> {args.metrics_dir / 'cv_summary.md'}, "
-            f"{args.metrics_dir / 'cv_pooled_<experiment>.csv'}"
+            "cv_pooled_<experiment>.csv beside each experiment's run folders"
         )
 
 

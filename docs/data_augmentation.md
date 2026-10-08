@@ -45,7 +45,7 @@ perturbation at the median range. Neither sigma is a measurement of scanner nois
 
 - [He et al. (2019)](https://ceur-ws.org/Vol-2349/SegTHOR2019_paper_2.pdf) used flipping and scaling from 0.6 to 1 in a SegTHOR multi-task method. This supports studying geometric augmentation; our 0.9–1.1 scale range is deliberately milder.
 - [Vesal et al. (2019)](https://ceur-ws.org/Vol-2349/SegTHOR2019_paper_13.pdf) reported better SegTHOR performance for an augmented 2D model. Their paper does not establish our transform probabilities or parameter ranges.
-- [Wang et al. (2019), EMSN](https://ceur-ws.org/Vol-2349/SegTHOR2019_paper_8.pdf) used registration-based augmentation on SegTHOR. It motivates a separately considered deformation direction, but does not justify our `p=0.5`, ±10° rotation, or scaling range. Registration-based deformation is not part of these six arms and has not been implemented for this experiment.
+- [Wang et al. (2019), EMSN](https://ceur-ws.org/Vol-2349/SegTHOR2019_paper_8.pdf) used registration-based augmentation on SegTHOR. It motivates a separately considered deformation direction, but does not justify our `p=0.5`, ±10° rotation, or scaling range. Offline registration is implemented separately from these six online arms; see [registration_augmentation.md](registration_augmentation.md).
 
 ## Implementation and configurations
 
@@ -60,6 +60,20 @@ on another. The six configs are:
 | [`configs/full_cv4_enet_ce_rotation.yaml`](../configs/full_cv4_enet_ce_rotation.yaml) | [`configs/full_cv4_enet_dice_ce_rotation.yaml`](../configs/full_cv4_enet_dice_ce_rotation.yaml) |
 | [`configs/full_cv4_enet_ce_scaling.yaml`](../configs/full_cv4_enet_ce_scaling.yaml) | [`configs/full_cv4_enet_dice_ce_scaling.yaml`](../configs/full_cv4_enet_dice_ce_scaling.yaml) |
 | [`configs/full_cv4_enet_ce_gaussian_noise.yaml`](../configs/full_cv4_enet_ce_gaussian_noise.yaml) | [`configs/full_cv4_enet_dice_ce_gaussian_noise.yaml`](../configs/full_cv4_enet_dice_ce_gaussian_noise.yaml) |
+
+Single-transform metrics are stored under `metrics/augmentation_metrics/screening/`.
+The joint recipe's metrics are under `metrics/augmentation_metrics/joint/`.
+Submit either type with the shared-CV wrapper from the repository root, for example:
+
+```bash
+sbatch --job-name=full_cv4_enet_dice_ce_augmented \
+  --export=ALL,CONFIG=configs/full_cv4_enet_dice_ce_augmented.yaml \
+  jobsAndOutputs/augmentation/jobs/online/cv.job
+```
+
+The wrapper keeps the existing 0–11 array and writes Slurm stdout/stderr under
+`jobsAndOutputs/augmentation/outputs/online/`. For seed-0-only screening, pass
+`--array=0-3`. The generic pipeline `cv.job` remains the control-job entry point.
 
 ## No-augmentation references
 
@@ -85,7 +99,9 @@ preflight, before training or augmentation, when cache paths were unavailable.
 
 Status (2026-10-08). The single-transform screening was run on the improved ENet only,
 seed 0 (4 runs per arm): rotation, scaling, Gaussian noise, shift, shear, gamma,
-brightness/contrast and blur (the last five added in later configs). BASE
+brightness/contrast and blur. Saved 3D evaluations are available here for rotation,
+scaling and shift; the other five arms' reported results are historical values without
+currently available saved evaluations. BASE
 single-transform arms and seeds 1-2 of the single-transform arms were not run. An
 earlier submission of all six arms (72 runs) was budget-cancelled except Improved +
 Rotation fold 0 / seed 0. The final recipe combines rotation, scaling and shift and was

@@ -1,0 +1,2021 @@
+{
+  "schema_version": 1,
+  "missing_screening_evaluations": [
+    "shear",
+    "Gaussian noise",
+    "Gaussian blur",
+    "brightness/contrast",
+    "gamma"
+  ],
+  "artifacts": [
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed0/config.yaml",
+      "sha256": "41c6bed5f229018f1f2d3e16ffbc52dbf5cf313e36446f3c8ce6c83965509688",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed0/epochs.csv",
+      "sha256": "d5d523a14f94fe4f9dd7c75afac5761805092b0aa4322bd8cd793b4bc2b8a467",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed0/manifest.json",
+      "sha256": "f56f14aeae1eff36ec81c0733f3f43d5e6e4e5cd08c6f7e9c5d959a3a84649c6",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed0/metrics_3d.csv",
+      "sha256": "6a334d31e596bf80817af1cdd0fe350ea6d3821fafb0cd0d76584a7a98df23b9",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed0/summary.json",
+      "sha256": "92a0dde55078f67edd0a0bf513bdc9c0c854c8129ce2d179f81dffc416cbd432",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed1/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed1/config.yaml",
+      "sha256": "07be3a6936ac5ab2f9cafe062b4c8a448246ffae3b5290f3fb2f9fa7c333505f",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed1/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed1/epochs.csv",
+      "sha256": "73220d3f25eb15387e069f39359462bff5126951d518af7f0a08ae7a2b04da27",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed1/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed1/manifest.json",
+      "sha256": "dab6526149ed9ae881189cf73f5ad1b9e3a01e9e8ec8fc8ce4a4ce52e54e32bd",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed1/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed1/metrics_3d.csv",
+      "sha256": "b8681e7ba453358d6db66946fdbd75f8e7909f404e46b12a96cc184baed913b9",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed1/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed1/summary.json",
+      "sha256": "64cc2128c2dbdf09f64db7e6165fffc6f11d11542adf9bd16b4cefd9a6659dd9",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed2/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed2/config.yaml",
+      "sha256": "0f90a7173d3ef5fb064a0f65b7ad221eedce9007de0061c4933fa6a41982412f",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed2/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed2/epochs.csv",
+      "sha256": "e4fc32bb4ade1ff9ac9fad2d0e16bf55bf58a05134597cb927a1146f623e8ef7",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed2/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed2/manifest.json",
+      "sha256": "cfe1c4fa25c77439885043734ff729632a406630e439b652f5a231f37233b9ff",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed2/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed2/metrics_3d.csv",
+      "sha256": "e79d2178b85cccd5784c351a91057d2037185259db7d660622fca9d8503ba382",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold0/seed2/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold0/seed2/summary.json",
+      "sha256": "917cea68dee783eb5720cef06367019b1fcbedd53262eefb0d889bdedf2f402a",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed0/config.yaml",
+      "sha256": "c01199afc07ea7c028e80795806e65c39317a5264f3b0191e724ea29d20e1bfc",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed0/epochs.csv",
+      "sha256": "3279865adf39d404c50d018c13c92797c67a327ee16eedd18fe1c11e7030b7be",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed0/manifest.json",
+      "sha256": "e4f50a2a868fb8e6b3215e3682b12b1c9ecb55ad6b6cbf68b30f9e661858d1a9",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed0/metrics_3d.csv",
+      "sha256": "49353b6eed617c0e94f11ceb520c8096b6b39b9eed0a22ec1bed357f334b7840",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed0/summary.json",
+      "sha256": "2f7117185ace47f473d368d5dd5426dd636acd1b5687974430b31f2dbcf8bf0f",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed1/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed1/config.yaml",
+      "sha256": "5cc1880430e1110095d3ccb2123e59010d4da5be595c890c2291ce6d24309484",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed1/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed1/epochs.csv",
+      "sha256": "9df8ca9c9b02a048b4dad2b12e0f582ebdce0261a18cd33d27919f1dabd9e72b",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed1/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed1/manifest.json",
+      "sha256": "ba04ad2d4e92a982dfc3d848dca5d97aeea3aba466bcd2e188ed264157da06ae",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed1/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed1/metrics_3d.csv",
+      "sha256": "94e154ab50a194b39e0918df754f1a6711fd4e4a14c0df6a4694cdedc312bd84",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed1/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed1/summary.json",
+      "sha256": "fd3879fcd073629eeb3fbcecc143478b7dff1fd5bfd2cf6f893efe9dbd27a452",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed2/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed2/config.yaml",
+      "sha256": "3676fd047f755ed21f4c57c1a28cb0cbed7151e7c244b9da89701b35f2214af3",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed2/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed2/epochs.csv",
+      "sha256": "ab85a5ea8d2e1877f7b888be0c27523bc1c2576b17f28b486102205fcdcfb73d",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed2/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed2/manifest.json",
+      "sha256": "8cb8f29c7670c74204b40bebff07f1988eaaff2877c3d8b98f1eff2ecdd58b3f",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed2/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed2/metrics_3d.csv",
+      "sha256": "a5ca80ccbe01d70e871e74022b9703000f5fe367fdc278c50e20c1cbf30268b4",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold1/seed2/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold1/seed2/summary.json",
+      "sha256": "8c47cd7833e7d241d97b1e802c3656e215487674b46d5499cdbc4be6853538bf",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed0/config.yaml",
+      "sha256": "d6a587122c9c3e83094cf70f868623be8620bce81399cef28e85f95a0eb171ea",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed0/epochs.csv",
+      "sha256": "1b12424f181ad1a12bcc5a90c6176d6d28d32ecea91a477291246394e2fd0050",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed0/manifest.json",
+      "sha256": "2114258f6b95f427aab17caedcc61eaa7cb4aca064c70832c457dca88aad2d66",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed0/metrics_3d.csv",
+      "sha256": "65f85bde5f81be41f734c32b95a5eb8829256fbd04665cb6b9fc691caffbe569",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed0/summary.json",
+      "sha256": "f685a3b9fdbd882bb865e3701a105a23a54ee9d370d5ed827440dd9b22f799ce",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed1/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed1/config.yaml",
+      "sha256": "76e6c7b56e68614c47a71c241d789ec93a95213554d4ee58b3244d75d044d1e1",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed1/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed1/epochs.csv",
+      "sha256": "3f3b8223f6ecd34aa2275028f89039994f00c77db588d11018ba07f228d35d07",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed1/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed1/manifest.json",
+      "sha256": "8154da7e22170078f3f0dfc8404f02490240a89783ae7e00c5997174dc823c35",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed1/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed1/metrics_3d.csv",
+      "sha256": "ca270d05fd88cc6d0b72a733cabac0e4d42da50d1b515261b2722bd1cb2139c0",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed1/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed1/summary.json",
+      "sha256": "498d641b2e805c44d25cc41425ee64729181ab6901f63682e862abe2543e6edf",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed2/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed2/config.yaml",
+      "sha256": "a61e0945744ef22109eeb884d6d99dd6f26318f519f68ef94aaad8ce05c5d288",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed2/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed2/epochs.csv",
+      "sha256": "beea4b9e69f7cb43f57ceb19998aa84effb08edaa4f662334e52c2f6232f24da",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed2/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed2/manifest.json",
+      "sha256": "84285ebb6069f489e9153b8a77310f71e1d1bacf217bb2719c10bfbfca8a7693",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed2/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed2/metrics_3d.csv",
+      "sha256": "8c4bd64c4090df5f5fbe581fb3fc27a884ffc2a638f18a45a56497635749d11e",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold2/seed2/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold2/seed2/summary.json",
+      "sha256": "dfa96f666ed185f0b525c5cdea8ed572b3394d5782de73a066f067d54e1c6293",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed0/config.yaml",
+      "sha256": "a3720b5321d9306ce843ff0ba590bb54335180091bdf88c77100c54508d99b50",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed0/epochs.csv",
+      "sha256": "a691175cd73eb8cebad6c2a8cf68b51367027d379b712c8102853eece14c8511",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed0/manifest.json",
+      "sha256": "b2e49282ea084eeddea9dae1ccb4246b17e76307d869489f7983f8bfdbcc37f7",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed0/metrics_3d.csv",
+      "sha256": "6654108b0b887925c786f45333126eb74d7b737ecd6c3f5b38a92c83866b5346",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed0/summary.json",
+      "sha256": "8ea82925cbcccad0ae3fcc0131ac93a6954de4d8a08bbd368593a30da5643530",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed1/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed1/config.yaml",
+      "sha256": "fe2feccc86a0861d6fbf0e4debb1af02d048a611f30f42170caa87543dae52da",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed1/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed1/epochs.csv",
+      "sha256": "ad3e1872850d0d00f4859e155446b59e7b47b772678cb320bf5322facd7c4967",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed1/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed1/manifest.json",
+      "sha256": "4d6b203c40396a02b0ccedbda8123ca8e8790511956f22dd2f5a6cc3c7374411",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed1/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed1/metrics_3d.csv",
+      "sha256": "aff90fb7ebdd0dbfafc8c88015e2f45ff5ab897e2e3204efc7d417484f9114a8",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed1/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed1/summary.json",
+      "sha256": "ed54bd74c350a13c36a0991a04f5257a2b843256c9d4c5822c189e4c539c101e",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed2/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed2/config.yaml",
+      "sha256": "74f31d18ca2f98c5715ae838f57c21fc7855819a09e7ec430339f8dbf3f07793",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed2/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed2/epochs.csv",
+      "sha256": "58ff29b7817016a4287426a61aa409c538e3a4ca3613a6c4521ae94248c97c82",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed2/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed2/manifest.json",
+      "sha256": "803f3866c2b272a1b33805c5283ee308d2422bbbacfaf7878eaeeff1e64bd5ac",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed2/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed2/metrics_3d.csv",
+      "sha256": "0b61c7f7849eab549fc39d2b85c710231824b993340546a34b9acb665eb6b57a",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_ce_augmented_fold3/seed2/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_ce_augmented_fold3/seed2/summary.json",
+      "sha256": "ad3158255c133abbda50e04cc00a98a7eb1f83e6cfbf414b447036e870d70575",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed0/config.yaml",
+      "sha256": "d1df414e91f3a5154708998e4d8f1dc197b00dc545d372ab30196a0ab83cdcec",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed0/epochs.csv",
+      "sha256": "fb4f4ef9c216f4359c6386304a59151a9a0ec551869c2beca3229ac049818210",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed0/manifest.json",
+      "sha256": "6f365c9e0731c5230c03b905b9e9390cafd3100d5cfef64e3837ddd2aa3edbdb",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed0/metrics_3d.csv",
+      "sha256": "f0362c76644c0532d09025e8edc9ea7160f1789ce82d17674620aa3ff5dd100d",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed0/summary.json",
+      "sha256": "f20f31ae0ff3283f9e24ab031184f4bb3df08c64053a917ae272c876b0c0a7aa",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed1/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed1/config.yaml",
+      "sha256": "f58df4fcf2307f8cbb24adfaafe501b8f0bb8ee828aa4b97b63327b9c55d7512",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed1/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed1/epochs.csv",
+      "sha256": "27d90c73f1214d40602e10a4beba772a8bbf4845251498504d4c5d87a9c58148",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed1/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed1/manifest.json",
+      "sha256": "08f57b28ca454d2168f3678b03a9d174e39d22d64ce853ec41efb4bad19ce5e0",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed1/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed1/metrics_3d.csv",
+      "sha256": "460e73730c2158669d57008571a7ff49f9c33415849ab67c9989c3426c294381",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed1/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed1/summary.json",
+      "sha256": "cbbca91f7deb271b0ed1839a5ccce931de9c0a51a01aded7ace45e4fcdac311a",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed2/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed2/config.yaml",
+      "sha256": "0353f97a41aaad672bdaca6b218bd86e4c7a67568098eb5fbadd5f805615f08c",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed2/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed2/epochs.csv",
+      "sha256": "5de593a4655694e4e3b9ef363683ad9d74af6578e941e2dabbe45d1be5c74eea",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed2/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed2/manifest.json",
+      "sha256": "e293d15dc0b2fb87aea63927dbcaed5dda21f194801d35ddfbf527c7b46f408f",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed2/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed2/metrics_3d.csv",
+      "sha256": "7b0fb976cffe0f447ad53277c85ce6ae6f23bbdc1b593839b4c867a5645bb73d",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold0/seed2/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold0/seed2/summary.json",
+      "sha256": "ee05966c7660bbd4567b2a51cba2a915aa2a5bea10a05cacfeaec444966fc0e2",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed0/config.yaml",
+      "sha256": "c7a271924162d8b8dbd7c85b2364b03d4c000054e5fe32705236ba49967c9dc8",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed0/epochs.csv",
+      "sha256": "28947b762127beeb470ca4c849d15c2dd2ef8fa04422fa44d76e1a89d5812a48",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed0/manifest.json",
+      "sha256": "409b47a393cd8a111bd1655ce9590dbf937b995908bd638f8eeb746c1651d1f6",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed0/metrics_3d.csv",
+      "sha256": "cbacfe7623e44ceed27c01342b2ed57cfad11f66021194777fd8e5c203a8a266",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed0/summary.json",
+      "sha256": "46a9d63ee3f08ea6172577234f5744d4bbeee56eea9c2223aca123a7925e9d24",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed1/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed1/config.yaml",
+      "sha256": "82ea3cfece3291b3d444592c22f9e67fefa66c6c105fcde5e11dbdfd3591ea90",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed1/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed1/epochs.csv",
+      "sha256": "0fc352e8004455f12d4dd60283cd8de4ead58feb700449993ec55844e3698034",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed1/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed1/manifest.json",
+      "sha256": "f62813d41eb5f3a498b06ff49fe2d63c09fc29295a1326bc5b65d90458535e4a",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed1/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed1/metrics_3d.csv",
+      "sha256": "ad8662bbb644500ea8bffd206e918da932120798e01771169603e46bf2d1815c",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed1/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed1/summary.json",
+      "sha256": "fd5ab22efc440750e736eddc14ab89225ad6064e5b268819a0dae297134f9e77",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed2/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed2/config.yaml",
+      "sha256": "9018dabd5826276431816aa92216bd55bc8c64c41724aafd140b59d731706119",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed2/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed2/epochs.csv",
+      "sha256": "317e1827a7751f3a01d156e859ba2b4ba991646dadf72c51d600d679d8056257",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed2/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed2/manifest.json",
+      "sha256": "a57955d6b55fb5236a7890a7b213140ed6e126c77372f4f29bf64a074120b372",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed2/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed2/metrics_3d.csv",
+      "sha256": "9cc69aa956675acbd2c02aafa97c5f7fcef0723e466112e9aedf0caef53fa44a",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold1/seed2/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold1/seed2/summary.json",
+      "sha256": "0c01f4362ac278cb7deacd0d45087d7aed314a042cf7e477125f640ccf5729ce",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed0/config.yaml",
+      "sha256": "662499ac3af9fede69b5eb93f5d9c3248687ebeae22e0c5d9bcbe1d2a96d4bad",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed0/epochs.csv",
+      "sha256": "b46d8f0f7eb8f9c2cc7d502f68368ec40a944363792729a2cd1cbdc32ca01b72",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed0/manifest.json",
+      "sha256": "17fd3cb6e4c4cf1d2c75e72a839c4bfd598572e84d7bf21c27cca04dd7548770",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed0/metrics_3d.csv",
+      "sha256": "6dc21eb5be513509bd54d80a32a8f1601ba8b90b3123b3ee88bfa83133bb85b3",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed0/summary.json",
+      "sha256": "278fc9c145b4c8d8e2f81f3305ead2183c308e8bd0f8aaf2d53b09349f9ca116",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed1/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed1/config.yaml",
+      "sha256": "a0954a36c523895ba09d0baa2ce6663f0e6c651ac3560e039bdfbc84201efc07",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed1/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed1/epochs.csv",
+      "sha256": "7c582a377e450c47b104b50aaa616dacc5e2860461fdc65b402389b467beff8a",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed1/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed1/manifest.json",
+      "sha256": "26bb6c32b9740b2437a9ea273904333335fd86aec6211fe6d00687fcfe5b288d",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed1/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed1/metrics_3d.csv",
+      "sha256": "c6b826b99e728a2a003fc59e33105536d94020ae89e3a3e6baed51d13efd6cd8",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed1/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed1/summary.json",
+      "sha256": "8f2ba220d5ebf3c0f6668601930c5a4f850690e853d2aba68b353e9610f6e76f",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed2/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed2/config.yaml",
+      "sha256": "58bf901dc5991e5b21bceccd222bd2bcd8246c24d1a149e699c8376209b992dc",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed2/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed2/epochs.csv",
+      "sha256": "0049efc8a473caf389cceda8f9611735519dbda2643478a70873efd299ac7c9f",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed2/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed2/manifest.json",
+      "sha256": "a1b5592ae04665f48c3c866b5c55b9c79a3baae7bcac09e47e440ebef73f1a79",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed2/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed2/metrics_3d.csv",
+      "sha256": "31a6ac3fa38be4a243fd54bf8f0c9776a176bf2823c5682506547a219af74de5",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold2/seed2/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold2/seed2/summary.json",
+      "sha256": "3c7a5c0f9a9ba8f505544a41760d585210762223a64fb4ccabf1b1fcc8dabc41",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed0/config.yaml",
+      "sha256": "2881749f6645cb57396a4b61272a22efa251b7f498dd5752ed2460a69fd737e9",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed0/epochs.csv",
+      "sha256": "c476b60ba67b79009f9c24e32ca0f0b9131af5c6d5b8b48d8a4387b9eefe9e03",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed0/manifest.json",
+      "sha256": "4315526d94506b38f309c949453a294be315f32d966c22700c223a32c86b78a1",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed0/metrics_3d.csv",
+      "sha256": "e49b2ab26a2db1c49749c7a2bd130aed3e0dc8a97a23f7cc5d7f26314097a2c5",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed0/summary.json",
+      "sha256": "a114b5baa81a4736b5ed10088abb205434c44237f4c919eb5ffcffd2010864c6",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed1/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed1/config.yaml",
+      "sha256": "f6f60bf6999c56c1281fc62cae11c9ad7b609ff9d16e9cf36ea625a41c52bddc",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed1/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed1/epochs.csv",
+      "sha256": "5512d045f40e94182199e3308562e2c0eef7207e0699c96ec05ba1f988fff73e",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed1/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed1/manifest.json",
+      "sha256": "d9d44d805cb974fc135a59cbbc87fa51c6cfa0ec33294649070c0fa71aaabcb3",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed1/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed1/metrics_3d.csv",
+      "sha256": "98a6b4b959aa729dfdb95798da7fc42afd270b93f00d7b91f3e1e1abd110178d",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed1/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed1/summary.json",
+      "sha256": "da92244ec2ca197e5c06055e166e7adff2b3beefd874e0bbb563964295b7fcc1",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed2/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed2/config.yaml",
+      "sha256": "679c86d2c5ecbfc78f991f881ae8c4e23d76c0452bc86330babb5252f05541ec",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed2/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed2/epochs.csv",
+      "sha256": "689abbb4b770c455fd5feb3546ecccbfba421f8504090968308b8dc8e51ecd5a",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed2/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed2/manifest.json",
+      "sha256": "a5f1414aabfb72cfaa2645953a2b3fd5b992de9ceb257f435f4debb3875b2775",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed2/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed2/metrics_3d.csv",
+      "sha256": "21255bda5c5c7bff314beb67f2fe57309860ed45d22b55f6a664f8c6335c71db",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_augmented_fold3/seed2/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_enet_dice_ce_augmented_fold3/seed2/summary.json",
+      "sha256": "f43f6f13b691a87e8d6034ae9815e62a404541863afee302883fdeaffa38912c",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold0/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold0/seed0/config.yaml",
+      "sha256": "9a15e16cc88787308fe79be39d16a19e1d2205f56ca8a179aa5daa2cb6ba6bb7",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold0/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold0/seed0/epochs.csv",
+      "sha256": "05dd556e2c66317c646744ef41cc356e0aabf5f15efee02e2bb0e1f8ea5f382a",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold0/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold0/seed0/manifest.json",
+      "sha256": "54c4ad78c123e68d1b7d836715403787488703a8f616e5945b06d920b77fae35",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold0/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold0/seed0/metrics_3d.csv",
+      "sha256": "c1696bc693d0fb5ee846d9c89b25a1a55500ae190b494c4a7f07c80a18c223d3",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold0/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold0/seed0/summary.json",
+      "sha256": "0ed67ad99bff6ef544981830f541ced54f4cf0064d114e42eb1862ae6d04907c",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold1/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold1/seed0/config.yaml",
+      "sha256": "9df407ca701bd7f664003d6003c2a60c506e579990d724091d6918122026ea7b",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold1/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold1/seed0/epochs.csv",
+      "sha256": "09e97f0584591e937081ad80c1eb0a66be0a29f7d8996545f6d40198cd64f1a9",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold1/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold1/seed0/manifest.json",
+      "sha256": "ebeedf64e0f311e8f5a3d2de7a30608279a8d9ede6f0e505e03b11b5ba3de38b",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold1/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold1/seed0/metrics_3d.csv",
+      "sha256": "6e5fee06b3de7901b3af992f411de528d674f701ea42b0a883ffca1c31e857da",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold1/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold1/seed0/summary.json",
+      "sha256": "45b239042ea09f16e8204f4df40b446aee4f6cf6c0cd2d2b943dccc411eedf05",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold2/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold2/seed0/config.yaml",
+      "sha256": "33e08ca338a9bf8f0d2ee7a1566200043817cf84fd16ebed72ef65d5864d4ca3",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold2/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold2/seed0/epochs.csv",
+      "sha256": "e4d7c7439cdb7e06db6b748e0489e5b0af64923b6eb891bceb50334ad36cc488",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold2/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold2/seed0/manifest.json",
+      "sha256": "f2a2785b8aa8a85814bba160224e4e1257bb8cd908e18c081044b98e11922000",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold2/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold2/seed0/metrics_3d.csv",
+      "sha256": "edcf89dbbc86c7f34414273b1839ed17a5cc7c48b3c41b9b4d904b3217387d15",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold2/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold2/seed0/summary.json",
+      "sha256": "2ec4fc1a17c819b76211227b6cffdbbc103d0d88fe807853607276fd72715c04",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold3/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold3/seed0/config.yaml",
+      "sha256": "6d25727f56a1af27657118bbdb842327d66b4ecfbede45d62df82eaae49298d1",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold3/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold3/seed0/epochs.csv",
+      "sha256": "dee516c297eb573e2aa61c6af552de06c91956e5a87adb70996475ffac9b4b41",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold3/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold3/seed0/manifest.json",
+      "sha256": "bdc06e14d811f18ca7afa64d7139033d233f9fbfc19c1e0aca2dbc9bcadc5375",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold3/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold3/seed0/metrics_3d.csv",
+      "sha256": "f1f79007889b01bf828b3e16b8e55bf2d493f67047778d4d910c07b34cce5056",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_rotation_fold3/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_rotation_fold3/seed0/summary.json",
+      "sha256": "178c64c76d3df352874103721759b4ab8315f3f7d1ed7ace09a099fdddff0ec6",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold0/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold0/seed0/config.yaml",
+      "sha256": "03251c9ffb3c61083fec5bcf054d07888aa1c7271aaada1904dadfaefc299b73",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold0/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold0/seed0/epochs.csv",
+      "sha256": "5b32c8f4d6b7c63f46a2eb133a0d727905a9d5d89de1197c0eb4f2d6dccae9b3",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold0/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold0/seed0/manifest.json",
+      "sha256": "ee4cf95d989b6974fe53799cce17c3388ab29ee57f6a45bfb320bd209ce32df6",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold0/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold0/seed0/metrics_3d.csv",
+      "sha256": "65f30add82e5b307f845182b9ffe1e06af294c56e8d661c644d38adb25b5f983",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold0/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold0/seed0/summary.json",
+      "sha256": "44748d88fe1b84e85bf27935eb6d24ff777bbd62a32a1c258b343513eb85f168",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold1/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold1/seed0/config.yaml",
+      "sha256": "061838c85de2adfdd073ce11f632f92a00348264d535d4e29bc38e9331c4aee5",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold1/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold1/seed0/epochs.csv",
+      "sha256": "fbe8b2e17ee66a507ad345de865d8fe1290114cce80e2f07123c1c9fa2f4876d",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold1/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold1/seed0/manifest.json",
+      "sha256": "93fefa3fe222d0c7377783156c4afd29b4713b8db0fd62154d5df3d69107225e",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold1/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold1/seed0/metrics_3d.csv",
+      "sha256": "061588b720233e5124764d179258862dcf3703f656147fd0b648aa51fd8c1d47",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold1/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold1/seed0/summary.json",
+      "sha256": "17989c9443f25b936fdb9cb1c68307489b23ffa53f38c9b8974ddeddca841de5",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold2/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold2/seed0/config.yaml",
+      "sha256": "cf5d87912646f8cdcef8d24fb4768b4629c7ee6338bb056403b4cc54103b9dbd",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold2/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold2/seed0/epochs.csv",
+      "sha256": "aac613c60987ec45a55164c62ebdd2f15cb0a8f50b3375f76f366b460ddc0bee",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold2/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold2/seed0/manifest.json",
+      "sha256": "9dc07cb8e6e329267acad123bdf9dcf89172c92bedfb934b4382f8d0d8549e66",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold2/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold2/seed0/metrics_3d.csv",
+      "sha256": "0c683e4b3ecbf5090db69d2de5a9561c65cd3d012280f3a70183d51b85b45d15",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold2/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold2/seed0/summary.json",
+      "sha256": "4943c71cfc374212471db730071f75066d13bb15c63177b5779b8131fb403523",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold3/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold3/seed0/config.yaml",
+      "sha256": "f6667a0fce2a20ecd8782d86a58bac60adcf46bfdc7d613ca3d43f2e4129e5ec",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold3/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold3/seed0/epochs.csv",
+      "sha256": "742a836e316eeac14413b390c69797e34fa450c39d4c96d817b06c67cbd66947",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold3/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold3/seed0/manifest.json",
+      "sha256": "5b1c13cb661d48974760c2a031b1f62dafcf3240f96dd984ae2b79fc1eb5c77a",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold3/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold3/seed0/metrics_3d.csv",
+      "sha256": "4695715333ab8f03ce0f769a7e1080c2ba4be2a8de1963af3ef8eb5c18c67911",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_scaling_fold3/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_scaling_fold3/seed0/summary.json",
+      "sha256": "48f283e59a15fb032f185b920a13e4452d75187fe49f33431b7dc553ac97d037",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold0/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold0/seed0/config.yaml",
+      "sha256": "1dca0f60a3b790879def5fb1e244980b9425af56c1d395424f9ac207f9bc114d",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold0/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold0/seed0/epochs.csv",
+      "sha256": "a6f2e5fee87dca015fc1e819e67f1c00e1a3b2f600ca0e9a5ffc7e72748607ed",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold0/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold0/seed0/manifest.json",
+      "sha256": "084862e08cb35cb5819d13f8bde7ea2cd1399f8923b194ebd7cc285ab29830bc",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold0/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold0/seed0/metrics_3d.csv",
+      "sha256": "d276aa7510fa1f2c875c16affe6f6a8704862ac531d3a7fe04df3b91b0de6823",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold0/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold0/seed0/summary.json",
+      "sha256": "7915bcaf212e3c317e81a66593241ec9f75103a537b748b066647b8a8ae038d9",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold1/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold1/seed0/config.yaml",
+      "sha256": "15deeadc01dd51479cf3306787ea8101b7eb9c8cc200e9d65a919da5eae5ae10",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold1/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold1/seed0/epochs.csv",
+      "sha256": "3e286da7168ac1059e5cd7dce0280389f202099525adc7f7dab7350e75605fc5",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold1/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold1/seed0/manifest.json",
+      "sha256": "e84be93242c1d528efc2bd964b875b771eb60e0b98412253034a6a5cfb7641bb",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold1/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold1/seed0/metrics_3d.csv",
+      "sha256": "a817f7cea47431ac38a995e22ee3914a742788390dc85108ad5b5db1ce535c1d",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold1/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold1/seed0/summary.json",
+      "sha256": "1b9642039aa78d5cd05b5c9566a40bbf362a768c2acc1f45007fad6788623944",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold2/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold2/seed0/config.yaml",
+      "sha256": "422c430b0e1ac2ccdd89bda998decda993afab487219a6e21fe142befe265d42",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold2/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold2/seed0/epochs.csv",
+      "sha256": "a65f37341398e2ab36cd7c7daeb4b5ab1764a784944ff82ac8b696e34e6d16b0",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold2/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold2/seed0/manifest.json",
+      "sha256": "65e0e5fe0cb66bb0e6b3debb43ea463b75a692b027214880566d8c1ab7ae64ab",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold2/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold2/seed0/metrics_3d.csv",
+      "sha256": "18b64bbdaa8190b6281f205eb1855e7773e7c61f265ea0b78a12e69043aed964",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold2/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold2/seed0/summary.json",
+      "sha256": "c314b13a87f484873ba32058a39ad3666b93a1a372e1270b0f78bfd71091ccbc",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold3/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold3/seed0/config.yaml",
+      "sha256": "43e27cfbe687e86b21327ba0455272770899c00af93d6f13708be4ba5c972251",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold3/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold3/seed0/epochs.csv",
+      "sha256": "a8f0f732b6976a2f30c87115db3f454a79697eaa3e95affb8db0885730413519",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold3/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold3/seed0/manifest.json",
+      "sha256": "b4daa228d45701810964b454a46f916f1d8c7de8b0e6fa4db6c889c6b1aead3a",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold3/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold3/seed0/metrics_3d.csv",
+      "sha256": "6785166b5c91ec2f6e8b1ebcb6e06d7d5e05547d852c8de479be0961576875f4",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_enet_dice_ce_shift_fold3/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/screening/full_cv4_enet_dice_ce_shift_fold3/seed0/summary.json",
+      "sha256": "f8f1e5f9b2668933a82ce7f2235e7d1f2b1e1b312a315fb13dcea5875e106a01",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed0/config.yaml",
+      "sha256": "e2adfddd2a35cb33a5280e7f9adbfc4d1129fb8881e1d536d766a09c9ad0be46",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed0/epochs.csv",
+      "sha256": "724c89cc8cf58811dd4987cf34cc18130a2909b6472d15f60d89d436d71ce4ea",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed0/manifest.json",
+      "sha256": "77013d0e4553567c4cc489cc5527ff7ba79ec764b3342087b677f304ff0c7bc2",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed0/metrics_3d.csv",
+      "sha256": "94fb7e13f7fb987bbad898d7b2acf024c98c41178a5d73f0c21376f0e78d8818",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed0/summary.json",
+      "sha256": "4f6d7fdb4e4f2c5f2967ab603d498265eee5ba6c093bdd4e4a9b7b892a58803f",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed1/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed1/config.yaml",
+      "sha256": "f1251cb042d95a70c546bf7952befbc7ea600926c5bad493db0daf8d30ca66bb",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed1/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed1/epochs.csv",
+      "sha256": "4bf12a67fb00c9de1f76577e56738226203723d2bde3a23531edc6a2db54b300",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed1/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed1/manifest.json",
+      "sha256": "15f120f9cdc2eee735e11a93b8ee16a447812e60b97cbb8c9a463ee0b909f986",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed1/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed1/metrics_3d.csv",
+      "sha256": "bd771b654974f53308d7575e36d6702fdb370f712b82d9ec1b5c347e619a2753",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed1/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed1/summary.json",
+      "sha256": "5420712b42f3fd205848d504aed9bca43312f1e6c25959777e94a8516c904068",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed2/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed2/config.yaml",
+      "sha256": "270dd6794141fe01463f8332f03ced4ad9a55fe71817e7dfa84d6679bed19801",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed2/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed2/epochs.csv",
+      "sha256": "a3815e82f3fbcb2da72e8898d6458f37f24dc46fd05550ebdcdc70672d98a53b",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed2/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed2/manifest.json",
+      "sha256": "42fbaa6a88f37ae9b40f717e9f03dc465042f72fdea5809b0778f5aacdf829f0",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed2/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed2/metrics_3d.csv",
+      "sha256": "63ed6bf3abf79ba51942b86b78967d0a69dc29da162f9209ef17a713b84bb332",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed2/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold0/seed2/summary.json",
+      "sha256": "984e0e8677851b42f4580183d5cde17c0f2416f0c52f1f0bc511a12df7431dd4",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed0/config.yaml",
+      "sha256": "0d717a3ba2a5c81865d9f60edfc39a78e12d831f08a65d537551c5aa301e8025",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed0/epochs.csv",
+      "sha256": "f62aabbc2b80a2facca64c552b0186cbab8ac25c79b9951abce8d38c32606e26",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed0/manifest.json",
+      "sha256": "62b04e0851978bfbaa145f40e62e8676ccd5be3fdd4319b4f5368be79de3f903",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed0/metrics_3d.csv",
+      "sha256": "3b957ef2e8f47b8d2336a2c627abc3324d83b8c0f1672a3d583ea2c76235beaa",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed0/summary.json",
+      "sha256": "0feca7235b4aa5e75179696c73ed027b12ab7fe92f838cd2ca802eba2a2acd2c",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed1/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed1/config.yaml",
+      "sha256": "75d4a21c6a7f71b43002d0aec35fe2c822c70a94e43bb9d3617a53043647d06d",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed1/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed1/epochs.csv",
+      "sha256": "90737c2492222763f01872496eb0d92fabbe26ae3af01e6d207152217615b3bc",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed1/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed1/manifest.json",
+      "sha256": "9efffa7e3496f26d21fd85717f92592eb9393acb363ca0a65fafc7ac77b7bdae",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed1/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed1/metrics_3d.csv",
+      "sha256": "321d9812decb7e3b2bd8845769db5643257292589bcc79844d4deebc42a5ad26",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed1/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed1/summary.json",
+      "sha256": "e142cd526199b946c87a5a0db33c35d306e4cfba566a951c2894f71241ac7313",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed2/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed2/config.yaml",
+      "sha256": "4b782546768de6e6e0db76fefcdd410cafeb36e7913af4533c5a806aa7f0b601",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed2/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed2/epochs.csv",
+      "sha256": "0b45613caccad983e0ef1f800c152ad6297388c9f4042458e833d6edcbee8d7c",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed2/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed2/manifest.json",
+      "sha256": "efc6e672ef0cb21ab561176d06988a8d4be1ff767b1c99aae005a06ed432c0d1",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed2/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed2/metrics_3d.csv",
+      "sha256": "9c59bc6adf9b35f52d920135054b70dbfb1455893fbd670b3a908723a363aba6",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed2/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold1/seed2/summary.json",
+      "sha256": "f7e84399452cb830a283591d0a274951934d3ccec05d140fb5b6b90e20a09bb7",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed0/config.yaml",
+      "sha256": "4e08201cfaca73729440ce7f117fe274091b1747668614f91350c6d39967f48d",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed0/epochs.csv",
+      "sha256": "dd27081dda31ecb8f2973e68b17507609101981adc1aab2ae7c0c77c7aac93d9",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed0/manifest.json",
+      "sha256": "14de2f796bfcb6d51b8eaef72cb81f7a91eee81daf8230230a47eb183c386201",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed0/metrics_3d.csv",
+      "sha256": "d032b11d05b03409346362fe752b7c153c67a367bc60086c2df7eaa5a9417171",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed0/summary.json",
+      "sha256": "21a7de8baf2e8bcf7d472b20b668f3f6d5d9fb7d6221cfafd355b8d763d82042",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed1/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed1/config.yaml",
+      "sha256": "e245515df2a30fa4c359a12a2fdf77337b9c5b4a37836a8e5bed915602d72aef",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed1/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed1/epochs.csv",
+      "sha256": "cbc1a7826c6cb0eab9ebf6f75f2c0f567782c1bcdef19d9a696fb05ca33283f5",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed1/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed1/manifest.json",
+      "sha256": "2e2d350de3b39128b5106183a9d5ce2641afaca9416732b8222bb62b823ee6b4",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed1/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed1/metrics_3d.csv",
+      "sha256": "be7f80e1a445963c37a4f6ff48554141c9108ab89f195874148757e0dff6233c",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed1/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed1/summary.json",
+      "sha256": "342e82a594dc1ad3e9c7bc0a5bd07ec7e377304f49475dab818ee58f86cdddc6",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed2/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed2/config.yaml",
+      "sha256": "02bf067b17d0295d2af46c5968d88570d1a79a74c08650439157bc38ca0ab549",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed2/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed2/epochs.csv",
+      "sha256": "bd7f4573542dd6e50f25d2b932320befcc27f94698255e1288ad6707522ab782",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed2/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed2/manifest.json",
+      "sha256": "203533001cca9ea19512c78ee851b867a05a5cd932f77f764a086518acf02353",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed2/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed2/metrics_3d.csv",
+      "sha256": "14b4cc3933d8b1b17845be4fe962056336310720e8102a9c67aeb5e9d1dffde4",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed2/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold2/seed2/summary.json",
+      "sha256": "bef4c57c0c58c3e7d3f8d5da0e53578d1c14c309bb49cf3ce4601c45208b2963",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed0/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed0/config.yaml",
+      "sha256": "1725c27ab451effa7f400f331048cd03a72ce683eff0959a33fe659e4141a4d6",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed0/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed0/epochs.csv",
+      "sha256": "bc5df64460418eee36430ad25eff2aeb39edb9167ebe9a10fc7eb34afda9dba1",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed0/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed0/manifest.json",
+      "sha256": "5f37f63f8b17fb2df3081bdd945c18a5fd7767b09d8ee8a341c147a4d10af487",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed0/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed0/metrics_3d.csv",
+      "sha256": "26004f9e0d521d439bd4c66789a289d39926da824dad975be093a6991da9ce83",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed0/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed0/summary.json",
+      "sha256": "d860f9caf5c938ce18a12ef00943938befebfca13b1e6365785ad54b916982e3",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed1/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed1/config.yaml",
+      "sha256": "2e17ecacb9900ecdd1dfda49b942f5fe7e51f9bc81af8045e062f28ffe6d6426",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed1/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed1/epochs.csv",
+      "sha256": "6dda374f621916637efdeaab5d8cc350e9b6bd2273ae9bc07ad9628ca7824ecf",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed1/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed1/manifest.json",
+      "sha256": "c33c94512e6d28df00992f1cf900bdae106d14ddeb7a7fd3a7cf01a2df03f4e2",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed1/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed1/metrics_3d.csv",
+      "sha256": "eedddb3e4c581f5de94e20da06dc249443ea2d96794ca114ef866ca6442c645b",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed1/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed1/summary.json",
+      "sha256": "ceb722b61e70a413ff5cfc4c2374027119bd05dd3ac1b045772e289d5996fd06",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed2/config.yaml",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed2/config.yaml",
+      "sha256": "ef198f8028afc16c76f4aa5b7c179c7a371e7b29537ce93846cdace0a5d79beb",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed2/epochs.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed2/epochs.csv",
+      "sha256": "b9cc2ad4edb1a1989ee58c0e360a67d94865c8312ea3cc4ec5030fdeba3ab83e",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed2/manifest.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed2/manifest.json",
+      "sha256": "3bc51f8845244eb8e2d7e7372012ed4a74aa53cd99a578a8bffd082e53b9466b",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed2/metrics_3d.csv",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed2/metrics_3d.csv",
+      "sha256": "4ed15aa53d017f6c3d477df207baa715e407487b518a5ba1498cf080b3f8ccd4",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed2/summary.json",
+      "destination": "metrics/augmentation_metrics/joint/full_cv4_resenc_ds_unet_dice_ce_augmented_fold3/seed2/summary.json",
+      "sha256": "fed90b44e270cb5e4c7198e61c177576bd4cdd0a44836cf105bf6f835ef684fa",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/cv_pooled_full_cv4_enet_ce_augmented.csv",
+      "destination": "metrics/augmentation_metrics/joint/cv_pooled_full_cv4_enet_ce_augmented.csv",
+      "sha256": "e61404462550b0004ca4e76399d243bb570223e6ce459d3cf058459e3140a28e",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/cv_pooled_full_cv4_enet_dice_ce_augmented.csv",
+      "destination": "metrics/augmentation_metrics/joint/cv_pooled_full_cv4_enet_dice_ce_augmented.csv",
+      "sha256": "d09c8d3816c410b94344bcb650b28e4edbaab18f120fee98fc65419999b2b377",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/cv_pooled_full_cv4_enet_dice_ce_rotation.csv",
+      "destination": "metrics/augmentation_metrics/screening/cv_pooled_full_cv4_enet_dice_ce_rotation.csv",
+      "sha256": "1ea4b6d4e4e6f30f875230c2c319b651c8b1936df84c3f516d8d1300e232cf46",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/cv_pooled_full_cv4_enet_dice_ce_scaling.csv",
+      "destination": "metrics/augmentation_metrics/screening/cv_pooled_full_cv4_enet_dice_ce_scaling.csv",
+      "sha256": "76b226503f3e347e6a45f66c15df3b195e768b30b14d4b62e51cbe1ff353e1e6",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/cv_pooled_full_cv4_enet_dice_ce_shift.csv",
+      "destination": "metrics/augmentation_metrics/screening/cv_pooled_full_cv4_enet_dice_ce_shift.csv",
+      "sha256": "34098d7a4004349a62c8a0e948d62fba0f70e3042388f37271448cb9ce0ee1f5",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "metric",
+      "source": "metrics/cv_pooled_full_cv4_resenc_ds_unet_dice_ce_augmented.csv",
+      "destination": "metrics/augmentation_metrics/joint/cv_pooled_full_cv4_resenc_ds_unet_dice_ce_augmented.csv",
+      "sha256": "5e6a6dee3aed850a5cc4e091587259fdf34fc029cdba52adcbdefb7ab8aa1f2e",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/augmentation_config_audit_27679823.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/augmentation_config_audit_27679823.out",
+      "sha256": "5557a146833fc33f5d73c97a16e4727bbbe65048a741cc65723b4cd2b5175c95",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_gaussian_noise_27632309_0.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_gaussian_noise_27632309_0.out",
+      "sha256": "dc8e52bfbdd6e53c03b2f174769d41c9829ebd11d68b18f8f723f673407810e4",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_gaussian_noise_27632309_1.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_gaussian_noise_27632309_1.out",
+      "sha256": "c030afa1baeb4d1b5c876dbae432d807488123a34cc764d25dce8349de738066",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_gaussian_noise_27632309_10.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_gaussian_noise_27632309_10.out",
+      "sha256": "b7a5354b0185a11e90b9bd66530bd3cfc791fc1247f7071ac8b291378d4770bf",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_gaussian_noise_27632309_11.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_gaussian_noise_27632309_11.out",
+      "sha256": "ecb23fe87c29e21b0a42bccee0e3f3b8117cddf2514147ca70e698188239fb5b",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_gaussian_noise_27632309_2.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_gaussian_noise_27632309_2.out",
+      "sha256": "48875ab17544008fa1f9686ee9ee73a92799f3be7bc3e3b24fd63121e0e6cad2",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_gaussian_noise_27632309_3.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_gaussian_noise_27632309_3.out",
+      "sha256": "4dc9a7d269389b19232a19085fbbc55208d62e29728cd5268b6e98ddc2625476",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_gaussian_noise_27632309_4.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_gaussian_noise_27632309_4.out",
+      "sha256": "f5213f8f12602fa87cd4be45b9ca8ccea8feb030b30303bee6fd13b4766dcf28",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_gaussian_noise_27632309_5.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_gaussian_noise_27632309_5.out",
+      "sha256": "66035de26cbfedb71d66feb310f5876ffa54fd9e01f8daec34ca9935679ccd86",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_gaussian_noise_27632309_6.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_gaussian_noise_27632309_6.out",
+      "sha256": "dd290e1aa50529b9953e3b462217b2cfe959d59aefb956fac7de9aaf695738af",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_gaussian_noise_27632309_7.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_gaussian_noise_27632309_7.out",
+      "sha256": "1fd5e4c75846e61a5eff92f132eae0007f9688216e1a4a68bc90d8bc10082af0",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_gaussian_noise_27632309_8.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_gaussian_noise_27632309_8.out",
+      "sha256": "c0b379ab11cdebf1ef5086ea163eda7d4349db9bcdbbe9efc22844c24c4f2a9d",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_gaussian_noise_27632309_9.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_gaussian_noise_27632309_9.out",
+      "sha256": "8d014c69389ddac96cc67150ecd97859747d726306fc904a3c807d611cb4a188",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_rotation_27632299_0.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_rotation_27632299_0.out",
+      "sha256": "c7b2b3b3a0a9543b149f3d2de27f3c992e8fa3bcaa2e7b36917d78c8683a7db4",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_rotation_27632299_1.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_rotation_27632299_1.out",
+      "sha256": "041b29e32e0122bb8e28cfdd144af71a55476babfd4d1550f225fa5fb994cd7c",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_rotation_27632299_10.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_rotation_27632299_10.out",
+      "sha256": "d719fc40fef69a8434155b377e75410737a032717fdeee9fbdbccffe16ff2078",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_rotation_27632299_11.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_rotation_27632299_11.out",
+      "sha256": "11007c1532b24e0567a9e341db1f86bf16d7b2a90dd370494e807d6aeb682433",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_rotation_27632299_2.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_rotation_27632299_2.out",
+      "sha256": "77fb231480b4bea7b6156fe7107bbfcd95b764259a2718ef1991612ae647d8e5",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_rotation_27632299_3.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_rotation_27632299_3.out",
+      "sha256": "ab804b822b04f7730590fd10b38379d2e3cd03c1a5c7be08922e8699ba6f3a89",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_rotation_27632299_4.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_rotation_27632299_4.out",
+      "sha256": "317ef6fd848c68b9e81d336edc6e5c3f307cf254d4b0bf696a8b0feb2749eb40",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_rotation_27632299_5.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_rotation_27632299_5.out",
+      "sha256": "0342c249ebcc7b6dc080368b533f1a4c49cf12fb72453787ccc25ed47d21d5d8",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_rotation_27632299_6.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_rotation_27632299_6.out",
+      "sha256": "604f528beb41f534da3e47376ffa42d7b66090b1040e6f31bbee5496adb333c1",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_rotation_27632299_7.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_rotation_27632299_7.out",
+      "sha256": "bf2920c31b54fc17700fcad680ea463fa120f622d5c974ea6282f29bb339f4e8",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_rotation_27632299_8.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_rotation_27632299_8.out",
+      "sha256": "adf7d42c81b40270395c7c3f2d0f4cf2706e1e4067c649ef10ff088a8185454d",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_rotation_27632299_9.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_rotation_27632299_9.out",
+      "sha256": "efe8d0090afc0d73f484ec6135a5f0c3157d0ad3dea59c719ceb2837db2bbc79",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_rotation_27679829_0.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_rotation_27679829_0.out",
+      "sha256": "f997ecf3fef6477ecf2d24f7d632e0a5852563128060582e5f533851d4310b41",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_scaling_27632301_0.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_scaling_27632301_0.out",
+      "sha256": "80940fde950ab6afe866f91b35a068413fee2f6007cee08e8609aeb38243719d",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_scaling_27632301_1.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_scaling_27632301_1.out",
+      "sha256": "a04a13248a3e4d67a167a5660d737880137a3c469dc0e6064bf80d257eac63e1",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_scaling_27632301_10.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_scaling_27632301_10.out",
+      "sha256": "3bd25250351e202204fd9cebcb8a8fde896d80e0b5d7eba5071b23a76f3eb429",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_scaling_27632301_11.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_scaling_27632301_11.out",
+      "sha256": "24195b185728d3ce33585fcfa72db0ed8233b67c22dc004eaf9bd3de23774395",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_scaling_27632301_2.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_scaling_27632301_2.out",
+      "sha256": "29e65e151c7db2b53c716fda0173a73397af2078b924eef16a8572627c2d4c11",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_scaling_27632301_3.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_scaling_27632301_3.out",
+      "sha256": "498782e5e53d8588660f8b30c03e60fb508101976fd7c5a3ea227d67aeccf283",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_scaling_27632301_4.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_scaling_27632301_4.out",
+      "sha256": "1c1c7ad1c11f48c7f168d569cb7e0128599ad9786d77e649a3c07728ce4ef533",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_scaling_27632301_5.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_scaling_27632301_5.out",
+      "sha256": "61db5adc583a62c605e9704a48a0f9ddcdc9bd260de014a040c14532065b8093",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_scaling_27632301_6.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_scaling_27632301_6.out",
+      "sha256": "2dbf09e218b85cfea167fa3814ae51a7a21ff5316c324a0a6591a664fb40479b",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_scaling_27632301_7.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_scaling_27632301_7.out",
+      "sha256": "e2d5bfde073f32ffa814883dfedf83efb9bf9b9637bc522b32e6c9fea4297307",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_scaling_27632301_8.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_scaling_27632301_8.out",
+      "sha256": "4af8512c6075a8bf6887aeecf4a25ee45059c77224137d6e8d336930a0a2ed21",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "log",
+      "source": "jobsAndOutputs/pipeline/outputs/full_cv4_enet_dice_ce_scaling_27632301_9.out",
+      "destination": "jobsAndOutputs/augmentation/outputs/online/full_cv4_enet_dice_ce_scaling_27632301_9.out",
+      "sha256": "bac4cd562ef133de90be1175e7bd2358881f178b68622f830340bbfbcd547d2e",
+      "content_changes_expected": false
+    },
+    {
+      "kind": "job",
+      "source": "jobsAndOutputs/pipeline/jobs/registration.job",
+      "destination": "jobsAndOutputs/augmentation/jobs/registration/registration.job",
+      "sha256": "1d236ec85e8d38630d06ce4f242a211d4ae00f574c0d1d2d8de0ccfea6969092",
+      "content_changes_expected": true
+    },
+    {
+      "kind": "job",
+      "source": "jobsAndOutputs/augmentation/jobs/build_cv_folds_mig.job",
+      "destination": "jobsAndOutputs/augmentation/jobs/online/build_cv_folds_mig.job",
+      "sha256": "d8ac355cf967c1d69f934cd1dfb053cdf9b941280343c0983db7c35f97a2367d",
+      "content_changes_expected": true
+    },
+    {
+      "kind": "job",
+      "source": "jobsAndOutputs/augmentation/jobs/build_cv_folds_a100.job",
+      "destination": "jobsAndOutputs/augmentation/jobs/online/build_cv_folds_a100.job",
+      "sha256": "0c9452584e2a3e5efccfbf653d0fa83a6c895c6d7e54ad696b23f278f920189b",
+      "content_changes_expected": true
+    }
+  ]
+}

@@ -1,13 +1,14 @@
 #!/bin/bash
 #SBATCH --job-name=build_cv_folds
-# Copy of pipeline/jobs/build_cv_folds.job on gpu_a100: the CPU (genoa) budget is exhausted, the GPU budget is not.
-#SBATCH --partition=gpu_a100
+# Copy of pipeline/jobs/build_cv_folds.job on gpu_mig: the CPU (genoa) budget is exhausted, the GPU budget is not.
+#SBATCH --partition=gpu_mig
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=18
+#SBATCH --cpus-per-task=9
 #SBATCH --gpus=1
 #SBATCH --time=01:30:00
-#SBATCH --output=jobsAndOutputs/augmentation/outputs/%x_%j.out
+#SBATCH --output=jobsAndOutputs/augmentation/outputs/online/%x_%j.out
+#SBATCH --error=jobsAndOutputs/augmentation/outputs/online/%x_%j.err
 
 # Build the sliced dataset of every fold of a cross-validation config on CPU, in parallel (slice_segthor.py --process),
 # so the (billed) GPU jobs only reuse them. Each fold is built into /scratch-shared/$USER/ai4mi_project/<sliced_hash>
@@ -16,11 +17,11 @@
 # Checks per fold (src.folds.check_dataset): image and label slices match, PNG size, train/val patients disjoint, `retains` val
 # patients, and the normalisation / ROI statistics come from exactly the fold's training patients. Then: the folds' val sets
 # partition the patients.
-# Usage: sbatch --export=ALL,CONFIG=configs/full_cv4_enet_ce.yaml jobsAndOutputs/pipeline/jobs/build_cv_folds.job
+# Usage: sbatch --export=ALL,CONFIG=configs/full_cv4_enet_dice_ce_augmented.yaml jobsAndOutputs/augmentation/jobs/online/build_cv_folds_mig.job
 #   PROCS (optional, default 12): slicing workers; each holds a whole CT volume, so 24 would not fit the node's memory.
 set -euo pipefail
 CONFIG="${CONFIG:?set CONFIG=configs/<experiment>.yaml via --export}"
-PROCS="${PROCS:-12}"
+PROCS="${PROCS:-8}"
 SCRATCH_ROOT="${SCRATCH_ROOT:-/scratch-shared/$USER/ai4mi_project}"
 source jobsAndOutputs/pipeline/jobs/env_setup.sh
 export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1   # workers x threads would oversubscribe the CPUs

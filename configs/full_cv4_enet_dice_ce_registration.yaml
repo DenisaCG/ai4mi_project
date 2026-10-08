@@ -1,4 +1,4 @@
-# Full40 improved Dice+CE with the same train-only synthetic NIfTIs as BASE.
+# Full40 improved Dice+CE sharing train-only synthetic NIfTIs with the ResEnc + DS U-Net arm.
 # The real fold's window, z-score, ROI, and validation remain unchanged.
 experiment: full_cv4_enet_dice_ce_registration
 notes: ENet + Dice CE, full preprocessing, 30 train-only registered volumes per fold
@@ -27,3 +27,6 @@ eval:
 
 wandb:
   mode: disabled
+
+paths:
+  metrics_category: registration

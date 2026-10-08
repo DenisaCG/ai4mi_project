@@ -8,7 +8,8 @@ over esophagus, heart, trachea, aorta.
 
 Each transform was added alone to the improved ENet (`full_cv4_enet_dice_ce`: Dice+CE,
 median spacing, HU window + z-score, ROI crop), fold 0-3, **seed 0 only** (4 runs per arm).
-Single-transform configs are `configs/full_cv4_enet_dice_ce_<transform>.yaml`. The control is
+Saved single-transform configs and evaluations are available for rotation, scaling and shift.
+The control is
 the same four seed-0 runs without augmentation (mean Dice 0.8376); the 12-run control mean
 (0.835) is not comparable to a seed-0-only arm.
 
@@ -22,6 +23,11 @@ the same four seed-0 runs without augmentation (mean Dice 0.8376); the 12-run co
 | Gaussian blur | p=0.2, sigma 0.5-1.0 | 0.8382 | +0.0006 | 13.8 | 2.46 | 2/4 |
 | Brightness/contrast | p=0.15, 0.75-1.25 | 0.8345 | -0.0031 | 14.0 | 2.68 | 2/4 |
 | Gamma | p=0.2, 0.7-1.5 | 0.8324 | -0.0051 | 13.2 | 2.65 | 0/4 |
+
+The shear, Gaussian noise, Gaussian blur, brightness/contrast and gamma rows preserve
+historically reported values. Their saved 3D evaluations are unavailable in the current
+repository and scratch run store, so those rows cannot be independently verified here.
+No values have been reconstructed from the table.
 
 ## 2. Decision
 
@@ -49,7 +55,7 @@ Each model is compared with its own no-augmentation control, paired by fold and 
 | Model | Config | Control | Control Dice (fg) | Augmented Dice (fg) | Delta (paired) | Folds/seeds improved |
 |---|---|---|---:|---:|---:|---:|
 | BASE ENet | `full_cv4_enet_ce_augmented` | `full_cv4_enet_ce` | 0.707 | 0.741 | +0.033 | 12/12 |
-| Improved ENet | `full_cv4_enet_dice_ce_augmented` | `full_cv4_enet_dice_ce` | 0.835 | 0.852 | +0.016 | 12/12 |
+| Improved ENet | `full_cv4_enet_dice_ce_augmented` | `full_cv4_enet_dice_ce` | 0.835 | 0.851 | +0.016 | 12/12 |
 | ResEnc + DS U-Net | `full_cv4_resenc_ds_unet_dice_ce_augmented` | `full_cv4_resenc_ds_unet_dice_ce` | 0.867 | 0.880 | +0.012 | 12/12 |
 
 Full results, mean +/- std over 12 runs (4 folds x 3 seeds), 3D metrics:
@@ -57,7 +63,7 @@ Full results, mean +/- std over 12 runs (4 folds x 3 seeds), 3D metrics:
 | Model | Dice fg | Esophagus | Heart | Trachea | Aorta | HD95 fg (mm) | ASSD fg (mm) | Runs done |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | BASE ENet + joint aug | 0.741 +/- 0.026 | 0.516 | 0.895 | 0.758 | 0.794 | 22.2 +/- 6.7 | 4.11 +/- 0.91 | 12/12 |
-| Improved ENet + joint aug | 0.852 +/- 0.018 | 0.713 | 0.929 | 0.876 | 0.888 | 13.1 +/- 3.2 | 2.33 +/- 0.37 | 12/12 |
+| Improved ENet + joint aug | 0.851 +/- 0.018 | 0.713 | 0.929 | 0.876 | 0.888 | 13.1 +/- 3.2 | 2.33 +/- 0.37 | 12/12 |
 | ResEnc + DS U-Net + joint aug | 0.880 +/- 0.013 | 0.784 | 0.933 | 0.890 | 0.911 | 11.8 +/- 2.0 | 2.13 +/- 0.36 | 12/12 |
 
 Controls for the same table (Dice, per organ order as above, HD95, ASSD): BASE ENet 0.707 (0.469, 0.877, 0.743, 0.741), 25.8 mm, 4.91 mm; Improved ENet 0.835 (0.678, 0.922, 0.864, 0.877), 14.9 mm, 2.65 mm; ResEnc + DS U-Net 0.867 (0.763, 0.920, 0.886, 0.901), 13.8 mm, 2.42 mm.
@@ -68,10 +74,11 @@ shrinks as the baseline improves (+0.033, +0.016, +0.012). The effect is compara
 so the paired comparison, not the means alone, is the evidence. Transforms were selected on the same folds
 (see Caveats), so these gains are slightly optimistic.
 
-Source of the numbers: `metrics/<experiment>_fold*/seed*/summary.json` (`eval` block); aggregate with
+Source of the verified numbers: `metrics/augmentation_metrics/{screening,joint}/<experiment>_fold*/seed*/summary.json`
+(`eval` block); aggregate with
 `python -m src.aggregate --filter augmented`.
 
-## 4. Does combining beat the best single transform?
+## 4. Does combining beat the best verified single transform?
 
 Seed 0 only (4 folds), improved ENet, matched folds, 3D Dice (fg). Control: 0.8376.
 
@@ -82,6 +89,7 @@ Seed 0 only (4 folds), improved ENet, matched folds, 3D Dice (fg). Control: 0.83
 | Shift | 0.8450 | +0.0074 | 15.6 | 2.45 | +0.010 / +0.010 / 0.000 / +0.009 |
 | **Joint: rotation + scaling + shift** | **0.8541** | **+0.0165** | 13.3 | 2.29 | +0.015 / +0.029 / +0.005 / +0.017 |
 
-The joint recipe is better than rotation alone on all four folds (by +0.010, +0.003, +0.001, +0.001; mean +0.004),
+Among the saved single-transform results, the joint recipe is better than rotation alone on all four folds
+(by +0.010, +0.003, +0.001, +0.001; mean +0.004),
 and has lower HD95 and ASSD. The gain over rotation is small (about 0.004 Dice) and rests on four seed-0 runs, so
 treat "joint > best single transform" as suggestive. A 12-run rotation-only arm (seeds 1 and 2) would test it.

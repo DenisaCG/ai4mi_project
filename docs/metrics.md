@@ -51,12 +51,17 @@ The orientation and spacing of each volume are logged in `eval.log`.
 
 ## Building tables
 
-After runs finish, their small files are copied to `metrics/<experiment>/seed<seed>/` (commit them).
+After runs finish, control results are copied to `metrics/<experiment>/seed<seed>/`.
+Augmentation copies go to `metrics/augmentation_metrics/<category>/<experiment>/seed<seed>/`,
+where `<category>` is `screening`, `joint` or `registration` from `paths.metrics_category`.
+Older saved augmentation configs without that metadata route by their `data.augment` or
+`data.registration` setting. Commit the small result files, including the migration manifest.
 Then, on any checkout:
 
 ```bash
 python -m src.aggregate                   # all experiments
 python -m src.aggregate --filter segthor  # subset by experiment-name substring
+python -m src.aggregate --filter augmented  # joint augmentation runs in the categorized tree
 ```
 
 - `metrics/comparison.md`: one row per experiment, mean ± std over seeds (paste into the report)
@@ -69,6 +74,9 @@ rows = list(csv.DictReader(open("metrics/comparison_runs.csv")))
 # or: import pandas as pd; pd.read_csv("metrics/comparison_runs.csv")
 ```
 
-For per-patient analysis, concatenate the `metrics_3d.csv` files in `metrics/*/*/`.
+For per-patient analysis, read `metrics_3d.csv` from the control and categorized
+augmentation run folders. `src.aggregate` discovers both layouts and writes each
+`cv_pooled_<experiment>.csv` beside that experiment's run folders; its shared
+comparison tables remain at the top level of `metrics/`.
 Report at least 3 seeds per configuration before claiming an improvement: with 5 validation patients
 and GPU nondeterminism, single-run differences of ~0.01 Dice are noise.
