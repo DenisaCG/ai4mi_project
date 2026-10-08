@@ -1,0 +1,107 @@
+experiment: full_cv4_enet_dice_ce_augmented_fold0
+seed: 1
+device: cuda
+notes: Full40 upgraded ENet Dice+CE with joint training-slice rotation + scaling +
+  shift
+data:
+  root: data/sliced_12749947
+  preprocess:
+    shape:
+    - 256
+    - 256
+    retains: 10
+    fold: 0
+    seed: 0
+    source_dir: data/segthor_train_full
+    gt_version: corrected
+    resample: median
+    normalize: ct_window_zscore
+    crop: roi
+    num_folds: 4
+  num_classes: 5
+  class_names:
+  - background
+  - esophagus
+  - heart
+  - trachea
+  - aorta
+  label_scale: 63
+  patient_regex: (Patient_\d+)_\d{4}
+  in_channels: 1
+  context: 0
+  batch_size: 8
+  num_workers: 5
+  augment:
+  - name: random_rotation
+    kwargs:
+      p: 0.5
+      degrees:
+      - -10.0
+      - 10.0
+      fill: ct_window_low
+  - name: random_scaling
+    kwargs:
+      p: 0.5
+      scales:
+      - 0.9
+      - 1.1
+      fill: ct_window_low
+  - name: random_shift
+    kwargs:
+      p: 0.5
+      max_fraction: 0.1
+      fill: ct_window_low
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+  test_source_pattern: null
+model:
+  name: enet
+  kwargs:
+    kernels: 8
+    factor: 2
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    dice_idk:
+    - 1
+    - 2
+    - 3
+    - 4
+    ce_weight: 1.0
+    dice_weight: 1.0
+optim:
+  name: adam
+  kwargs:
+    lr: 0.0005
+    betas:
+    - 0.9
+    - 0.999
+scheduler:
+  name: none
+  kwargs: {}
+train:
+  epochs: 25
+  select_metric: val_dice_fg
+  max_failed_batches: 5
+  debug_samples: 0
+  train_patients: 0
+eval:
+  classes:
+  - 1
+  - 2
+  - 3
+  - 4
+wandb:
+  mode: disabled
+  entity: ''
+  project: ai4mi-segthor
+  tags: []
+  image_every: 5
+paths:
+  run_root: runs
+  metrics_dir: metrics
