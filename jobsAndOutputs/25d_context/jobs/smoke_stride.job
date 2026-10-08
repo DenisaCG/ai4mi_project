@@ -1,0 +1,46 @@
+#!/bin/bash
+#SBATCH --job-name=stride_smoke
+#SBATCH --partition=gpu_mig
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=9
+#SBATCH --gpus=1
+#SBATCH --time=00:30:00
+#SBATCH --output=jobsAndOutputs/25d_context/outputs/%x_%j.out
+
+# Smoke test of the stride-4 2.5D U-Net, fold 0: checks that the stacked channels of a real val sample are z-4, z, z+4 and differ from
+# the stride-1 stack, then 2 epochs on 16 slices + the 3D evaluation, on the cheapest GPU (runs/_smoke). The fold datasets must exist.
+# Usage: sbatch [--export=ALL,CONFIG=configs/..._s2.yaml] jobsAndOutputs/25d_context/jobs/smoke_stride.job
+set -euo pipefail
+CONFIG="${CONFIG:-configs/full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4.yaml}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv
+
+python - "$CONFIG" <<'PY'
+import sys
+import torch
+from src.config import config_hash, load_config
+from src.data import build_dataset
+from src.folds import run_configs
+
+base = load_config("configs/full_cv4_resenc_ds_unet_dice_ce_25d_c1.yaml")
+(c1,) = run_configs(base, 0)
+(cs,) = run_configs(load_config(sys.argv[1]), 0)
+stride = cs["data"]["stride"]
+assert cs["data"]["root"] == c1["data"]["root"], "stride must reuse the fold dataset"
+assert config_hash(cs) != config_hash(c1), "stride must change the run hash"
+for cfg in (c1, cs):
+    cfg["data"]["num_workers"] = 0
+d1, ds = build_dataset(c1, "val"), build_dataset(cs, "val")
+mid = len(ds) // 2
+a, b = d1[mid], ds[mid]
+assert a["stems"] == b["stems"] and tuple(b["images"].shape) == (3, *a["images"].shape[1:])
+assert torch.equal(a["images"][1], b["images"][1]), "centre channel must be the same slice"
+print(b["stems"], "stride", stride, "| channel diff to the centre, stride 1:",
+      [float((a["images"][c] - a["images"][1]).abs().mean()) for c in (0, 2)],
+      "stride", stride, [float((b["images"][c] - b["images"][1]).abs().mean()) for c in (0, 2)])
+PY
+python -m src.train --config "$CONFIG" --fold 0 --smoke
+RUN_DIR=$(python -m src.run --config "$CONFIG" --fold 0 --smoke)
+python -m src.evaluate --run "$RUN_DIR"
+echo "--- smoke OK: $RUN_DIR"

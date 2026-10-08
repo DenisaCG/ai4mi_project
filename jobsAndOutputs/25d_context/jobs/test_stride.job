@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --job-name=stride_tests
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=00:20:00
+#SBATCH --output=jobsAndOutputs/25d_context/outputs/%x_%j.out
+
+# CPU only: the whole unit-test suite (incl. the new data.stride tests in tests/test_slice_stack.py).
+# Usage: sbatch jobsAndOutputs/25d_context/jobs/test_stride.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+python -B -m unittest discover -s tests -v 2>&1 | tail -60
+echo "[$(date -Is)] done"

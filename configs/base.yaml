@@ -20,6 +20,7 @@ data:
   patient_regex: "(Patient_\\d+)_\\d{4}"   # group 1 = patient id; groups slices into volumes
   in_channels: 1
   context: 0              # 2.5D: neighbouring slices per side stacked as channels; requires in_channels = 2*context+1
+  stride: 1               # 2.5D: slice distance between channels (neighbours are z +- stride*k); 1 = adjacent slices
   batch_size: 8
   num_workers: 5
   augment: []             # EXTENSION POINT: list of {name: <registered augment>, kwargs: {...}}, train only

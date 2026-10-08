@@ -1,4 +1,5 @@
 """Config loading: configs/base.yaml <- experiment yaml <- --set overrides."""
+
 import copy
 import hashlib
 import json
@@ -7,12 +8,21 @@ from pathlib import Path
 
 import yaml
 
-REPO = Path(__file__).resolve().parents[1]  # relative paths in configs resolve against this
+REPO = (
+    Path(__file__).resolve().parents[1]
+)  # relative paths in configs resolve against this
 BASE_CONFIG = REPO / "configs" / "base.yaml"
-FREE_FORM = "kwargs"  # keys below a `kwargs` block are component-specific, not validated
+FREE_FORM = (
+    "kwargs"  # keys below a `kwargs` block are component-specific, not validated
+)
 IGNORED_BY_HASH = ("notes", "wandb", "paths", "device")
 
-PREPROCESS_DEFAULTS = {"shape": [256, 256], "retains": 25, "fold": 0, "seed": 0}  # = slice_segthor.py defaults
+PREPROCESS_DEFAULTS = {
+    "shape": [256, 256],
+    "retains": 25,
+    "fold": 0,
+    "seed": 0,
+}  # = slice_segthor.py defaults
 
 # --smoke: a few slices, two epochs, separate run dir, no W&B. Applied before --set overrides.
 SMOKE = {"train": {"epochs": 2, "debug_samples": 16}, "wandb": {"mode": "disabled"}}
@@ -22,8 +32,11 @@ class _Loader(yaml.SafeLoader):
     """PyYAML follows YAML 1.1, where `1e-4` is a *string*; read it as a float (as YAML 1.2 does)."""
 
 
-_Loader.add_implicit_resolver("tag:yaml.org,2002:float", re.compile(r"^[-+]?(\d+\.?\d*|\.\d+)[eE][-+]?\d+$"),
-                              list("-+0123456789."))
+_Loader.add_implicit_resolver(
+    "tag:yaml.org,2002:float",
+    re.compile(r"^[-+]?(\d+\.?\d*|\.\d+)[eE][-+]?\d+$"),
+    list("-+0123456789."),
+)
 
 
 def read_yaml(text: str):
@@ -32,7 +45,11 @@ def read_yaml(text: str):
 
 def merge(base: dict, override: dict, path: str = "") -> dict:
     out = copy.deepcopy(base)
-    if "name" in override and override["name"] != out.get("name") and isinstance(out.get(FREE_FORM), dict):
+    if (
+        "name" in override
+        and override["name"] != out.get("name")
+        and isinstance(out.get(FREE_FORM), dict)
+    ):
         out[FREE_FORM] = {}
     for key, value in override.items():
         where = f"{path}{key}"
@@ -60,7 +77,9 @@ def parse_overrides(pairs: list[str]) -> dict:
     return out
 
 
-def load_config(path: Path | None, overrides: list[str] = (), smoke: bool = False) -> dict:
+def load_config(
+    path: Path | None, overrides: list[str] = (), smoke: bool = False
+) -> dict:
     cfg = read_yaml(BASE_CONFIG.read_text())
     if path is not None:
         cfg = merge(cfg, read_yaml(Path(path).read_text()) or {})
@@ -83,11 +102,15 @@ def resolve_preprocess(cfg: dict) -> None:
     if p.get("gt_version") not in ("original", "corrected"):
         raise ValueError("data.preprocess.gt_version must be 'original' or 'corrected'")
     if p.get("normalize") not in (None, "ct_window", "ct_window_zscore"):
-        raise ValueError("data.preprocess.normalize must be 'ct_window' or 'ct_window_zscore'")
+        raise ValueError(
+            "data.preprocess.normalize must be 'ct_window' or 'ct_window_zscore'"
+        )
     if p.get("crop") not in (None, "roi"):
         raise ValueError("data.preprocess.crop must be 'roi'")
     if p.get("crop") and p.get("resample") != "median":
-        raise ValueError("data.preprocess.crop needs resample: median (the window is a size in voxels of the common grid)")
+        raise ValueError(
+            "data.preprocess.crop needs resample: median (the window is a size in voxels of the common grid)"
+        )
     p = cfg["data"]["preprocess"] = PREPROCESS_DEFAULTS | p
     if type(p["fold"]) is not int or p["fold"] < 0:
         raise ValueError("data.preprocess.fold must be a non-negative integer")
@@ -97,8 +120,12 @@ def resolve_preprocess(cfg: dict) -> None:
         if type(p["num_folds"]) is not int or p["num_folds"] < 2:
             raise ValueError("data.preprocess.num_folds must be an integer >= 2")
         if p["fold"] >= p["num_folds"]:
-            raise ValueError("data.preprocess.fold index must be smaller than num_folds")
-    cfg["data"]["root"] = f"data/sliced_{hashlib.sha256(json.dumps(p, sort_keys=True).encode()).hexdigest()[:8]}"
+            raise ValueError(
+                "data.preprocess.fold index must be smaller than num_folds"
+            )
+    cfg["data"]["root"] = (
+        f"data/sliced_{hashlib.sha256(json.dumps(p, sort_keys=True).encode()).hexdigest()[:8]}"
+    )
 
 
 def validate(cfg: dict) -> None:
@@ -117,7 +144,12 @@ def validate(cfg: dict) -> None:
     if type(context) is not int or context < 0:
         raise ValueError(f"data.context must be an integer >= 0, got {context!r}")
     if in_channels != 2 * context + 1:
-        raise ValueError(f"data.in_channels={in_channels} must equal 2*data.context+1={2 * context + 1} (data.context={context})")
+        raise ValueError(
+            f"data.in_channels={in_channels} must equal 2*data.context+1={2 * context + 1} (data.context={context})"
+        )
+    stride = cfg["data"]["stride"]
+    if type(stride) is not int or stride < 1:
+        raise ValueError(f"data.stride must be an integer >= 1, got {stride!r}")
     validate_component_names(cfg)
 
 
@@ -128,7 +160,9 @@ def validate_component_names(cfg: dict) -> None:
     import src.optim  # noqa: F401
     from src.registry import available
 
-    selected = [(kind, cfg[kind]["name"]) for kind in ("model", "loss", "optim", "scheduler")]
+    selected = [
+        (kind, cfg[kind]["name"]) for kind in ("model", "loss", "optim", "scheduler")
+    ]
     selected += [("augment", a["name"]) for a in cfg["data"]["augment"]]
     for kind, name in selected:
         if name not in available(kind):
@@ -138,7 +172,14 @@ def validate_component_names(cfg: dict) -> None:
 def config_hash(cfg: dict) -> str:
     """Identity of a run's settings. Ignore worker count only without random online augmentation."""
     relevant = {k: v for k, v in cfg.items() if k not in IGNORED_BY_HASH}
-    # data.context == 0 is the plain 2D input and is left out, so runs from before the key existed keep their hash
-    relevant["data"] = {k: v for k, v in cfg["data"].items()
-                        if (k != "num_workers" or cfg["data"]["augment"]) and (k != "context" or v != 0)}
-    return hashlib.sha256(json.dumps(relevant, sort_keys=True).encode()).hexdigest()[:12]
+    # data.context == 0 (plain 2D input) and data.stride == 1 are left out, so runs from before the keys existed keep their hash
+    relevant["data"] = {
+        k: v
+        for k, v in cfg["data"].items()
+        if (k != "num_workers" or cfg["data"]["augment"])
+        and (k != "context" or v != 0)
+        and (k != "stride" or v != 1)
+    }
+    return hashlib.sha256(json.dumps(relevant, sort_keys=True).encode()).hexdigest()[
+        :12
+    ]
