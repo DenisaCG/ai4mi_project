@@ -179,6 +179,7 @@ def config_hash(cfg: dict) -> str:
         if (k != "num_workers" or cfg["data"]["augment"])
         and (k != "context" or v != 0)
         and (k != "stride" or v != 1)
+        and (k != "registration" or v is not None)
     }
     return hashlib.sha256(json.dumps(relevant, sort_keys=True).encode()).hexdigest()[
         :12

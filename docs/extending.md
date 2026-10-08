@@ -161,6 +161,9 @@ validation and test use the unaugmented slices.
 As with other online augmentations, interpolation can thin small structures such
 as the esophagus or trachea; inspect overlays before interpreting an ablation.
 
+Offline 3D registration uses a separate train-only generated dataset; see
+[registration_augmentation.md](registration_augmentation.md).
+
 ## 2.5D input
 
 `data.context: c` (default 0, plain 2D) stacks slices z-c ... z+c of the same patient as channels, so a sample's
