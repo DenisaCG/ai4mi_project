@@ -308,6 +308,12 @@ Without `--fold`, `python -m src.train --config <cv config>` trains all folds on
 only fold k, and `python -m src.run --config <cv config> --fold k` prints that run's directory. `--smoke` runs fold 0 only.
 `train.job` and `sweep.job` do not know about folds: use `cv.job` for CV configs.
 
+`configs/full_cv4_resenc_ds_unet_tversky_ce.yaml` is the loss ablation of the residual-encoder U-Net with deep supervision
+(`full_cv4_resenc_ds_unet_dice_ce`): it keeps the `data.preprocess` block, model, optimizer and schedule, and replaces the
+soft Dice term by a soft Tversky term, `TP / (TP + alpha * FP + beta * FN)` per foreground class, with `alpha: 0.3` and
+`beta: 0.7` so that missed foreground costs more than extra foreground (`tversky_ce` in `src/losses/tversky.py`; with
+`alpha = beta = 0.5` it is the Dice loss). One run seed: `cv.job --array=0-3`.
+
 Each finished run leaves `metrics/<experiment>_fold<k>/seed<s>/` with the per-patient `metrics_3d.csv` of that fold's
 validation patients; the best weights and the 3D predictions stay in the run directory on scratch (kept alive by
 `keepalive_scratch.job`). The generated per-fold configs record `num_folds` and use `fold` as the index; rerunning
