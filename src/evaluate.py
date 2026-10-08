@@ -7,6 +7,11 @@ Writes into the run directory:
   volumes/<split>/<patient>.nii.gz   predictions stitched back onto the original CT grid
   eval/metrics_3d.csv                one row per (patient, class): dice, hd95, assd
   eval/<split>/{dice,hd95,assd}.npz  submission format: patient -> (K,) array, background = NaN
+With a slice-presence head (model.kwargs.slice_presence) it also writes, next to the ungated results above:
+  volumes_gated/<split>/<patient>.nii.gz   the predictions with every organ set to background on the slices
+                                           whose presence probability is below 0.5, stitched like the others
+  eval/metrics_3d_gated.csv                metrics_3d.csv of those volumes
+  eval/presence.csv                        per val organ: slices, accuracy and confusion counts of the head
 then adds an `eval` block to summary.json and W&B, and refreshes the metrics/ copy.
 The val split is scored against `data.source_pattern` volumes; the test split (if
 `data.test_source_pattern` is set and <data.root>/test exists) is only predicted and stitched.
@@ -30,24 +35,33 @@ from src.config import REPO, read_yaml
 from src.data import build_dataset, patient_of
 from src.engine import build_model
 from src.metrics_3d import METRICS, volume_metrics
+from src.presence import gate_prediction, presence_counts, presence_target
 from src.run import copy_back, read_json, resolve_device, setup_logging, write_json
 from src.wandb_logger import WandbLogger
 
 
-def predict(net, cfg: dict, split: str, device, out_dir: Path) -> dict[str, np.ndarray]:
+def predict(net, cfg: dict, split: str, device, out_dir: Path) -> tuple[dict, dict, dict]:
+    """Class maps of the whole split, plus, for a net with a slice-presence head, the head's probabilities
+    and the GT presence targets per slice stem (both empty otherwise)."""
     cfg = cfg | {"train": cfg["train"] | {"debug_samples": 0}}  # always the whole split
     loader = DataLoader(build_dataset(cfg, split), batch_size=cfg["data"]["batch_size"],
                         num_workers=cfg["data"]["num_workers"], shuffle=False)
     out_dir.mkdir(parents=True, exist_ok=True)
-    preds = {}
+    preds, presence, targets = {}, {}, {}
     net.eval()
+    has_presence = getattr(net, "presence", None) is not None
     with torch.no_grad():
         for batch in loader:
             classes = net(batch["images"].to(device)).argmax(dim=1).cpu().numpy().astype(np.uint8)
-            for stem, pred in zip(batch["stems"], classes):
+            if has_presence:
+                probs = torch.sigmoid(net.presence_logits).cpu().numpy()
+                target = presence_target(batch["gts"]).numpy()
+            for i, (stem, pred) in enumerate(zip(batch["stems"], classes)):
                 preds[stem] = pred
+                if has_presence:
+                    presence[stem], targets[stem] = probs[i], target[i]
                 Image.fromarray(pred * cfg["data"]["label_scale"]).save(out_dir / f"{stem}.png")
-    return preds
+    return preds, presence, targets
 
 
 def stitch(slices: dict[int, np.ndarray], reference: nib.Nifti1Image, patient: str,
@@ -88,6 +102,57 @@ def mean(values) -> float:
     return float(np.nanmean(a)) if np.isfinite(a).any() else float("nan")
 
 
+def score_volumes(preds: dict[str, np.ndarray], split: str, pattern: str, vol_dir: Path, cfg: dict,
+                  sliced_spacing: dict, log) -> tuple[list[dict], dict]:
+    """Stitches the 2D predictions of a split into volumes in `vol_dir` and scores them against the source GT
+    (the test split is only stitched). Returns the metrics_3d.csv rows and the per-patient metric arrays."""
+    d, names = cfg["data"], cfg["data"]["class_names"]
+    rows, per_metric = [], {m: {} for m in METRICS}
+    for patient, slices in group_by_patient(preds, d["patient_regex"]).items():
+        ref = nib.load(REPO / pattern.format(patient=patient))
+        spacing = tuple(float(s) for s in ref.header.get_zooms()[:3])
+        log.info("%s %s: shape %s, spacing %s mm, orientation %s", split, patient, ref.shape,
+                 np.round(spacing, 3).tolist(), "".join(nib.aff2axcodes(ref.affine)))
+        if patient in sliced_spacing and not np.allclose(sliced_spacing[patient], spacing):
+            log.warning("%s: spacing %s differs from spacing.pkl %s", patient, spacing,
+                        sliced_spacing[patient])
+        # a missing roi_crop file is an error, never a silent full-frame stitch (that would misplace every organ)
+        crop = read_json(REPO / d["root"] / "roi_crop" / f"{patient}.json") if (d.get("preprocess") or {}).get("crop") else None
+        vol = stitch(slices, ref, patient, resampled=bool((d.get("preprocess") or {}).get("resample")), crop=crop)
+        out = vol_dir / f"{patient}.nii.gz"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        nib.save(nib.Nifti1Image(vol, ref.affine, ref.header), out)
+        if split == "test":
+            continue
+        gt = np.asarray(ref.dataobj)
+        for m in METRICS:
+            per_metric[m][patient] = np.full(d["num_classes"], np.nan)
+        for k in range(1, d["num_classes"]):
+            values = volume_metrics(gt == k, vol == k, spacing)
+            for m in METRICS:
+                per_metric[m][patient][k] = values[m]
+            rows.append({"split": split, "patient": patient, "class_idx": k, "class_name": names[k],
+                         "gt_voxels": int(np.count_nonzero(gt == k)),
+                         "pred_voxels": int(np.count_nonzero(vol == k)), **values})
+    return rows, per_metric
+
+
+def presence_accuracy(presence: dict, targets: dict, split: str, names: list[str]) -> list[dict]:
+    """Per foreground organ: accuracy and confusion counts of the thresholded presence head over the split's slices."""
+    stems = sorted(presence)
+    counts = presence_counts(np.stack([presence[s] for s in stems]), np.stack([targets[s] for s in stems]))
+    return [{"split": split, "class_idx": k, "class_name": names[k], "slices": len(stems),
+             "present_slices": int(tp + fn), "accuracy": (tp + tn) / len(stems), "tp": int(tp), "fp": int(fp),
+             "fn": int(fn), "tn": int(tn)} for k, (tp, fp, fn, tn) in enumerate(counts, start=1)]
+
+
+def write_csv(path: Path, rows: list[dict]) -> None:
+    with path.open("w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+
+
 def evaluate(run_dir: Path, device: torch.device) -> dict:
     cfg = read_yaml((run_dir / "config.yaml").read_text())
     log = setup_logging(run_dir / "eval.log")
@@ -105,39 +170,19 @@ def evaluate(run_dir: Path, device: torch.device) -> dict:
     splits = {"val": d["source_pattern"]}
     if d["test_source_pattern"] and (REPO / d["root"] / "test").is_dir():
         splits["test"] = d["test_source_pattern"]
-    rows, block = [], {}
+    rows, gated_rows, presence_rows, block = [], [], [], {}
     for split, pattern in splits.items():
-        preds = predict(net, cfg, split, device, run_dir / "predictions" / split)
+        preds, presence, targets = predict(net, cfg, split, device, run_dir / "predictions" / split)
         log.info("%s: predicted %d slices -> %s", split, len(preds), run_dir / "predictions" / split)
         if pattern is None:
             continue
-        per_metric = {m: {} for m in METRICS}
-        for patient, slices in group_by_patient(preds, d["patient_regex"]).items():
-            ref = nib.load(REPO / pattern.format(patient=patient))
-            spacing = tuple(float(s) for s in ref.header.get_zooms()[:3])
-            log.info("%s %s: shape %s, spacing %s mm, orientation %s", split, patient, ref.shape,
-                     np.round(spacing, 3).tolist(), "".join(nib.aff2axcodes(ref.affine)))
-            if patient in sliced_spacing and not np.allclose(sliced_spacing[patient], spacing):
-                log.warning("%s: spacing %s differs from spacing.pkl %s", patient, spacing,
-                            sliced_spacing[patient])
-            # a missing roi_crop file is an error, never a silent full-frame stitch (that would misplace every organ)
-            crop = read_json(REPO / d["root"] / "roi_crop" / f"{patient}.json") if (d.get("preprocess") or {}).get("crop") else None
-            vol = stitch(slices, ref, patient, resampled=bool((d.get("preprocess") or {}).get("resample")), crop=crop)
-            out = run_dir / "volumes" / split / f"{patient}.nii.gz"
-            out.parent.mkdir(parents=True, exist_ok=True)
-            nib.save(nib.Nifti1Image(vol, ref.affine, ref.header), out)
-            if split == "test":
-                continue
-            gt = np.asarray(ref.dataobj)
-            for m in METRICS:
-                per_metric[m][patient] = np.full(d["num_classes"], np.nan)
-            for k in range(1, d["num_classes"]):
-                values = volume_metrics(gt == k, vol == k, spacing)
-                for m in METRICS:
-                    per_metric[m][patient][k] = values[m]
-                rows.append({"split": split, "patient": patient, "class_idx": k, "class_name": names[k],
-                             "gt_voxels": int(np.count_nonzero(gt == k)),
-                             "pred_voxels": int(np.count_nonzero(vol == k)), **values})
+        split_rows, per_metric = score_volumes(preds, split, pattern, run_dir / "volumes" / split, cfg, sliced_spacing, log)
+        rows += split_rows
+        if presence:
+            gated = {stem: gate_prediction(pred, presence[stem]) for stem, pred in preds.items()}
+            gated_rows += score_volumes(gated, split, pattern, run_dir / "volumes_gated" / split, cfg, sliced_spacing, log)[0]
+            if split != "test":
+                presence_rows += presence_accuracy(presence, targets, split, names)
         if split == "test":
             continue
         (run_dir / "eval" / split).mkdir(parents=True, exist_ok=True)
@@ -149,11 +194,9 @@ def evaluate(run_dir: Path, device: torch.device) -> dict:
             block[f"{split}_{m}_fg"] = mean([per_class[k] for k in cfg["eval"]["classes"]])
         block[f"{split}_patients"] = len(per_metric["dice"])
 
-    if rows:
-        with (run_dir / "eval" / "metrics_3d.csv").open("w", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=list(rows[0]))
-            writer.writeheader()
-            writer.writerows(rows)
+    for name, table in (("metrics_3d", rows), ("metrics_3d_gated", gated_rows), ("presence", presence_rows)):
+        if table:
+            write_csv(run_dir / "eval" / f"{name}.csv", table)
     block |= {"best_epoch": best["epoch"]}
     summary = read_json(run_dir / "summary.json")
     write_json(run_dir / "summary.json", summary | {"eval": block})

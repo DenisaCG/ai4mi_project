@@ -1,0 +1,33 @@
+# Same as full_cv4_resenc_ds_unet_dice_ce.yaml (residual-encoder U-Net, deep supervision, Dice+CE, full preprocessing, 4-fold CV,
+# constant LR, 25 epochs, split seed 0); only a slice-presence head is added: global average of the bottleneck features, a linear
+# layer with one logit per organ, loss + 0.5 * BCE against "the GT slice has any voxel of the organ". The 3D evaluation scores the
+# predictions as they are (eval/metrics_3d.csv) and gated at presence probability 0.5 (eval/metrics_3d_gated.csv).
+# Runs as full_cv4_resenc_ds_unet_dice_ce_presence_fold0..3.
+experiment: full_cv4_resenc_ds_unet_dice_ce_presence
+notes: residual-encoder 2D U-Net with deep supervision + CE (all classes) + soft Dice (foreground), full preprocessing, 4-fold CV on the full 40-patient SEGTHOR train set; slice-presence head on the bottleneck (weight 0.5 BCE), constant LR, 25 epochs
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+
+model:
+  name: unet
+  kwargs: {block: residual, deep_supervision: true, slice_presence: true}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+train:
+  presence_weight: 0.5
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled
