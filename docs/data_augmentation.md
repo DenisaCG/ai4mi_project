@@ -12,7 +12,7 @@ pipeline and whether it adds benefit after the preprocessing and loss improvemen
 Each arm uses the reference's four patient folds (30 train / 10 validation patients
 per fold) and three training seeds: **12 runs per arm**, or 72 intended augmentation
 runs across six arms. Folds and seeds match the corresponding no-augmentation
-reference. There are no combinations of augmentations. Each transform has `p: 0.5`,
+reference. The single-transform arms are not combined; the combined (joint) recipe is described below. Each transform has `p: 0.5`,
 an experimental design choice rather than a literature-derived optimum: approximately
 half of training-slice presentations are augmented, with frequency held constant
 across the three ablations. Validation and test data are not augmented.
@@ -73,7 +73,7 @@ foreground 3D metric means ± standard deviations across runs from
 | Full40 improved | 0.835 ± 0.022 | 14.9 ± 2.2 mm | 2.65 ± 0.31 mm |
 
 Improved is the no-augmentation control for the improved arms; BASE is the
-control for the BASE arms. No arm-level augmentation results are reported yet.
+control for the BASE arms. Augmentation results are in [`augmentation_selection.md`](augmentation_selection.md).
 
 ## Validation and submission status
 
@@ -83,19 +83,29 @@ training augmentation datasets; all required BASE and improved fold caches were
 accessible before launch. An earlier submission failed at `cv.job`'s cache
 preflight, before training or augmentation, when cache paths were unavailable.
 
-As of **2026-10-06 19:15 CEST**, all six arms had been submitted. Improved +
-Rotation fold 0 / seed 0 (`27679829_0`) completed training and 3D evaluation.
-The other **71 intended tasks** were cancelled at Slurm dispatch with
-`reason=budget`; they did not start training.
+Status (2026-10-08). The single-transform screening was run on the improved ENet only,
+seed 0 (4 runs per arm): rotation, scaling, Gaussian noise, shift, shear, gamma,
+brightness/contrast and blur (the last five added in later configs). BASE
+single-transform arms and seeds 1-2 of the single-transform arms were not run. An
+earlier submission of all six arms (72 runs) was budget-cancelled except Improved +
+Rotation fold 0 / seed 0. The final recipe combines rotation, scaling and shift and was
+run on BASE ENet, improved ENet and the ResEnc + DS U-Net (12 runs each, all complete);
+see [`augmentation_selection.md`](augmentation_selection.md) for the selection and results.
+No-augmentation references are complete.
 
-| Arm | Slurm array | Tasks | Recorded state |
-|---|---:|---:|---|
-| BASE rotation | `27680263` | `0-11` | Cancelled |
-| BASE scaling | `27680264` | `0-11` | Cancelled |
-| BASE Gaussian noise | `27680266` | `0-11` | Cancelled |
-| Improved rotation | `27680268` | `1-11` | Cancelled |
-| Improved scaling | `27680269` | `0-11` | Cancelled |
-| Improved Gaussian noise | `27680270` | `0-11` | Cancelled |
+## Joint augmentation (rotation + scaling + shift together)
 
-These are submission records, **not 72 completed runs or currently running jobs**.
-Both no-augmentation reference experiments are complete.
+The final recipe applies **rotation, scaling and shift jointly** in one training run
+and is chosen from the single-transform screening; see
+[`augmentation_selection.md`](augmentation_selection.md) for how and why. Transforms run in
+that order, each with `p: 0.5`. Rotation (-10 to +10 degrees), scaling (0.9 to 1.1) and shift
+(up to 10% of image size) use the same parameters as the single-transform arms (BASE
+`fill=0.0`; others `fill=ct_window_low`). Rotation, scaling and shift are separate
+resampling steps, so a slice hit by several is interpolated more than once. Same folds and
+seeds as the controls: 12 runs per model.
+
+| Model | Control | Joint-augmentation config |
+|---|---|---|
+| BASE ENet | `full_cv4_enet_ce` | [`configs/full_cv4_enet_ce_augmented.yaml`](../configs/full_cv4_enet_ce_augmented.yaml) |
+| Improved ENet | `full_cv4_enet_dice_ce` | [`configs/full_cv4_enet_dice_ce_augmented.yaml`](../configs/full_cv4_enet_dice_ce_augmented.yaml) |
+| ResEnc + DS U-Net | `full_cv4_resenc_ds_unet_dice_ce` | [`configs/full_cv4_resenc_ds_unet_dice_ce_augmented.yaml`](../configs/full_cv4_resenc_ds_unet_dice_ce_augmented.yaml) |
