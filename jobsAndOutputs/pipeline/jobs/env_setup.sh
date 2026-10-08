@@ -6,7 +6,9 @@ module load Anaconda3/2024.06-1
 # conda activate needs the shell hook in a non-interactive shell; conda.sh trips over set -u.
 set +u
 source "${EBROOTANACONDA3:-$CONDA_PREFIX}/etc/profile.d/conda.sh"
+while [ "${CONDA_SHLVL:-0}" -gt 0 ]; do conda deactivate; done   # sbatch inherits the login shell's active conda env
 conda activate ai4mi
+python -c "import torch" || { echo "no torch in $(which python): conda env ai4mi not active"; exit 1; }
 set -u
 
 cd "$SLURM_SUBMIT_DIR"   # jobs are submitted from the repo root (relative --output paths need it)

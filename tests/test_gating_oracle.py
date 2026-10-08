@@ -9,6 +9,7 @@ from unittest import mock
 
 import numpy as np
 
+from src.config import REPO
 from tools.gating_oracle import (
     aggregate,
     choose_per_organ,
@@ -18,6 +19,7 @@ from tools.gating_oracle import (
     largest_component,
     train_pixel_mm2,
     variant_volumes,
+    volume_rows,
 )
 
 NAMES = ["background", "esophagus", "heart", "trachea", "aorta"]
@@ -94,6 +96,9 @@ class VariantVolumesTest(unittest.TestCase):
                 "heart_hull",
                 "area_gate_5", "area_gate_10", "area_gate_25", "area_gate_50",
                 "adjacent_gate",
+                "zrun_3", "zrun_5", "zextent_0", "zextent_5", "slice_cc_0.1", "slice_cc_0.25",
+                "contiguous_z_0", "contiguous_z_2", "contiguous_z_5",
+                "trachea_anchor_20", "trachea_anchor_40", "trachea_anchor_60",
             ],
         )  # fmt: skip
 
@@ -114,11 +119,35 @@ class VariantVolumesTest(unittest.TestCase):
         self.assertEqual(v["adjacent_gate"][0, 0, 5], 0)
         self.assertEqual(int((v["area_gate_5"] == 2).sum()), int((self.pred == 2).sum()))
 
+    def test_only_restricts_the_variants(self):
+        got = dict(
+            variant_volumes(self.pred, self.gt, CLASSES, NAMES, 1.0, only=("zrun_3", "gate"))
+        )
+        self.assertEqual(list(got), ["baseline", "gate", "zrun_3"])
+
     def test_baseline_is_the_input_and_nothing_mutates_it(self):
         before = self.pred.copy()
         v = self.volumes()
         np.testing.assert_array_equal(self.pred, before)
         np.testing.assert_array_equal(v["baseline"], before)
+
+
+class VolumeRowsTest(unittest.TestCase):
+    def test_gt_voxels_lost_counts_correct_baseline_voxels_the_variant_dropped(self):
+        gt = np.zeros((2, 2, 2), dtype=np.uint8)
+        gt[0, :, :] = 1  # 4 GT voxels
+        baseline = gt.copy()
+        baseline[1, 0, 0] = 1  # one false positive
+        variant = baseline.copy()
+        variant[0, 0, 0] = 0  # drops a true positive
+        variant[1, 0, 0] = 0  # drops the false positive
+        rows = volume_rows(
+            REPO / "runs" / "e_fold0" / "seed0", "p", "v", variant, gt, (1.0, 1.0, 1.0), ["bg", "eso"], [1], {}, baseline
+        )
+        self.assertEqual(rows[0]["gt_voxels_lost"], 1)
+        self.assertNotIn("gt_voxels_lost", volume_rows(
+            REPO / "runs" / "e_fold0" / "seed0", "p", "v", variant, gt, (1.0, 1.0, 1.0), ["bg", "eso"], [1], {}
+        )[0])
 
 
 def row(variant, run, k, dice, hd95=1.0, patient="p"):
@@ -157,6 +186,16 @@ class AggregateTest(unittest.TestCase):
         rows += [row("w", f"exp_fold{f}/seed0", 2, 0.9 if f == 0 else 0.7) for f in (0, 1)]
         self.assertEqual(choose_per_organ(rows, [1, 2]), {1: "v", 2: "v"})
         rows = [r for r in rows if r["variant"] != "v"]
+        self.assertEqual(choose_per_organ(rows, [1, 2]), {1: "baseline", 2: "baseline"})
+
+    def test_hd95_choice_needs_a_better_hd95_and_a_small_dice_loss(self):
+        rows = []
+        for f in (0, 1):
+            run = f"exp_fold{f}/seed0"
+            rows += [row("baseline", run, 1, 0.80, hd95=10.0), row("baseline", run, 2, 0.80, hd95=10.0)]
+            rows += [row("a", run, 1, 0.799, hd95=5.0), row("a", run, 2, 0.70, hd95=1.0)]  # fmt: skip
+            rows += [row("gate", run, 1, 0.80, hd95=0.0), row("gate", run, 2, 0.80, hd95=0.0)]  # fmt: skip
+        self.assertEqual(choose_per_organ(rows, [1, 2], by="hd95"), {1: "a", 2: "baseline"})
         self.assertEqual(choose_per_organ(rows, [1, 2]), {1: "baseline", 2: "baseline"})
 
     def test_emptied_counts_only_new_nans(self):

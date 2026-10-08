@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH --job-name=postprocess_extra
+#SBATCH --partition=gpu_mig
+#SBATCH --gpus=1
+#SBATCH --cpus-per-task=9
+#SBATCH --time=00:30:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Gating-oracle tooling on CPU work, with a chosen output directory, variant subset and fold/seed range (the scripts do not use the GPU).
+# Usage: sbatch --export=ALL,EXPERIMENT=full_cv4_resenc_ds_unet_dice_ce,OUT=results/postprocess_extra,ARGS="--variants gate lcc_heart_trachea zrun_3" jobsAndOutputs/pipeline/jobs/postprocess_extra.job
+set -euo pipefail
+EXPERIMENT="${EXPERIMENT:?set EXPERIMENT=<cv experiment without _fold<k>> via --export}"
+OUT="${OUT:?set OUT=<output directory> via --export}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=1
+python -m unittest tests.test_gating_oracle tests.test_postprocess_filters tests.test_seed_ensemble
+# shellcheck disable=SC2086
+python -O -m tools.gating_oracle --experiment "$EXPERIMENT" --workers "$SLURM_CPUS_PER_TASK" --out "$OUT" ${ARGS:-}
+echo "[$(date -Is)] done: $OUT"

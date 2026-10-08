@@ -16,7 +16,15 @@ Ground-truth-free variants, each applied independently to the baseline predictio
   area_gate_<N>                    organ set to background on slices where it covers < N pixels of the
                                    256x256 training grid (converted to mm^2 through the run's ROI crop size)
   adjacent_gate                    organ removed on slices where it is absent from z-1 and z+1
+  zrun_<L>                         organ removed on runs of fewer than L consecutive slices
+  zextent_<m>                      organ kept only within the z-range of its largest component +- m slices
+  slice_cc_<r>                     per slice, organ pieces smaller than r x the largest piece removed
+  contiguous_z_<g>                 organ kept only on its longest run of slices, runs joined across gaps of <= g slices
+  trachea_anchor_<R>               esophagus components whose centroid is more than R training-grid pixels from the
+                                   trachea centroid of that slice (nearest slice with trachea) removed
   combo                            per organ, the ground-truth-free variant with the best mean Dice (or none)
+  combo_hd95                       same by lowest HD95, among variants losing at most 0.002 Dice
+--variants restricts the run to the named variants (baseline is always scored).
 Writes, into --out: rows.csv (per run, patient, variant, organ), means.csv (fg and per-organ means, overall
 and per fold, with deltas to the baseline), summary.md and slivers.csv (slices whose GT organ area is at
 most T pixels, on the 256x256 grid the network is trained on). cache/ holds per-patient results so a
@@ -43,15 +51,26 @@ from src.metrics_3d import METRICS, volume_metrics
 from tools.postprocess_filters import (
     adjacent_gate,
     area_gate,
+    contiguous_z,
     heart_hull,
+    min_run_length,
     remove_small_components,
+    slice_components,
     take_organs,
+    trachea_anchor,
+    z_extent,
 )
 
 ORACLE = ("gate", "gate_lcc")  # need the ground truth: excluded from the combo
 SLIVER_AREAS = (1, 3, 5, 10, 25, 50)  # pixels on the training grid
 AREA_GATES = (5, 10, 25, 50)  # pixels on the training grid
 SIZE_FILTERS = (("0.2x", 0.2, 0), ("0.05x", 0.05, 0), ("500vox", 0.0, 500))
+RUN_LENGTHS = (3, 5)  # slices
+Z_MARGINS = (0, 5)  # slices
+SLICE_COMPONENTS = (0.1, 0.25)  # of the largest piece on the slice
+CONTIGUOUS_GAPS = (0, 2, 5)  # slices
+ANCHOR_RADII = (20, 40, 60)  # pixels of the 256x256 training grid
+HD95_DICE_TOLERANCE = 0.002  # combo_hd95 may lose this much Dice per organ
 LONG_HD95 = 20.0  # mm, "bad" patient x organ rows
 
 
@@ -80,35 +99,91 @@ def variant_volumes(
     classes: list[int],
     names: list[str],
     voxels_per_px: float,
+    only: tuple[str, ...] | None = None,
 ) -> Iterator[tuple[str, np.ndarray]]:
-    """Yields (variant, volume) for every variant of the module docstring, baseline first.
-    `voxels_per_px` is the number of voxels of a slice of `pred` that one pixel of the 256x256 training
-    grid covers."""
+    """Yields (variant, volume) for every variant of the module docstring, baseline first; with `only`,
+    just those (and the baseline). `voxels_per_px` is the number of voxels of a slice of `pred` that one
+    pixel of the 256x256 training grid covers."""
     eso, heart, trachea = (names.index(n) for n in ("esophagus", "heart", "trachea"))
-    gated = gate(pred, gt, classes)
     lcc = largest_component(pred, classes)
+    candidates = {
+        "gate": lambda: gate(pred, gt, classes),
+        "lcc": lambda: lcc,
+        "gate_lcc": lambda: largest_component(gate(pred, gt, classes), classes),
+        **{f"lcc_{names[k]}": partial(take_organs, pred, lcc, [k]) for k in classes},
+        "lcc_heart_trachea": lambda: take_organs(pred, lcc, [heart, trachea]),
+        **{
+            f"esophagus_size_{label}": partial(remove_small_components, pred, eso, rel, min_voxels)
+            for label, rel, min_voxels in SIZE_FILTERS
+        },
+        "heart_hull": lambda: heart_hull(take_organs(pred, lcc, [heart]), heart),
+        **{f"area_gate_{n}": partial(area_gate, pred, classes, n * voxels_per_px) for n in AREA_GATES},
+        "adjacent_gate": lambda: adjacent_gate(pred, classes),
+        **{f"zrun_{n}": partial(min_run_length, pred, classes, n) for n in RUN_LENGTHS},
+        **{f"zextent_{m}": partial(z_extent, pred, classes, m) for m in Z_MARGINS},
+        **{f"slice_cc_{r}": partial(slice_components, pred, classes, r) for r in SLICE_COMPONENTS},
+        **{f"contiguous_z_{g}": partial(contiguous_z, pred, classes, g) for g in CONTIGUOUS_GAPS},
+        **{
+            f"trachea_anchor_{r}": partial(trachea_anchor, pred, eso, trachea, r * voxels_per_px**0.5)
+            for r in ANCHOR_RADII
+        },
+    }
     yield "baseline", pred
-    yield "gate", gated
-    yield "lcc", lcc
-    yield "gate_lcc", largest_component(gated, classes)
+    for name, build in candidates.items():
+        if only is None or name in only:
+            yield name, build()
+
+
+def volume_rows(
+    run_dir: Path,
+    patient: str,
+    variant: str,
+    vol: np.ndarray,
+    gt: np.ndarray,
+    spacing: tuple[float, float, float],
+    names: list[str],
+    classes: list[int],
+    scored: dict[tuple[int, bytes], dict],
+    reference: np.ndarray | None = None,
+) -> list[dict]:
+    """One row per organ for the label volume `vol` of a patient. `scored` caches the metrics of organ
+    masks already seen for this patient, so identical masks are scored once. With `reference` (the
+    baseline prediction) each row also has gt_voxels_lost: GT voxels the reference had right and `vol` dropped."""
+    rows = []
     for k in classes:
-        yield f"lcc_{names[k]}", take_organs(pred, lcc, [k])
-    yield "lcc_heart_trachea", take_organs(pred, lcc, [heart, trachea])
-    for label, rel, min_voxels in SIZE_FILTERS:
-        yield f"esophagus_size_{label}", remove_small_components(pred, eso, rel, min_voxels)
-    yield "heart_hull", heart_hull(take_organs(pred, lcc, [heart]), heart)
-    for n in AREA_GATES:
-        yield f"area_gate_{n}", area_gate(pred, classes, n * voxels_per_px)
-    yield "adjacent_gate", adjacent_gate(pred, classes)
+        mask = vol == k
+        false_positive = mask & ~(gt == k).any(axis=(0, 1))
+        key = (k, hashlib.blake2b(np.packbits(mask).tobytes()).digest())
+        if key not in scored:
+            scored[key] = volume_metrics(gt == k, mask, spacing)
+        rows.append(
+            {
+                "run": run_dir.relative_to(REPO / "runs").as_posix(),
+                "patient": patient,
+                "variant": variant,
+                "class_idx": k,
+                "class_name": names[k],
+                "fp_slices": int(false_positive.any(axis=(0, 1)).sum()),
+                "fp_voxels": int(false_positive.sum()),
+                "pred_voxels": int(mask.sum()),
+                **scored[key],
+            }
+            | (
+                {}
+                if reference is None
+                else {"gt_voxels_lost": int(((gt == k) & (reference == k) & ~mask).sum())}
+            )
+        )
+    return rows
 
 
 def score_patient(
-    task: tuple[str, str, str, list[str], list[int], float, dict[int, str] | None],
+    task: tuple[str, str, str, list[str], list[int], float, dict[str, dict[int, str]] | None, tuple[str, ...] | None],
 ) -> list[dict]:
-    """Scores the variants of one patient of one run; one row per (variant, organ). With `choices`
-    ({organ: variant}) only the combo is scored, taking each organ from its chosen variant. An organ
-    mask already scored for this patient (the same voxels) reuses its metrics."""
-    run, pattern, patient, names, classes, px_mm2, choices = task
+    """Scores the variants (`only`, default all) of one patient of one run; one row per (variant, organ).
+    With `choices` ({combo name: {organ: variant}}) only the combos are scored, taking each organ from its
+    chosen variant. An organ mask already scored for this patient (the same voxels) reuses its metrics."""
+    run, pattern, patient, names, classes, px_mm2, choices, only = task
     run_dir = Path(run)
     ref = nib.load(REPO / pattern.format(patient=patient))
     gt = np.asarray(ref.dataobj)
@@ -121,37 +196,21 @@ def score_patient(
     rows = []
 
     def score(variant: str, vol: np.ndarray) -> None:
-        for k in classes:
-            mask = vol == k
-            absent = ~(gt == k).any(axis=(0, 1))
-            false_positive = mask & absent
-            key = (k, hashlib.blake2b(np.packbits(mask).tobytes()).digest())
-            if key not in scored:
-                scored[key] = volume_metrics(gt == k, mask, spacing)
-            rows.append(
-                {
-                    "run": run_dir.relative_to(REPO / "runs").as_posix(),
-                    "patient": patient,
-                    "variant": variant,
-                    "class_idx": k,
-                    "class_name": names[k],
-                    "fp_slices": int(false_positive.any(axis=(0, 1)).sum()),
-                    "fp_voxels": int(false_positive.sum()),
-                    "pred_voxels": int(mask.sum()),
-                    **scored[key],
-                }
-            )
+        rows.extend(
+            volume_rows(run_dir, patient, variant, vol, gt, spacing, names, classes, scored, pred)
+        )
 
-    combo = np.zeros_like(pred)
-    for variant, vol in variant_volumes(pred, gt, classes, names, voxels_per_px):
+    combos = {name: np.zeros_like(pred) for name in choices or {}}
+    for variant, vol in variant_volumes(pred, gt, classes, names, voxels_per_px, only):
         if choices is None:
             score(variant, vol)
         else:
-            for k in classes:
-                if choices[k] == variant:
-                    combo[vol == k] = k
-    if choices is not None:
-        score("combo", combo)
+            for name, chosen in choices.items():
+                for k in classes:
+                    if chosen[k] == variant:
+                        combos[name][vol == k] = k
+    for name, vol in combos.items():
+        score(name, vol)
     return rows
 
 
@@ -279,7 +338,7 @@ def aggregate(rows: list[dict], metric: str, classes: list[int]) -> dict[str, di
     out = {}
     for variant in variants_of(rows):
         per_run = {
-            run: {k: mean(values[variant, run, k]) for k in classes}
+            run: {k: mean(values.get((variant, run, k), [])) for k in classes}
             for run in sorted({r["run"] for r in rows})
         }
         fg = {run: mean(list(v.values())) for run, v in per_run.items()}
@@ -292,17 +351,27 @@ def aggregate(rows: list[dict], metric: str, classes: list[int]) -> dict[str, di
     return out
 
 
-def choose_per_organ(rows: list[dict], classes: list[int]) -> dict[int, str]:
-    """Per organ, the ground-truth-free variant with the best mean Dice over all runs; the baseline
-    unless a variant is strictly better."""
-    agg = aggregate(
-        [r for r in rows if r["variant"] not in ORACLE], "dice", classes
-    )
+def choose_per_organ(
+    rows: list[dict], classes: list[int], by: str = "dice"
+) -> dict[int, str]:
+    """Per organ, the ground-truth-free variant that is best over all runs; the baseline unless a variant
+    is strictly better. by="dice": highest mean Dice. by="hd95": lowest mean HD95 among the variants that
+    lose at most HD95_DICE_TOLERANCE Dice."""
+    free = [r for r in rows if r["variant"] not in ORACLE]
+    dice, hd95 = aggregate(free, "dice", classes), aggregate(free, "hd95", classes)
     choices = {}
     for k in classes:
         best = "baseline"
-        for variant, a in agg.items():
-            if a[k, "all"] > agg[best][k, "all"]:
+        for variant in dice:
+            if by == "dice":
+                better = dice[variant][k, "all"] > dice[best][k, "all"]
+            else:
+                ok = (
+                    dice[variant][k, "all"]
+                    >= dice["baseline"][k, "all"] - HD95_DICE_TOLERANCE
+                )
+                better = ok and hd95[variant][k, "all"] < hd95[best][k, "all"]
+            if better:
                 best = variant
         choices[k] = best
     return choices
@@ -396,22 +465,52 @@ def count_table(
 
 
 def combo_table(
-    choices: dict[int, str], rows: list[dict], classes: list[int], names: list[str]
+    choices: dict[str, dict[int, str]],
+    rows: list[dict],
+    classes: list[int],
+    names: list[str],
 ) -> str:
     dice = aggregate(rows, "dice", classes)
     hd95 = aggregate(rows, "hd95", classes)
     lines = [
-        "### Combo: variant chosen per organ (best mean Dice over all runs among the ground-truth-free variants)",
+        "### Combos: variant chosen per organ among the ground-truth-free variants (combo by mean Dice, combo_hd95 by mean HD95)",
         "",
-        "| organ | chosen | Dice change | HD95 change (mm) |",
-        "|---|---|---|---|",
+        "| combo | organ | chosen | Dice change | HD95 change (mm) |",
+        "|---|---|---|---|---|",
     ]
-    for k in classes:
-        v = choices[k]
-        lines.append(
-            f"| {names[k]} | {v} | {dice[v][k, 'all'] - dice['baseline'][k, 'all']:+.4f} "
-            f"| {hd95[v][k, 'all'] - hd95['baseline'][k, 'all']:+.2f} |"
-        )
+    for combo, chosen in choices.items():
+        for k in classes:
+            v = chosen[k]
+            lines.append(
+                f"| {combo} | {names[k]} | {v} | {dice[v][k, 'all'] - dice['baseline'][k, 'all']:+.4f} "
+                f"| {hd95[v][k, 'all'] - hd95['baseline'][k, 'all']:+.2f} |"
+            )
+    return "\n".join(lines)
+
+
+def esophagus_table(rows: list[dict], classes: list[int], names: list[str]) -> str:
+    """The esophagus alone (its pieces may be real): metric changes against the baseline, the GT voxels
+    the variant removed from the baseline prediction (summed over all runs) and the rows it emptied."""
+    k = names.index("esophagus")
+    agg = {m: aggregate(rows, m, classes) for m in METRICS}
+    base = {
+        (r["run"], r["patient"]): r for r in rows if r["variant"] == "baseline" and r["class_idx"] == k
+    }
+    lines = [
+        "### Esophagus alone",
+        "",
+        "| variant | Dice | Dice change | HD95 mm | HD95 change | ASSD mm | ASSD change | GT voxels removed | rows emptied |",
+        "|---|---|---|---|---|---|---|---|---|",
+    ]
+    for variant in agg["dice"]:
+        sel = [r for r in rows if r["variant"] == variant and r["class_idx"] == k]
+        cells = []
+        for m, fmt in (("dice", ".4f"), ("hd95", ".2f"), ("assd", ".3f")):
+            v, b = agg[m][variant][k, "all"], agg[m]["baseline"][k, "all"]
+            cells += [format(v, fmt), format(v - b, "+" + fmt)]
+        lost = sum(r.get("gt_voxels_lost", 0) for r in sel)
+        gone = sum(r["pred_voxels"] == 0 and base[r["run"], r["patient"]]["pred_voxels"] > 0 for r in sel)
+        lines.append(f"| {variant} | " + " | ".join(cells) + f" | {lost} | {gone} |")
     return "\n".join(lines)
 
 
@@ -480,12 +579,16 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--folds", type=int, default=4)
     parser.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2])
     parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument(
+        "--variants", nargs="+", help="score only these variants (baseline always)"
+    )
     parser.add_argument("--out", type=Path, default=REPO / "results" / "gating_oracle")
     args = parser.parse_args(argv)
 
     dirs = run_dirs(args.experiment, args.folds, args.seeds)
     cfgs = {d: read_yaml((d / "config.yaml").read_text()) for d in dirs}
     cfg = cfgs[dirs[0]]
+    only = tuple(args.variants) if args.variants else None
     names, classes = cfg["data"]["class_names"], cfg["eval"]["classes"]
     pattern = cfg["data"]["source_pattern"]
     args.out.mkdir(parents=True, exist_ok=True)
@@ -494,7 +597,7 @@ def main(argv: list[str] | None = None) -> None:
         cached_score, cache=args.out / "cache", signature=source_signature()
     )
 
-    def run_all(choices: dict[int, str] | None) -> list[dict]:
+    def run_all(choices: dict[str, dict[int, str]] | None) -> list[dict]:
         tasks = [
             (
                 str(d),
@@ -504,6 +607,7 @@ def main(argv: list[str] | None = None) -> None:
                 classes,
                 train_pixel_mm2(cfgs[d]),
                 choices,
+                only,
             )
             for d in dirs
             for p in sorted((d / "volumes" / "val").glob("*.nii.gz"))
@@ -512,7 +616,10 @@ def main(argv: list[str] | None = None) -> None:
             return [row for rows in pool.map(score, tasks) for row in rows]
 
     rows = run_all(None)
-    choices = choose_per_organ(rows, classes)
+    choices = {
+        "combo": choose_per_organ(rows, classes),
+        "combo_hd95": choose_per_organ(rows, classes, by="hd95"),
+    }
     rows += run_all(choices)
     n_volumes = len(rows) // (len(variants_of(rows)) * len(classes))
 
@@ -541,6 +648,16 @@ def main(argv: list[str] | None = None) -> None:
         recovery_table(rows, classes),
         "",
         combo_table(choices, rows, classes, names),
+        "",
+        esophagus_table(rows, classes, names),
+        "",
+        count_table(
+            "GT voxels of the baseline prediction removed by the variant (true positives lost), summed over all runs",
+            rows,
+            classes,
+            names,
+            lambda r, b: r["gt_voxels_lost"],
+        ),
         "",
         count_table(
             f"Patient x run rows with HD95 above {LONG_HD95:.0f} mm (the baseline row is 'before')",

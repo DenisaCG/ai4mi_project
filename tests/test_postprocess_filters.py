@@ -7,9 +7,16 @@ import numpy as np
 from tools.postprocess_filters import (
     adjacent_gate,
     area_gate,
+    contiguous_z,
     heart_hull,
+    majority_vote,
+    min_run_length,
     remove_small_components,
+    slice_components,
     take_organs,
+    threshold_vote,
+    trachea_anchor,
+    z_extent,
 )
 
 
@@ -111,6 +118,154 @@ class AdjacentGateTest(unittest.TestCase):
         pred = np.zeros((1, 1, 3), dtype=np.uint8)
         pred[0, 0, 0] = 3
         np.testing.assert_array_equal(adjacent_gate(pred, [1]), pred)
+
+
+class MinRunLengthTest(unittest.TestCase):
+    def test_short_runs_removed(self):
+        pred = np.zeros((1, 1, 9), dtype=np.uint8)
+        pred[0, 0, [0, 1, 3, 4, 5, 7]] = 1  # runs of 2, 3 and 1
+        out = min_run_length(pred, [1], 3)
+        self.assertEqual(np.flatnonzero(out[0, 0]).tolist(), [3, 4, 5])
+        self.assertEqual(np.flatnonzero(min_run_length(pred, [1], 2)[0, 0]).tolist(), [0, 1, 3, 4, 5])
+        self.assertEqual(int(pred.sum()), 6)
+
+    def test_other_organs_untouched_and_absent_organ(self):
+        pred = np.zeros((1, 1, 3), dtype=np.uint8)
+        pred[0, 0, 0] = 2
+        np.testing.assert_array_equal(min_run_length(pred, [1], 5), pred)
+
+
+class ZExtentTest(unittest.TestCase):
+    def test_slices_outside_the_largest_component_span_removed(self):
+        pred = np.zeros((4, 4, 12), dtype=np.uint8)
+        pred[:, :, 4:8] = 1  # main component, z 4..7
+        pred[0, 0, 11] = 1  # isolated, far away
+        pred[0, 0, 2] = 1  # isolated, 2 slices below
+        self.assertEqual(np.flatnonzero(z_extent(pred, [1], 0)[0, 0]).tolist(), [4, 5, 6, 7])
+        self.assertEqual(np.flatnonzero(z_extent(pred, [1], 2)[0, 0]).tolist(), [2, 4, 5, 6, 7])
+
+    def test_margin_clipped_to_the_scan_and_missing_organ(self):
+        pred = np.zeros((2, 2, 4), dtype=np.uint8)
+        pred[:, :, 0:2] = 1
+        np.testing.assert_array_equal(z_extent(pred, [1, 2], 9), pred)
+
+
+class SliceComponentsTest(unittest.TestCase):
+    def test_small_piece_on_a_slice_removed(self):
+        pred = np.zeros((10, 10, 2), dtype=np.uint8)
+        pred[0:4, 0:4, 0] = 1  # 16 px
+        pred[8, 8, 0] = 1  # 1 px
+        pred[8, 8, 1] = 1  # alone on its slice: kept
+        out = slice_components(pred, [1], 0.25)
+        self.assertEqual(int((out[:, :, 0] == 1).sum()), 16)
+        self.assertEqual(out[8, 8, 1], 1)
+
+    def test_similar_pieces_kept_and_input_unchanged(self):
+        pred = np.zeros((10, 10, 1), dtype=np.uint8)
+        pred[0:4, 0:4, 0] = 1  # 16 px
+        pred[6:9, 6:9, 0] = 1  # 9 px
+        before = pred.copy()
+        self.assertEqual(int(slice_components(pred, [1], 0.25).sum()), 25)
+        self.assertEqual(int(slice_components(pred, [1], 0.7).sum()), 16)
+        np.testing.assert_array_equal(pred, before)
+
+
+class MajorityVoteTest(unittest.TestCase):
+    def test_majority_label_wins(self):
+        a = np.array([[0, 1, 2, 3]], dtype=np.uint8)
+        b = np.array([[0, 1, 1, 3]], dtype=np.uint8)
+        c = np.array([[1, 0, 1, 2]], dtype=np.uint8)
+        np.testing.assert_array_equal(majority_vote([a, b, c]), [[0, 1, 1, 3]])
+
+    def test_three_way_tie_takes_the_first_volume(self):
+        vols = [np.array([[2]], np.uint8), np.array([[0]], np.uint8), np.array([[3]], np.uint8)]
+        np.testing.assert_array_equal(majority_vote(vols), [[2]])
+
+    def test_a_false_positive_slice_in_one_volume_is_voted_away(self):
+        clean = np.zeros((2, 2, 4), dtype=np.uint8)
+        clean[:, :, 1:3] = 1
+        noisy = clean.copy()
+        noisy[0, 0, 3] = 1
+        out = majority_vote([noisy, clean, clean])
+        np.testing.assert_array_equal(out, clean)
+        self.assertEqual(out.dtype, np.uint8)
+        self.assertEqual(noisy[0, 0, 3], 1)  # inputs unchanged
+
+    def test_single_volume_is_returned_as_is(self):
+        v = np.array([[0, 4]], dtype=np.uint8)
+        np.testing.assert_array_equal(majority_vote([v]), v)
+
+
+class ThresholdVoteTest(unittest.TestCase):
+    def setUp(self):
+        # one voxel row: seeds disagree on whether the organ is there
+        self.vols = [np.array([[1, 1, 1, 0]], np.uint8), np.array([[1, 1, 0, 0]], np.uint8), np.array([[1, 0, 0, 2]], np.uint8)]
+
+    def test_union_majority_intersection(self):
+        for t, expected in ((1, [[1, 1, 1, 2]]), (2, [[1, 1, 0, 0]]), (3, [[1, 0, 0, 0]])):
+            np.testing.assert_array_equal(
+                threshold_vote(self.vols, [1, 2], {1: t, 2: t}), expected, f"t={t}"
+            )
+
+    def test_threshold_is_per_organ(self):
+        out = threshold_vote(self.vols, [1, 2], {1: 3, 2: 1})
+        np.testing.assert_array_equal(out, [[1, 0, 0, 2]])
+
+    def test_most_votes_wins_among_eligible_organs_and_ties_go_to_the_first_volume(self):
+        vols = [np.array([[2, 1, 2]], np.uint8), np.array([[1, 1, 1]], np.uint8), np.array([[1, 2, 0]], np.uint8)]
+        out = threshold_vote(vols, [1, 2], {1: 1, 2: 1})
+        np.testing.assert_array_equal(out, [[1, 1, 2]])  # voxel 2: organs 1 and 2 tie on one vote -> first volume says 2
+
+    def test_equals_the_majority_vote_for_three_volumes_without_three_way_ties(self):
+        vols = [np.array([[0, 1, 1, 2]], np.uint8), np.array([[0, 1, 0, 2]], np.uint8), np.array([[1, 0, 0, 1]], np.uint8)]
+        np.testing.assert_array_equal(threshold_vote(vols, [1, 2], {1: 2, 2: 2}), majority_vote(vols))
+
+
+class ContiguousZTest(unittest.TestCase):
+    def setUp(self):
+        self.pred = np.zeros((1, 1, 20), dtype=np.uint8)
+        self.pred[0, 0, [0, 1, 2]] = 1  # run of 3
+        self.pred[0, 0, [5, 6]] = 1  # 2 empty slices after the first run
+        self.pred[0, 0, [12, 13, 14, 15]] = 1  # run of 4, far away
+        self.pred[0, 0, 18] = 2
+
+    def kept(self, gap):
+        return np.flatnonzero(contiguous_z(self.pred, [1, 2], gap)[0, 0] == 1).tolist()
+
+    def test_gap_joins_runs_and_the_longest_is_kept(self):
+        self.assertEqual(self.kept(0), [12, 13, 14, 15])
+        self.assertEqual(self.kept(2), [0, 1, 2, 5, 6])  # 5 predicted slices beat 4
+        self.assertEqual(self.kept(5), [0, 1, 2, 5, 6, 12, 13, 14, 15])  # gap of 5 empty slices joins all
+
+    def test_other_organ_single_run_kept_input_unchanged_and_missing_organ(self):
+        out = contiguous_z(self.pred, [1, 2, 3], 0)
+        self.assertEqual(out[0, 0, 18], 2)
+        self.assertEqual(int((self.pred == 1).sum()), 9)
+
+
+class TracheaAnchorTest(unittest.TestCase):
+    def setUp(self):
+        self.pred = np.zeros((40, 40, 6), dtype=np.uint8)
+        self.pred[18:22, 18:22, :] = 3  # trachea centred at (19.5, 19.5)
+        self.pred[24:26, 18:22, 0:6] = 1  # esophagus beside it: ~5.5 voxels away
+        self.pred[2:4, 2:4, 0:2] = 1  # a piece far away (~24 voxels)
+
+    def test_components_beyond_the_radius_removed(self):
+        out = trachea_anchor(self.pred, 1, 3, radius=10)
+        self.assertEqual(int((out == 1).sum()), int((self.pred[24:26] == 1).sum()))
+        self.assertEqual(out[2, 2, 0], 0)
+        self.assertEqual(int((out == 3).sum()), int((self.pred == 3).sum()))
+        self.assertEqual(int((trachea_anchor(self.pred, 1, 3, radius=40) == 1).sum()), int((self.pred == 1).sum()))
+
+    def test_nearest_slice_with_trachea_is_used_and_no_trachea_removes_nothing(self):
+        pred = self.pred.copy()
+        pred[:, :, 3:] = 0  # trachea only on slices 0-2, esophagus piece at z 4-5
+        pred[30:32, 30:32, 4:6] = 1  # far from the trachea
+        out = trachea_anchor(pred, 1, 3, radius=10)
+        self.assertEqual(int((out[30:32, 30:32, 4:6] == 1).sum()), 0)
+        none = self.pred.copy()
+        none[none == 3] = 0
+        np.testing.assert_array_equal(trachea_anchor(none, 1, 3, radius=1), none)
 
 
 if __name__ == "__main__":
