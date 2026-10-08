@@ -129,6 +129,9 @@ def build_dataset(cfg: dict, split: str) -> Dataset:
         zscore = json.loads((REPO / d["root"] / "ct_norm_stats.json").read_text())  # same numbers for every split
     dataset = SliceDataset(split, REPO / d["root"], img_transform=partial(img_transform, zscore=zscore),
                            gt_transform=partial(gt_transform, d["num_classes"], d["label_scale"]))
+    if split == "train" and d.get("registration"):
+        from src.registration import synthetic_slice_files
+        dataset.files.extend(synthetic_slice_files(cfg))
     all_files = list(dataset.files)  # neighbour lookup for 2.5D input must not shrink with the subsets below
     if split == "train" and cfg["train"].get("train_patients"):
         dataset.files = keep_patients(dataset.files, d["patient_regex"], cfg["train"]["train_patients"])

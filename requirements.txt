@@ -2,6 +2,7 @@
 torch==2.14.0
 numpy==2.4.6
 nibabel==5.4.2
+SimpleITK==2.5.6  # offline 3D registration; installed from conda-forge in ai4mi
 torchvision==0.29.0
 tqdm==4.70.1
 pillow==12.3.0
