@@ -1,0 +1,28 @@
+# Full40 CE(all)+Dice(fg) reference recipe; only online brightness contrast differs.
+experiment: full_cv4_enet_dice_ce_brightness_contrast
+notes: training-slice brightness and contrast 0.75-1.25 (nnU-Net setting) only
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+  augment:
+    - {name: random_brightness_contrast, kwargs: {p: 0.15, factor: [0.75, 1.25]}}
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled
