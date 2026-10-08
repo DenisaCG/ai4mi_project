@@ -14,10 +14,11 @@ def _check_probability(p: float) -> None:
         raise ValueError("augmentation p must be chosen in [0, 1]")
 
 
-def _paired_affine(image: torch.Tensor, gt: torch.Tensor, angle: float, scale: float, fill: float):
+def _paired_affine(image: torch.Tensor, gt: torch.Tensor, angle: float, scale: float, fill: float,
+                   translate: tuple[int, int] = (0, 0)):
     if image.shape[-2:] != gt.shape[-2:]:
         raise ValueError("augmentation image and GT sizes differ")
-    params = dict(angle=angle, translate=[0, 0], scale=scale, shear=[0.0, 0.0])
+    params = dict(angle=angle, translate=list(translate), scale=scale, shear=[0.0, 0.0])
     image = affine(image, **params, interpolation=InterpolationMode.BILINEAR, fill=[fill])
     gt = affine(gt, **params, interpolation=InterpolationMode.NEAREST,
                 fill=[1.0] + [0.0] * (gt.shape[0] - 1))  # outside the source is background
@@ -64,3 +65,20 @@ def build_gaussian_noise(p: float, sigma: float):
         return image, gt
 
     return add_noise
+
+
+@register("augment", "random_shift")
+def build_random_shift(p: float, max_fraction: float, fill: float):
+    _check_probability(p)
+    if max_fraction is None or not 0 <= max_fraction < 1:
+        raise ValueError("shift max_fraction must be chosen in [0, 1)")
+
+    def shift(image, gt):
+        if random.random() < p:
+            h, w = image.shape[-2:]
+            translate = (round(random.uniform(-max_fraction, max_fraction) * w),
+                         round(random.uniform(-max_fraction, max_fraction) * h))
+            return _paired_affine(image, gt, angle=0.0, scale=1.0, fill=fill, translate=translate)
+        return image, gt
+
+    return shift

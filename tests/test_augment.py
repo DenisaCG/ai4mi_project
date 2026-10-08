@@ -9,7 +9,7 @@ from torchvision.transforms import InterpolationMode
 from torchvision.transforms.functional import affine
 
 from dataset import SliceDataset
-from src.augment import build_gaussian_noise, build_random_rotation, build_random_scaling
+from src.augment import build_gaussian_noise, build_random_rotation, build_random_scaling, build_random_shift
 from src.data import Augmented, build_dataset
 
 
@@ -50,6 +50,12 @@ class AugmentTests(unittest.TestCase):
             image, gt = build_gaussian_noise(p=1.0, sigma=0.25)(self.image, self.gt)
         self.assertTrue(torch.equal(image, self.image + 0.25))
         self.assertIs(gt, self.gt)
+
+    def test_shift_keeps_one_hot_labels(self):
+        image, gt = build_random_shift(p=1.0, max_fraction=0.1, fill=-5.0)(self.image, self.gt)
+        self.assertEqual(image.shape, self.image.shape)
+        self.assertEqual(gt.dtype, self.gt.dtype)
+        self.assertTrue(torch.all(gt.sum(dim=0) == 1))
 
     def test_unset_experiment_parameters_are_rejected(self):
         with self.assertRaises(ValueError):
