@@ -1,0 +1,71 @@
+#!/bin/bash
+#SBATCH --job-name=build_cv_folds
+# Copy of pipeline/jobs/build_cv_folds.job on gpu_mig: the CPU (genoa) budget is exhausted, the GPU budget is not.
+#SBATCH --partition=gpu_mig
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=9
+#SBATCH --gpus=1
+#SBATCH --time=01:30:00
+#SBATCH --output=jobsAndOutputs/augmentation/outputs/%x_%j.out
+
+# Build the sliced dataset of every fold of a cross-validation config on CPU, in parallel (slice_segthor.py --process),
+# so the (billed) GPU jobs only reuse them. Each fold is built into /scratch-shared/$USER/ai4mi_project/<sliced_hash>
+# (home would not hold ~4 GB per fold), checked, renamed into place and linked as data/<sliced_hash>, which is where
+# src.data.ensure_sliced looks. Folds that are already built are only re-checked, so resubmitting finishes an interrupted build.
+# Checks per fold (src.folds.check_dataset): image and label slices match, PNG size, train/val patients disjoint, `retains` val
+# patients, and the normalisation / ROI statistics come from exactly the fold's training patients. Then: the folds' val sets
+# partition the patients.
+# Usage: sbatch --export=ALL,CONFIG=configs/full_cv4_enet_ce.yaml jobsAndOutputs/pipeline/jobs/build_cv_folds.job
+#   PROCS (optional, default 12): slicing workers; each holds a whole CT volume, so 24 would not fit the node's memory.
+set -euo pipefail
+CONFIG="${CONFIG:?set CONFIG=configs/<experiment>.yaml via --export}"
+PROCS="${PROCS:-8}"
+SCRATCH_ROOT="${SCRATCH_ROOT:-/scratch-shared/$USER/ai4mi_project}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1   # workers x threads would oversubscribe the CPUs
+
+python -B - "$CONFIG" "$PROCS" "$SCRATCH_ROOT" <<'PY'
+import json, shutil, subprocess, sys, time
+from pathlib import Path
+from src.config import REPO, load_config
+from src.folds import check_dataset, run_configs, slice_command
+
+config, procs, scratch = sys.argv[1], int(sys.argv[2]), Path(sys.argv[3])
+cfg = load_config(config)
+p0 = cfg["data"]["preprocess"]
+everyone = {d.name for d in (REPO / p0["source_dir"] / "train").glob("Patient_*")}
+scratch.mkdir(parents=True, exist_ok=True)
+print(f"{scratch}: {shutil.disk_usage(scratch).free / 1e9:.0f} GB free | {len(everyone)} patients in {p0['source_dir']}")
+
+
+val_sets = {}
+for fold_cfg in run_configs(cfg):
+    p, name = fold_cfg["data"]["preprocess"], Path(fold_cfg["data"]["root"]).name
+    link, dest, tmp = REPO / fold_cfg["data"]["root"], scratch / name, scratch / f"{name}_tmp"
+    print(f"{fold_cfg['experiment']}: fold {p['fold']} of {p['num_folds']} -> {name}", flush=True)
+    if link.is_symlink() and not link.exists():
+        link.unlink()   # scratch was wiped: rebuild
+    if link.exists() and not link.is_symlink():
+        print(f"  {link} is a real directory; leaving it")
+    elif not link.exists():
+        if not dest.exists():
+            shutil.rmtree(tmp, ignore_errors=True)
+            command = slice_command(fold_cfg, str(tmp), procs)
+            print(" ", " ".join(command), flush=True)
+            start = time.time()
+            subprocess.run(command, cwd=REPO, check=True)
+            print(f"  sliced in {time.time() - start:.0f}s")
+            check_dataset(tmp, p, everyone)
+            tmp.rename(dest)
+        link.symlink_to(dest)
+    val_sets[p["fold"]] = check_dataset(link, p, everyone)
+    print("  val patients:", sorted(val_sets[p["fold"]]), flush=True)
+    if p.get("crop"):
+        print("  ROI window T =", json.loads((link / "roi_crop.json").read_text())["size"], "px")
+
+union = set().union(*val_sets.values())
+assert sum(len(v) for v in val_sets.values()) == len(union) == len(everyone), "validation sets overlap or miss patients"
+print(f"{len(val_sets)} folds: every one of the {len(everyone)} patients is in exactly one validation set")
+PY
+echo "[$(date -Is)] done"
