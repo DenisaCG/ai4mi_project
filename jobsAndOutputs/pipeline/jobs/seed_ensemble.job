@@ -1,0 +1,18 @@
+#!/bin/bash
+#SBATCH --job-name=seed_ensemble
+#SBATCH --partition=gpu_mig
+#SBATCH --gpus=1
+#SBATCH --cpus-per-task=9
+#SBATCH --time=00:30:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Majority vote over the seeds of each CV fold, scored against the single seeds (CPU work; the script does not use the GPU).
+# Usage: sbatch --export=ALL,EXPERIMENT=full_cv4_resenc_ds_unet_dice_ce jobsAndOutputs/pipeline/jobs/seed_ensemble.job
+set -euo pipefail
+EXPERIMENT="${EXPERIMENT:?set EXPERIMENT=<cv experiment without _fold<k>> via --export}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=1
+python -m unittest tests.test_gating_oracle tests.test_postprocess_filters tests.test_seed_ensemble
+python -O -m tools.seed_ensemble --experiment "$EXPERIMENT" --seeds 0 1 2 --workers "$SLURM_CPUS_PER_TASK"
+echo "[$(date -Is)] done: results/seed_ensemble"

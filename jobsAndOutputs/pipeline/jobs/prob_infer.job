@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH --job-name=prob_infer
+#SBATCH --partition=gpu_mig
+#SBATCH --gpus=1
+#SBATCH --cpus-per-task=9
+#SBATCH --time=00:30:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Re-predict the val split of a finished CV experiment from its best.pt checkpoints and save the softmax probabilities
+# (float16) for tools.prob_postprocess score. Skips patients already saved, so a timed-out job can be resubmitted.
+# Usage: sbatch --export=ALL,EXPERIMENT=full_cv4_resenc_ds_unet_dice_ce[,ARGS="--folds 1 --seeds 0"] jobsAndOutputs/pipeline/jobs/prob_infer.job
+set -euo pipefail
+EXPERIMENT="${EXPERIMENT:?set EXPERIMENT=<cv experiment without _fold<k>> via --export}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export PYTHONPATH="$HOME/pydensecrf_site${PYTHONPATH:+:$PYTHONPATH}"
+python -m unittest tests.test_prob_postprocess
+# shellcheck disable=SC2086
+python -O -m tools.prob_postprocess infer --experiment "$EXPERIMENT" ${ARGS:---seeds 0 1 2}
+echo "[$(date -Is)] done: probabilities saved"
