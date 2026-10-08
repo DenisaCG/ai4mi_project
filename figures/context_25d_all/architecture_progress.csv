@@ -24,6 +24,11 @@ dice,Residual-encoder U-Net,U-Net 2.5D (3 slices),full_cv4_resenc_ds_unet_dice_c
 dice,Residual-encoder U-Net,U-Net 2.5D (3 slices),full_cv4_resenc_ds_unet_dice_ce_25d_c1,trachea,12,0,0.8892230753319339
 dice,Residual-encoder U-Net,U-Net 2.5D (3 slices),full_cv4_resenc_ds_unet_dice_ce_25d_c1,aorta,12,0,0.8990355628164957
 dice,Residual-encoder U-Net,U-Net 2.5D (3 slices),full_cv4_resenc_ds_unet_dice_ce_25d_c1,fg,12,0,0.8673698353756579
+dice,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,esophagus,12,0,0.74705627524243
+dice,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,heart,12,0,0.9236033246220132
+dice,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,trachea,12,0,0.8845488368788509
+dice,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,aorta,12,0,0.8954834981131717
+dice,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,fg,12,0,0.8626729837141165
 hd95,ENet,ENet 2D (1 slice),full_cv4_enet_dice_ce,esophagus,12,0,13.22695395128499
 hd95,ENet,ENet 2D (1 slice),full_cv4_enet_dice_ce,heart,12,0,13.363248480386492
 hd95,ENet,ENet 2D (1 slice),full_cv4_enet_dice_ce,trachea,12,0,18.402842879301545
@@ -49,6 +54,11 @@ hd95,Residual-encoder U-Net,U-Net 2.5D (3 slices),full_cv4_resenc_ds_unet_dice_c
 hd95,Residual-encoder U-Net,U-Net 2.5D (3 slices),full_cv4_resenc_ds_unet_dice_ce_25d_c1,trachea,12,0,15.592638789499835
 hd95,Residual-encoder U-Net,U-Net 2.5D (3 slices),full_cv4_resenc_ds_unet_dice_ce_25d_c1,aorta,12,0,13.515953731317431
 hd95,Residual-encoder U-Net,U-Net 2.5D (3 slices),full_cv4_resenc_ds_unet_dice_ce_25d_c1,fg,12,0,14.436404602723952
+hd95,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,esophagus,12,0,12.46787500189518
+hd95,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,heart,12,0,18.1277260241303
+hd95,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,trachea,12,0,12.01863394822599
+hd95,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,aorta,12,0,17.437963772042206
+hd95,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,fg,12,0,15.013049686573419
 assd,ENet,ENet 2D (1 slice),full_cv4_enet_dice_ce,esophagus,12,0,2.9317465048268536
 assd,ENet,ENet 2D (1 slice),full_cv4_enet_dice_ce,heart,12,0,3.119888492520206
 assd,ENet,ENet 2D (1 slice),full_cv4_enet_dice_ce,trachea,12,0,2.127528918226222
@@ -74,3 +84,8 @@ assd,Residual-encoder U-Net,U-Net 2.5D (3 slices),full_cv4_resenc_ds_unet_dice_c
 assd,Residual-encoder U-Net,U-Net 2.5D (3 slices),full_cv4_resenc_ds_unet_dice_ce_25d_c1,trachea,12,0,1.7411279309799643
 assd,Residual-encoder U-Net,U-Net 2.5D (3 slices),full_cv4_resenc_ds_unet_dice_ce_25d_c1,aorta,12,0,1.9867265585892349
 assd,Residual-encoder U-Net,U-Net 2.5D (3 slices),full_cv4_resenc_ds_unet_dice_ce_25d_c1,fg,12,0,2.4521749489380285
+assd,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,esophagus,12,0,2.377120673564251
+assd,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,heart,12,0,4.144518570901631
+assd,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,trachea,12,0,1.6634288261377705
+assd,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,aorta,12,0,2.293945808896071
+assd,Residual-encoder U-Net,U-Net 2.5D (stride 4: ±10 mm),full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,fg,12,0,2.6197534698749307
