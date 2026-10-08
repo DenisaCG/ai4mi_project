@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "started": "2026-10-07T12:59:32",
+  "config_hash": "993336f222c6",
+  "smoke": false,
+  "user": "igardner1",
+  "host": "gcn36.local.snellius.surf.nl",
+  "slurm_job_id": "27711593",
+  "python": "3.11.17",
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "git_commit": "806b38b3bfba71d0e92789162a0f020f2cfc5186",
+  "git_branch": "registration-augmentation",
+  "git_dirty": true,
+  "command": "/gpfs/home6/igardner1/ai4mi_project/src/train.py --config configs/full_cv4_resenc_ds_unet_dice_ce_augmented.yaml --fold 2 --set seed=0",
+  "finished": "2026-10-07T13:28:07"
+}
