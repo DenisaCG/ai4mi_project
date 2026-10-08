@@ -140,5 +140,7 @@ def config_hash(cfg: dict) -> str:
     relevant = {k: v for k, v in cfg.items() if k not in IGNORED_BY_HASH}
     # data.context == 0 is the plain 2D input and is left out, so runs from before the key existed keep their hash
     relevant["data"] = {k: v for k, v in cfg["data"].items()
-                        if (k != "num_workers" or cfg["data"]["augment"]) and (k != "context" or v != 0)}
+                        if (k != "num_workers" or cfg["data"]["augment"])
+                        and (k != "context" or v != 0)
+                        and (k != "registration" or v is not None)}
     return hashlib.sha256(json.dumps(relevant, sort_keys=True).encode()).hexdigest()[:12]
