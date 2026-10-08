@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "started": "2026-10-06T22:12:52",
+  "config_hash": "b5b6994f43fe",
+  "smoke": false,
+  "user": "igardner1",
+  "host": "gcn44.local.snellius.surf.nl",
+  "slurm_job_id": "27684225",
+  "python": "3.11.17",
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "git_commit": "2afc4770766cb6ecfd4eed3e3232c5ab651a23a3",
+  "git_branch": "slice-presence",
+  "git_dirty": true,
+  "command": "/gpfs/home6/igardner1/ai4mi_project-slice-presence/src/train.py --config configs/full_cv4_resenc_ds_unet_dice_ce_presence.yaml --fold 1 --set wandb.mode=disabled seed=0",
+  "finished": "2026-10-06T22:42:07"
+}
