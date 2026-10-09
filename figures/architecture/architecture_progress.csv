@@ -1,0 +1,121 @@
+metric,section,step,experiment,organ,n_runs,n_nan,mean
+dice,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,esophagus,12,0,0.4685460330606005
+dice,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,heart,12,0,0.8768981503921724
+dice,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,trachea,12,0,0.742984345682399
+dice,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,aorta,12,0,0.7413639121840337
+dice,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,fg,12,0,0.7074481103298014
+dice,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,esophagus,12,0,0.6775762283062249
+dice,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,heart,12,0,0.9220937970838858
+dice,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,trachea,12,0,0.8641434658270085
+dice,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,aorta,12,0,0.8774456701855323
+dice,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,fg,12,0,0.8353147903506629
+dice,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,esophagus,12,0,0.7353591519475773
+dice,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,heart,12,0,0.9144514793095996
+dice,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,trachea,12,0,0.871787676171324
+dice,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,aorta,12,0,0.8844361624577015
+dice,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,fg,12,0,0.8515086174715506
+dice,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,esophagus,12,0,0.7471470431054595
+dice,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,heart,12,0,0.9071002217353956
+dice,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,trachea,12,0,0.880927639115835
+dice,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,aorta,12,0,0.8952860801260871
+dice,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,fg,12,0,0.8576152460206943
+dice,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,esophagus,12,0,0.7416921341531154
+dice,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,heart,12,0,0.9121226693113671
+dice,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,trachea,12,0,0.865621979217887
+dice,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,aorta,12,0,0.8779943227423542
+dice,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,fg,12,0,0.8493577763561809
+dice,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,esophagus,12,0,0.7501268248857834
+dice,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,heart,12,0,0.9201370026543781
+dice,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,trachea,12,0,0.8776824466582357
+dice,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,aorta,12,0,0.8944595352006391
+dice,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,fg,12,0,0.860601452349759
+dice,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,esophagus,12,0,0.7200168367442591
+dice,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,heart,12,0,0.9057233347116
+dice,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,trachea,12,0,0.8721480026705593
+dice,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,aorta,12,0,0.8761584431447403
+dice,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,fg,12,0,0.8435116543177896
+dice,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,esophagus,12,0,0.7626782408914028
+dice,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,heart,12,0,0.9204522685498315
+dice,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,trachea,12,0,0.885634642536833
+dice,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,aorta,12,0,0.9007646212283493
+dice,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,fg,12,0,0.8673824433016042
+hd95,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,esophagus,12,0,22.517439605522675
+hd95,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,heart,12,0,21.05058382782949
+hd95,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,trachea,12,0,38.78177357733832
+hd95,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,aorta,12,0,20.718247445688554
+hd95,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,fg,12,0,25.76701111409476
+hd95,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,esophagus,12,0,13.22695395128499
+hd95,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,heart,12,0,13.363248480386492
+hd95,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,trachea,12,0,18.402842879301545
+hd95,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,aorta,12,0,14.6475090666633
+hd95,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,fg,12,0,14.910138594409082
+hd95,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,esophagus,12,0,15.19541721312387
+hd95,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,heart,12,0,18.028329758232175
+hd95,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,trachea,12,0,18.687424268695604
+hd95,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,aorta,12,0,17.253728112177104
+hd95,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,fg,12,0,17.29122483805719
+hd95,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,esophagus,12,0,14.030809225702196
+hd95,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,heart,12,0,22.612367266559957
+hd95,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,trachea,12,0,21.434805807343707
+hd95,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,aorta,12,0,14.847141779577479
+hd95,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,fg,12,0,18.231281019795833
+hd95,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,esophagus,12,0,15.708565675221742
+hd95,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,heart,12,0,19.832818361499395
+hd95,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,trachea,12,0,29.962454875738732
+hd95,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,aorta,12,0,19.961581024962967
+hd95,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,fg,12,0,21.36635498435571
+hd95,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,esophagus,12,0,11.799338958982238
+hd95,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,heart,12,0,15.01136548876018
+hd95,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,trachea,12,0,19.18658550626475
+hd95,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,aorta,12,0,14.035371713710852
+hd95,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,fg,12,0,15.008165416929504
+hd95,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,esophagus,12,0,12.214254838106553
+hd95,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,heart,12,0,19.874083353233022
+hd95,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,trachea,12,0,15.978700680564621
+hd95,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,aorta,12,0,17.088597405647135
+hd95,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,fg,12,0,16.288909069387834
+hd95,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,esophagus,12,0,10.913934010373438
+hd95,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,heart,12,0,18.092614716019487
+hd95,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,trachea,12,0,11.736376254820133
+hd95,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,aorta,12,0,14.450345114746806
+hd95,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,fg,12,0,13.798317523989967
+assd,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,esophagus,12,0,5.143421139432898
+assd,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,heart,12,0,5.144067104995558
+assd,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,trachea,12,0,5.105570425472555
+assd,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,aorta,12,0,4.23555357022638
+assd,Baselines → U-Net,ENet CE · no preprocessing,full_cv4_enet_ce,fg,12,0,4.907153060031848
+assd,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,esophagus,12,0,2.9317465048268536
+assd,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,heart,12,0,3.119888492520206
+assd,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,trachea,12,0,2.127528918226222
+assd,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,aorta,12,0,2.427004824018325
+assd,Baselines → U-Net,ENet Dice+CE · full preprocessing,full_cv4_enet_dice_ce,fg,12,0,2.651542184897902
+assd,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,esophagus,12,0,2.7756130001749324
+assd,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,heart,12,0,4.104862768825212
+assd,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,trachea,12,0,2.1286942121149273
+assd,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,aorta,12,0,2.632474069018074
+assd,Baselines → U-Net,U-Net,full_cv4_unet_dice_ce,fg,12,0,2.9104110125332867
+assd,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,esophagus,12,0,2.4463945058987506
+assd,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,heart,12,0,4.782315275541102
+assd,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,trachea,12,0,2.441059491117832
+assd,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,aorta,12,0,2.1779314181934737
+assd,U-Net + one change,U-Net + residual encoder,full_cv4_resenc_unet_dice_ce,fg,12,0,2.9619251726877893
+assd,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,esophagus,12,0,2.635831330641102
+assd,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,heart,12,0,4.389441213021105
+assd,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,trachea,12,0,2.9313777060330835
+assd,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,aorta,12,0,2.7045386583789948
+assd,U-Net + one change,U-Net + attention gates,full_cv4_attention_unet_dice_ce,fg,12,0,3.1652972270185713
+assd,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,esophagus,12,0,2.2938839187530777
+assd,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,heart,12,0,3.4281940703948037
+assd,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,trachea,12,0,2.179097386217281
+assd,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,aorta,12,0,2.033715356293876
+assd,U-Net + one change,U-Net + deep supervision,full_cv4_ds_unet_dice_ce,fg,12,0,2.4837226829147596
+assd,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,esophagus,12,0,2.5698046591354826
+assd,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,heart,12,0,4.624446017148751
+assd,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,trachea,12,0,2.096371793520481
+assd,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,aorta,12,0,2.5069950838487274
+assd,U-Net + one change,U-Net + cosine LR,full_cv4_unet_dice_ce_cosine,fg,12,0,2.9494043884133605
+assd,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,esophagus,12,0,2.160285902062023
+assd,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,heart,12,0,3.989472551759716
+assd,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,trachea,12,0,1.4885067893246315
+assd,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,aorta,12,0,2.059583842525089
+assd,Combination,U-Net + residual encoder + deep supervision,full_cv4_resenc_ds_unet_dice_ce,fg,12,0,2.424462271417865

@@ -1,0 +1,185 @@
+experiment,label,model,group,fold,seed,dice_fg,dice_esophagus,dice_heart,dice_trachea,dice_aorta,hd95_fg,assd_fg,best_epoch
+full_cv4_enet_ce,"BASE ENet, no aug",BASE ENet,control,0,0,0.726541,0.485940,0.854025,0.763858,0.802342,31.657781,5.575669,24
+full_cv4_enet_ce,"BASE ENet, no aug",BASE ENet,control,0,1,0.736918,0.508642,0.845461,0.794896,0.798673,21.370299,4.394397,22
+full_cv4_enet_ce,"BASE ENet, no aug",BASE ENet,control,0,2,0.709791,0.442823,0.856860,0.778880,0.760599,36.814401,5.546287,16
+full_cv4_enet_ce,"BASE ENet, no aug",BASE ENet,control,1,0,0.663162,0.374091,0.873902,0.723283,0.681371,27.411738,4.937534,21
+full_cv4_enet_ce,"BASE ENet, no aug",BASE ENet,control,1,1,0.656983,0.422862,0.858523,0.702652,0.643894,29.358404,6.077794,20
+full_cv4_enet_ce,"BASE ENet, no aug",BASE ENet,control,1,2,0.672184,0.428502,0.870238,0.763870,0.626128,20.929638,5.011166,18
+full_cv4_enet_ce,"BASE ENet, no aug",BASE ENet,control,2,0,0.726044,0.510642,0.890142,0.726393,0.776999,27.120689,4.999645,23
+full_cv4_enet_ce,"BASE ENet, no aug",BASE ENet,control,2,1,0.745965,0.561335,0.901342,0.766611,0.754571,18.902266,3.682649,23
+full_cv4_enet_ce,"BASE ENet, no aug",BASE ENet,control,2,2,0.721889,0.494917,0.894183,0.716919,0.781538,25.566169,4.425201,20
+full_cv4_enet_ce,"BASE ENet, no aug",BASE ENet,control,3,0,0.720148,0.475131,0.909097,0.722946,0.773419,23.902760,4.336265,21
+full_cv4_enet_ce,"BASE ENet, no aug",BASE ENet,control,3,1,0.717026,0.470669,0.905545,0.732972,0.758919,18.437019,4.015129,24
+full_cv4_enet_ce,"BASE ENet, no aug",BASE ENet,control,3,2,0.692726,0.446997,0.863460,0.722533,0.737913,27.732968,5.884100,21
+full_cv4_enet_ce_augmented,"BASE ENet, joint rot+scale+shift",BASE ENet,joint,0,0,0.763211,0.546344,0.881548,0.772267,0.852686,21.064867,3.878056,23
+full_cv4_enet_ce_augmented,"BASE ENet, joint rot+scale+shift",BASE ENet,joint,0,1,0.769541,0.538615,0.902404,0.804311,0.832833,32.191979,3.971084,23
+full_cv4_enet_ce_augmented,"BASE ENet, joint rot+scale+shift",BASE ENet,joint,0,2,0.762323,0.544952,0.875733,0.805983,0.822622,15.689130,3.461493,23
+full_cv4_enet_ce_augmented,"BASE ENet, joint rot+scale+shift",BASE ENet,joint,1,0,0.705172,0.457093,0.883909,0.717376,0.762311,18.339847,4.010984,23
+full_cv4_enet_ce_augmented,"BASE ENet, joint rot+scale+shift",BASE ENet,joint,1,1,0.704166,0.489356,0.877787,0.724240,0.725283,24.611991,4.685677,18
+full_cv4_enet_ce_augmented,"BASE ENet, joint rot+scale+shift",BASE ENet,joint,1,2,0.704357,0.466262,0.862268,0.769594,0.719304,28.788450,4.491310,20
+full_cv4_enet_ce_augmented,"BASE ENet, joint rot+scale+shift",BASE ENet,joint,2,0,0.764442,0.566942,0.903247,0.767270,0.820308,15.755770,3.272381,23
+full_cv4_enet_ce_augmented,"BASE ENet, joint rot+scale+shift",BASE ENet,joint,2,1,0.764951,0.560678,0.908858,0.776130,0.814138,13.666074,3.025445,22
+full_cv4_enet_ce_augmented,"BASE ENet, joint rot+scale+shift",BASE ENet,joint,2,2,0.753386,0.559552,0.912507,0.738379,0.803105,27.597297,6.466335,20
+full_cv4_enet_ce_augmented,"BASE ENet, joint rot+scale+shift",BASE ENet,joint,3,0,0.731486,0.473784,0.914788,0.737763,0.799610,21.671785,3.831979,24
+full_cv4_enet_ce_augmented,"BASE ENet, joint rot+scale+shift",BASE ENet,joint,3,1,0.733805,0.495161,0.913958,0.734599,0.791503,31.650934,4.634867,19
+full_cv4_enet_ce_augmented,"BASE ENet, joint rot+scale+shift",BASE ENet,joint,3,2,0.731913,0.489626,0.902179,0.746632,0.789215,15.175286,3.590116,22
+full_cv4_enet_dice_ce,"ENet, no aug",Improved ENet,control,0,0,0.861103,0.721589,0.920630,0.896776,0.905416,19.184722,2.528151,12
+full_cv4_enet_dice_ce,"ENet, no aug",Improved ENet,control,0,1,0.859292,0.707158,0.924490,0.891938,0.913583,13.280765,2.387432,22
+full_cv4_enet_dice_ce,"ENet, no aug",Improved ENet,control,0,2,0.855983,0.720571,0.909117,0.890566,0.903677,16.247184,2.514202,15
+full_cv4_enet_dice_ce,"ENet, no aug",Improved ENet,control,1,0,0.802435,0.587197,0.929814,0.845971,0.846757,15.758441,2.918135,23
+full_cv4_enet_dice_ce,"ENet, no aug",Improved ENet,control,1,1,0.804823,0.616843,0.916870,0.830682,0.854895,15.883315,2.999639,23
+full_cv4_enet_dice_ce,"ENet, no aug",Improved ENet,control,1,2,0.808729,0.622483,0.920272,0.844377,0.847782,15.097984,3.093079,18
+full_cv4_enet_dice_ce,"ENet, no aug",Improved ENet,control,2,0,0.860132,0.731974,0.926557,0.889826,0.892170,10.743729,2.068388,22
+full_cv4_enet_dice_ce,"ENet, no aug",Improved ENet,control,2,1,0.846588,0.705677,0.924688,0.871940,0.884049,16.227352,2.513997,24
+full_cv4_enet_dice_ce,"ENet, no aug",Improved ENet,control,2,2,0.844750,0.703441,0.930783,0.862298,0.882476,12.182461,2.342832,24
+full_cv4_enet_dice_ce,"ENet, no aug",Improved ENet,control,3,0,0.826603,0.663139,0.922298,0.853800,0.867176,15.197678,2.845007,8
+full_cv4_enet_dice_ce,"ENet, no aug",Improved ENet,control,3,1,0.825252,0.665813,0.920346,0.857103,0.857746,14.598689,2.777612,23
+full_cv4_enet_dice_ce,"ENet, no aug",Improved ENet,control,3,2,0.828090,0.685030,0.919262,0.834445,0.873622,14.519342,2.830033,23
+full_cv4_enet_dice_ce_rotation,"ENet, rotation",Improved ENet,single (seed 0),0,0,0.866450,0.736155,0.916187,0.899066,0.914394,10.819858,2.057072,20
+full_cv4_enet_dice_ce_rotation,"ENet, rotation",Improved ENet,single (seed 0),1,0,0.828488,0.648501,0.936888,0.862894,0.865668,29.661917,3.592874,24
+full_cv4_enet_dice_ce_rotation,"ENet, rotation",Improved ENet,single (seed 0),2,0,0.863278,0.748422,0.926806,0.880008,0.897876,15.735336,2.248677,22
+full_cv4_enet_dice_ce_rotation,"ENet, rotation",Improved ENet,single (seed 0),3,0,0.842088,0.705767,0.926961,0.835715,0.899909,15.670582,2.502617,22
+full_cv4_enet_dice_ce_scaling,"ENet, scaling",Improved ENet,single (seed 0),0,0,0.873534,0.735979,0.929920,0.903488,0.924750,9.289995,1.903863,22
+full_cv4_enet_dice_ce_scaling,"ENet, scaling",Improved ENet,single (seed 0),1,0,0.814303,0.624146,0.935568,0.835721,0.861778,17.767699,2.779762,23
+full_cv4_enet_dice_ce_scaling,"ENet, scaling",Improved ENet,single (seed 0),2,0,0.860507,0.740703,0.923834,0.885025,0.892467,11.482274,2.238709,22
+full_cv4_enet_dice_ce_scaling,"ENet, scaling",Improved ENet,single (seed 0),3,0,0.839330,0.691253,0.930693,0.832651,0.902722,12.910136,2.498117,24
+full_cv4_enet_dice_ce_shift,"ENet, shift",Improved ENet,single (seed 0),0,0,0.871251,0.727707,0.933732,0.900345,0.923221,10.921114,2.019282,17
+full_cv4_enet_dice_ce_shift,"ENet, shift",Improved ENet,single (seed 0),1,0,0.812411,0.609229,0.932241,0.850901,0.857274,26.280182,3.188084,21
+full_cv4_enet_dice_ce_shift,"ENet, shift",Improved ENet,single (seed 0),2,0,0.860561,0.735140,0.918091,0.891671,0.897342,11.209514,2.110222,20
+full_cv4_enet_dice_ce_shift,"ENet, shift",Improved ENet,single (seed 0),3,0,0.835740,0.697214,0.924472,0.844774,0.876498,14.170288,2.471659,18
+full_cv4_enet_dice_ce_shear,"ENet, shear",Improved ENet,single (seed 0),0,0,0.854429,0.717333,0.904815,0.890558,0.905009,10.315429,2.173320,12
+full_cv4_enet_dice_ce_shear,"ENet, shear",Improved ENet,single (seed 0),1,0,0.815071,0.608076,0.928218,0.860326,0.863666,17.141198,2.938155,22
+full_cv4_enet_dice_ce_shear,"ENet, shear",Improved ENet,single (seed 0),2,0,0.862450,0.744654,0.921860,0.883975,0.899311,11.518273,2.243586,17
+full_cv4_enet_dice_ce_shear,"ENet, shear",Improved ENet,single (seed 0),3,0,0.830685,0.697263,0.925585,0.820167,0.879725,15.751691,2.522479,24
+full_cv4_enet_dice_ce_gaussian_noise,"ENet, Gaussian noise",Improved ENet,single (seed 0),0,0,0.858265,0.709499,0.915378,0.893689,0.914495,9.782749,2.037408,22
+full_cv4_enet_dice_ce_gaussian_noise,"ENet, Gaussian noise",Improved ENet,single (seed 0),1,0,0.808523,0.608045,0.918993,0.863710,0.843344,14.901133,2.949143,6
+full_cv4_enet_dice_ce_gaussian_noise,"ENet, Gaussian noise",Improved ENet,single (seed 0),2,0,0.852202,0.710628,0.928961,0.871050,0.898168,11.539828,2.156609,15
+full_cv4_enet_dice_ce_gaussian_noise,"ENet, Gaussian noise",Improved ENet,single (seed 0),3,0,0.836560,0.683085,0.927172,0.856358,0.879626,14.323081,2.516180,22
+full_cv4_enet_dice_ce_blur,"ENet, Gaussian blur",Improved ENet,single (seed 0),0,0,0.859241,0.718671,0.902631,0.896829,0.918834,9.566854,2.148197,24
+full_cv4_enet_dice_ce_blur,"ENet, Gaussian blur",Improved ENet,single (seed 0),1,0,0.813033,0.626036,0.920059,0.857913,0.848123,21.678780,3.122619,23
+full_cv4_enet_dice_ce_blur,"ENet, Gaussian blur",Improved ENet,single (seed 0),2,0,0.850195,0.712697,0.928110,0.868764,0.891210,10.568663,2.087838,22
+full_cv4_enet_dice_ce_blur,"ENet, Gaussian blur",Improved ENet,single (seed 0),3,0,0.830402,0.679984,0.927706,0.823695,0.890222,13.530511,2.486895,22
+full_cv4_enet_dice_ce_brightness_contrast,"ENet, brightness/contrast",Improved ENet,single (seed 0),0,0,0.852324,0.690867,0.916186,0.895932,0.906312,10.030594,2.115252,20
+full_cv4_enet_dice_ce_brightness_contrast,"ENet, brightness/contrast",Improved ENet,single (seed 0),1,0,0.803412,0.605572,0.910022,0.864300,0.833752,20.067306,3.579160,20
+full_cv4_enet_dice_ce_brightness_contrast,"ENet, brightness/contrast",Improved ENet,single (seed 0),2,0,0.852490,0.713118,0.911857,0.895517,0.889467,12.663589,2.478196,24
+full_cv4_enet_dice_ce_brightness_contrast,"ENet, brightness/contrast",Improved ENet,single (seed 0),3,0,0.829682,0.685942,0.913501,0.855673,0.863611,13.078164,2.555222,22
+full_cv4_enet_dice_ce_gamma,"ENet, gamma",Improved ENet,single (seed 0),0,0,0.853648,0.696643,0.917289,0.889033,0.911627,10.457611,2.125176,24
+full_cv4_enet_dice_ce_gamma,"ENet, gamma",Improved ENet,single (seed 0),1,0,0.799785,0.610031,0.905896,0.825720,0.857494,16.914245,3.461073,21
+full_cv4_enet_dice_ce_gamma,"ENet, gamma",Improved ENet,single (seed 0),2,0,0.857024,0.713823,0.923572,0.894047,0.896655,10.911594,2.137045,16
+full_cv4_enet_dice_ce_gamma,"ENet, gamma",Improved ENet,single (seed 0),3,0,0.819226,0.677904,0.918019,0.803843,0.877138,14.385311,2.856680,22
+full_cv4_enet_dice_ce_augmented,"ENet, joint rot+scale+shift",Improved ENet,joint,0,0,0.876433,0.756258,0.929245,0.902042,0.918185,16.509817,2.321082,24
+full_cv4_enet_dice_ce_augmented,"ENet, joint rot+scale+shift",Improved ENet,joint,0,1,0.872964,0.745557,0.929826,0.894797,0.921676,9.417300,1.914403,17
+full_cv4_enet_dice_ce_augmented,"ENet, joint rot+scale+shift",Improved ENet,joint,0,2,0.865982,0.739561,0.922178,0.889849,0.912343,14.827755,2.343655,23
+full_cv4_enet_dice_ce_augmented,"ENet, joint rot+scale+shift",Improved ENet,joint,1,0,0.831839,0.655089,0.936833,0.868041,0.867392,11.765634,2.238175,17
+full_cv4_enet_dice_ce_augmented,"ENet, joint rot+scale+shift",Improved ENet,joint,1,1,0.832763,0.649257,0.933881,0.885389,0.862524,10.498813,2.258057,16
+full_cv4_enet_dice_ce_augmented,"ENet, joint rot+scale+shift",Improved ENet,joint,1,2,0.816872,0.645563,0.926357,0.848237,0.847333,20.928836,3.381649,10
+full_cv4_enet_dice_ce_augmented,"ENet, joint rot+scale+shift",Improved ENet,joint,2,0,0.864637,0.750262,0.927094,0.885687,0.895505,10.946407,2.072869,24
+full_cv4_enet_dice_ce_augmented,"ENet, joint rot+scale+shift",Improved ENet,joint,2,1,0.858967,0.742467,0.931100,0.875118,0.887182,11.178428,2.073838,20
+full_cv4_enet_dice_ce_augmented,"ENet, joint rot+scale+shift",Improved ENet,joint,2,2,0.853660,0.733148,0.925498,0.875920,0.880074,11.292103,2.250661,24
+full_cv4_enet_dice_ce_augmented,"ENet, joint rot+scale+shift",Improved ENet,joint,3,0,0.843311,0.703155,0.930473,0.853539,0.886080,13.804209,2.512075,17
+full_cv4_enet_dice_ce_augmented,"ENet, joint rot+scale+shift",Improved ENet,joint,3,1,0.849927,0.712508,0.926506,0.869921,0.890773,14.086926,2.472517,23
+full_cv4_enet_dice_ce_augmented,"ENet, joint rot+scale+shift",Improved ENet,joint,3,2,0.850146,0.725687,0.928752,0.863401,0.882745,11.848150,2.174344,17
+full_cv4_enet_dice_ce_nnunet_rot_scale_shift,"ENet, nnU-Net-rate rot+scale+shift (seed 0)",Improved ENet,joint variant,0,0,0.871233,0.743685,0.918565,0.901598,0.921086,9.461170,1.884242,20
+full_cv4_enet_dice_ce_nnunet_rot_scale_shift,"ENet, nnU-Net-rate rot+scale+shift (seed 0)",Improved ENet,joint variant,1,0,0.834117,0.675451,0.934393,0.851197,0.875427,12.522749,2.400413,20
+full_cv4_enet_dice_ce_nnunet_rot_scale_shift,"ENet, nnU-Net-rate rot+scale+shift (seed 0)",Improved ENet,joint variant,2,0,0.865321,0.751701,0.920449,0.892508,0.896626,10.636143,1.982279,19
+full_cv4_enet_dice_ce_nnunet_rot_scale_shift,"ENet, nnU-Net-rate rot+scale+shift (seed 0)",Improved ENet,joint variant,3,0,0.850636,0.720974,0.926050,0.851380,0.904139,14.124791,2.452402,24
+full_cv4_enet_dice_ce_nnunet_rot_scale_shift_noise,"ENet, nnU-Net-rate + noise (seed 0)",Improved ENet,joint variant,0,0,0.879610,0.763218,0.926088,0.913037,0.916097,10.610311,1.911288,24
+full_cv4_enet_dice_ce_nnunet_rot_scale_shift_noise,"ENet, nnU-Net-rate + noise (seed 0)",Improved ENet,joint variant,1,0,0.835132,0.673996,0.923154,0.867538,0.875839,14.391654,2.405905,19
+full_cv4_enet_dice_ce_nnunet_rot_scale_shift_noise,"ENet, nnU-Net-rate + noise (seed 0)",Improved ENet,joint variant,2,0,0.865341,0.747852,0.932206,0.878473,0.902832,15.178595,2.166114,21
+full_cv4_enet_dice_ce_nnunet_rot_scale_shift_noise,"ENet, nnU-Net-rate + noise (seed 0)",Improved ENet,joint variant,3,0,0.850679,0.702273,0.932606,0.863306,0.904533,15.983672,2.446191,24
+full_cv4_enet_dice_ce_rot_scale_shift_elastic,"ENet, joint + elastic",Improved ENet,joint variant,0,0,0.879533,0.757191,0.927867,0.905401,0.927673,8.145587,1.821192,20
+full_cv4_enet_dice_ce_rot_scale_shift_elastic,"ENet, joint + elastic",Improved ENet,joint variant,0,1,0.881309,0.765614,0.930427,0.909602,0.919592,9.761025,1.743834,23
+full_cv4_enet_dice_ce_rot_scale_shift_elastic,"ENet, joint + elastic",Improved ENet,joint variant,0,2,0.869242,0.748266,0.928793,0.889564,0.910346,14.532387,2.233900,21
+full_cv4_enet_dice_ce_rot_scale_shift_elastic,"ENet, joint + elastic",Improved ENet,joint variant,1,0,0.836460,0.661277,0.932625,0.875444,0.876496,15.061000,2.458953,23
+full_cv4_enet_dice_ce_rot_scale_shift_elastic,"ENet, joint + elastic",Improved ENet,joint variant,1,1,0.835774,0.660233,0.933112,0.885651,0.864100,25.990791,3.276389,22
+full_cv4_enet_dice_ce_rot_scale_shift_elastic,"ENet, joint + elastic",Improved ENet,joint variant,1,2,0.823722,0.652865,0.913302,0.867662,0.861060,26.308751,3.552550,19
+full_cv4_enet_dice_ce_rot_scale_shift_elastic,"ENet, joint + elastic",Improved ENet,joint variant,2,0,0.866774,0.748571,0.933072,0.890163,0.895292,9.914566,1.927673,23
+full_cv4_enet_dice_ce_rot_scale_shift_elastic,"ENet, joint + elastic",Improved ENet,joint variant,2,1,0.859441,0.737245,0.922034,0.885577,0.892906,11.339069,2.143410,19
+full_cv4_enet_dice_ce_rot_scale_shift_elastic,"ENet, joint + elastic",Improved ENet,joint variant,2,2,0.856012,0.743623,0.921720,0.879693,0.879010,11.006471,2.152100,21
+full_cv4_enet_dice_ce_rot_scale_shift_elastic,"ENet, joint + elastic",Improved ENet,joint variant,3,0,0.846719,0.703233,0.921568,0.853797,0.908278,14.850071,2.649747,24
+full_cv4_enet_dice_ce_rot_scale_shift_elastic,"ENet, joint + elastic",Improved ENet,joint variant,3,1,0.850672,0.721256,0.922374,0.867214,0.891842,13.215880,2.223671,24
+full_cv4_enet_dice_ce_rot_scale_shift_elastic,"ENet, joint + elastic",Improved ENet,joint variant,3,2,0.847656,0.720140,0.931323,0.851429,0.887733,17.171984,2.676841,19
+full_cv4_enet_dice_ce_strong_geometric,"ENet, strong geometric",Improved ENet,strong,0,0,0.877139,0.756548,0.928563,0.902957,0.920488,7.661268,1.732444,16
+full_cv4_enet_dice_ce_strong_geometric,"ENet, strong geometric",Improved ENet,strong,0,1,0.881255,0.769387,0.934808,0.898934,0.921893,9.704420,1.798225,23
+full_cv4_enet_dice_ce_strong_geometric,"ENet, strong geometric",Improved ENet,strong,0,2,0.883247,0.768799,0.941219,0.902535,0.920437,8.930807,1.685799,23
+full_cv4_enet_dice_ce_strong_geometric,"ENet, strong geometric",Improved ENet,strong,1,0,0.839781,0.670721,0.934721,0.879273,0.874410,18.338533,2.868186,20
+full_cv4_enet_dice_ce_strong_geometric,"ENet, strong geometric",Improved ENet,strong,1,1,0.841883,0.664253,0.940156,0.878618,0.884505,11.281824,2.183841,24
+full_cv4_enet_dice_ce_strong_geometric,"ENet, strong geometric",Improved ENet,strong,1,2,0.837307,0.685218,0.923974,0.867205,0.872829,12.607832,2.433529,24
+full_cv4_enet_dice_ce_strong_geometric,"ENet, strong geometric",Improved ENet,strong,2,0,0.871474,0.762434,0.931673,0.893798,0.897989,9.038857,1.860316,24
+full_cv4_enet_dice_ce_strong_geometric,"ENet, strong geometric",Improved ENet,strong,2,1,0.872177,0.766188,0.929030,0.896184,0.897306,9.685404,1.946941,22
+full_cv4_enet_dice_ce_strong_geometric,"ENet, strong geometric",Improved ENet,strong,2,2,0.863297,0.755094,0.925862,0.881020,0.891210,11.704462,2.106873,24
+full_cv4_enet_dice_ce_strong_geometric,"ENet, strong geometric",Improved ENet,strong,3,0,0.857290,0.727000,0.928334,0.872611,0.901217,18.338520,2.814475,24
+full_cv4_enet_dice_ce_strong_geometric,"ENet, strong geometric",Improved ENet,strong,3,1,0.860848,0.744984,0.925404,0.871932,0.901072,12.323010,2.271242,20
+full_cv4_enet_dice_ce_strong_geometric,"ENet, strong geometric",Improved ENet,strong,3,2,0.855252,0.729489,0.930340,0.858939,0.902238,12.156997,2.172465,24
+full_cv4_enet_dice_ce_strong_geometric_elastic,"ENet, strong geometric + elastic",Improved ENet,strong variant,0,0,0.879077,0.757374,0.937938,0.905499,0.915498,12.487637,2.192226,20
+full_cv4_enet_dice_ce_strong_geometric_elastic,"ENet, strong geometric + elastic",Improved ENet,strong variant,0,1,0.879001,0.767150,0.931656,0.910729,0.906467,9.113697,1.762849,22
+full_cv4_enet_dice_ce_strong_geometric_elastic,"ENet, strong geometric + elastic",Improved ENet,strong variant,0,2,0.877510,0.763667,0.936296,0.900050,0.910027,8.406383,1.865104,23
+full_cv4_enet_dice_ce_strong_geometric_elastic,"ENet, strong geometric + elastic",Improved ENet,strong variant,1,0,0.841514,0.680833,0.935712,0.865768,0.883744,10.743899,2.156629,17
+full_cv4_enet_dice_ce_strong_geometric_elastic,"ENet, strong geometric + elastic",Improved ENet,strong variant,1,1,0.849766,0.696941,0.929893,0.887425,0.884805,12.896951,2.440514,24
+full_cv4_enet_dice_ce_strong_geometric_elastic,"ENet, strong geometric + elastic",Improved ENet,strong variant,1,2,0.831288,0.643645,0.933807,0.882032,0.865667,11.926094,2.452151,22
+full_cv4_enet_dice_ce_strong_geometric_elastic,"ENet, strong geometric + elastic",Improved ENet,strong variant,2,0,0.868211,0.752098,0.926225,0.893739,0.900783,12.490158,2.100935,24
+full_cv4_enet_dice_ce_strong_geometric_elastic,"ENet, strong geometric + elastic",Improved ENet,strong variant,2,1,0.865312,0.741385,0.935181,0.885339,0.899342,10.035281,1.892646,20
+full_cv4_enet_dice_ce_strong_geometric_elastic,"ENet, strong geometric + elastic",Improved ENet,strong variant,2,2,0.867091,0.754313,0.925298,0.893081,0.895672,11.297429,2.035481,24
+full_cv4_enet_dice_ce_strong_geometric_elastic,"ENet, strong geometric + elastic",Improved ENet,strong variant,3,0,0.863049,0.741342,0.930750,0.862600,0.917502,11.018484,2.068020,18
+full_cv4_enet_dice_ce_strong_geometric_elastic,"ENet, strong geometric + elastic",Improved ENet,strong variant,3,1,0.859038,0.729516,0.919279,0.871433,0.915926,13.399490,2.313663,22
+full_cv4_enet_dice_ce_strong_geometric_elastic,"ENet, strong geometric + elastic",Improved ENet,strong variant,3,2,0.858630,0.725099,0.931905,0.870002,0.907515,13.265508,2.169353,20
+full_cv4_enet_dice_ce_extreme_geometric,"ENet, extreme geometric",Improved ENet,strong variant,0,0,0.879459,0.768023,0.933768,0.907329,0.908718,9.424313,1.757138,20
+full_cv4_enet_dice_ce_extreme_geometric,"ENet, extreme geometric",Improved ENet,strong variant,0,1,0.881308,0.766974,0.938410,0.903223,0.916627,11.463672,1.854671,23
+full_cv4_enet_dice_ce_extreme_geometric,"ENet, extreme geometric",Improved ENet,strong variant,0,2,0.877781,0.757508,0.933492,0.903413,0.916712,9.053678,1.769106,23
+full_cv4_enet_dice_ce_extreme_geometric,"ENet, extreme geometric",Improved ENet,strong variant,1,0,0.847685,0.690329,0.934257,0.883210,0.882943,12.489358,2.234871,20
+full_cv4_enet_dice_ce_extreme_geometric,"ENet, extreme geometric",Improved ENet,strong variant,1,1,0.849579,0.703028,0.933312,0.887510,0.874466,12.140812,2.484138,22
+full_cv4_enet_dice_ce_extreme_geometric,"ENet, extreme geometric",Improved ENet,strong variant,1,2,0.840853,0.682777,0.939773,0.876866,0.863996,19.814638,3.111843,21
+full_cv4_enet_dice_ce_extreme_geometric,"ENet, extreme geometric",Improved ENet,strong variant,2,0,0.867190,0.760327,0.925391,0.886832,0.896209,10.764042,2.084591,24
+full_cv4_enet_dice_ce_extreme_geometric,"ENet, extreme geometric",Improved ENet,strong variant,2,1,0.864710,0.752081,0.926827,0.896371,0.883562,9.804566,1.972527,23
+full_cv4_enet_dice_ce_extreme_geometric,"ENet, extreme geometric",Improved ENet,strong variant,2,2,0.864102,0.758055,0.928263,0.892646,0.877445,9.937137,1.992466,24
+full_cv4_enet_dice_ce_extreme_geometric,"ENet, extreme geometric",Improved ENet,strong variant,3,0,0.857720,0.727853,0.920941,0.867210,0.914876,11.463369,2.123660,22
+full_cv4_enet_dice_ce_extreme_geometric,"ENet, extreme geometric",Improved ENet,strong variant,3,1,0.862810,0.746995,0.917778,0.871422,0.915042,13.280105,2.632272,22
+full_cv4_enet_dice_ce_extreme_geometric,"ENet, extreme geometric",Improved ENet,strong variant,3,2,0.855290,0.714164,0.932138,0.870821,0.904037,11.456985,2.150409,24
+full_cv4_enet_dice_ce_strong_geometric_50ep,"ENet, strong geometric, 50 epochs",Improved ENet,strong variant,0,0,0.888847,0.782031,0.934404,0.909535,0.929419,7.824512,1.620535,44
+full_cv4_enet_dice_ce_strong_geometric_50ep,"ENet, strong geometric, 50 epochs",Improved ENet,strong variant,0,1,0.886192,0.773998,0.938986,0.907912,0.923873,12.116308,1.935224,37
+full_cv4_enet_dice_ce_strong_geometric_50ep,"ENet, strong geometric, 50 epochs",Improved ENet,strong variant,0,2,0.888375,0.779745,0.936942,0.911999,0.924812,8.191355,1.612183,45
+full_cv4_enet_dice_ce_strong_geometric_50ep,"ENet, strong geometric, 50 epochs",Improved ENet,strong variant,1,0,0.847424,0.686180,0.931622,0.886510,0.885385,15.857254,2.382534,45
+full_cv4_enet_dice_ce_strong_geometric_50ep,"ENet, strong geometric, 50 epochs",Improved ENet,strong variant,1,1,0.854667,0.717532,0.934610,0.884210,0.882316,10.129201,1.994363,37
+full_cv4_enet_dice_ce_strong_geometric_50ep,"ENet, strong geometric, 50 epochs",Improved ENet,strong variant,1,2,0.853846,0.720094,0.930123,0.884272,0.880893,14.080577,2.336109,49
+full_cv4_enet_dice_ce_strong_geometric_50ep,"ENet, strong geometric, 50 epochs",Improved ENet,strong variant,2,0,0.870007,0.760797,0.925212,0.892590,0.901429,10.312790,2.194081,48
+full_cv4_enet_dice_ce_strong_geometric_50ep,"ENet, strong geometric, 50 epochs",Improved ENet,strong variant,2,1,0.877803,0.771968,0.934327,0.896722,0.908195,8.863146,1.888758,48
+full_cv4_enet_dice_ce_strong_geometric_50ep,"ENet, strong geometric, 50 epochs",Improved ENet,strong variant,2,2,0.871348,0.766679,0.931521,0.888616,0.898576,13.287675,2.312815,49
+full_cv4_enet_dice_ce_strong_geometric_50ep,"ENet, strong geometric, 50 epochs",Improved ENet,strong variant,3,0,0.869424,0.747409,0.934906,0.876811,0.918570,11.219289,2.108896,24
+full_cv4_enet_dice_ce_strong_geometric_50ep,"ENet, strong geometric, 50 epochs",Improved ENet,strong variant,3,1,0.872662,0.770003,0.931115,0.873039,0.916490,11.580420,1.948886,47
+full_cv4_enet_dice_ce_strong_geometric_50ep,"ENet, strong geometric, 50 epochs",Improved ENet,strong variant,3,2,0.869601,0.750110,0.936733,0.876886,0.914675,9.956989,1.875199,47
+full_cv4_resenc_ds_unet_dice_ce,"ResEnc DS U-Net, no aug",ResEnc DS U-Net,control,0,0,0.875448,0.787669,0.878981,0.908638,0.926501,12.743661,2.678236,21
+full_cv4_resenc_ds_unet_dice_ce,"ResEnc DS U-Net, no aug",ResEnc DS U-Net,control,0,1,0.878258,0.776461,0.907284,0.905755,0.923534,16.097915,3.301224,20
+full_cv4_resenc_ds_unet_dice_ce,"ResEnc DS U-Net, no aug",ResEnc DS U-Net,control,0,2,0.876795,0.760652,0.925192,0.914679,0.906657,12.804443,2.214925,18
+full_cv4_resenc_ds_unet_dice_ce,"ResEnc DS U-Net, no aug",ResEnc DS U-Net,control,1,0,0.845278,0.715133,0.932338,0.855439,0.878202,13.618271,2.397518,17
+full_cv4_resenc_ds_unet_dice_ce,"ResEnc DS U-Net, no aug",ResEnc DS U-Net,control,1,1,0.847926,0.717825,0.923675,0.890970,0.859232,18.763295,2.838545,13
+full_cv4_resenc_ds_unet_dice_ce,"ResEnc DS U-Net, no aug",ResEnc DS U-Net,control,1,2,0.850099,0.719581,0.932434,0.874179,0.874203,15.324509,2.470330,21
+full_cv4_resenc_ds_unet_dice_ce,"ResEnc DS U-Net, no aug",ResEnc DS U-Net,control,2,0,0.876549,0.785596,0.915326,0.885733,0.919543,15.105546,2.283961,18
+full_cv4_resenc_ds_unet_dice_ce,"ResEnc DS U-Net, no aug",ResEnc DS U-Net,control,2,1,0.879199,0.797949,0.922624,0.882921,0.913302,10.317633,1.997055,19
+full_cv4_resenc_ds_unet_dice_ce,"ResEnc DS U-Net, no aug",ResEnc DS U-Net,control,2,2,0.879978,0.794184,0.929933,0.889126,0.906670,9.440719,1.836643,19
+full_cv4_resenc_ds_unet_dice_ce,"ResEnc DS U-Net, no aug",ResEnc DS U-Net,control,3,0,0.867619,0.767206,0.925689,0.869186,0.908397,14.337479,2.290852,16
+full_cv4_resenc_ds_unet_dice_ce,"ResEnc DS U-Net, no aug",ResEnc DS U-Net,control,3,1,0.872406,0.773505,0.932783,0.882694,0.900641,13.215119,2.260699,22
+full_cv4_resenc_ds_unet_dice_ce,"ResEnc DS U-Net, no aug",ResEnc DS U-Net,control,3,2,0.859034,0.756378,0.919170,0.868296,0.892292,13.811219,2.523561,16
+full_cv4_resenc_ds_unet_dice_ce_augmented,"ResEnc DS U-Net, joint rot+scale+shift",ResEnc DS U-Net,joint,0,0,0.895314,0.805473,0.928960,0.909861,0.936962,15.046847,2.895970,20
+full_cv4_resenc_ds_unet_dice_ce_augmented,"ResEnc DS U-Net, joint rot+scale+shift",ResEnc DS U-Net,joint,0,1,0.899399,0.815310,0.940072,0.914046,0.928169,12.412069,2.434205,21
+full_cv4_resenc_ds_unet_dice_ce_augmented,"ResEnc DS U-Net, joint rot+scale+shift",ResEnc DS U-Net,joint,0,2,0.896151,0.803344,0.934838,0.912345,0.934076,8.052849,1.555771,24
+full_cv4_resenc_ds_unet_dice_ce_augmented,"ResEnc DS U-Net, joint rot+scale+shift",ResEnc DS U-Net,joint,1,0,0.867525,0.746588,0.937875,0.888748,0.896892,13.800189,2.355737,23
+full_cv4_resenc_ds_unet_dice_ce_augmented,"ResEnc DS U-Net, joint rot+scale+shift",ResEnc DS U-Net,joint,1,1,0.859194,0.739228,0.940244,0.878942,0.878364,11.075629,2.073591,23
+full_cv4_resenc_ds_unet_dice_ce_augmented,"ResEnc DS U-Net, joint rot+scale+shift",ResEnc DS U-Net,joint,1,2,0.861817,0.733545,0.939917,0.876344,0.897464,12.124536,2.252442,20
+full_cv4_resenc_ds_unet_dice_ce_augmented,"ResEnc DS U-Net, joint rot+scale+shift",ResEnc DS U-Net,joint,2,0,0.885709,0.798391,0.931764,0.892720,0.919962,10.126166,1.758889,23
+full_cv4_resenc_ds_unet_dice_ce_augmented,"ResEnc DS U-Net, joint rot+scale+shift",ResEnc DS U-Net,joint,2,1,0.881257,0.801526,0.926973,0.889616,0.906911,9.467390,1.852665,18
+full_cv4_resenc_ds_unet_dice_ce_augmented,"ResEnc DS U-Net, joint rot+scale+shift",ResEnc DS U-Net,joint,2,2,0.883178,0.810983,0.921003,0.891107,0.909618,11.604885,1.987693,22
+full_cv4_resenc_ds_unet_dice_ce_augmented,"ResEnc DS U-Net, joint rot+scale+shift",ResEnc DS U-Net,joint,3,0,0.874327,0.781211,0.931889,0.874223,0.909984,12.720352,2.140160,12
+full_cv4_resenc_ds_unet_dice_ce_augmented,"ResEnc DS U-Net, joint rot+scale+shift",ResEnc DS U-Net,joint,3,1,0.878278,0.793400,0.932127,0.871585,0.916000,11.010090,1.890872,15
+full_cv4_resenc_ds_unet_dice_ce_augmented,"ResEnc DS U-Net, joint rot+scale+shift",ResEnc DS U-Net,joint,3,2,0.873371,0.781441,0.935549,0.880772,0.895724,14.276306,2.311520,13
+full_cv4_resenc_ds_unet_dice_ce_strong_geometric,"ResEnc DS U-Net, strong geometric",ResEnc DS U-Net,strong,0,0,0.899205,0.819909,0.925208,0.916606,0.935097,24.874574,3.531474,21
+full_cv4_resenc_ds_unet_dice_ce_strong_geometric,"ResEnc DS U-Net, strong geometric",ResEnc DS U-Net,strong,0,1,0.901678,0.818498,0.941684,0.921743,0.924785,7.942168,1.475310,23
+full_cv4_resenc_ds_unet_dice_ce_strong_geometric,"ResEnc DS U-Net, strong geometric",ResEnc DS U-Net,strong,0,2,0.899009,0.811995,0.934330,0.917935,0.931775,13.487738,3.054280,22
+full_cv4_resenc_ds_unet_dice_ce_strong_geometric,"ResEnc DS U-Net, strong geometric",ResEnc DS U-Net,strong,1,0,0.874774,0.757544,0.948880,0.895976,0.896695,10.369115,1.801980,23
+full_cv4_resenc_ds_unet_dice_ce_strong_geometric,"ResEnc DS U-Net, strong geometric",ResEnc DS U-Net,strong,1,1,0.868779,0.749431,0.927905,0.905511,0.892267,12.872735,2.354773,14
+full_cv4_resenc_ds_unet_dice_ce_strong_geometric,"ResEnc DS U-Net, strong geometric",ResEnc DS U-Net,strong,1,2,0.871653,0.748494,0.945028,0.897788,0.895304,9.132830,1.799135,16
+full_cv4_resenc_ds_unet_dice_ce_strong_geometric,"ResEnc DS U-Net, strong geometric",ResEnc DS U-Net,strong,2,0,0.886338,0.808312,0.936651,0.898594,0.901794,10.857552,1.960732,20
+full_cv4_resenc_ds_unet_dice_ce_strong_geometric,"ResEnc DS U-Net, strong geometric",ResEnc DS U-Net,strong,2,1,0.888541,0.813154,0.930745,0.892640,0.917625,8.695377,1.683839,19
+full_cv4_resenc_ds_unet_dice_ce_strong_geometric,"ResEnc DS U-Net, strong geometric",ResEnc DS U-Net,strong,2,2,0.888385,0.811409,0.931736,0.895716,0.914679,12.555787,2.007348,23
+full_cv4_resenc_ds_unet_dice_ce_strong_geometric,"ResEnc DS U-Net, strong geometric",ResEnc DS U-Net,strong,3,0,0.889369,0.806331,0.944500,0.879097,0.927547,10.376382,1.674871,22
+full_cv4_resenc_ds_unet_dice_ce_strong_geometric,"ResEnc DS U-Net, strong geometric",ResEnc DS U-Net,strong,3,1,0.887778,0.801132,0.943673,0.876275,0.930035,9.464167,1.813339,22
+full_cv4_resenc_ds_unet_dice_ce_strong_geometric,"ResEnc DS U-Net, strong geometric",ResEnc DS U-Net,strong,3,2,0.881076,0.801248,0.937703,0.860920,0.924431,11.516250,1.948550,23
