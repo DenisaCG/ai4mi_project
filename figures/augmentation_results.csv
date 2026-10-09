@@ -1,0 +1,14 @@
+point,type,experiment,n_pairs,dice_change,hd95_reduction
+Rotation,geometric,full_cv4_enet_dice_ce_rotation,4,0.0125,-2.751
+Scaling,geometric,full_cv4_enet_dice_ce_scaling,4,0.0094,2.359
+Shift,geometric,full_cv4_enet_dice_ce_shift,4,0.0074,-0.424
+Shear,geometric,full_cv4_enet_dice_ce_shear,4,0.0031,1.539
+Gaussian noise,intensity,full_cv4_enet_dice_ce_gaussian_noise,4,0.0013,2.584
+Blur,intensity,full_cv4_enet_dice_ce_blur,4,0.0006,1.385
+Brightness/contrast,intensity,full_cv4_enet_dice_ce_brightness_contrast,4,-0.0031,1.261
+Gamma,intensity,full_cv4_enet_dice_ce_gamma,4,-0.0051,2.054
+Joint,joint,full_cv4_enet_dice_ce_augmented,12,0.0161,1.818
+Joint + elastic,joint,full_cv4_enet_dice_ce_rot_scale_shift_elastic,12,0.0191,0.135
+Strong,strong,full_cv4_enet_dice_ce_strong_geometric,12,0.0264,3.096
+Strong + elastic,strong,full_cv4_enet_dice_ce_strong_geometric_elastic,12,0.0263,3.487
+"Strong, 50 epochs",strong,full_cv4_enet_dice_ce_strong_geometric_50ep,12,0.0355,3.792
