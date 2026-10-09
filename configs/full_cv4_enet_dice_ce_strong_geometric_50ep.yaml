@@ -1,6 +1,6 @@
-# Full40 CE(all)+Dice(fg) reference recipe; only the online augmentation differs (strong_geometric, no noise).
-experiment: full_cv4_enet_dice_ce_strong_geometric
-notes: Full40 upgraded ENet Dice+CE with stronger joint geometric augmentation (rotation +-15, scaling 0.8-1.2, shift 10%, all p0.7)
+# full_cv4_enet_dice_ce_strong_geometric_50ep: ENet with stronger joint geometric (p0.7, rot +-15, scale 0.8-1.2, shift 10%), 50 epochs. Everything else as full_cv4_enet_dice_ce_rot_scale_shift.
+experiment: full_cv4_enet_dice_ce_strong_geometric_50ep
+notes: ENet with stronger joint geometric (p0.7, rot +-15, scale 0.8-1.2, shift 10%), 50 epochs
 seed: 0
 
 data:
@@ -25,6 +25,9 @@ loss:
 
 eval:
   classes: [1, 2, 3, 4]
+
+train:
+  epochs: 50
 
 wandb:
   mode: disabled
