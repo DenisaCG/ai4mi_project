@@ -11,6 +11,7 @@ import json
 import os
 import random
 import shutil
+import tempfile
 import time
 from copy import deepcopy
 from pathlib import Path
@@ -248,32 +249,50 @@ def estimate_transform(source: sitk.Image, target: sitk.Image,
         learningRate=2.0, minStep=0.01, numberOfIterations=params["rigid_iterations"]
     )
     rigid_method.SetOptimizerScalesFromPhysicalShift()
-    rigid = rigid_method.Execute(fixed, moving)
+    rigid_started = time.monotonic()
+    try:
+        rigid = rigid_method.Execute(fixed, moving)
+    except Exception:
+        print(f"rigid registration failed after {time.monotonic() - rigid_started:.2f}s", flush=True)
+        raise
+    rigid_runtime = time.monotonic() - rigid_started
     rigid_info = {"metric": rigid_method.GetMetricValue(),
                   "iterations": rigid_method.GetOptimizerIteration(),
-                  "stop": rigid_method.GetOptimizerStopConditionDescription()}
+                  "stop": rigid_method.GetOptimizerStopConditionDescription(),
+                  "runtime_seconds": round(rigid_runtime, 2)}
+    print(f"rigid registration: {rigid_info}", flush=True)
 
     extent = [(n - 1) * s for n, s in zip(fixed.GetSize(), fixed.GetSpacing())]
     mesh = [max(1, round(length / params["bspline_spacing_mm"])) for length in extent]
     bspline = sitk.BSplineTransformInitializer(fixed, mesh, order=3)
-    # CompositeTransform applies its back transform first. Only the back B-spline
-    # parameters are exposed to the optimizer; the fitted rigid stays fixed.
-    composite = sitk.CompositeTransform(3)
-    composite.AddTransform(rigid)
-    composite.AddTransform(bspline)
+    # Optimize the B-spline alone while the rigid is fixed. The registration method
+    # evaluates rigid(bspline(point)); a composite optimized directly lacks the
+    # position Jacobian needed by the metric derivative in this SimpleITK build.
     deform_method = registration_method(params, mask)
-    deform_method.SetInitialTransform(composite, inPlace=True)
+    deform_method.SetMovingInitialTransform(rigid)
+    deform_method.SetInitialTransform(bspline, inPlace=True)
     bound = params["bspline_coefficient_bound_mm"]
     deform_method.SetOptimizerAsLBFGSB(
         numberOfIterations=params["bspline_iterations"],
         maximumNumberOfFunctionEvaluations=500,
         lowerBound=-bound, upperBound=bound
     )
-    final = deform_method.Execute(fixed, moving)
+    bspline_started = time.monotonic()
+    try:
+        fitted_bspline = deform_method.Execute(fixed, moving)
+    except Exception:
+        print(f"B-spline registration failed after {time.monotonic() - bspline_started:.2f}s", flush=True)
+        raise
+    bspline_runtime = time.monotonic() - bspline_started
     deform_info = {"metric": deform_method.GetMetricValue(),
                    "iterations": deform_method.GetOptimizerIteration(),
                    "stop": deform_method.GetOptimizerStopConditionDescription(),
-                   "mesh_size": mesh}
+                   "mesh_size": mesh,
+                   "runtime_seconds": round(bspline_runtime, 2)}
+    print(f"B-spline registration: {deform_info}", flush=True)
+    final = sitk.CompositeTransform(3)
+    final.AddTransform(rigid)
+    final.AddTransform(fitted_bspline)
     return final, {"rigid": rigid_info, "bspline": deform_info}
 
 
@@ -303,7 +322,31 @@ def check_pair(ct: sitk.Image, gt: sitk.Image) -> None:
         raise ValueError(f"warped GT labels {sorted(labels)}; expected all of 0..4")
 
 
-def register_one(cfg: dict, entry: dict, params: dict) -> dict:
+def save_transform(transform: sitk.Transform, path: Path, reference: sitk.Image) -> None:
+    """Flatten nested composites, verify the HDF5 round trip, then publish atomically."""
+    flattened = sitk.CompositeTransform(transform)
+    flattened.FlattenTransform()
+    size = reference.GetSize()
+    points = [reference.TransformIndexToPhysicalPoint(index) for index in
+              ((0, 0, 0), tuple(n // 2 for n in size), tuple(n - 1 for n in size))]
+    for point in points:
+        if not np.allclose(transform.TransformPoint(point), flattened.TransformPoint(point),
+                           rtol=0, atol=1e-6):
+            raise ValueError("flattening changed registration physical-point mapping")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=".transform_", dir=path.parent) as directory:
+        temporary = Path(directory) / path.name
+        sitk.WriteTransform(flattened, str(temporary))
+        loaded = sitk.ReadTransform(str(temporary))
+        for point in points:
+            if not np.allclose(transform.TransformPoint(point), loaded.TransformPoint(point),
+                               rtol=0, atol=1e-6):
+                raise ValueError("serialized registration transform changed physical-point mapping")
+        os.replace(temporary, path)
+
+
+def register_one(cfg: dict, entry: dict, params: dict,
+                 transform_output: Path | None = None) -> dict:
     source_dir = REPO / cfg["data"]["preprocess"]["source_dir"] / "train"
     source_id, target_id = entry["source_patient"], entry["target_patient"]
     source_ct = sitk.ReadImage(str(source_dir / source_id / f"{source_id}.nii.gz"), sitk.sitkFloat32)
@@ -315,7 +358,11 @@ def register_one(cfg: dict, entry: dict, params: dict) -> dict:
         raise ValueError(f"{source_id}: CT and GT physical geometry differ")
     sitk.ProcessObject.SetGlobalDefaultNumberOfThreads(params["threads"])
     started = time.monotonic()
-    transform, info = estimate_transform(source_ct, target_ct, params)
+    try:
+        transform, info = estimate_transform(source_ct, target_ct, params)
+    except Exception:
+        print(f"registration failed after {time.monotonic() - started:.2f}s total", flush=True)
+        raise
     ct, gt = warp_pair(source_ct, source_gt, target_ct, transform)
     check_pair(ct, gt)
     out_ct, out_gt = Path(entry["output_ct"]), Path(entry["output_gt"])
@@ -326,6 +373,8 @@ def register_one(cfg: dict, entry: dict, params: dict) -> dict:
     sitk.WriteImage(gt, str(tmp_gt))
     os.replace(tmp_ct, out_ct)
     os.replace(tmp_gt, out_gt)
+    if transform_output is not None:
+        save_transform(transform, transform_output, target_ct)
     info["runtime_seconds"] = round(time.monotonic() - started, 2)
     info["source_geometry"] = geometry(source_ct)
     info["target_geometry"] = geometry(target_ct)

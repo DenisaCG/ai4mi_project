@@ -13,6 +13,20 @@ with [ResEnc + DS U-Net + registration](../configs/full_cv4_resenc_ds_unet_dice_
 Each registration arm has four folds × three training seeds: 12 runs per model,
 24 training/evaluation runs total. The historical BASE registration config is not an active arm.
 
+## Current status
+
+The focused registration suite passes 13/13 tests. One isolated fold-0 pair,
+Patient_26 → Patient_19, has completed registration and CT/GT quality checks;
+its volumes, transform, figures, and reports are under
+[`metrics/augmentation_metrics/registration/smoketest/`](../metrics/augmentation_metrics/registration/smoketest/README.md).
+The original and repeat results differ, and anatomical QC raises concern about
+alignment to the target patient. The measurements, figure interpretations, and
+remaining uncertainties are in the
+[scientific QC report](../metrics/augmentation_metrics/registration/smoketest/scientific_qc.md).
+This isolated pair is not part of the production registration dataset. Bulk
+generation and registration-augmented training have not started; the pilot
+requires further review before either proceeds.
+
 ## Pairing and outputs
 
 For each fold, the 30 real training IDs are sorted, shuffled with
@@ -70,9 +84,10 @@ registration arms. The command above uses the general builder and writes
 `data/registration_full40/fold0/qc/Synthetic_f0_00.png` for visual inspection.
 The fold remains incomplete and cannot be used for training.
 
-After reviewing the pilot, omit `LIMIT` to resume the remaining pairs in fold 0,
-then submit the same job with `FOLD=1`, `2` and `3`. No training or CV job is
-submitted by the registration builder. Once a fold is complete,
+If the pilot is accepted after further review, omit `LIMIT` to resume the
+remaining pairs in fold 0, then submit the same job with `FOLD=1`, `2` and `3`.
+No training or CV job is submitted by the registration builder. Once a fold is
+complete,
 `jobsAndOutputs/augmentation/jobs/registration/cv.job` runs the shared CV
 training/evaluation mechanism for the two registration configs, with array
 tasks 0–11 for each model (folds 0–3 × seeds 0–2). Submit it from the repository

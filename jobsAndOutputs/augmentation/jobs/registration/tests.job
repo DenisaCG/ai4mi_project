@@ -1,0 +1,15 @@
+#!/bin/bash
+#SBATCH --job-name=registration_tests
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=4G
+#SBATCH --time=00:10:00
+#SBATCH --output=jobsAndOutputs/augmentation/outputs/registration/%x_%j.out
+#SBATCH --error=jobsAndOutputs/augmentation/outputs/registration/%x_%j.err
+
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+export OMP_NUM_THREADS=2 ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=2
+python -B -m unittest -v tests.test_registration
