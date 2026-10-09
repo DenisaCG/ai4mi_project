@@ -6,12 +6,17 @@ from pathlib import Path
 
 import nibabel as nib
 import numpy as np
+import torch
 from PIL import Image
 
 from analyze_dataset import original_stats
 from analyze_baseline import bin_index, class_summary
 from shape import shape_descriptor
 from figures import select_shape_examples, orthogonal_plane
+from dataset_overview_figure import density, quantiles
+from error_cases_figure import crop_render
+from augmentation_examples import best_slice, random_shift
+from augmentation_results import paired_change
 from loss_training_curves import smooth
 from utils import extent, load_png, normalized_z, overlap, spreads
 
@@ -203,6 +208,61 @@ class LossCurveTests(unittest.TestCase):
         out = smooth(values, 3)
         np.testing.assert_allclose(out[0], [1.5, 3.0, 6.0, 7.5])
         np.testing.assert_allclose(out[1], [1.0, 1.0, 1.0, 1.0])
+
+
+class DatasetOverviewFigureTests(unittest.TestCase):
+    def test_quantiles_of_a_known_sample(self):
+        q = quantiles(np.arange(101.0))
+        self.assertEqual((q["p5"], q["median"], q["p95"]), (5.0, 50.0, 95.0))
+
+    def test_density_peaks_at_one_and_follows_the_sample(self):
+        grid = np.linspace(0, 1, 201)
+        d = density(np.random.default_rng(0).normal(0.8, 0.03, 200), grid)
+        self.assertEqual(d.max(), 1.0)
+        self.assertAlmostEqual(grid[d.argmax()], 0.8, delta=0.03)
+
+    def test_crop_render_keeps_only_the_framed_image_without_the_label_rows(self):
+        img = np.full((100, 120, 3), 255, np.uint8)
+        img[10:80, 20:100] = 0  # frame and content of the image area
+        img[11:79, 21:99] = 120
+        img[90:95, 40:60] = 0  # axis label text below the frame
+        out = crop_render(img, label_px=8)
+        self.assertEqual(out.shape, (70 - 2 - 8, 80 - 2, 3))
+        self.assertTrue((out == 120).all())
+
+
+class AugmentationTests(unittest.TestCase):
+    def test_best_slice_maximises_the_smallest_organ(self):
+        gt = np.zeros((4, 4, 3), int)
+        gt[0, 0, 0], gt[0, 1, 0] = 1, 2  # slice 0 lacks organs 3 and 4
+        for k, n in ((1, 2), (2, 3), (3, 2), (4, 4)):
+            gt[:, :, 2].flat[np.arange(n) + 4 * (k - 1)] = k
+        self.assertEqual(best_slice(gt), (2, 2))
+        self.assertEqual(best_slice(np.zeros((2, 2, 2), int)), (0, 0))
+
+    def test_shift_moves_ct_and_labels_together_and_fills_with_background(self):
+        image = torch.arange(16.0).reshape(1, 4, 4) + 1
+        gt = torch.zeros(2, 4, 4)
+        gt[0], gt[1, 1, 1] = 1, 1
+        gt[0, 1, 1] = 0
+        moved, labels = random_shift(1.0, 0.25, -1.0)(image, gt)
+        dx = int(torch.nonzero(labels[1])[0, 1]) - 1
+        dy = int(torch.nonzero(labels[1])[0, 0]) - 1
+        self.assertEqual(float(moved[0, 1 + dy, 1 + dx]), float(image[0, 1, 1]))
+        self.assertTrue(torch.equal(labels.sum(0), torch.ones(4, 4)))
+
+    def test_paired_change_uses_only_shared_runs_and_flips_the_hd95_sign(self):
+        run = lambda d, h: {"dice": d, "hd95": h, "assd": 1.0}  # noqa: E731
+        reference = {
+            (0, 0): run(0.80, 10.0),
+            (0, 1): run(0.70, 20.0),
+            (1, 0): run(0.90, 12.0),
+        }
+        arm = {(0, 0): run(0.82, 8.0), (1, 0): run(0.94, 11.0), (2, 0): run(0.10, 99.0)}
+        n, dice, hd95 = paired_change(arm, reference)
+        self.assertEqual(n, 2)
+        self.assertAlmostEqual(dice, 0.03)
+        self.assertAlmostEqual(hd95, 1.5)  # HD95 fell by 2 and 1 mm
 
 
 if __name__ == "__main__":
