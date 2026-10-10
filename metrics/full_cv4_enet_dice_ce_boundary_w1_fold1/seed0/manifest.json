@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "started": "2026-10-09T11:31:45",
+  "config_hash": "1ee2cbfccd62",
+  "smoke": false,
+  "user": "igardner1",
+  "host": "gcn36.local.snellius.surf.nl",
+  "slurm_job_id": "27804072",
+  "python": "3.11.17",
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "git_commit": "ad0ef016f8672e4287d2034160851256c79af54a",
+  "git_branch": "standardized_pipeline",
+  "git_dirty": true,
+  "command": "/gpfs/home6/igardner1/ai4mi_project/src/train.py --config configs/full_cv4_enet_dice_ce_boundary_w1.yaml --fold 1 --set seed=0",
+  "finished": "2026-10-09T11:52:00"
+}
