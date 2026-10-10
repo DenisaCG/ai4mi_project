@@ -1,0 +1,32 @@
+# Same 4-fold cross-validation as full_cv4_enet_ce.yaml (40 patients, 30 train / 10 val per fold, split seed 0, run seeds 0-2 from cv.job),
+# with the current recipe: ENet + CE (all classes) + soft Dice (foreground) and the full preprocessing stack (median spacing,
+# HU window + z-score, ROI crop/pad). The window size T comes from each fold's 30 training patients, so it can differ per fold
+# (see <dataset>/roi_crop.json). Only the loss differs from full_cv4_enet_dice_ce: a distance-weighted error term is added (src/losses/hausdorff.py). Runs as full_cv4_enet_dice_ce_hd_fold0..3.
+experiment: full_cv4_enet_dice_ce_hd
+notes: ENet + CE (all classes) + soft Dice (foreground) + distance-weighted error (hd, weight 1, dmax 20 px), same preprocessing, folds and seed 0 as full_cv4_enet_dice_ce
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: ce_dice_hd
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+    boundary_idk: [1, 2, 3, 4]   # classes with GT distance maps
+    hd_weight: 1.0
+    dmax: 20.0                  # pixels; farther than this costs the full weight
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled

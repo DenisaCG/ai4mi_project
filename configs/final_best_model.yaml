@@ -1,0 +1,37 @@
+# FINAL model 2/2: our best model, on ALL 40 labelled patients, then predicts the 20 test CTs. See docs/final_training.md.
+# Best model by CV (docs/final_training.md): ResEnc DS U-Net + strong geometric, 50 epochs. CV counterpart: full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep.
+# NEEDS CODE SUPPORT: same as final_enet_dice_ce.yaml (retains: 0, no val, last epoch, test split).
+experiment: final_best_model
+notes: Final run, best model (ResEnc DS U-Net + strong geometric, 50 epochs) on all 40 train+val patients
+seed: 0   # 0 is the default; final runs use seeds 0, 1, 2 via --set seed=k
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 0, fold: 0, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: null
+  test_source_pattern: data/segthor_train_full/test/{patient}.nii.gz
+  augment:
+    - {name: random_rotation, kwargs: {p: 0.7, degrees: [-15.0, 15.0], fill: ct_window_low}}
+    - {name: random_scaling, kwargs: {p: 0.7, scales: [0.8, 1.2], fill: ct_window_low}}
+    - {name: random_shift, kwargs: {p: 0.7, max_fraction: 0.1, fill: ct_window_low}}
+
+model:
+  name: unet
+  kwargs: {block: residual, deep_supervision: true}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+train:
+  epochs: 50                  
+  select_metric: train_dice_fg   # no val set: final model = last epoch
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled
