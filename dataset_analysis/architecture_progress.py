@@ -190,12 +190,23 @@ def save(plt, fig, out: Path, name: str) -> None:
 
 
 def progress_figure(
-    plt, sections, organs, metric, n_patients, out, title=DEFAULT_TITLE, note="", show_reference=True, join_sections=False
+    plt,
+    sections,
+    organs,
+    metric,
+    n_patients,
+    out,
+    title=DEFAULT_TITLE,
+    note="",
+    show_reference=True,
+    join_sections=False,
+    compact=False,
 ) -> None:
     """One metric: a panel per organ, the runs of each step as points and their mean as a marker.
 
     The means of the first section are joined by a line. Each later section starts after a vertical separator, its
     means are not joined, and a dashed line marks the last step of the first section (unless show_reference is False); join_sections joins the later sections too.
+    compact packs the panels: short rows, the organ name as the row label instead of a title above each panel.
     """
     label, key, digits = metric
     panels = [*organs, FG]
@@ -215,7 +226,10 @@ def progress_figure(
         len(panels),
         1,
         sharex=True,
-        figsize=(max(9, 1.6 * (x[-1] + 1) + 1.4), 1.9 * len(panels) + 1.2),
+        figsize=(
+            max(9, 1.6 * (x[-1] + 1) + 1.4),
+            (1.15 if compact else 1.9) * len(panels) + (1.5 if compact else 1.2),
+        ),
         squeeze=False,
     )
     any_nan = False
@@ -289,13 +303,12 @@ def progress_figure(
                 (before[-1] + after[0]) / 2, color=MUTED, linewidth=0.8, alpha=0.6
             )
         ax.margins(x=0.04, y=0.2)
-        ax.set_title(
-            "All organs (mean)" if organ == FG else organ.capitalize(),
-            loc="left",
-            fontsize=11,
-            fontweight="bold",
-        )
-        ax.set_ylabel(label)
+        name = "All organs (mean)" if organ == FG else organ.capitalize()
+        if compact:
+            ax.set_ylabel(f"{name}\n{label}", fontsize=9, fontweight="bold")
+        else:
+            ax.set_title(name, loc="left", fontsize=11, fontweight="bold")
+            ax.set_ylabel(label)
         clean_axis(ax)
     top, bottom = axes[0, 0], axes[-1, 0]
     for (heading, _), xs in zip(sections, positions):
@@ -304,7 +317,7 @@ def progress_figure(
                 heading,
                 ((xs[0] + xs[-1]) / 2, 1),
                 xycoords=top.get_xaxis_transform(),
-                xytext=(0, 26),  # above the organ title, on a row of its own
+                xytext=(0, 6 if compact else 26),  # above the organ title, on a row of its own
                 textcoords="offset points",
                 ha="center",
                 va="bottom",
@@ -353,12 +366,13 @@ def progress_figure(
     decorate(
         fig,
         title.format(metric=label.split()[0]),
-        subtitle=f"{CV_FOLDS}-fold cross-validation × {CV_SEEDS} seeds, {n_patients} patients" + (f". {note}" if note else ""),
+        subtitle=f"{CV_FOLDS}-fold cross-validation × {CV_SEEDS} seeds, {n_patients} patients"
+        + (f". {note}" if note else ""),
         footnote_text=footnote,
     )
     tighten(fig, 0.45, 0.3)
-    fig.subplots_adjust(hspace=0.55)
-    save(plt, fig, out, f"architecture_progress_{key}")
+    fig.subplots_adjust(hspace=0.3 if compact else 0.55)
+    save(plt, fig, out, f"architecture_progress_{key}{'_compact' if compact else ''}")
 
 
 def patient_figure(plt, a: Step, b: Step, organs, out: Path, note: str = "") -> None:
@@ -421,7 +435,8 @@ def patient_figure(plt, a: Step, b: Step, organs, out: Path, note: str = "") -> 
     decorate(
         fig,
         f"Per-patient Dice, {a.name} and {b.name}",
-        subtitle=f"{len(patients)} patients, one row each, grouped by fold ({CV_FOLDS}-fold cross-validation)" + (f". {note}" if note else ""),
+        subtitle=f"{len(patients)} patients, one row each, grouped by fold ({CV_FOLDS}-fold cross-validation)"
+        + (f". {note}" if note else ""),
         footnote_text=f"Each patient's 3D Dice (best checkpoint) averaged over {CV_SEEDS} seeds.",
     )
     tighten(fig, 0.45, 0.3)
@@ -463,10 +478,23 @@ def main(argv: list[str] | None = None) -> None:
         action="store_true",
         help="join the means of every section by a line, not only those of the first",
     )
+    parser.add_argument(
+        "--compact",
+        action="store_true",
+        help="shorter rows and no per-panel titles; files get a _compact suffix",
+    )
     parser.add_argument("--metrics-dir", type=Path, default=REPO / "metrics")
     parser.add_argument("--out", type=Path, default=REPO / "figures/architecture")
-    parser.add_argument("--title", default=DEFAULT_TITLE, help="progress figure title; {metric} is the metric name")
-    parser.add_argument("--note", default="", help="sentence appended to every figure subtitle (dataset, preprocessing, loss)")
+    parser.add_argument(
+        "--title",
+        default=DEFAULT_TITLE,
+        help="progress figure title; {metric} is the metric name",
+    )
+    parser.add_argument(
+        "--note",
+        default="",
+        help="sentence appended to every figure subtitle (dataset, preprocessing, loss)",
+    )
     args = parser.parse_args(argv)
 
     steps = load_steps(args.metrics_dir, args.experiments)
@@ -488,7 +516,17 @@ def main(argv: list[str] | None = None) -> None:
     for metric in CV_METRICS:
         _, key, _ = metric
         progress_figure(
-            plt, sections, organs, metric, n_patients, args.out, args.title, args.note, not args.no_reference, args.join_sections
+            plt,
+            sections,
+            organs,
+            metric,
+            n_patients,
+            args.out,
+            args.title,
+            args.note,
+            not args.no_reference,
+            args.join_sections,
+            args.compact,
         )
         for heading, group in sections:
             for step, organ in itertools.product(group, [*organs, FG]):
@@ -508,7 +546,12 @@ def main(argv: list[str] | None = None) -> None:
     write_csv(args.out / "architecture_progress.csv", table)
     if args.compare:
         patient_figure(
-            plt, by_label[args.compare[0]], by_label[args.compare[1]], organs, args.out, args.note
+            plt,
+            by_label[args.compare[0]],
+            by_label[args.compare[1]],
+            organs,
+            args.out,
+            args.note,
         )
     print(f"{len(steps)} steps -> {args.out}")
 

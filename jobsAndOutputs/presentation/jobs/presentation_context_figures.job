@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH --job-name=presentation_context_figures
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=00:10:00
+#SBATCH --output=jobsAndOutputs/presentation/outputs/%x_%j.out
+
+# CPU only. Slide figures A (paired 2.5D effect), B (U-Net vs ENet), C (absolute Dice) + delta table, in figures/25d_presentation (read-only on metrics/).
+# Usage: sbatch jobsAndOutputs/presentation/jobs/presentation_context_figures.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=1 MPLBACKEND=Agg
+python dataset_analysis/presentation_context_figures.py --metrics-dir "${METRICS_DIR:-metrics}" --out figures/25d_presentation
+echo "[$(date -Is)] done: figures/25d_presentation"
