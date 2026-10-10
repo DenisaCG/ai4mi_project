@@ -6,4 +6,5 @@ from . import tversky  # noqa: F401
 from . import weighted_cross_entropy  # noqa: F401
 from . import weightedCEdice
 from . import boundary
+from . import hausdorff  # noqa: F401
 

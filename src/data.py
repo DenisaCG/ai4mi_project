@@ -150,7 +150,7 @@ def build_dataset(cfg: dict, split: str) -> Dataset:
                 kwargs["fill"] = (zscore["lo"] - zscore["mean"]) / zscore["std"]
             augments.append(build("augment", a["name"], **kwargs))
         dataset = Augmented(dataset, augments)
-    if split != "test" and cfg.get("loss", {}).get("name") in ("boundary", "ce_dice_boundary", "weighted_ce_dice_boundary"):
+    if split != "test" and cfg.get("loss", {}).get("name") in ("boundary", "ce_dice_boundary", "weighted_ce_dice_boundary", "ce_dice_hd"):
         classes = cfg["loss"]["kwargs"].get("boundary_idk")
         dataset = WithDistanceMaps(dataset, list(range(1, d["num_classes"])) if classes is None else classes)
     return dataset
