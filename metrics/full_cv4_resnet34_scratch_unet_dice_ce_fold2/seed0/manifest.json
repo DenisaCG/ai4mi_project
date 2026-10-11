@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "started": "2026-10-06T16:15:02",
+  "config_hash": "ebe30773a803",
+  "smoke": false,
+  "user": "scur0049",
+  "host": "gcn44.local.snellius.surf.nl",
+  "slurm_job_id": "27665274",
+  "python": "3.11.16",
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "git_commit": "b95917e74d3c707cdc5957169fee2d49d111cec1",
+  "git_branch": "resnet34-unet",
+  "git_dirty": false,
+  "command": "/gpfs/home5/scur0049/ai4mi_project-resnet34/src/train.py --config configs/full_cv4_resnet34_scratch_unet_dice_ce.yaml --fold 2 --set seed=0",
+  "finished": "2026-10-06T16:31:05"
+}

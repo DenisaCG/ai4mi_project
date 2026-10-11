@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "started": "2026-10-11T09:33:35",
+  "config_hash": "e72235ea6de9",
+  "smoke": false,
+  "user": "scur0049",
+  "host": "gcn37.local.snellius.surf.nl",
+  "slurm_job_id": "27874187",
+  "python": "3.11.16",
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "git_commit": "67743c29443e618ac9538d1b56a607175c16bb91",
+  "git_branch": "final-training",
+  "git_dirty": true,
+  "command": "/gpfs/home5/scur0049/ai4mi_final/src/train.py --config configs/full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_cosine.yaml --fold 2 --set seed=2",
+  "finished": "2026-10-11T10:31:18"
+}

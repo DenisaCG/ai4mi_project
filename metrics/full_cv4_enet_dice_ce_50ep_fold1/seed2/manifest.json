@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "started": "2026-10-11T11:25:46",
+  "config_hash": "00c93b0fad3b",
+  "smoke": false,
+  "user": "scur0049",
+  "host": "gcn65.local.snellius.surf.nl",
+  "slurm_job_id": "27876213",
+  "python": "3.11.16",
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "git_commit": "67743c29443e618ac9538d1b56a607175c16bb91",
+  "git_branch": "final-training",
+  "git_dirty": true,
+  "command": "/gpfs/home5/scur0049/ai4mi_final/src/train.py --config configs/full_cv4_enet_dice_ce_50ep.yaml --fold 1 --set seed=2",
+  "finished": "2026-10-11T11:59:08"
+}

@@ -1,0 +1,27 @@
+{
+  "experiment": "final_enet_ce_base",
+  "seed": 1,
+  "run": "seed1",
+  "config_hash": "2d3824c2b8ea",
+  "model": "enet",
+  "loss": "cross_entropy",
+  "optim": "adam",
+  "lr": 0.0005,
+  "data_root": "data/sliced_c5b52fd5",
+  "epochs": 50,
+  "best_epoch": 49,
+  "best": {
+    "train_loss": 0.0019025617773305102,
+    "train_dice_esophagus": 0.8190515825969727,
+    "train_dice_heart": 0.9768026935627327,
+    "train_dice_trachea": 0.9106820870223317,
+    "train_dice_aorta": 0.93731803061118,
+    "train_dice_fg": 0.9109635984483043,
+    "train_dice_legacy_fg": 0.9518682956695557
+  },
+  "user": "scur0049",
+  "git_commit": "67743c29443e618ac9538d1b56a607175c16bb91",
+  "started": "2026-10-11T11:27:00",
+  "finished": "2026-10-11T12:07:58",
+  "wandb_url": null
+}
