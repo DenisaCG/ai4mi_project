@@ -1,11 +1,11 @@
 # Held-out estimate for a 2.5D + boundary variant of final_best_model. Combines three existing CV configs, nothing else changes:
 # - full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep: model, strong geometric augmentation (p0.7, rot +-15, scale 0.8-1.2, shift 10%), 50 epochs
 # - full_cv4_resenc_ds_unet_dice_ce_25d_c1: data.context 1 / in_channels 3 (slice +-1 neighbours as channels, centre-slice target)
-# - full_cv4_resenc_ds_unet_dice_ce_boundary: boundary_dice_ce loss, alpha 1.0 -> 0.1 linear over the 50 epochs
+# - full_cv4_enet_dice_ce_boundary_preprocessing: fixed-weight ce_dice_boundary loss (CE + Dice + 0.08 * boundary, no ramp); applied at every deep-supervision scale
 # Same 4-fold CV on the 40 patients (30 train / 10 val, split seed 0), same preprocessing. Report the LAST epoch. No early stopping (not implemented).
-# Runs as full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep_fold0..3.
-experiment: full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep
-notes: 2.5D (3 slices as channels) + boundary loss (alpha 1.0 -> 0.1 over 50 epochs) + strong geometric augmentation, 50 epochs; residual-encoder deep-supervised U-Net, constant LR, full preprocessing, 4-fold CV on the 40-patient SEGTHOR train set
+# Runs as full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008_fold0..3. (The same-named config without _w008 was run in ai4mi_final with the ramped boundary_dice_ce loss.)
+experiment: full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008
+notes: 2.5D (3 slices as channels) + fixed-weight boundary loss (weight 0.08) + strong geometric augmentation, 50 epochs; residual-encoder deep-supervised U-Net, constant LR, full preprocessing, 4-fold CV on the 40-patient SEGTHOR train set
 seed: 0
 
 data:
@@ -23,11 +23,10 @@ model:
   kwargs: {block: residual, deep_supervision: true}
 
 loss:
-  name: boundary_dice_ce
+  name: ce_dice_boundary
   kwargs:
-    alpha_start: 1.0
-    alpha_end: 0.1
     boundary_idk: [1, 2, 3, 4]
+    boundary_weight: 0.08     # as in full_cv4_enet_ce_dice_boundary_preprocessing (code default 0.01, w1 run 1.0)
     ce_idk: [0, 1, 2, 3, 4]   # CE sees background
     dice_idk: [1, 2, 3, 4]
     ce_weight: 1.0
