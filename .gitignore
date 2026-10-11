@@ -36,3 +36,5 @@ wandb/
 metrics/comparison*
 
 predictions
+
+.claude/

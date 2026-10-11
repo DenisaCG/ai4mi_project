@@ -1,0 +1,15 @@
+{
+  "git_commit": "0c74bac6b839bf2c5094db1e76189f4cb81037cd",
+  "started": "2026-10-08T13:33:32",
+  "finished": "2026-10-08T13:33:32",
+  "args": {
+    "data_dir": "/gpfs/home5/scur0049/ai4mi_project/data/segthor_train_full/train",
+    "midterm_dir": "/gpfs/home5/scur0049/ai4mi_project/data/segthor_part1_corrected/train",
+    "data_root": "/gpfs/home5/scur0049/ai4mi_project/data",
+    "out_dir": "/gpfs/home5/scur0049/ai4mi_project/figures/dataset_40",
+    "workers": "24"
+  },
+  "n_patients": 40,
+  "n_original": 20,
+  "seed": "none (the nnU-Net sample inside dataset_profile uses its fixed seed 1234)"
+}

@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH --job-name=context_25d_regions
+#SBATCH --partition=rome
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
+#SBATCH --time=01:00:00
+#SBATCH --output=jobsAndOutputs/25d_context/outputs/%x_%j.out
+
+# 2.5D minus 2D per organ region (middle / ends / just past the ends), from the stitched validation volumes.
+# Resumable: each scored run is cached in figures/context_25d_regions/cache; rerunning skips finished runs.
+# Usage: sbatch jobsAndOutputs/25d_context/jobs/context_25d_regions.job   (from the repo root)
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+python -B dataset_analysis/context_25d_regions.py --runs-dir runs --out-dir figures/context_25d_regions \
+    --workers "$SLURM_CPUS_PER_TASK"
+echo "[$(date -Is)] done"

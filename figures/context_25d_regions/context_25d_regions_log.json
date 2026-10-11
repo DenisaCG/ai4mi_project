@@ -1,0 +1,47 @@
+{
+  "runs_dir": "runs",
+  "gt_pattern": "data/segthor_train_full/train/{patient}/GT.nii.gz",
+  "edge_mm": 10.0,
+  "comparisons": [
+    [
+      "Residual-encoder U-Net",
+      "full_cv4_resenc_ds_unet_dice_ce",
+      [
+        [
+          "2.5D, 3 slices, stride 1 (\u00b12.5 mm)",
+          "full_cv4_resenc_ds_unet_dice_ce_25d_c1"
+        ],
+        [
+          "2.5D, 3 slices, stride 4 (\u00b110 mm)",
+          "full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4"
+        ]
+      ]
+    ],
+    [
+      "ENet",
+      "full_cv4_enet_dice_ce",
+      [
+        [
+          "2.5D, 3 slices, stride 1 (\u00b12.5 mm)",
+          "full_cv4_enet_dice_ce_25d_c1"
+        ],
+        [
+          "2.5D, 5 slices, stride 1 (\u00b15 mm)",
+          "full_cv4_enet_dice_ce_25d_c2"
+        ]
+      ]
+    ]
+  ],
+  "runs_scored": 72,
+  "patients_per_experiment": {
+    "full_cv4_enet_dice_ce": 40,
+    "full_cv4_enet_dice_ce_25d_c1": 40,
+    "full_cv4_enet_dice_ce_25d_c2": 40,
+    "full_cv4_resenc_ds_unet_dice_ce": 40,
+    "full_cv4_resenc_ds_unet_dice_ce_25d_c1": 40,
+    "full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4": 40
+  },
+  "git_commit": "f9de3888dbda5c047e1148af572c5b86b82883f2",
+  "started": "2026-10-09T18:47:24.334051+00:00",
+  "finished": "2026-10-09T18:47:27.288795+00:00"
+}

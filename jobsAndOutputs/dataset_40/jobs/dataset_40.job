@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH --job-name=dataset_40
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=24
+#SBATCH --mem=64G
+#SBATCH --time=01:00:00
+#SBATCH --output=jobsAndOutputs/dataset_40/outputs/%x_%j.out
+
+# Per-patient tables, group comparison, figures and validation for the 40-patient SegTHOR set.
+# Resumable: per-patient results are cached in results/dataset_40_cache; rerunning skips finished patients.
+# Usage: sbatch jobsAndOutputs/dataset_40/jobs/dataset_40.job   (from the repo root)
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+python -B tools/dataset_40_tables.py --workers "$SLURM_CPUS_PER_TASK"
+python -B tools/dataset_40_figures.py
+python -B tools/validate_dataset_40.py
+echo "[$(date -Is)] done"

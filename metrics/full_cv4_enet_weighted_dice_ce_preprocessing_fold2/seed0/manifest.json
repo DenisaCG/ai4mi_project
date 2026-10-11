@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "started": "2026-10-08T19:44:55",
+  "config_hash": "f55251bed8ea",
+  "smoke": false,
+  "user": "scur0049",
+  "host": "gcn55.local.snellius.surf.nl",
+  "slurm_job_id": "27781928",
+  "python": "3.11.16",
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "git_commit": "d1b32adcb875a0a87fbf9e1306b39a500e24da8a",
+  "git_branch": "standardized_pipeline",
+  "git_dirty": true,
+  "command": "/gpfs/home5/scur0049/ai4mi_project/src/train.py --config configs/full_cv4_enet_weighted_ce_dice_preprocessing.yaml --fold 2 --set seed=0",
+  "finished": "2026-10-08T20:02:29"
+}

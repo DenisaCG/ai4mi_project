@@ -1,0 +1,1921 @@
+model,fold,patient,organ,metric,mean_over_seeds,valid_seed_count,all_expected_seeds_valid
+CE + Dice,0,Patient_01,aorta,assd,1.1452110185681634,3,True
+CE + Dice,0,Patient_01,aorta,dice,0.9198749571634491,3,True
+CE + Dice,0,Patient_01,aorta,hd95,5.062832790430482,3,True
+CE + Dice,0,Patient_01,esophagus,assd,2.2773271134448074,3,True
+CE + Dice,0,Patient_01,esophagus,dice,0.761713194805099,3,True
+CE + Dice,0,Patient_01,esophagus,hd95,12.61399037140319,3,True
+CE + Dice,0,Patient_01,heart,assd,1.748937592735958,3,True
+CE + Dice,0,Patient_01,heart,dice,0.9473467706871954,3,True
+CE + Dice,0,Patient_01,heart,hd95,5.023794251338433,3,True
+CE + Dice,0,Patient_01,trachea,assd,1.5763173120988732,3,True
+CE + Dice,0,Patient_01,trachea,dice,0.9195756796865114,3,True
+CE + Dice,0,Patient_01,trachea,hd95,9.879322760888611,3,True
+CE + Dice,0,Patient_02,aorta,assd,1.4652671757994133,3,True
+CE + Dice,0,Patient_02,aorta,dice,0.9226902819992091,3,True
+CE + Dice,0,Patient_02,aorta,hd95,6.621286328733494,3,True
+CE + Dice,0,Patient_02,esophagus,assd,2.9533366054796697,3,True
+CE + Dice,0,Patient_02,esophagus,dice,0.7226696238508051,3,True
+CE + Dice,0,Patient_02,esophagus,hd95,13.333333333333334,3,True
+CE + Dice,0,Patient_02,heart,assd,2.7503280751247936,3,True
+CE + Dice,0,Patient_02,heart,dice,0.9346745490114458,3,True
+CE + Dice,0,Patient_02,heart,hd95,7.5,3,True
+CE + Dice,0,Patient_02,trachea,assd,8.304525329586719,3,True
+CE + Dice,0,Patient_02,trachea,dice,0.8642940704662333,3,True
+CE + Dice,0,Patient_02,trachea,hd95,141.00004090688319,3,True
+CE + Dice,3,Patient_03,aorta,assd,5.6243051417268575,3,True
+CE + Dice,3,Patient_03,aorta,dice,0.6879561140009844,3,True
+CE + Dice,3,Patient_03,aorta,hd95,39.37365061852132,3,True
+CE + Dice,3,Patient_03,esophagus,assd,4.123494594815983,3,True
+CE + Dice,3,Patient_03,esophagus,dice,0.4582314277303941,3,True
+CE + Dice,3,Patient_03,esophagus,hd95,18.769968082314367,3,True
+CE + Dice,3,Patient_03,heart,assd,2.055658155699392,3,True
+CE + Dice,3,Patient_03,heart,dice,0.920230420541245,3,True
+CE + Dice,3,Patient_03,heart,hd95,6.666666666666667,3,True
+CE + Dice,3,Patient_03,trachea,assd,2.6357964690470004,3,True
+CE + Dice,3,Patient_03,trachea,dice,0.7954520266725664,3,True
+CE + Dice,3,Patient_03,trachea,hd95,22.125936739124814,3,True
+CE + Dice,2,Patient_04,aorta,assd,1.3833918435553823,3,True
+CE + Dice,2,Patient_04,aorta,dice,0.9135085233350901,3,True
+CE + Dice,2,Patient_04,aorta,hd95,5.0,3,True
+CE + Dice,2,Patient_04,esophagus,assd,2.015993940155995,3,True
+CE + Dice,2,Patient_04,esophagus,dice,0.7531843221092793,3,True
+CE + Dice,2,Patient_04,esophagus,hd95,8.157892677614349,3,True
+CE + Dice,2,Patient_04,heart,assd,1.8182403993702874,3,True
+CE + Dice,2,Patient_04,heart,dice,0.9493663118909165,3,True
+CE + Dice,2,Patient_04,heart,hd95,5.0,3,True
+CE + Dice,2,Patient_04,trachea,assd,1.0872658357531895,3,True
+CE + Dice,2,Patient_04,trachea,dice,0.9034006276353667,3,True
+CE + Dice,2,Patient_04,trachea,hd95,7.302974787772261,3,True
+CE + Dice,2,Patient_05,aorta,assd,4.341511353733247,3,True
+CE + Dice,2,Patient_05,aorta,dice,0.829100364256747,3,True
+CE + Dice,2,Patient_05,aorta,hd95,17.039553441039512,3,True
+CE + Dice,2,Patient_05,esophagus,assd,2.8517684313934235,3,True
+CE + Dice,2,Patient_05,esophagus,dice,0.5400983679557625,3,True
+CE + Dice,2,Patient_05,esophagus,hd95,9.483396410446149,3,True
+CE + Dice,2,Patient_05,heart,assd,4.936649880718293,3,True
+CE + Dice,2,Patient_05,heart,dice,0.9035999915481323,3,True
+CE + Dice,2,Patient_05,heart,hd95,21.744714287038097,3,True
+CE + Dice,2,Patient_05,trachea,assd,4.794084420769075,3,True
+CE + Dice,2,Patient_05,trachea,dice,0.7562605520109807,3,True
+CE + Dice,2,Patient_05,trachea,hd95,35.333333333333336,3,True
+CE + Dice,1,Patient_06,aorta,assd,1.9978933182580114,3,True
+CE + Dice,1,Patient_06,aorta,dice,0.909972773662561,3,True
+CE + Dice,1,Patient_06,aorta,hd95,12.905535877207882,3,True
+CE + Dice,1,Patient_06,esophagus,assd,3.109187378811234,3,True
+CE + Dice,1,Patient_06,esophagus,dice,0.6805677355018439,3,True
+CE + Dice,1,Patient_06,esophagus,hd95,13.122606349798339,3,True
+CE + Dice,1,Patient_06,heart,assd,3.3194098788664266,3,True
+CE + Dice,1,Patient_06,heart,dice,0.915368288500194,3,True
+CE + Dice,1,Patient_06,heart,hd95,13.44809861955641,3,True
+CE + Dice,1,Patient_06,trachea,assd,2.2178957894513087,3,True
+CE + Dice,1,Patient_06,trachea,dice,0.9021035429562246,3,True
+CE + Dice,1,Patient_06,trachea,hd95,13.396598556503243,3,True
+CE + Dice,2,Patient_07,aorta,assd,1.7129349042916104,3,True
+CE + Dice,2,Patient_07,aorta,dice,0.8883889440656588,3,True
+CE + Dice,2,Patient_07,aorta,hd95,9.932336498881261,3,True
+CE + Dice,2,Patient_07,esophagus,assd,2.461227953764711,3,True
+CE + Dice,2,Patient_07,esophagus,dice,0.7237486540217892,3,True
+CE + Dice,2,Patient_07,esophagus,hd95,14.058417840114023,3,True
+CE + Dice,2,Patient_07,heart,assd,2.386861235852446,3,True
+CE + Dice,2,Patient_07,heart,dice,0.9526163977941141,3,True
+CE + Dice,2,Patient_07,heart,hd95,23.049162005074024,3,True
+CE + Dice,2,Patient_07,trachea,assd,1.3140455118327736,3,True
+CE + Dice,2,Patient_07,trachea,dice,0.9012223055128801,3,True
+CE + Dice,2,Patient_07,trachea,hd95,6.936874954244314,3,True
+CE + Dice,1,Patient_08,aorta,assd,5.554881182991752,3,True
+CE + Dice,1,Patient_08,aorta,dice,0.8629281669626799,3,True
+CE + Dice,1,Patient_08,aorta,hd95,41.28628407625396,3,True
+CE + Dice,1,Patient_08,esophagus,assd,3.121150960171715,3,True
+CE + Dice,1,Patient_08,esophagus,dice,0.5285906049624045,3,True
+CE + Dice,1,Patient_08,esophagus,hd95,14.476963906554241,3,True
+CE + Dice,1,Patient_08,heart,assd,4.919334575280005,3,True
+CE + Dice,1,Patient_08,heart,dice,0.8465616384017824,3,True
+CE + Dice,1,Patient_08,heart,hd95,24.05372169037202,3,True
+CE + Dice,1,Patient_08,trachea,assd,3.000277571749383,3,True
+CE + Dice,1,Patient_08,trachea,dice,0.8557035844091595,3,True
+CE + Dice,1,Patient_08,trachea,hd95,24.74902189512586,3,True
+CE + Dice,2,Patient_09,aorta,assd,3.5336565002483233,3,True
+CE + Dice,2,Patient_09,aorta,dice,0.8324859958908831,3,True
+CE + Dice,2,Patient_09,aorta,hd95,21.82083550494198,3,True
+CE + Dice,2,Patient_09,esophagus,assd,1.8678425188310535,3,True
+CE + Dice,2,Patient_09,esophagus,dice,0.7371578041620698,3,True
+CE + Dice,2,Patient_09,esophagus,hd95,11.876659879335387,3,True
+CE + Dice,2,Patient_09,heart,assd,3.239785844342018,3,True
+CE + Dice,2,Patient_09,heart,dice,0.9220054287897859,3,True
+CE + Dice,2,Patient_09,heart,hd95,10.0,3,True
+CE + Dice,2,Patient_09,trachea,assd,1.4247290537729798,3,True
+CE + Dice,2,Patient_09,trachea,dice,0.9081790836655389,3,True
+CE + Dice,2,Patient_09,trachea,hd95,10.350974012691234,3,True
+CE + Dice,2,Patient_10,aorta,assd,1.3967857832622552,3,True
+CE + Dice,2,Patient_10,aorta,dice,0.9170709745841731,3,True
+CE + Dice,2,Patient_10,aorta,hd95,9.072820310476935,3,True
+CE + Dice,2,Patient_10,esophagus,assd,1.9859326360005687,3,True
+CE + Dice,2,Patient_10,esophagus,dice,0.7797497170574653,3,True
+CE + Dice,2,Patient_10,esophagus,hd95,10.007525959034394,3,True
+CE + Dice,2,Patient_10,heart,assd,3.058951034845883,3,True
+CE + Dice,2,Patient_10,heart,dice,0.9226535485464836,3,True
+CE + Dice,2,Patient_10,heart,hd95,14.279720987419045,3,True
+CE + Dice,2,Patient_10,trachea,assd,0.9746050548682227,3,True
+CE + Dice,2,Patient_10,trachea,dice,0.9105769261584689,3,True
+CE + Dice,2,Patient_10,trachea,hd95,6.228511878555364,3,True
+CE + Dice,1,Patient_11,aorta,assd,1.912413171363568,3,True
+CE + Dice,1,Patient_11,aorta,dice,0.9269655000429523,3,True
+CE + Dice,1,Patient_11,aorta,hd95,19.682194037778217,3,True
+CE + Dice,1,Patient_11,esophagus,assd,3.095016779200936,3,True
+CE + Dice,1,Patient_11,esophagus,dice,0.6561502795493565,3,True
+CE + Dice,1,Patient_11,esophagus,hd95,14.697646976176197,3,True
+CE + Dice,1,Patient_11,heart,assd,1.917370216881572,3,True
+CE + Dice,1,Patient_11,heart,dice,0.9478413393852104,3,True
+CE + Dice,1,Patient_11,heart,hd95,13.45515042053887,3,True
+CE + Dice,1,Patient_11,trachea,assd,1.834967887807095,3,True
+CE + Dice,1,Patient_11,trachea,dice,0.8689818747099814,3,True
+CE + Dice,1,Patient_11,trachea,hd95,16.000160004489228,3,True
+CE + Dice,3,Patient_12,aorta,assd,2.9029318678996634,3,True
+CE + Dice,3,Patient_12,aorta,dice,0.8584303030141373,3,True
+CE + Dice,3,Patient_12,aorta,hd95,14.946638364151033,3,True
+CE + Dice,3,Patient_12,esophagus,assd,1.7593057645818753,3,True
+CE + Dice,3,Patient_12,esophagus,dice,0.7534796230955599,3,True
+CE + Dice,3,Patient_12,esophagus,hd95,7.915669765618927,3,True
+CE + Dice,3,Patient_12,heart,assd,5.167605760798545,3,True
+CE + Dice,3,Patient_12,heart,dice,0.8787384526234429,3,True
+CE + Dice,3,Patient_12,heart,hd95,16.32972019204303,3,True
+CE + Dice,3,Patient_12,trachea,assd,1.2723950960466028,3,True
+CE + Dice,3,Patient_12,trachea,dice,0.8846505727157722,3,True
+CE + Dice,3,Patient_12,trachea,hd95,9.03194926999779,3,True
+CE + Dice,0,Patient_13,aorta,assd,1.239010132669593,3,True
+CE + Dice,0,Patient_13,aorta,dice,0.9261304603381099,3,True
+CE + Dice,0,Patient_13,aorta,hd95,6.4700632695612255,3,True
+CE + Dice,0,Patient_13,esophagus,assd,1.7797047624364657,3,True
+CE + Dice,0,Patient_13,esophagus,dice,0.7342497687022639,3,True
+CE + Dice,0,Patient_13,esophagus,hd95,6.314963314406139,3,True
+CE + Dice,0,Patient_13,heart,assd,2.903419133599787,3,True
+CE + Dice,0,Patient_13,heart,dice,0.9234817875713134,3,True
+CE + Dice,0,Patient_13,heart,hd95,9.392107851672122,3,True
+CE + Dice,0,Patient_13,trachea,assd,1.2459321291677394,3,True
+CE + Dice,0,Patient_13,trachea,dice,0.9143628670767602,3,True
+CE + Dice,0,Patient_13,trachea,hd95,7.396316587547048,3,True
+CE + Dice,1,Patient_14,aorta,assd,4.037004023399507,3,True
+CE + Dice,1,Patient_14,aorta,dice,0.7627924816118922,3,True
+CE + Dice,1,Patient_14,aorta,hd95,16.32075120482213,3,True
+CE + Dice,1,Patient_14,esophagus,assd,5.5741456448125435,3,True
+CE + Dice,1,Patient_14,esophagus,dice,0.3688697947051398,3,True
+CE + Dice,1,Patient_14,esophagus,hd95,39.58464353112266,3,True
+CE + Dice,1,Patient_14,heart,assd,5.0272503280340874,3,True
+CE + Dice,1,Patient_14,heart,dice,0.8571796190991949,3,True
+CE + Dice,1,Patient_14,heart,hd95,19.019353785962092,3,True
+CE + Dice,1,Patient_14,trachea,assd,7.533968641640217,3,True
+CE + Dice,1,Patient_14,trachea,dice,0.4068392146206692,3,True
+CE + Dice,1,Patient_14,trachea,hd95,31.78139609996615,3,True
+CE + Dice,1,Patient_15,aorta,assd,2.7791298827652504,3,True
+CE + Dice,1,Patient_15,aorta,dice,0.8329817962904458,3,True
+CE + Dice,1,Patient_15,aorta,hd95,10.427391574430905,3,True
+CE + Dice,1,Patient_15,esophagus,assd,6.848999034458302,3,True
+CE + Dice,1,Patient_15,esophagus,dice,0.5157003751681001,3,True
+CE + Dice,1,Patient_15,esophagus,hd95,31.064485261449246,3,True
+CE + Dice,1,Patient_15,heart,assd,2.414390530016993,3,True
+CE + Dice,1,Patient_15,heart,dice,0.9474144268080148,3,True
+CE + Dice,1,Patient_15,heart,hd95,23.333333333333332,3,True
+CE + Dice,1,Patient_15,trachea,assd,1.484342650363029,3,True
+CE + Dice,1,Patient_15,trachea,dice,0.9034062630888625,3,True
+CE + Dice,1,Patient_15,trachea,hd95,5.202066378510359,3,True
+CE + Dice,0,Patient_16,aorta,assd,1.3983074573110628,3,True
+CE + Dice,0,Patient_16,aorta,dice,0.9316713531292375,3,True
+CE + Dice,0,Patient_16,aorta,hd95,11.046130401417967,3,True
+CE + Dice,0,Patient_16,esophagus,assd,1.9114358735641168,3,True
+CE + Dice,0,Patient_16,esophagus,dice,0.7890815552324826,3,True
+CE + Dice,0,Patient_16,esophagus,hd95,9.482993381196101,3,True
+CE + Dice,0,Patient_16,heart,assd,2.3189022928315803,3,True
+CE + Dice,0,Patient_16,heart,dice,0.9324620837539026,3,True
+CE + Dice,0,Patient_16,heart,hd95,5.834360012752474,3,True
+CE + Dice,0,Patient_16,trachea,assd,0.9136966360395676,3,True
+CE + Dice,0,Patient_16,trachea,dice,0.9035625085074731,3,True
+CE + Dice,0,Patient_16,trachea,hd95,4.921419745496843,3,True
+CE + Dice,3,Patient_17,aorta,assd,2.173554947349952,3,True
+CE + Dice,3,Patient_17,aorta,dice,0.8781153022173727,3,True
+CE + Dice,3,Patient_17,aorta,hd95,20.877113639706824,3,True
+CE + Dice,3,Patient_17,esophagus,assd,1.6691676033298724,3,True
+CE + Dice,3,Patient_17,esophagus,dice,0.7689182532112092,3,True
+CE + Dice,3,Patient_17,esophagus,hd95,7.213019128167063,3,True
+CE + Dice,3,Patient_17,heart,assd,1.511508461026675,3,True
+CE + Dice,3,Patient_17,heart,dice,0.9588099127120652,3,True
+CE + Dice,3,Patient_17,heart,hd95,7.327694299751021,3,True
+CE + Dice,3,Patient_17,trachea,assd,1.402968941125032,3,True
+CE + Dice,3,Patient_17,trachea,dice,0.8873484082442445,3,True
+CE + Dice,3,Patient_17,trachea,hd95,13.333333333333334,3,True
+CE + Dice,1,Patient_18,aorta,assd,2.195151050571909,3,True
+CE + Dice,1,Patient_18,aorta,dice,0.8720883109853242,3,True
+CE + Dice,1,Patient_18,aorta,hd95,11.222294384057422,3,True
+CE + Dice,1,Patient_18,esophagus,assd,1.8286146260764433,3,True
+CE + Dice,1,Patient_18,esophagus,dice,0.7635272029861949,3,True
+CE + Dice,1,Patient_18,esophagus,hd95,6.679860724384042,3,True
+CE + Dice,1,Patient_18,heart,assd,3.1923637309503543,3,True
+CE + Dice,1,Patient_18,heart,dice,0.9349112397418393,3,True
+CE + Dice,1,Patient_18,heart,hd95,11.427627041647723,3,True
+CE + Dice,1,Patient_18,trachea,assd,0.726561576099433,3,True
+CE + Dice,1,Patient_18,trachea,dice,0.939474489955756,3,True
+CE + Dice,1,Patient_18,trachea,hd95,5.031491596638478,3,True
+CE + Dice,2,Patient_19,aorta,assd,2.654852742275235,3,True
+CE + Dice,2,Patient_19,aorta,dice,0.8815435424664498,3,True
+CE + Dice,2,Patient_19,aorta,hd95,12.685505558786568,3,True
+CE + Dice,2,Patient_19,esophagus,assd,1.8572422250668363,3,True
+CE + Dice,2,Patient_19,esophagus,dice,0.7023370514154529,3,True
+CE + Dice,2,Patient_19,esophagus,hd95,9.281068478753534,3,True
+CE + Dice,2,Patient_19,heart,assd,2.3707035682913555,3,True
+CE + Dice,2,Patient_19,heart,dice,0.9372261136389506,3,True
+CE + Dice,2,Patient_19,heart,hd95,7.5,3,True
+CE + Dice,2,Patient_19,trachea,assd,4.5396537923145095,3,True
+CE + Dice,2,Patient_19,trachea,dice,0.836057976337016,3,True
+CE + Dice,2,Patient_19,trachea,hd95,79.05702269400246,3,True
+CE + Dice,3,Patient_20,aorta,assd,5.950475198108286,3,True
+CE + Dice,3,Patient_20,aorta,dice,0.8165086271382483,3,True
+CE + Dice,3,Patient_20,aorta,hd95,38.862501158967014,3,True
+CE + Dice,3,Patient_20,esophagus,assd,9.502275898716341,3,True
+CE + Dice,3,Patient_20,esophagus,dice,0.4527171638374365,3,True
+CE + Dice,3,Patient_20,esophagus,hd95,36.81070469375596,3,True
+CE + Dice,3,Patient_20,heart,assd,7.070875810308401,3,True
+CE + Dice,3,Patient_20,heart,dice,0.8681964141255736,3,True
+CE + Dice,3,Patient_20,heart,hd95,34.280350236671424,3,True
+CE + Dice,3,Patient_20,trachea,assd,3.047311201112935,3,True
+CE + Dice,3,Patient_20,trachea,dice,0.7987385007210764,3,True
+CE + Dice,3,Patient_20,trachea,hd95,13.97505248708623,3,True
+CE + Dice,0,Patient_21,aorta,assd,1.1785861736009462,3,True
+CE + Dice,0,Patient_21,aorta,dice,0.933079785993832,3,True
+CE + Dice,0,Patient_21,aorta,hd95,7.851271923312517,3,True
+CE + Dice,0,Patient_21,esophagus,assd,1.4960327104467168,3,True
+CE + Dice,0,Patient_21,esophagus,dice,0.7035941915689111,3,True
+CE + Dice,0,Patient_21,esophagus,hd95,5.828268866917054,3,True
+CE + Dice,0,Patient_21,heart,assd,2.5904278751893144,3,True
+CE + Dice,0,Patient_21,heart,dice,0.9296579284661606,3,True
+CE + Dice,0,Patient_21,heart,hd95,11.21510487550446,3,True
+CE + Dice,0,Patient_21,trachea,assd,1.108151583759956,3,True
+CE + Dice,0,Patient_21,trachea,dice,0.9078402374478044,3,True
+CE + Dice,0,Patient_21,trachea,hd95,7.4224178722088565,3,True
+CE + Dice,0,Patient_22,aorta,assd,1.5130167523978437,3,True
+CE + Dice,0,Patient_22,aorta,dice,0.9078431232138376,3,True
+CE + Dice,0,Patient_22,aorta,hd95,7.521103668922357,3,True
+CE + Dice,0,Patient_22,esophagus,assd,3.198150190870655,3,True
+CE + Dice,0,Patient_22,esophagus,dice,0.6195226576735758,3,True
+CE + Dice,0,Patient_22,esophagus,hd95,10.631672788175868,3,True
+CE + Dice,0,Patient_22,heart,assd,5.083989085969178,3,True
+CE + Dice,0,Patient_22,heart,dice,0.9075983568398492,3,True
+CE + Dice,0,Patient_22,heart,hd95,28.88493179462128,3,True
+CE + Dice,0,Patient_22,trachea,assd,3.0939180905134376,3,True
+CE + Dice,0,Patient_22,trachea,dice,0.9179454546364586,3,True
+CE + Dice,0,Patient_22,trachea,hd95,79.76454086815001,3,True
+CE + Dice,1,Patient_23,aorta,assd,2.603156782930125,3,True
+CE + Dice,1,Patient_23,aorta,dice,0.8790419969360829,3,True
+CE + Dice,1,Patient_23,aorta,hd95,20.16751351612812,3,True
+CE + Dice,1,Patient_23,esophagus,assd,3.94762089002608,3,True
+CE + Dice,1,Patient_23,esophagus,dice,0.6267689179815563,3,True
+CE + Dice,1,Patient_23,esophagus,hd95,17.190157124652217,3,True
+CE + Dice,1,Patient_23,heart,assd,1.195189113292394,3,True
+CE + Dice,1,Patient_23,heart,dice,0.966756392863132,3,True
+CE + Dice,1,Patient_23,heart,hd95,4.389891924655971,3,True
+CE + Dice,1,Patient_23,trachea,assd,1.2896654578563596,3,True
+CE + Dice,1,Patient_23,trachea,dice,0.907951384658105,3,True
+CE + Dice,1,Patient_23,trachea,hd95,7.521103668922357,3,True
+CE + Dice,1,Patient_24,aorta,assd,6.804207329285749,3,True
+CE + Dice,1,Patient_24,aorta,dice,0.6209883329990477,3,True
+CE + Dice,1,Patient_24,aorta,hd95,32.49847761871066,3,True
+CE + Dice,1,Patient_24,esophagus,assd,6.665617028980513,3,True
+CE + Dice,1,Patient_24,esophagus,dice,0.4333754177249853,3,True
+CE + Dice,1,Patient_24,esophagus,hd95,27.22156159799766,3,True
+CE + Dice,1,Patient_24,heart,assd,3.854529924134905,3,True
+CE + Dice,1,Patient_24,heart,dice,0.9012384846354357,3,True
+CE + Dice,1,Patient_24,heart,hd95,15.554051185409344,3,True
+CE + Dice,1,Patient_24,trachea,assd,2.1155491795722594,3,True
+CE + Dice,1,Patient_24,trachea,dice,0.8110489033796847,3,True
+CE + Dice,1,Patient_24,trachea,hd95,14.931540800085479,3,True
+CE + Dice,3,Patient_25,aorta,assd,1.7970927268039913,3,True
+CE + Dice,3,Patient_25,aorta,dice,0.8945871880141748,3,True
+CE + Dice,3,Patient_25,aorta,hd95,13.62146600068794,3,True
+CE + Dice,3,Patient_25,esophagus,assd,6.888179018249249,3,True
+CE + Dice,3,Patient_25,esophagus,dice,0.5864171001247774,3,True
+CE + Dice,3,Patient_25,esophagus,hd95,31.840960787079506,3,True
+CE + Dice,3,Patient_25,heart,assd,2.159404233981288,3,True
+CE + Dice,3,Patient_25,heart,dice,0.9408195445576067,3,True
+CE + Dice,3,Patient_25,heart,hd95,6.666666666666667,3,True
+CE + Dice,3,Patient_25,trachea,assd,1.5087193536231522,3,True
+CE + Dice,3,Patient_25,trachea,dice,0.8694779313171072,3,True
+CE + Dice,3,Patient_25,trachea,hd95,10.490660621501489,3,True
+CE + Dice,3,Patient_26,aorta,assd,2.221824963431471,3,True
+CE + Dice,3,Patient_26,aorta,dice,0.8952882131724799,3,True
+CE + Dice,3,Patient_26,aorta,hd95,17.34317449328867,3,True
+CE + Dice,3,Patient_26,esophagus,assd,1.3808383770902768,3,True
+CE + Dice,3,Patient_26,esophagus,dice,0.8243832052946239,3,True
+CE + Dice,3,Patient_26,esophagus,hd95,5.472847146479176,3,True
+CE + Dice,3,Patient_26,heart,assd,3.4418068303927245,3,True
+CE + Dice,3,Patient_26,heart,dice,0.9034310478729117,3,True
+CE + Dice,3,Patient_26,heart,hd95,11.421397529867983,3,True
+CE + Dice,3,Patient_26,trachea,assd,1.99124667050705,3,True
+CE + Dice,3,Patient_26,trachea,dice,0.8615638249953372,3,True
+CE + Dice,3,Patient_26,trachea,hd95,10.93457847469344,3,True
+CE + Dice,3,Patient_27,aorta,assd,2.1178942676675043,3,True
+CE + Dice,3,Patient_27,aorta,dice,0.895115763642913,3,True
+CE + Dice,3,Patient_27,aorta,hd95,15.384163169361129,3,True
+CE + Dice,3,Patient_27,esophagus,assd,2.236824072454261,3,True
+CE + Dice,3,Patient_27,esophagus,dice,0.6178487953922286,3,True
+CE + Dice,3,Patient_27,esophagus,hd95,8.058589599824026,3,True
+CE + Dice,3,Patient_27,heart,assd,2.425864927084693,3,True
+CE + Dice,3,Patient_27,heart,dice,0.9303887820210712,3,True
+CE + Dice,3,Patient_27,heart,hd95,7.837781194401338,3,True
+CE + Dice,3,Patient_27,trachea,assd,1.4399483144846517,3,True
+CE + Dice,3,Patient_27,trachea,dice,0.8527695667611432,3,True
+CE + Dice,3,Patient_27,trachea,hd95,10.659874754246394,3,True
+CE + Dice,0,Patient_28,aorta,assd,2.7268020340796877,3,True
+CE + Dice,0,Patient_28,aorta,dice,0.8877995135265658,3,True
+CE + Dice,0,Patient_28,aorta,hd95,18.988469390083225,3,True
+CE + Dice,0,Patient_28,esophagus,assd,2.9657312649846563,3,True
+CE + Dice,0,Patient_28,esophagus,dice,0.6338508637072809,3,True
+CE + Dice,0,Patient_28,esophagus,hd95,13.366266896435453,3,True
+CE + Dice,0,Patient_28,heart,assd,6.417780303063502,3,True
+CE + Dice,0,Patient_28,heart,dice,0.8708890892515382,3,True
+CE + Dice,0,Patient_28,heart,hd95,29.166666666666668,3,True
+CE + Dice,0,Patient_28,trachea,assd,1.3705632293196457,3,True
+CE + Dice,0,Patient_28,trachea,dice,0.8756259499852964,3,True
+CE + Dice,0,Patient_28,trachea,hd95,10.818754500327875,3,True
+CE + Dice,2,Patient_29,aorta,assd,1.8767824429946491,3,True
+CE + Dice,2,Patient_29,aorta,dice,0.8974083506483627,3,True
+CE + Dice,2,Patient_29,aorta,hd95,9.219446413658437,3,True
+CE + Dice,2,Patient_29,esophagus,assd,1.3423284195078218,3,True
+CE + Dice,2,Patient_29,esophagus,dice,0.7827663119494863,3,True
+CE + Dice,2,Patient_29,esophagus,hd95,5.017892872476888,3,True
+CE + Dice,2,Patient_29,heart,assd,2.7482260051418,3,True
+CE + Dice,2,Patient_29,heart,dice,0.9110441908036355,3,True
+CE + Dice,2,Patient_29,heart,hd95,9.153963963538288,3,True
+CE + Dice,2,Patient_29,trachea,assd,1.7382659883038334,3,True
+CE + Dice,2,Patient_29,trachea,dice,0.903289757021929,3,True
+CE + Dice,2,Patient_29,trachea,hd95,15.003249101810619,3,True
+CE + Dice,0,Patient_30,aorta,assd,3.029792338101833,3,True
+CE + Dice,0,Patient_30,aorta,dice,0.817396599616873,3,True
+CE + Dice,0,Patient_30,aorta,hd95,12.138405141778463,3,True
+CE + Dice,0,Patient_30,esophagus,assd,3.7666803215806848,3,True
+CE + Dice,0,Patient_30,esophagus,dice,0.6530875677639486,3,True
+CE + Dice,0,Patient_30,esophagus,hd95,19.565862693753367,3,True
+CE + Dice,0,Patient_30,heart,assd,6.194266617424653,3,True
+CE + Dice,0,Patient_30,heart,dice,0.8655364891299916,3,True
+CE + Dice,0,Patient_30,heart,hd95,20.511186045395764,3,True
+CE + Dice,0,Patient_30,trachea,assd,1.9953844389270536,3,True
+CE + Dice,0,Patient_30,trachea,dice,0.8191349049178105,3,True
+CE + Dice,0,Patient_30,trachea,hd95,10.356480185249032,3,True
+CE + Dice,3,Patient_31,aorta,assd,1.2337410563724658,3,True
+CE + Dice,3,Patient_31,aorta,dice,0.9256801465572689,3,True
+CE + Dice,3,Patient_31,aorta,hd95,9.393636262150162,3,True
+CE + Dice,3,Patient_31,esophagus,assd,1.379238496236817,3,True
+CE + Dice,3,Patient_31,esophagus,dice,0.8004124306812064,3,True
+CE + Dice,3,Patient_31,esophagus,hd95,5.572262327674668,3,True
+CE + Dice,3,Patient_31,heart,assd,1.811173686889742,3,True
+CE + Dice,3,Patient_31,heart,dice,0.9508430085816214,3,True
+CE + Dice,3,Patient_31,heart,hd95,6.138429518274023,3,True
+CE + Dice,3,Patient_31,trachea,assd,1.4370537351565096,3,True
+CE + Dice,3,Patient_31,trachea,dice,0.9049482634646456,3,True
+CE + Dice,3,Patient_31,trachea,hd95,12.34199178808624,3,True
+CE + Dice,3,Patient_32,aorta,assd,2.4777340680142337,3,True
+CE + Dice,3,Patient_32,aorta,dice,0.9056505801017186,3,True
+CE + Dice,3,Patient_32,aorta,hd95,25.945003270779576,3,True
+CE + Dice,3,Patient_32,esophagus,assd,2.194793844862921,3,True
+CE + Dice,3,Patient_32,esophagus,dice,0.7979986711050527,3,True
+CE + Dice,3,Patient_32,esophagus,hd95,7.84087583755629,3,True
+CE + Dice,3,Patient_32,heart,assd,2.589131359465237,3,True
+CE + Dice,3,Patient_32,heart,dice,0.9354684482440722,3,True
+CE + Dice,3,Patient_32,heart,hd95,5.89574306656498,3,True
+CE + Dice,3,Patient_32,trachea,assd,1.3824619913738214,3,True
+CE + Dice,3,Patient_32,trachea,dice,0.8650587808519811,3,True
+CE + Dice,3,Patient_32,trachea,hd95,9.459794882641903,3,True
+CE + Dice,3,Patient_33,aorta,assd,1.4530695577030193,3,True
+CE + Dice,3,Patient_33,aorta,dice,0.9044813344130306,3,True
+CE + Dice,3,Patient_33,aorta,hd95,7.2414130903699965,3,True
+CE + Dice,3,Patient_33,esophagus,assd,2.467279382183772,3,True
+CE + Dice,3,Patient_33,esophagus,dice,0.6528642279550751,3,True
+CE + Dice,3,Patient_33,esophagus,hd95,11.718756078607186,3,True
+CE + Dice,3,Patient_33,heart,assd,2.7913190259228124,3,True
+CE + Dice,3,Patient_33,heart,dice,0.9194249502682689,3,True
+CE + Dice,3,Patient_33,heart,hd95,9.297194285711166,3,True
+CE + Dice,3,Patient_33,trachea,assd,4.005756491038954,3,True
+CE + Dice,3,Patient_33,trachea,dice,0.7644833976032572,3,True
+CE + Dice,3,Patient_33,trachea,hd95,22.458891650594353,3,True
+CE + Dice,2,Patient_34,aorta,assd,2.25517557490928,3,True
+CE + Dice,2,Patient_34,aorta,dice,0.914208702037078,3,True
+CE + Dice,2,Patient_34,aorta,hd95,15.457400344961107,3,True
+CE + Dice,2,Patient_34,esophagus,assd,4.379976025384926,3,True
+CE + Dice,2,Patient_34,esophagus,dice,0.5375805257959535,3,True
+CE + Dice,2,Patient_34,esophagus,hd95,20.6813070843728,3,True
+CE + Dice,2,Patient_34,heart,assd,4.111216576680566,3,True
+CE + Dice,2,Patient_34,heart,dice,0.8932508181207125,3,True
+CE + Dice,2,Patient_34,heart,hd95,20.40229610060766,3,True
+CE + Dice,2,Patient_34,trachea,assd,1.7554178529697217,3,True
+CE + Dice,2,Patient_34,trachea,dice,0.8500499973176732,3,True
+CE + Dice,2,Patient_34,trachea,hd95,10.179355812333824,3,True
+CE + Dice,0,Patient_35,aorta,assd,1.3120885506057949,3,True
+CE + Dice,0,Patient_35,aorta,dice,0.9141471951239594,3,True
+CE + Dice,0,Patient_35,aorta,hd95,6.90133251677396,3,True
+CE + Dice,0,Patient_35,esophagus,assd,1.9821338754164495,3,True
+CE + Dice,0,Patient_35,esophagus,dice,0.7442918147290438,3,True
+CE + Dice,0,Patient_35,esophagus,hd95,10.563444259471126,3,True
+CE + Dice,0,Patient_35,heart,assd,2.4996290637226153,3,True
+CE + Dice,0,Patient_35,heart,dice,0.9355523783701557,3,True
+CE + Dice,0,Patient_35,heart,hd95,10.666666666666666,3,True
+CE + Dice,0,Patient_35,trachea,assd,0.7447747236396275,3,True
+CE + Dice,0,Patient_35,trachea,dice,0.9281349402713511,3,True
+CE + Dice,0,Patient_35,trachea,hd95,2.6666666666666665,3,True
+CE + Dice,2,Patient_36,aorta,assd,2.151811353533336,3,True
+CE + Dice,2,Patient_36,aorta,dice,0.8703569428203037,3,True
+CE + Dice,2,Patient_36,aorta,hd95,11.965637547594364,3,True
+CE + Dice,2,Patient_36,esophagus,assd,1.5843891757275832,3,True
+CE + Dice,2,Patient_36,esophagus,dice,0.7886369896633029,3,True
+CE + Dice,2,Patient_36,esophagus,hd95,5.076156871128128,3,True
+CE + Dice,2,Patient_36,heart,assd,1.5847672253970273,3,True
+CE + Dice,2,Patient_36,heart,dice,0.9469091166688434,3,True
+CE + Dice,2,Patient_36,heart,hd95,4.605394297830992,3,True
+CE + Dice,2,Patient_36,trachea,assd,1.0555240758304971,3,True
+CE + Dice,2,Patient_36,trachea,dice,0.8801394315251567,3,True
+CE + Dice,2,Patient_36,trachea,hd95,4.282209131901783,3,True
+CE + Dice,2,Patient_37,aorta,assd,1.1216595076181048,3,True
+CE + Dice,2,Patient_37,aorta,dice,0.9182424508918176,3,True
+CE + Dice,2,Patient_37,aorta,hd95,4.501309584388955,3,True
+CE + Dice,2,Patient_37,esophagus,assd,1.5678706901615005,3,True
+CE + Dice,2,Patient_37,esophagus,dice,0.791713776756513,3,True
+CE + Dice,2,Patient_37,esophagus,hd95,6.698360442552381,3,True
+CE + Dice,2,Patient_37,heart,assd,2.178664457208215,3,True
+CE + Dice,2,Patient_37,heart,dice,0.9347543974968647,3,True
+CE + Dice,2,Patient_37,heart,hd95,9.166666666666666,3,True
+CE + Dice,2,Patient_37,trachea,assd,0.8754393715229977,3,True
+CE + Dice,2,Patient_37,trachea,dice,0.8977046312355128,3,True
+CE + Dice,2,Patient_37,trachea,hd95,5.437283563746791,3,True
+CE + Dice,1,Patient_38,aorta,assd,1.0579930973556801,3,True
+CE + Dice,1,Patient_38,aorta,dice,0.9200953495270113,3,True
+CE + Dice,1,Patient_38,aorta,hd95,4.316860571821411,3,True
+CE + Dice,1,Patient_38,esophagus,assd,1.8962729542246501,3,True
+CE + Dice,1,Patient_38,esophagus,dice,0.7127594445714943,3,True
+CE + Dice,1,Patient_38,esophagus,hd95,7.604061581154812,3,True
+CE + Dice,1,Patient_38,heart,assd,1.3795442931608122,3,True
+CE + Dice,1,Patient_38,heart,dice,0.9503246497899149,3,True
+CE + Dice,1,Patient_38,heart,hd95,4.739767735362397,3,True
+CE + Dice,1,Patient_38,trachea,assd,2.481880986981599,3,True
+CE + Dice,1,Patient_38,trachea,dice,0.8801711773453301,3,True
+CE + Dice,1,Patient_38,trachea,hd95,11.275950112822812,3,True
+CE + Dice,0,Patient_39,aorta,assd,1.1502087140361568,3,True
+CE + Dice,0,Patient_39,aorta,dice,0.9149504894080179,3,True
+CE + Dice,0,Patient_39,aorta,hd95,5.64363602027039,3,True
+CE + Dice,0,Patient_39,esophagus,assd,1.8956970603452283,3,True
+CE + Dice,0,Patient_39,esophagus,dice,0.8023330420242365,3,True
+CE + Dice,0,Patient_39,esophagus,hd95,9.601286879794339,3,True
+CE + Dice,0,Patient_39,heart,assd,4.170648973506903,3,True
+CE + Dice,0,Patient_39,heart,dice,0.9335896842615202,3,True
+CE + Dice,0,Patient_39,heart,hd95,34.719373283989505,3,True
+CE + Dice,0,Patient_39,trachea,assd,1.647680052048865,3,True
+CE + Dice,0,Patient_39,trachea,dice,0.8804559274234126,3,True
+CE + Dice,0,Patient_39,trachea,hd95,12.81551458190899,3,True
+CE + Dice,1,Patient_40,aorta,assd,1.598886973142083,3,True
+CE + Dice,1,Patient_40,aorta,dice,0.9102599756213108,3,True
+CE + Dice,1,Patient_40,aorta,hd95,9.144923081324412,3,True
+CE + Dice,1,Patient_40,esophagus,assd,1.441036049226481,3,True
+CE + Dice,1,Patient_40,esophagus,dice,0.8021006597256336,3,True
+CE + Dice,1,Patient_40,esophagus,hd95,4.581756250319054,3,True
+CE + Dice,1,Patient_40,heart,assd,1.439413617605009,3,True
+CE + Dice,1,Patient_40,heart,dice,0.9555893899413257,3,True
+CE + Dice,1,Patient_40,heart,hd95,5.431190065221043,3,True
+CE + Dice,1,Patient_40,trachea,assd,0.7324142409732154,3,True
+CE + Dice,1,Patient_40,trachea,dice,0.9277530957698031,3,True
+CE + Dice,1,Patient_40,trachea,hd95,4.259058111972755,3,True
+Weighted CE + Dice,0,Patient_01,aorta,assd,,2,False
+Weighted CE + Dice,0,Patient_01,aorta,dice,,2,False
+Weighted CE + Dice,0,Patient_01,aorta,hd95,,2,False
+Weighted CE + Dice,0,Patient_01,esophagus,assd,,2,False
+Weighted CE + Dice,0,Patient_01,esophagus,dice,,2,False
+Weighted CE + Dice,0,Patient_01,esophagus,hd95,,2,False
+Weighted CE + Dice,0,Patient_01,heart,assd,,2,False
+Weighted CE + Dice,0,Patient_01,heart,dice,,2,False
+Weighted CE + Dice,0,Patient_01,heart,hd95,,2,False
+Weighted CE + Dice,0,Patient_01,trachea,assd,,2,False
+Weighted CE + Dice,0,Patient_01,trachea,dice,,2,False
+Weighted CE + Dice,0,Patient_01,trachea,hd95,,2,False
+Weighted CE + Dice,0,Patient_02,aorta,assd,,2,False
+Weighted CE + Dice,0,Patient_02,aorta,dice,,2,False
+Weighted CE + Dice,0,Patient_02,aorta,hd95,,2,False
+Weighted CE + Dice,0,Patient_02,esophagus,assd,,2,False
+Weighted CE + Dice,0,Patient_02,esophagus,dice,,2,False
+Weighted CE + Dice,0,Patient_02,esophagus,hd95,,2,False
+Weighted CE + Dice,0,Patient_02,heart,assd,,2,False
+Weighted CE + Dice,0,Patient_02,heart,dice,,2,False
+Weighted CE + Dice,0,Patient_02,heart,hd95,,2,False
+Weighted CE + Dice,0,Patient_02,trachea,assd,,2,False
+Weighted CE + Dice,0,Patient_02,trachea,dice,,2,False
+Weighted CE + Dice,0,Patient_02,trachea,hd95,,2,False
+Weighted CE + Dice,3,Patient_03,aorta,assd,4.703316088015489,3,True
+Weighted CE + Dice,3,Patient_03,aorta,dice,0.6840363470719577,3,True
+Weighted CE + Dice,3,Patient_03,aorta,hd95,26.49670072895346,3,True
+Weighted CE + Dice,3,Patient_03,esophagus,assd,4.3105399461577525,3,True
+Weighted CE + Dice,3,Patient_03,esophagus,dice,0.47800549670344417,3,True
+Weighted CE + Dice,3,Patient_03,esophagus,hd95,18.314104704921167,3,True
+Weighted CE + Dice,3,Patient_03,heart,assd,2.1283031249788853,3,True
+Weighted CE + Dice,3,Patient_03,heart,dice,0.9207016504272536,3,True
+Weighted CE + Dice,3,Patient_03,heart,hd95,6.666666666666667,3,True
+Weighted CE + Dice,3,Patient_03,trachea,assd,1.6657420411301056,3,True
+Weighted CE + Dice,3,Patient_03,trachea,dice,0.8207402916208929,3,True
+Weighted CE + Dice,3,Patient_03,trachea,hd95,14.52897980587897,3,True
+Weighted CE + Dice,2,Patient_04,aorta,assd,1.4240812784124535,3,True
+Weighted CE + Dice,2,Patient_04,aorta,dice,0.9109756069753954,3,True
+Weighted CE + Dice,2,Patient_04,aorta,hd95,5.933129096056093,3,True
+Weighted CE + Dice,2,Patient_04,esophagus,assd,2.156876887005096,3,True
+Weighted CE + Dice,2,Patient_04,esophagus,dice,0.7507271671027747,3,True
+Weighted CE + Dice,2,Patient_04,esophagus,hd95,9.627961642132009,3,True
+Weighted CE + Dice,2,Patient_04,heart,assd,1.8193930598168355,3,True
+Weighted CE + Dice,2,Patient_04,heart,dice,0.9447349043861744,3,True
+Weighted CE + Dice,2,Patient_04,heart,hd95,5.0972142652505665,3,True
+Weighted CE + Dice,2,Patient_04,trachea,assd,1.3160035387100537,3,True
+Weighted CE + Dice,2,Patient_04,trachea,dice,0.8814789371114896,3,True
+Weighted CE + Dice,2,Patient_04,trachea,hd95,9.301346671737578,3,True
+Weighted CE + Dice,2,Patient_05,aorta,assd,2.8857002261364797,3,True
+Weighted CE + Dice,2,Patient_05,aorta,dice,0.8391989085575529,3,True
+Weighted CE + Dice,2,Patient_05,aorta,hd95,21.333333333333332,3,True
+Weighted CE + Dice,2,Patient_05,esophagus,assd,2.538971381074129,3,True
+Weighted CE + Dice,2,Patient_05,esophagus,dice,0.6325937463538526,3,True
+Weighted CE + Dice,2,Patient_05,esophagus,hd95,8.539289924063093,3,True
+Weighted CE + Dice,2,Patient_05,heart,assd,6.3722232253627284,3,True
+Weighted CE + Dice,2,Patient_05,heart,dice,0.8828423738023917,3,True
+Weighted CE + Dice,2,Patient_05,heart,hd95,31.530198794622976,3,True
+Weighted CE + Dice,2,Patient_05,trachea,assd,3.920459284647711,3,True
+Weighted CE + Dice,2,Patient_05,trachea,dice,0.7807990679539295,3,True
+Weighted CE + Dice,2,Patient_05,trachea,hd95,17.60649775423357,3,True
+Weighted CE + Dice,1,Patient_06,aorta,assd,2.6294655240300298,3,True
+Weighted CE + Dice,1,Patient_06,aorta,dice,0.9074384744198758,3,True
+Weighted CE + Dice,1,Patient_06,aorta,hd95,15.0,3,True
+Weighted CE + Dice,1,Patient_06,esophagus,assd,2.4371430347328897,3,True
+Weighted CE + Dice,1,Patient_06,esophagus,dice,0.6609461116453567,3,True
+Weighted CE + Dice,1,Patient_06,esophagus,hd95,10.16900544583818,3,True
+Weighted CE + Dice,1,Patient_06,heart,assd,3.3020917912737793,3,True
+Weighted CE + Dice,1,Patient_06,heart,dice,0.9164147501167607,3,True
+Weighted CE + Dice,1,Patient_06,heart,hd95,14.166666666666666,3,True
+Weighted CE + Dice,1,Patient_06,trachea,assd,1.5866093494120037,3,True
+Weighted CE + Dice,1,Patient_06,trachea,dice,0.904314256635763,3,True
+Weighted CE + Dice,1,Patient_06,trachea,hd95,10.409006121722022,3,True
+Weighted CE + Dice,2,Patient_07,aorta,assd,2.2088689468401292,3,True
+Weighted CE + Dice,2,Patient_07,aorta,dice,0.8762340409396484,3,True
+Weighted CE + Dice,2,Patient_07,aorta,hd95,15.436911281594663,3,True
+Weighted CE + Dice,2,Patient_07,esophagus,assd,2.253834331889276,3,True
+Weighted CE + Dice,2,Patient_07,esophagus,dice,0.7429703562548458,3,True
+Weighted CE + Dice,2,Patient_07,esophagus,hd95,12.541709104658457,3,True
+Weighted CE + Dice,2,Patient_07,heart,assd,4.01951667404112,3,True
+Weighted CE + Dice,2,Patient_07,heart,dice,0.9243369143581676,3,True
+Weighted CE + Dice,2,Patient_07,heart,hd95,28.558922378412845,3,True
+Weighted CE + Dice,2,Patient_07,trachea,assd,1.1875974045888162,3,True
+Weighted CE + Dice,2,Patient_07,trachea,dice,0.9038895977426353,3,True
+Weighted CE + Dice,2,Patient_07,trachea,hd95,9.337015228618087,3,True
+Weighted CE + Dice,1,Patient_08,aorta,assd,5.464593183916366,3,True
+Weighted CE + Dice,1,Patient_08,aorta,dice,0.8638392169959009,3,True
+Weighted CE + Dice,1,Patient_08,aorta,hd95,51.77955796390878,3,True
+Weighted CE + Dice,1,Patient_08,esophagus,assd,3.032241161706889,3,True
+Weighted CE + Dice,1,Patient_08,esophagus,dice,0.5458447975118779,3,True
+Weighted CE + Dice,1,Patient_08,esophagus,hd95,15.10904680259066,3,True
+Weighted CE + Dice,1,Patient_08,heart,assd,4.720954644138621,3,True
+Weighted CE + Dice,1,Patient_08,heart,dice,0.8541655425809123,3,True
+Weighted CE + Dice,1,Patient_08,heart,hd95,18.84387740698507,3,True
+Weighted CE + Dice,1,Patient_08,trachea,assd,2.690350272214166,3,True
+Weighted CE + Dice,1,Patient_08,trachea,dice,0.867056528447233,3,True
+Weighted CE + Dice,1,Patient_08,trachea,hd95,21.806244435048598,3,True
+Weighted CE + Dice,2,Patient_09,aorta,assd,3.212994277474749,3,True
+Weighted CE + Dice,2,Patient_09,aorta,dice,0.8300955016957096,3,True
+Weighted CE + Dice,2,Patient_09,aorta,hd95,19.488529815977333,3,True
+Weighted CE + Dice,2,Patient_09,esophagus,assd,1.5924362843298911,3,True
+Weighted CE + Dice,2,Patient_09,esophagus,dice,0.7579913953562586,3,True
+Weighted CE + Dice,2,Patient_09,esophagus,hd95,8.8792330214714,3,True
+Weighted CE + Dice,2,Patient_09,heart,assd,3.67658722271206,3,True
+Weighted CE + Dice,2,Patient_09,heart,dice,0.9054431130736508,3,True
+Weighted CE + Dice,2,Patient_09,heart,hd95,10.572676818160156,3,True
+Weighted CE + Dice,2,Patient_09,trachea,assd,1.1547360298454237,3,True
+Weighted CE + Dice,2,Patient_09,trachea,dice,0.9086743996337656,3,True
+Weighted CE + Dice,2,Patient_09,trachea,hd95,10.833333333333334,3,True
+Weighted CE + Dice,2,Patient_10,aorta,assd,3.0514226676387612,3,True
+Weighted CE + Dice,2,Patient_10,aorta,dice,0.9153433845038285,3,True
+Weighted CE + Dice,2,Patient_10,aorta,hd95,51.926927821954536,3,True
+Weighted CE + Dice,2,Patient_10,esophagus,assd,2.178534435999713,3,True
+Weighted CE + Dice,2,Patient_10,esophagus,dice,0.7698741194453156,3,True
+Weighted CE + Dice,2,Patient_10,esophagus,hd95,13.333333333333334,3,True
+Weighted CE + Dice,2,Patient_10,heart,assd,4.602957936073884,3,True
+Weighted CE + Dice,2,Patient_10,heart,dice,0.900459042433737,3,True
+Weighted CE + Dice,2,Patient_10,heart,hd95,26.00680963123466,3,True
+Weighted CE + Dice,2,Patient_10,trachea,assd,0.880813763885126,3,True
+Weighted CE + Dice,2,Patient_10,trachea,dice,0.9167730154472462,3,True
+Weighted CE + Dice,2,Patient_10,trachea,hd95,5.9071967460406825,3,True
+Weighted CE + Dice,1,Patient_11,aorta,assd,2.052309518213846,3,True
+Weighted CE + Dice,1,Patient_11,aorta,dice,0.9214443185458602,3,True
+Weighted CE + Dice,1,Patient_11,aorta,hd95,24.950777143754323,3,True
+Weighted CE + Dice,1,Patient_11,esophagus,assd,2.9567857052679103,3,True
+Weighted CE + Dice,1,Patient_11,esophagus,dice,0.6147812119760677,3,True
+Weighted CE + Dice,1,Patient_11,esophagus,hd95,13.876156744488327,3,True
+Weighted CE + Dice,1,Patient_11,heart,assd,2.4668068723635503,3,True
+Weighted CE + Dice,1,Patient_11,heart,dice,0.9446605420952242,3,True
+Weighted CE + Dice,1,Patient_11,heart,hd95,15.078602094767147,3,True
+Weighted CE + Dice,1,Patient_11,trachea,assd,1.5378299998935727,3,True
+Weighted CE + Dice,1,Patient_11,trachea,dice,0.8808950156755069,3,True
+Weighted CE + Dice,1,Patient_11,trachea,hd95,13.81540646802915,3,True
+Weighted CE + Dice,3,Patient_12,aorta,assd,2.9736822820550124,3,True
+Weighted CE + Dice,3,Patient_12,aorta,dice,0.8544703939642116,3,True
+Weighted CE + Dice,3,Patient_12,aorta,hd95,13.48610067773796,3,True
+Weighted CE + Dice,3,Patient_12,esophagus,assd,2.05758474862847,3,True
+Weighted CE + Dice,3,Patient_12,esophagus,dice,0.7360669388302684,3,True
+Weighted CE + Dice,3,Patient_12,esophagus,hd95,9.349250529098684,3,True
+Weighted CE + Dice,3,Patient_12,heart,assd,5.012854911454113,3,True
+Weighted CE + Dice,3,Patient_12,heart,dice,0.8789657288172936,3,True
+Weighted CE + Dice,3,Patient_12,heart,hd95,15.333333333333334,3,True
+Weighted CE + Dice,3,Patient_12,trachea,assd,1.3301790008012067,3,True
+Weighted CE + Dice,3,Patient_12,trachea,dice,0.8812079871749048,3,True
+Weighted CE + Dice,3,Patient_12,trachea,hd95,8.734769563008673,3,True
+Weighted CE + Dice,0,Patient_13,aorta,assd,,2,False
+Weighted CE + Dice,0,Patient_13,aorta,dice,,2,False
+Weighted CE + Dice,0,Patient_13,aorta,hd95,,2,False
+Weighted CE + Dice,0,Patient_13,esophagus,assd,,2,False
+Weighted CE + Dice,0,Patient_13,esophagus,dice,,2,False
+Weighted CE + Dice,0,Patient_13,esophagus,hd95,,2,False
+Weighted CE + Dice,0,Patient_13,heart,assd,,2,False
+Weighted CE + Dice,0,Patient_13,heart,dice,,2,False
+Weighted CE + Dice,0,Patient_13,heart,hd95,,2,False
+Weighted CE + Dice,0,Patient_13,trachea,assd,,2,False
+Weighted CE + Dice,0,Patient_13,trachea,dice,,2,False
+Weighted CE + Dice,0,Patient_13,trachea,hd95,,2,False
+Weighted CE + Dice,1,Patient_14,aorta,assd,5.041435082015056,3,True
+Weighted CE + Dice,1,Patient_14,aorta,dice,0.7933248038845916,3,True
+Weighted CE + Dice,1,Patient_14,aorta,hd95,33.71308026932435,3,True
+Weighted CE + Dice,1,Patient_14,esophagus,assd,4.487967406331854,3,True
+Weighted CE + Dice,1,Patient_14,esophagus,dice,0.3356995888579471,3,True
+Weighted CE + Dice,1,Patient_14,esophagus,hd95,16.01498235938519,3,True
+Weighted CE + Dice,1,Patient_14,heart,assd,4.294772359590797,3,True
+Weighted CE + Dice,1,Patient_14,heart,dice,0.8650727243596842,3,True
+Weighted CE + Dice,1,Patient_14,heart,hd95,17.22051549110463,3,True
+Weighted CE + Dice,1,Patient_14,trachea,assd,10.895267797575698,3,True
+Weighted CE + Dice,1,Patient_14,trachea,dice,0.4903427511967284,3,True
+Weighted CE + Dice,1,Patient_14,trachea,hd95,65.9689422047162,3,True
+Weighted CE + Dice,1,Patient_15,aorta,assd,2.656242133075756,3,True
+Weighted CE + Dice,1,Patient_15,aorta,dice,0.8558040074919177,3,True
+Weighted CE + Dice,1,Patient_15,aorta,hd95,11.239718017926952,3,True
+Weighted CE + Dice,1,Patient_15,esophagus,assd,6.347243464039312,3,True
+Weighted CE + Dice,1,Patient_15,esophagus,dice,0.5172096887522765,3,True
+Weighted CE + Dice,1,Patient_15,esophagus,hd95,31.44489795402353,3,True
+Weighted CE + Dice,1,Patient_15,heart,assd,2.0843944333379256,3,True
+Weighted CE + Dice,1,Patient_15,heart,dice,0.9442132006764788,3,True
+Weighted CE + Dice,1,Patient_15,heart,hd95,7.279057956921314,3,True
+Weighted CE + Dice,1,Patient_15,trachea,assd,1.3660787978939013,3,True
+Weighted CE + Dice,1,Patient_15,trachea,dice,0.9117469073987142,3,True
+Weighted CE + Dice,1,Patient_15,trachea,hd95,6.666666666666667,3,True
+Weighted CE + Dice,0,Patient_16,aorta,assd,,2,False
+Weighted CE + Dice,0,Patient_16,aorta,dice,,2,False
+Weighted CE + Dice,0,Patient_16,aorta,hd95,,2,False
+Weighted CE + Dice,0,Patient_16,esophagus,assd,,2,False
+Weighted CE + Dice,0,Patient_16,esophagus,dice,,2,False
+Weighted CE + Dice,0,Patient_16,esophagus,hd95,,2,False
+Weighted CE + Dice,0,Patient_16,heart,assd,,2,False
+Weighted CE + Dice,0,Patient_16,heart,dice,,2,False
+Weighted CE + Dice,0,Patient_16,heart,hd95,,2,False
+Weighted CE + Dice,0,Patient_16,trachea,assd,,2,False
+Weighted CE + Dice,0,Patient_16,trachea,dice,,2,False
+Weighted CE + Dice,0,Patient_16,trachea,hd95,,2,False
+Weighted CE + Dice,3,Patient_17,aorta,assd,2.725041949268633,3,True
+Weighted CE + Dice,3,Patient_17,aorta,dice,0.8573367041692359,3,True
+Weighted CE + Dice,3,Patient_17,aorta,hd95,25.31657775019137,3,True
+Weighted CE + Dice,3,Patient_17,esophagus,assd,1.516665457584428,3,True
+Weighted CE + Dice,3,Patient_17,esophagus,dice,0.7704400714790184,3,True
+Weighted CE + Dice,3,Patient_17,esophagus,hd95,7.489162547684942,3,True
+Weighted CE + Dice,3,Patient_17,heart,assd,2.7010353687337276,3,True
+Weighted CE + Dice,3,Patient_17,heart,dice,0.9390493942388126,3,True
+Weighted CE + Dice,3,Patient_17,heart,hd95,14.597533153216778,3,True
+Weighted CE + Dice,3,Patient_17,trachea,assd,1.1067172810291617,3,True
+Weighted CE + Dice,3,Patient_17,trachea,dice,0.9118645342675595,3,True
+Weighted CE + Dice,3,Patient_17,trachea,hd95,9.166666666666666,3,True
+Weighted CE + Dice,1,Patient_18,aorta,assd,2.622821968185536,3,True
+Weighted CE + Dice,1,Patient_18,aorta,dice,0.8591790850278486,3,True
+Weighted CE + Dice,1,Patient_18,aorta,hd95,13.756612289659238,3,True
+Weighted CE + Dice,1,Patient_18,esophagus,assd,1.854360815218388,3,True
+Weighted CE + Dice,1,Patient_18,esophagus,dice,0.7732923788950862,3,True
+Weighted CE + Dice,1,Patient_18,esophagus,hd95,8.040040894762406,3,True
+Weighted CE + Dice,1,Patient_18,heart,assd,3.9392683201184115,3,True
+Weighted CE + Dice,1,Patient_18,heart,dice,0.928500899920445,3,True
+Weighted CE + Dice,1,Patient_18,heart,hd95,16.839569005015036,3,True
+Weighted CE + Dice,1,Patient_18,trachea,assd,0.6451419743579957,3,True
+Weighted CE + Dice,1,Patient_18,trachea,dice,0.9367294140454544,3,True
+Weighted CE + Dice,1,Patient_18,trachea,hd95,3.3792323609280728,3,True
+Weighted CE + Dice,2,Patient_19,aorta,assd,1.7601028274309538,3,True
+Weighted CE + Dice,2,Patient_19,aorta,dice,0.8719960431845268,3,True
+Weighted CE + Dice,2,Patient_19,aorta,hd95,5.899256936812667,3,True
+Weighted CE + Dice,2,Patient_19,esophagus,assd,1.7430027424309749,3,True
+Weighted CE + Dice,2,Patient_19,esophagus,dice,0.7216831895626958,3,True
+Weighted CE + Dice,2,Patient_19,esophagus,hd95,7.759912988123795,3,True
+Weighted CE + Dice,2,Patient_19,heart,assd,1.7133310240365969,3,True
+Weighted CE + Dice,2,Patient_19,heart,dice,0.9530395818650698,3,True
+Weighted CE + Dice,2,Patient_19,heart,hd95,5.833333333333333,3,True
+Weighted CE + Dice,2,Patient_19,trachea,assd,1.6987043729806983,3,True
+Weighted CE + Dice,2,Patient_19,trachea,dice,0.842600795687679,3,True
+Weighted CE + Dice,2,Patient_19,trachea,hd95,16.414184088219947,3,True
+Weighted CE + Dice,3,Patient_20,aorta,assd,2.6459208607374944,3,True
+Weighted CE + Dice,3,Patient_20,aorta,dice,0.843591828206184,3,True
+Weighted CE + Dice,3,Patient_20,aorta,hd95,12.472046023102251,3,True
+Weighted CE + Dice,3,Patient_20,esophagus,assd,9.761985316222908,3,True
+Weighted CE + Dice,3,Patient_20,esophagus,dice,0.43833687368552576,3,True
+Weighted CE + Dice,3,Patient_20,esophagus,hd95,43.529402740862004,3,True
+Weighted CE + Dice,3,Patient_20,heart,assd,6.612778262870641,3,True
+Weighted CE + Dice,3,Patient_20,heart,dice,0.8392838068852733,3,True
+Weighted CE + Dice,3,Patient_20,heart,hd95,24.239077174395806,3,True
+Weighted CE + Dice,3,Patient_20,trachea,assd,5.87966963702497,3,True
+Weighted CE + Dice,3,Patient_20,trachea,dice,0.6861815274380411,3,True
+Weighted CE + Dice,3,Patient_20,trachea,hd95,31.55351303903161,3,True
+Weighted CE + Dice,0,Patient_21,aorta,assd,,2,False
+Weighted CE + Dice,0,Patient_21,aorta,dice,,2,False
+Weighted CE + Dice,0,Patient_21,aorta,hd95,,2,False
+Weighted CE + Dice,0,Patient_21,esophagus,assd,,2,False
+Weighted CE + Dice,0,Patient_21,esophagus,dice,,2,False
+Weighted CE + Dice,0,Patient_21,esophagus,hd95,,2,False
+Weighted CE + Dice,0,Patient_21,heart,assd,,2,False
+Weighted CE + Dice,0,Patient_21,heart,dice,,2,False
+Weighted CE + Dice,0,Patient_21,heart,hd95,,2,False
+Weighted CE + Dice,0,Patient_21,trachea,assd,,2,False
+Weighted CE + Dice,0,Patient_21,trachea,dice,,2,False
+Weighted CE + Dice,0,Patient_21,trachea,hd95,,2,False
+Weighted CE + Dice,0,Patient_22,aorta,assd,,2,False
+Weighted CE + Dice,0,Patient_22,aorta,dice,,2,False
+Weighted CE + Dice,0,Patient_22,aorta,hd95,,2,False
+Weighted CE + Dice,0,Patient_22,esophagus,assd,,2,False
+Weighted CE + Dice,0,Patient_22,esophagus,dice,,2,False
+Weighted CE + Dice,0,Patient_22,esophagus,hd95,,2,False
+Weighted CE + Dice,0,Patient_22,heart,assd,,2,False
+Weighted CE + Dice,0,Patient_22,heart,dice,,2,False
+Weighted CE + Dice,0,Patient_22,heart,hd95,,2,False
+Weighted CE + Dice,0,Patient_22,trachea,assd,,2,False
+Weighted CE + Dice,0,Patient_22,trachea,dice,,2,False
+Weighted CE + Dice,0,Patient_22,trachea,hd95,,2,False
+Weighted CE + Dice,1,Patient_23,aorta,assd,2.874278426073585,3,True
+Weighted CE + Dice,1,Patient_23,aorta,dice,0.8807665264761226,3,True
+Weighted CE + Dice,1,Patient_23,aorta,hd95,30.331283403890165,3,True
+Weighted CE + Dice,1,Patient_23,esophagus,assd,3.719677076507379,3,True
+Weighted CE + Dice,1,Patient_23,esophagus,dice,0.6250396803561524,3,True
+Weighted CE + Dice,1,Patient_23,esophagus,hd95,14.280793889054243,3,True
+Weighted CE + Dice,1,Patient_23,heart,assd,2.1081331752673407,3,True
+Weighted CE + Dice,1,Patient_23,heart,dice,0.959897391165299,3,True
+Weighted CE + Dice,1,Patient_23,heart,hd95,21.180764405035553,3,True
+Weighted CE + Dice,1,Patient_23,trachea,assd,1.0919565487467122,3,True
+Weighted CE + Dice,1,Patient_23,trachea,dice,0.8976056688479989,3,True
+Weighted CE + Dice,1,Patient_23,trachea,hd95,7.603201197358181,3,True
+Weighted CE + Dice,1,Patient_24,aorta,assd,7.618635239827938,3,True
+Weighted CE + Dice,1,Patient_24,aorta,dice,0.6488398594511038,3,True
+Weighted CE + Dice,1,Patient_24,aorta,hd95,38.84590660598145,3,True
+Weighted CE + Dice,1,Patient_24,esophagus,assd,5.641034824204741,3,True
+Weighted CE + Dice,1,Patient_24,esophagus,dice,0.4820613913060612,3,True
+Weighted CE + Dice,1,Patient_24,esophagus,hd95,30.025520896398643,3,True
+Weighted CE + Dice,1,Patient_24,heart,assd,3.6100858376837124,3,True
+Weighted CE + Dice,1,Patient_24,heart,dice,0.8964061172589562,3,True
+Weighted CE + Dice,1,Patient_24,heart,hd95,12.579563233216419,3,True
+Weighted CE + Dice,1,Patient_24,trachea,assd,0.9609379206996636,3,True
+Weighted CE + Dice,1,Patient_24,trachea,dice,0.8803123670005721,3,True
+Weighted CE + Dice,1,Patient_24,trachea,hd95,4.053402959529668,3,True
+Weighted CE + Dice,3,Patient_25,aorta,assd,1.5990877835296764,3,True
+Weighted CE + Dice,3,Patient_25,aorta,dice,0.8962517741203323,3,True
+Weighted CE + Dice,3,Patient_25,aorta,hd95,8.22860244760105,3,True
+Weighted CE + Dice,3,Patient_25,esophagus,assd,5.451980406841188,3,True
+Weighted CE + Dice,3,Patient_25,esophagus,dice,0.5922805193114903,3,True
+Weighted CE + Dice,3,Patient_25,esophagus,hd95,26.56569229493884,3,True
+Weighted CE + Dice,3,Patient_25,heart,assd,2.2331465328980986,3,True
+Weighted CE + Dice,3,Patient_25,heart,dice,0.9382449138820353,3,True
+Weighted CE + Dice,3,Patient_25,heart,hd95,7.337265789306804,3,True
+Weighted CE + Dice,3,Patient_25,trachea,assd,1.1948934393295667,3,True
+Weighted CE + Dice,3,Patient_25,trachea,dice,0.8768657143018,3,True
+Weighted CE + Dice,3,Patient_25,trachea,hd95,6.505379475412467,3,True
+Weighted CE + Dice,3,Patient_26,aorta,assd,1.7722607091318665,3,True
+Weighted CE + Dice,3,Patient_26,aorta,dice,0.9104599470729813,3,True
+Weighted CE + Dice,3,Patient_26,aorta,hd95,10.666666666666666,3,True
+Weighted CE + Dice,3,Patient_26,esophagus,assd,1.4822895607482305,3,True
+Weighted CE + Dice,3,Patient_26,esophagus,dice,0.820493170673418,3,True
+Weighted CE + Dice,3,Patient_26,esophagus,hd95,6.929733330469785,3,True
+Weighted CE + Dice,3,Patient_26,heart,assd,3.218159014012264,3,True
+Weighted CE + Dice,3,Patient_26,heart,dice,0.9035290265512481,3,True
+Weighted CE + Dice,3,Patient_26,heart,hd95,8.819441816053029,3,True
+Weighted CE + Dice,3,Patient_26,trachea,assd,1.5636636622612563,3,True
+Weighted CE + Dice,3,Patient_26,trachea,dice,0.8569453754207478,3,True
+Weighted CE + Dice,3,Patient_26,trachea,hd95,11.339581927739166,3,True
+Weighted CE + Dice,3,Patient_27,aorta,assd,2.562904781177624,3,True
+Weighted CE + Dice,3,Patient_27,aorta,dice,0.8935564104602601,3,True
+Weighted CE + Dice,3,Patient_27,aorta,hd95,19.095707708969627,3,True
+Weighted CE + Dice,3,Patient_27,esophagus,assd,2.7870401746834705,3,True
+Weighted CE + Dice,3,Patient_27,esophagus,dice,0.6420722013761809,3,True
+Weighted CE + Dice,3,Patient_27,esophagus,hd95,13.832343338356305,3,True
+Weighted CE + Dice,3,Patient_27,heart,assd,2.0298887652744417,3,True
+Weighted CE + Dice,3,Patient_27,heart,dice,0.9386796844976532,3,True
+Weighted CE + Dice,3,Patient_27,heart,hd95,6.836120807682008,3,True
+Weighted CE + Dice,3,Patient_27,trachea,assd,3.5627087329970837,3,True
+Weighted CE + Dice,3,Patient_27,trachea,dice,0.8586889928728169,3,True
+Weighted CE + Dice,3,Patient_27,trachea,hd95,76.59497343189159,3,True
+Weighted CE + Dice,0,Patient_28,aorta,assd,,2,False
+Weighted CE + Dice,0,Patient_28,aorta,dice,,2,False
+Weighted CE + Dice,0,Patient_28,aorta,hd95,,2,False
+Weighted CE + Dice,0,Patient_28,esophagus,assd,,2,False
+Weighted CE + Dice,0,Patient_28,esophagus,dice,,2,False
+Weighted CE + Dice,0,Patient_28,esophagus,hd95,,2,False
+Weighted CE + Dice,0,Patient_28,heart,assd,,2,False
+Weighted CE + Dice,0,Patient_28,heart,dice,,2,False
+Weighted CE + Dice,0,Patient_28,heart,hd95,,2,False
+Weighted CE + Dice,0,Patient_28,trachea,assd,,2,False
+Weighted CE + Dice,0,Patient_28,trachea,dice,,2,False
+Weighted CE + Dice,0,Patient_28,trachea,hd95,,2,False
+Weighted CE + Dice,2,Patient_29,aorta,assd,2.433329270466432,3,True
+Weighted CE + Dice,2,Patient_29,aorta,dice,0.8897343737186029,3,True
+Weighted CE + Dice,2,Patient_29,aorta,hd95,16.046435657280796,3,True
+Weighted CE + Dice,2,Patient_29,esophagus,assd,1.457572752198554,3,True
+Weighted CE + Dice,2,Patient_29,esophagus,dice,0.7886429277678711,3,True
+Weighted CE + Dice,2,Patient_29,esophagus,hd95,6.072963154855515,3,True
+Weighted CE + Dice,2,Patient_29,heart,assd,4.0096279062160445,3,True
+Weighted CE + Dice,2,Patient_29,heart,dice,0.8799118519807761,3,True
+Weighted CE + Dice,2,Patient_29,heart,hd95,11.987906397615758,3,True
+Weighted CE + Dice,2,Patient_29,trachea,assd,1.262886364901741,3,True
+Weighted CE + Dice,2,Patient_29,trachea,dice,0.9121888548513556,3,True
+Weighted CE + Dice,2,Patient_29,trachea,hd95,10.173186760569584,3,True
+Weighted CE + Dice,0,Patient_30,aorta,assd,,2,False
+Weighted CE + Dice,0,Patient_30,aorta,dice,,2,False
+Weighted CE + Dice,0,Patient_30,aorta,hd95,,2,False
+Weighted CE + Dice,0,Patient_30,esophagus,assd,,2,False
+Weighted CE + Dice,0,Patient_30,esophagus,dice,,2,False
+Weighted CE + Dice,0,Patient_30,esophagus,hd95,,2,False
+Weighted CE + Dice,0,Patient_30,heart,assd,,2,False
+Weighted CE + Dice,0,Patient_30,heart,dice,,2,False
+Weighted CE + Dice,0,Patient_30,heart,hd95,,2,False
+Weighted CE + Dice,0,Patient_30,trachea,assd,,2,False
+Weighted CE + Dice,0,Patient_30,trachea,dice,,2,False
+Weighted CE + Dice,0,Patient_30,trachea,hd95,,2,False
+Weighted CE + Dice,3,Patient_31,aorta,assd,1.751434833357018,3,True
+Weighted CE + Dice,3,Patient_31,aorta,dice,0.938270240010135,3,True
+Weighted CE + Dice,3,Patient_31,aorta,hd95,27.157178337439472,3,True
+Weighted CE + Dice,3,Patient_31,esophagus,assd,1.4360970911732,3,True
+Weighted CE + Dice,3,Patient_31,esophagus,dice,0.7921973874646605,3,True
+Weighted CE + Dice,3,Patient_31,esophagus,hd95,6.055004627043988,3,True
+Weighted CE + Dice,3,Patient_31,heart,assd,1.4690979896245306,3,True
+Weighted CE + Dice,3,Patient_31,heart,dice,0.9520113967988934,3,True
+Weighted CE + Dice,3,Patient_31,heart,hd95,5.2241633722215886,3,True
+Weighted CE + Dice,3,Patient_31,trachea,assd,1.6134015934396648,3,True
+Weighted CE + Dice,3,Patient_31,trachea,dice,0.8861456149727829,3,True
+Weighted CE + Dice,3,Patient_31,trachea,hd95,12.5,3,True
+Weighted CE + Dice,3,Patient_32,aorta,assd,2.232251464080979,3,True
+Weighted CE + Dice,3,Patient_32,aorta,dice,0.9032294651521666,3,True
+Weighted CE + Dice,3,Patient_32,aorta,hd95,24.572563481961037,3,True
+Weighted CE + Dice,3,Patient_32,esophagus,assd,1.5366560769819622,3,True
+Weighted CE + Dice,3,Patient_32,esophagus,dice,0.8309056545108454,3,True
+Weighted CE + Dice,3,Patient_32,esophagus,hd95,7.753558708097451,3,True
+Weighted CE + Dice,3,Patient_32,heart,assd,3.2673714671679774,3,True
+Weighted CE + Dice,3,Patient_32,heart,dice,0.9384815759626245,3,True
+Weighted CE + Dice,3,Patient_32,heart,hd95,34.53845676939118,3,True
+Weighted CE + Dice,3,Patient_32,trachea,assd,1.5727055329539537,3,True
+Weighted CE + Dice,3,Patient_32,trachea,dice,0.8529746863464625,3,True
+Weighted CE + Dice,3,Patient_32,trachea,hd95,9.890763430515515,3,True
+Weighted CE + Dice,3,Patient_33,aorta,assd,1.166396960629834,3,True
+Weighted CE + Dice,3,Patient_33,aorta,dice,0.9072451823406364,3,True
+Weighted CE + Dice,3,Patient_33,aorta,hd95,3.9699176211233547,3,True
+Weighted CE + Dice,3,Patient_33,esophagus,assd,2.7801397147732234,3,True
+Weighted CE + Dice,3,Patient_33,esophagus,dice,0.6679379687924721,3,True
+Weighted CE + Dice,3,Patient_33,esophagus,hd95,17.672387464890324,3,True
+Weighted CE + Dice,3,Patient_33,heart,assd,2.2325244883794064,3,True
+Weighted CE + Dice,3,Patient_33,heart,dice,0.9325487605186941,3,True
+Weighted CE + Dice,3,Patient_33,heart,hd95,6.83029432732597,3,True
+Weighted CE + Dice,3,Patient_33,trachea,assd,3.8941301167177524,3,True
+Weighted CE + Dice,3,Patient_33,trachea,dice,0.8031760389758582,3,True
+Weighted CE + Dice,3,Patient_33,trachea,hd95,21.915530412490156,3,True
+Weighted CE + Dice,2,Patient_34,aorta,assd,3.334081293668378,3,True
+Weighted CE + Dice,2,Patient_34,aorta,dice,0.9070510393393438,3,True
+Weighted CE + Dice,2,Patient_34,aorta,hd95,25.089200415091327,3,True
+Weighted CE + Dice,2,Patient_34,esophagus,assd,4.2545316524886525,3,True
+Weighted CE + Dice,2,Patient_34,esophagus,dice,0.5703963992038582,3,True
+Weighted CE + Dice,2,Patient_34,esophagus,hd95,19.41271557829656,3,True
+Weighted CE + Dice,2,Patient_34,heart,assd,4.3332435732177,3,True
+Weighted CE + Dice,2,Patient_34,heart,dice,0.8826554591809446,3,True
+Weighted CE + Dice,2,Patient_34,heart,hd95,20.01488018499233,3,True
+Weighted CE + Dice,2,Patient_34,trachea,assd,1.8930246058561486,3,True
+Weighted CE + Dice,2,Patient_34,trachea,dice,0.8349954426369908,3,True
+Weighted CE + Dice,2,Patient_34,trachea,hd95,11.316792315146403,3,True
+Weighted CE + Dice,0,Patient_35,aorta,assd,,2,False
+Weighted CE + Dice,0,Patient_35,aorta,dice,,2,False
+Weighted CE + Dice,0,Patient_35,aorta,hd95,,2,False
+Weighted CE + Dice,0,Patient_35,esophagus,assd,,2,False
+Weighted CE + Dice,0,Patient_35,esophagus,dice,,2,False
+Weighted CE + Dice,0,Patient_35,esophagus,hd95,,2,False
+Weighted CE + Dice,0,Patient_35,heart,assd,,2,False
+Weighted CE + Dice,0,Patient_35,heart,dice,,2,False
+Weighted CE + Dice,0,Patient_35,heart,hd95,,2,False
+Weighted CE + Dice,0,Patient_35,trachea,assd,,2,False
+Weighted CE + Dice,0,Patient_35,trachea,dice,,2,False
+Weighted CE + Dice,0,Patient_35,trachea,hd95,,2,False
+Weighted CE + Dice,2,Patient_36,aorta,assd,4.341142256127628,3,True
+Weighted CE + Dice,2,Patient_36,aorta,dice,0.8552018108737927,3,True
+Weighted CE + Dice,2,Patient_36,aorta,hd95,59.52519337721892,3,True
+Weighted CE + Dice,2,Patient_36,esophagus,assd,1.600528388590541,3,True
+Weighted CE + Dice,2,Patient_36,esophagus,dice,0.7970527832526179,3,True
+Weighted CE + Dice,2,Patient_36,esophagus,hd95,5.479757169456511,3,True
+Weighted CE + Dice,2,Patient_36,heart,assd,1.6783110152814766,3,True
+Weighted CE + Dice,2,Patient_36,heart,dice,0.9464349973996954,3,True
+Weighted CE + Dice,2,Patient_36,heart,hd95,4.891572288471509,3,True
+Weighted CE + Dice,2,Patient_36,trachea,assd,1.2748228326040447,3,True
+Weighted CE + Dice,2,Patient_36,trachea,dice,0.8663013127622747,3,True
+Weighted CE + Dice,2,Patient_36,trachea,hd95,6.567562200033362,3,True
+Weighted CE + Dice,2,Patient_37,aorta,assd,1.2086414668959626,3,True
+Weighted CE + Dice,2,Patient_37,aorta,dice,0.9218362080259883,3,True
+Weighted CE + Dice,2,Patient_37,aorta,hd95,4.066319496044014,3,True
+Weighted CE + Dice,2,Patient_37,esophagus,assd,1.7285513128202226,3,True
+Weighted CE + Dice,2,Patient_37,esophagus,dice,0.7963994571235474,3,True
+Weighted CE + Dice,2,Patient_37,esophagus,hd95,7.968512497431843,3,True
+Weighted CE + Dice,2,Patient_37,heart,assd,3.237930628658193,3,True
+Weighted CE + Dice,2,Patient_37,heart,dice,0.9188181905591644,3,True
+Weighted CE + Dice,2,Patient_37,heart,hd95,13.252283083117405,3,True
+Weighted CE + Dice,2,Patient_37,trachea,assd,0.7888308892570214,3,True
+Weighted CE + Dice,2,Patient_37,trachea,dice,0.908681679328401,3,True
+Weighted CE + Dice,2,Patient_37,trachea,hd95,5.872604698563916,3,True
+Weighted CE + Dice,1,Patient_38,aorta,assd,3.4757988476432384,3,True
+Weighted CE + Dice,1,Patient_38,aorta,dice,0.9035464086037104,3,True
+Weighted CE + Dice,1,Patient_38,aorta,hd95,40.42628262198486,3,True
+Weighted CE + Dice,1,Patient_38,esophagus,assd,2.260541511171448,3,True
+Weighted CE + Dice,1,Patient_38,esophagus,dice,0.7014367690842883,3,True
+Weighted CE + Dice,1,Patient_38,esophagus,hd95,8.644541643744772,3,True
+Weighted CE + Dice,1,Patient_38,heart,assd,1.4104314344708684,3,True
+Weighted CE + Dice,1,Patient_38,heart,dice,0.9510977763405989,3,True
+Weighted CE + Dice,1,Patient_38,heart,hd95,5.108826369067932,3,True
+Weighted CE + Dice,1,Patient_38,trachea,assd,3.251381386888378,3,True
+Weighted CE + Dice,1,Patient_38,trachea,dice,0.8826730749718599,3,True
+Weighted CE + Dice,1,Patient_38,trachea,hd95,13.615639759327905,3,True
+Weighted CE + Dice,0,Patient_39,aorta,assd,,2,False
+Weighted CE + Dice,0,Patient_39,aorta,dice,,2,False
+Weighted CE + Dice,0,Patient_39,aorta,hd95,,2,False
+Weighted CE + Dice,0,Patient_39,esophagus,assd,,2,False
+Weighted CE + Dice,0,Patient_39,esophagus,dice,,2,False
+Weighted CE + Dice,0,Patient_39,esophagus,hd95,,2,False
+Weighted CE + Dice,0,Patient_39,heart,assd,,2,False
+Weighted CE + Dice,0,Patient_39,heart,dice,,2,False
+Weighted CE + Dice,0,Patient_39,heart,hd95,,2,False
+Weighted CE + Dice,0,Patient_39,trachea,assd,,2,False
+Weighted CE + Dice,0,Patient_39,trachea,dice,,2,False
+Weighted CE + Dice,0,Patient_39,trachea,hd95,,2,False
+Weighted CE + Dice,1,Patient_40,aorta,assd,1.310917472589016,3,True
+Weighted CE + Dice,1,Patient_40,aorta,dice,0.9153645799423383,3,True
+Weighted CE + Dice,1,Patient_40,aorta,hd95,6.943938450365548,3,True
+Weighted CE + Dice,1,Patient_40,esophagus,assd,1.2583094645044797,3,True
+Weighted CE + Dice,1,Patient_40,esophagus,dice,0.8083299635421227,3,True
+Weighted CE + Dice,1,Patient_40,esophagus,hd95,4.154126279894196,3,True
+Weighted CE + Dice,1,Patient_40,heart,assd,1.59255199815591,3,True
+Weighted CE + Dice,1,Patient_40,heart,dice,0.956429353478787,3,True
+Weighted CE + Dice,1,Patient_40,heart,hd95,4.195184201846524,3,True
+Weighted CE + Dice,1,Patient_40,trachea,assd,0.48348607353681766,3,True
+Weighted CE + Dice,1,Patient_40,trachea,dice,0.942358280554493,3,True
+Weighted CE + Dice,1,Patient_40,trachea,hd95,2.5,3,True
+Boundary v1,0,Patient_01,aorta,assd,1.4124025476762716,3,True
+Boundary v1,0,Patient_01,aorta,dice,0.9102384810796019,3,True
+Boundary v1,0,Patient_01,aorta,hd95,7.601162297559182,3,True
+Boundary v1,0,Patient_01,esophagus,assd,1.8878780317786632,3,True
+Boundary v1,0,Patient_01,esophagus,dice,0.7768362816137718,3,True
+Boundary v1,0,Patient_01,esophagus,hd95,8.171732412458999,3,True
+Boundary v1,0,Patient_01,heart,assd,2.0472742696686077,3,True
+Boundary v1,0,Patient_01,heart,dice,0.9409292346098662,3,True
+Boundary v1,0,Patient_01,heart,hd95,6.442985147660472,3,True
+Boundary v1,0,Patient_01,trachea,assd,1.0710789729662595,3,True
+Boundary v1,0,Patient_01,trachea,dice,0.9236008672787329,3,True
+Boundary v1,0,Patient_01,trachea,hd95,8.160584203732276,3,True
+Boundary v1,0,Patient_02,aorta,assd,1.3166791228047243,3,True
+Boundary v1,0,Patient_02,aorta,dice,0.9232439553483883,3,True
+Boundary v1,0,Patient_02,aorta,hd95,7.5,3,True
+Boundary v1,0,Patient_02,esophagus,assd,4.313478348208265,3,True
+Boundary v1,0,Patient_02,esophagus,dice,0.7264300837335563,3,True
+Boundary v1,0,Patient_02,esophagus,hd95,37.059249189996756,3,True
+Boundary v1,0,Patient_02,heart,assd,2.618633292012365,3,True
+Boundary v1,0,Patient_02,heart,dice,0.9349731945786918,3,True
+Boundary v1,0,Patient_02,heart,hd95,7.5,3,True
+Boundary v1,0,Patient_02,trachea,assd,1.6805012989530288,3,True
+Boundary v1,0,Patient_02,trachea,dice,0.8794149549435772,3,True
+Boundary v1,0,Patient_02,trachea,hd95,12.737404617032531,3,True
+Boundary v1,3,Patient_03,aorta,assd,4.730077004321596,3,True
+Boundary v1,3,Patient_03,aorta,dice,0.7137060477123426,3,True
+Boundary v1,3,Patient_03,aorta,hd95,30.32871770625333,3,True
+Boundary v1,3,Patient_03,esophagus,assd,4.543583673411912,3,True
+Boundary v1,3,Patient_03,esophagus,dice,0.4506869594948439,3,True
+Boundary v1,3,Patient_03,esophagus,hd95,18.91365142063096,3,True
+Boundary v1,3,Patient_03,heart,assd,2.465148580841094,3,True
+Boundary v1,3,Patient_03,heart,dice,0.9108534472380257,3,True
+Boundary v1,3,Patient_03,heart,hd95,8.300673257396642,3,True
+Boundary v1,3,Patient_03,trachea,assd,2.16213273563471,3,True
+Boundary v1,3,Patient_03,trachea,dice,0.8118678315140097,3,True
+Boundary v1,3,Patient_03,trachea,hd95,20.0,3,True
+Boundary v1,2,Patient_04,aorta,assd,1.2806175303337712,3,True
+Boundary v1,2,Patient_04,aorta,dice,0.9167597833878826,3,True
+Boundary v1,2,Patient_04,aorta,hd95,4.483342751041899,3,True
+Boundary v1,2,Patient_04,esophagus,assd,2.259438782450819,3,True
+Boundary v1,2,Patient_04,esophagus,dice,0.7411247929477867,3,True
+Boundary v1,2,Patient_04,esophagus,hd95,9.756599795647396,3,True
+Boundary v1,2,Patient_04,heart,assd,1.6362180498870595,3,True
+Boundary v1,2,Patient_04,heart,dice,0.9531730564269342,3,True
+Boundary v1,2,Patient_04,heart,hd95,4.960936705271403,3,True
+Boundary v1,2,Patient_04,trachea,assd,1.3866979610054946,3,True
+Boundary v1,2,Patient_04,trachea,dice,0.8767045635807245,3,True
+Boundary v1,2,Patient_04,trachea,hd95,10.174367303715197,3,True
+Boundary v1,2,Patient_05,aorta,assd,3.4132375776234993,3,True
+Boundary v1,2,Patient_05,aorta,dice,0.8318372200308729,3,True
+Boundary v1,2,Patient_05,aorta,hd95,20.70075187701968,3,True
+Boundary v1,2,Patient_05,esophagus,assd,2.780404191762075,3,True
+Boundary v1,2,Patient_05,esophagus,dice,0.5793305503437254,3,True
+Boundary v1,2,Patient_05,esophagus,hd95,10.492268596068024,3,True
+Boundary v1,2,Patient_05,heart,assd,6.3219238517373215,3,True
+Boundary v1,2,Patient_05,heart,dice,0.8916627768572868,3,True
+Boundary v1,2,Patient_05,heart,hd95,28.020777471607033,3,True
+Boundary v1,2,Patient_05,trachea,assd,3.4699471811147067,3,True
+Boundary v1,2,Patient_05,trachea,dice,0.8019081675097094,3,True
+Boundary v1,2,Patient_05,trachea,hd95,27.568200836635516,3,True
+Boundary v1,1,Patient_06,aorta,assd,2.029121506391784,3,True
+Boundary v1,1,Patient_06,aorta,dice,0.9091189167588397,3,True
+Boundary v1,1,Patient_06,aorta,hd95,14.19202081698298,3,True
+Boundary v1,1,Patient_06,esophagus,assd,2.133483263877059,3,True
+Boundary v1,1,Patient_06,esophagus,dice,0.6780770317636592,3,True
+Boundary v1,1,Patient_06,esophagus,hd95,8.787240261050956,3,True
+Boundary v1,1,Patient_06,heart,assd,3.8580922262309727,3,True
+Boundary v1,1,Patient_06,heart,dice,0.9063707810648042,3,True
+Boundary v1,1,Patient_06,heart,hd95,15.0,3,True
+Boundary v1,1,Patient_06,trachea,assd,1.9432923372768782,3,True
+Boundary v1,1,Patient_06,trachea,dice,0.8986687412401286,3,True
+Boundary v1,1,Patient_06,trachea,hd95,12.90377716659178,3,True
+Boundary v1,2,Patient_07,aorta,assd,1.6845390204253423,3,True
+Boundary v1,2,Patient_07,aorta,dice,0.8954224461510849,3,True
+Boundary v1,2,Patient_07,aorta,hd95,10.245851941313274,3,True
+Boundary v1,2,Patient_07,esophagus,assd,2.2916510986182552,3,True
+Boundary v1,2,Patient_07,esophagus,dice,0.7303845482092277,3,True
+Boundary v1,2,Patient_07,esophagus,hd95,12.148621379032866,3,True
+Boundary v1,2,Patient_07,heart,assd,2.820010094569445,3,True
+Boundary v1,2,Patient_07,heart,dice,0.945364663434661,3,True
+Boundary v1,2,Patient_07,heart,hd95,22.666666666666668,3,True
+Boundary v1,2,Patient_07,trachea,assd,1.1189576791942273,3,True
+Boundary v1,2,Patient_07,trachea,dice,0.8928516454614402,3,True
+Boundary v1,2,Patient_07,trachea,hd95,7.976872174526761,3,True
+Boundary v1,1,Patient_08,aorta,assd,2.5858515106572635,3,True
+Boundary v1,1,Patient_08,aorta,dice,0.8742806641204531,3,True
+Boundary v1,1,Patient_08,aorta,hd95,22.17715005440454,3,True
+Boundary v1,1,Patient_08,esophagus,assd,3.8857891143685244,3,True
+Boundary v1,1,Patient_08,esophagus,dice,0.5126595224139331,3,True
+Boundary v1,1,Patient_08,esophagus,hd95,21.597048786109468,3,True
+Boundary v1,1,Patient_08,heart,assd,3.383801812415641,3,True
+Boundary v1,1,Patient_08,heart,dice,0.8993343077608267,3,True
+Boundary v1,1,Patient_08,heart,hd95,13.74276680448481,3,True
+Boundary v1,1,Patient_08,trachea,assd,2.373651810171442,3,True
+Boundary v1,1,Patient_08,trachea,dice,0.8735731939685448,3,True
+Boundary v1,1,Patient_08,trachea,hd95,21.49725745277866,3,True
+Boundary v1,2,Patient_09,aorta,assd,2.960632467526981,3,True
+Boundary v1,2,Patient_09,aorta,dice,0.846140995534547,3,True
+Boundary v1,2,Patient_09,aorta,hd95,19.726878334188424,3,True
+Boundary v1,2,Patient_09,esophagus,assd,1.9812040175541716,3,True
+Boundary v1,2,Patient_09,esophagus,dice,0.7182324138428986,3,True
+Boundary v1,2,Patient_09,esophagus,hd95,11.623107289213365,3,True
+Boundary v1,2,Patient_09,heart,assd,3.199528412778403,3,True
+Boundary v1,2,Patient_09,heart,dice,0.9176698465092964,3,True
+Boundary v1,2,Patient_09,heart,hd95,10.0,3,True
+Boundary v1,2,Patient_09,trachea,assd,1.3011679297550491,3,True
+Boundary v1,2,Patient_09,trachea,dice,0.9022765849986096,3,True
+Boundary v1,2,Patient_09,trachea,hd95,11.698158263305146,3,True
+Boundary v1,2,Patient_10,aorta,assd,1.551420350206253,3,True
+Boundary v1,2,Patient_10,aorta,dice,0.9117056540409058,3,True
+Boundary v1,2,Patient_10,aorta,hd95,10.692984463295327,3,True
+Boundary v1,2,Patient_10,esophagus,assd,1.8291863777409463,3,True
+Boundary v1,2,Patient_10,esophagus,dice,0.7996828816848872,3,True
+Boundary v1,2,Patient_10,esophagus,hd95,8.832098555385523,3,True
+Boundary v1,2,Patient_10,heart,assd,3.1293593806581357,3,True
+Boundary v1,2,Patient_10,heart,dice,0.9220693959175293,3,True
+Boundary v1,2,Patient_10,heart,hd95,11.889268622540795,3,True
+Boundary v1,2,Patient_10,trachea,assd,1.3980073831918858,3,True
+Boundary v1,2,Patient_10,trachea,dice,0.8905293414709766,3,True
+Boundary v1,2,Patient_10,trachea,hd95,10.707743644361505,3,True
+Boundary v1,1,Patient_11,aorta,assd,1.3610346739266486,3,True
+Boundary v1,1,Patient_11,aorta,dice,0.9244836907592657,3,True
+Boundary v1,1,Patient_11,aorta,hd95,11.762169091937004,3,True
+Boundary v1,1,Patient_11,esophagus,assd,3.3616412925014756,3,True
+Boundary v1,1,Patient_11,esophagus,dice,0.6369880194217384,3,True
+Boundary v1,1,Patient_11,esophagus,hd95,17.441280019687174,3,True
+Boundary v1,1,Patient_11,heart,assd,2.123597367740127,3,True
+Boundary v1,1,Patient_11,heart,dice,0.9419694762430807,3,True
+Boundary v1,1,Patient_11,heart,hd95,10.813762281746692,3,True
+Boundary v1,1,Patient_11,trachea,assd,1.6905078362861339,3,True
+Boundary v1,1,Patient_11,trachea,dice,0.8805698538529471,3,True
+Boundary v1,1,Patient_11,trachea,hd95,14.011384346733806,3,True
+Boundary v1,3,Patient_12,aorta,assd,2.45356211983788,3,True
+Boundary v1,3,Patient_12,aorta,dice,0.8797487366238391,3,True
+Boundary v1,3,Patient_12,aorta,hd95,14.352460852562636,3,True
+Boundary v1,3,Patient_12,esophagus,assd,1.7778019824574482,3,True
+Boundary v1,3,Patient_12,esophagus,dice,0.7598834282315244,3,True
+Boundary v1,3,Patient_12,esophagus,hd95,8.86367868042793,3,True
+Boundary v1,3,Patient_12,heart,assd,3.7772240579192413,3,True
+Boundary v1,3,Patient_12,heart,dice,0.907411753573618,3,True
+Boundary v1,3,Patient_12,heart,hd95,10.878599912404155,3,True
+Boundary v1,3,Patient_12,trachea,assd,1.442695411883382,3,True
+Boundary v1,3,Patient_12,trachea,dice,0.9016390191320682,3,True
+Boundary v1,3,Patient_12,trachea,hd95,13.789702397621268,3,True
+Boundary v1,0,Patient_13,aorta,assd,0.9209639814719702,3,True
+Boundary v1,0,Patient_13,aorta,dice,0.938801090405367,3,True
+Boundary v1,0,Patient_13,aorta,hd95,3.174757242673301,3,True
+Boundary v1,0,Patient_13,esophagus,assd,2.1079206012388423,3,True
+Boundary v1,0,Patient_13,esophagus,dice,0.6776781803828641,3,True
+Boundary v1,0,Patient_13,esophagus,hd95,9.223169145941675,3,True
+Boundary v1,0,Patient_13,heart,assd,2.5836300303107653,3,True
+Boundary v1,0,Patient_13,heart,dice,0.9229890741662103,3,True
+Boundary v1,0,Patient_13,heart,hd95,8.659501941169964,3,True
+Boundary v1,0,Patient_13,trachea,assd,1.0812179095087344,3,True
+Boundary v1,0,Patient_13,trachea,dice,0.9072029776738156,3,True
+Boundary v1,0,Patient_13,trachea,hd95,7.802638769883186,3,True
+Boundary v1,1,Patient_14,aorta,assd,4.5050359760915155,3,True
+Boundary v1,1,Patient_14,aorta,dice,0.775757607801149,3,True
+Boundary v1,1,Patient_14,aorta,hd95,27.383049757874655,3,True
+Boundary v1,1,Patient_14,esophagus,assd,3.799808697342834,3,True
+Boundary v1,1,Patient_14,esophagus,dice,0.3902845351955113,3,True
+Boundary v1,1,Patient_14,esophagus,hd95,11.780968926759707,3,True
+Boundary v1,1,Patient_14,heart,assd,4.012642249312673,3,True
+Boundary v1,1,Patient_14,heart,dice,0.9047327269521266,3,True
+Boundary v1,1,Patient_14,heart,hd95,30.290311495391418,3,True
+Boundary v1,1,Patient_14,trachea,assd,9.453639813071396,3,True
+Boundary v1,1,Patient_14,trachea,dice,0.39718846435745586,3,True
+Boundary v1,1,Patient_14,trachea,hd95,60.64813155903249,3,True
+Boundary v1,1,Patient_15,aorta,assd,2.757410301527376,3,True
+Boundary v1,1,Patient_15,aorta,dice,0.8258252739106946,3,True
+Boundary v1,1,Patient_15,aorta,hd95,11.069147078924546,3,True
+Boundary v1,1,Patient_15,esophagus,assd,6.262496260715935,3,True
+Boundary v1,1,Patient_15,esophagus,dice,0.513308067902535,3,True
+Boundary v1,1,Patient_15,esophagus,hd95,31.332810671698493,3,True
+Boundary v1,1,Patient_15,heart,assd,1.9905461391870787,3,True
+Boundary v1,1,Patient_15,heart,dice,0.9460331215184915,3,True
+Boundary v1,1,Patient_15,heart,hd95,6.95813508011404,3,True
+Boundary v1,1,Patient_15,trachea,assd,0.9203609132263758,3,True
+Boundary v1,1,Patient_15,trachea,dice,0.9237664247993781,3,True
+Boundary v1,1,Patient_15,trachea,hd95,6.666666666666667,3,True
+Boundary v1,0,Patient_16,aorta,assd,2.0652407692792516,3,True
+Boundary v1,0,Patient_16,aorta,dice,0.9336143885393818,3,True
+Boundary v1,0,Patient_16,aorta,hd95,11.756205455064487,3,True
+Boundary v1,0,Patient_16,esophagus,assd,1.412238245617761,3,True
+Boundary v1,0,Patient_16,esophagus,dice,0.8219749016566675,3,True
+Boundary v1,0,Patient_16,esophagus,hd95,6.94327480170108,3,True
+Boundary v1,0,Patient_16,heart,assd,2.7683512969828397,3,True
+Boundary v1,0,Patient_16,heart,dice,0.9218716613593531,3,True
+Boundary v1,0,Patient_16,heart,hd95,8.064196259557752,3,True
+Boundary v1,0,Patient_16,trachea,assd,1.2894493473124047,3,True
+Boundary v1,0,Patient_16,trachea,dice,0.8924608289513368,3,True
+Boundary v1,0,Patient_16,trachea,hd95,10.664338078468461,3,True
+Boundary v1,3,Patient_17,aorta,assd,3.0324062675847436,3,True
+Boundary v1,3,Patient_17,aorta,dice,0.8558518433076375,3,True
+Boundary v1,3,Patient_17,aorta,hd95,22.638857357257262,3,True
+Boundary v1,3,Patient_17,esophagus,assd,1.5439693356998607,3,True
+Boundary v1,3,Patient_17,esophagus,dice,0.7684627041589693,3,True
+Boundary v1,3,Patient_17,esophagus,hd95,6.012425511037016,3,True
+Boundary v1,3,Patient_17,heart,assd,2.0782853077346637,3,True
+Boundary v1,3,Patient_17,heart,dice,0.9412907464920925,3,True
+Boundary v1,3,Patient_17,heart,hd95,9.808547452662552,3,True
+Boundary v1,3,Patient_17,trachea,assd,1.2135623901471435,3,True
+Boundary v1,3,Patient_17,trachea,dice,0.893967148055339,3,True
+Boundary v1,3,Patient_17,trachea,hd95,10.575420721997709,3,True
+Boundary v1,1,Patient_18,aorta,assd,1.6373765374927143,3,True
+Boundary v1,1,Patient_18,aorta,dice,0.890796495256069,3,True
+Boundary v1,1,Patient_18,aorta,hd95,6.081848951802577,3,True
+Boundary v1,1,Patient_18,esophagus,assd,2.0803370093011218,3,True
+Boundary v1,1,Patient_18,esophagus,dice,0.7532648964863317,3,True
+Boundary v1,1,Patient_18,esophagus,hd95,10.452797138442326,3,True
+Boundary v1,1,Patient_18,heart,assd,3.7284495844100607,3,True
+Boundary v1,1,Patient_18,heart,dice,0.9283025140568314,3,True
+Boundary v1,1,Patient_18,heart,hd95,15.235190896779384,3,True
+Boundary v1,1,Patient_18,trachea,assd,0.9540737444006645,3,True
+Boundary v1,1,Patient_18,trachea,dice,0.9292830166070857,3,True
+Boundary v1,1,Patient_18,trachea,hd95,5.246917864413913,3,True
+Boundary v1,2,Patient_19,aorta,assd,1.6130974987273967,3,True
+Boundary v1,2,Patient_19,aorta,dice,0.8794468314032624,3,True
+Boundary v1,2,Patient_19,aorta,hd95,5.943889676687664,3,True
+Boundary v1,2,Patient_19,esophagus,assd,2.696608414506413,3,True
+Boundary v1,2,Patient_19,esophagus,dice,0.6896222750651434,3,True
+Boundary v1,2,Patient_19,esophagus,hd95,9.473123128312977,3,True
+Boundary v1,2,Patient_19,heart,assd,2.5320971294516617,3,True
+Boundary v1,2,Patient_19,heart,dice,0.9441403972801393,3,True
+Boundary v1,2,Patient_19,heart,hd95,8.409160299614861,3,True
+Boundary v1,2,Patient_19,trachea,assd,2.111161682307538,3,True
+Boundary v1,2,Patient_19,trachea,dice,0.8239035728333516,3,True
+Boundary v1,2,Patient_19,trachea,hd95,18.24814018800148,3,True
+Boundary v1,3,Patient_20,aorta,assd,3.717161490774623,3,True
+Boundary v1,3,Patient_20,aorta,dice,0.8317617109142752,3,True
+Boundary v1,3,Patient_20,aorta,hd95,27.901816931594073,3,True
+Boundary v1,3,Patient_20,esophagus,assd,12.305063349346533,3,True
+Boundary v1,3,Patient_20,esophagus,dice,0.39815171492743257,3,True
+Boundary v1,3,Patient_20,esophagus,hd95,53.010497981657444,3,True
+Boundary v1,3,Patient_20,heart,assd,8.195237651017322,3,True
+Boundary v1,3,Patient_20,heart,dice,0.8135600207860638,3,True
+Boundary v1,3,Patient_20,heart,hd95,31.645021990448882,3,True
+Boundary v1,3,Patient_20,trachea,assd,4.283235187639862,3,True
+Boundary v1,3,Patient_20,trachea,dice,0.6932375397440196,3,True
+Boundary v1,3,Patient_20,trachea,hd95,19.6508209059505,3,True
+Boundary v1,0,Patient_21,aorta,assd,1.286715783264181,3,True
+Boundary v1,0,Patient_21,aorta,dice,0.9284542945034762,3,True
+Boundary v1,0,Patient_21,aorta,hd95,9.905212343170723,3,True
+Boundary v1,0,Patient_21,esophagus,assd,1.6667170187997815,3,True
+Boundary v1,0,Patient_21,esophagus,dice,0.6684403807657473,3,True
+Boundary v1,0,Patient_21,esophagus,hd95,5.803608426875002,3,True
+Boundary v1,0,Patient_21,heart,assd,2.193622230225593,3,True
+Boundary v1,0,Patient_21,heart,dice,0.9284507239326801,3,True
+Boundary v1,0,Patient_21,heart,hd95,9.226850949806474,3,True
+Boundary v1,0,Patient_21,trachea,assd,0.7673737081839037,3,True
+Boundary v1,0,Patient_21,trachea,dice,0.9174986922473513,3,True
+Boundary v1,0,Patient_21,trachea,hd95,5.978035832683837,3,True
+Boundary v1,0,Patient_22,aorta,assd,1.4159437501714753,3,True
+Boundary v1,0,Patient_22,aorta,dice,0.9194863088201273,3,True
+Boundary v1,0,Patient_22,aorta,hd95,8.515039182245348,3,True
+Boundary v1,0,Patient_22,esophagus,assd,2.318833512303758,3,True
+Boundary v1,0,Patient_22,esophagus,dice,0.6289667512183915,3,True
+Boundary v1,0,Patient_22,esophagus,hd95,8.560600719415266,3,True
+Boundary v1,0,Patient_22,heart,assd,4.591519077179918,3,True
+Boundary v1,0,Patient_22,heart,dice,0.9116884624764436,3,True
+Boundary v1,0,Patient_22,heart,hd95,16.617203558498808,3,True
+Boundary v1,0,Patient_22,trachea,assd,1.0956585053866632,3,True
+Boundary v1,0,Patient_22,trachea,dice,0.916616043389261,3,True
+Boundary v1,0,Patient_22,trachea,hd95,12.913969943269537,3,True
+Boundary v1,1,Patient_23,aorta,assd,2.254861974474602,3,True
+Boundary v1,1,Patient_23,aorta,dice,0.8757812251368439,3,True
+Boundary v1,1,Patient_23,aorta,hd95,13.526276336269673,3,True
+Boundary v1,1,Patient_23,esophagus,assd,3.3409580915393575,3,True
+Boundary v1,1,Patient_23,esophagus,dice,0.6271726880659337,3,True
+Boundary v1,1,Patient_23,esophagus,hd95,14.118864413230083,3,True
+Boundary v1,1,Patient_23,heart,assd,2.00257667745336,3,True
+Boundary v1,1,Patient_23,heart,dice,0.9559981304553836,3,True
+Boundary v1,1,Patient_23,heart,hd95,15.0,3,True
+Boundary v1,1,Patient_23,trachea,assd,0.9512196366454769,3,True
+Boundary v1,1,Patient_23,trachea,dice,0.912587492685491,3,True
+Boundary v1,1,Patient_23,trachea,hd95,5.929753722003198,3,True
+Boundary v1,1,Patient_24,aorta,assd,7.076118932997606,3,True
+Boundary v1,1,Patient_24,aorta,dice,0.5975606719178591,3,True
+Boundary v1,1,Patient_24,aorta,hd95,33.259773628148984,3,True
+Boundary v1,1,Patient_24,esophagus,assd,5.523422580506318,3,True
+Boundary v1,1,Patient_24,esophagus,dice,0.4567039170135587,3,True
+Boundary v1,1,Patient_24,esophagus,hd95,21.821408363934967,3,True
+Boundary v1,1,Patient_24,heart,assd,4.379319528366358,3,True
+Boundary v1,1,Patient_24,heart,dice,0.8928623937220849,3,True
+Boundary v1,1,Patient_24,heart,hd95,15.402010402883768,3,True
+Boundary v1,1,Patient_24,trachea,assd,2.132759744218435,3,True
+Boundary v1,1,Patient_24,trachea,dice,0.7963627130254065,3,True
+Boundary v1,1,Patient_24,trachea,hd95,13.328672156488764,3,True
+Boundary v1,3,Patient_25,aorta,assd,1.5119745436388037,3,True
+Boundary v1,3,Patient_25,aorta,dice,0.9149464820767852,3,True
+Boundary v1,3,Patient_25,aorta,hd95,11.144722743109675,3,True
+Boundary v1,3,Patient_25,esophagus,assd,6.541187909942046,3,True
+Boundary v1,3,Patient_25,esophagus,dice,0.6037037384735051,3,True
+Boundary v1,3,Patient_25,esophagus,hd95,32.31398497207436,3,True
+Boundary v1,3,Patient_25,heart,assd,2.1405687812579828,3,True
+Boundary v1,3,Patient_25,heart,dice,0.9392053773612846,3,True
+Boundary v1,3,Patient_25,heart,hd95,5.995200828444514,3,True
+Boundary v1,3,Patient_25,trachea,assd,1.572813025902984,3,True
+Boundary v1,3,Patient_25,trachea,dice,0.8772718133147936,3,True
+Boundary v1,3,Patient_25,trachea,hd95,10.54235773446661,3,True
+Boundary v1,3,Patient_26,aorta,assd,1.408921602120066,3,True
+Boundary v1,3,Patient_26,aorta,dice,0.9173266322824252,3,True
+Boundary v1,3,Patient_26,aorta,hd95,8.062983254213714,3,True
+Boundary v1,3,Patient_26,esophagus,assd,1.2797960002715993,3,True
+Boundary v1,3,Patient_26,esophagus,dice,0.8291719839817892,3,True
+Boundary v1,3,Patient_26,esophagus,hd95,5.092418466269745,3,True
+Boundary v1,3,Patient_26,heart,assd,3.255467944409048,3,True
+Boundary v1,3,Patient_26,heart,dice,0.9021000529401139,3,True
+Boundary v1,3,Patient_26,heart,hd95,9.353128079761063,3,True
+Boundary v1,3,Patient_26,trachea,assd,1.5002654429164608,3,True
+Boundary v1,3,Patient_26,trachea,dice,0.8685291220207622,3,True
+Boundary v1,3,Patient_26,trachea,hd95,11.473439999124407,3,True
+Boundary v1,3,Patient_27,aorta,assd,2.15341112677346,3,True
+Boundary v1,3,Patient_27,aorta,dice,0.9070786945108412,3,True
+Boundary v1,3,Patient_27,aorta,hd95,17.684935357679333,3,True
+Boundary v1,3,Patient_27,esophagus,assd,2.7201043910294374,3,True
+Boundary v1,3,Patient_27,esophagus,dice,0.63258077487046,3,True
+Boundary v1,3,Patient_27,esophagus,hd95,13.551671172598793,3,True
+Boundary v1,3,Patient_27,heart,assd,2.2942774771499743,3,True
+Boundary v1,3,Patient_27,heart,dice,0.9293450945312153,3,True
+Boundary v1,3,Patient_27,heart,hd95,7.5457347655835845,3,True
+Boundary v1,3,Patient_27,trachea,assd,1.3252139761982964,3,True
+Boundary v1,3,Patient_27,trachea,dice,0.8642665859331915,3,True
+Boundary v1,3,Patient_27,trachea,hd95,9.333333333333334,3,True
+Boundary v1,0,Patient_28,aorta,assd,2.37026581391581,3,True
+Boundary v1,0,Patient_28,aorta,dice,0.8708706043624743,3,True
+Boundary v1,0,Patient_28,aorta,hd95,13.346176117333414,3,True
+Boundary v1,0,Patient_28,esophagus,assd,2.940321915049577,3,True
+Boundary v1,0,Patient_28,esophagus,dice,0.6274834674325301,3,True
+Boundary v1,0,Patient_28,esophagus,hd95,12.59698772590341,3,True
+Boundary v1,0,Patient_28,heart,assd,6.271700298186825,3,True
+Boundary v1,0,Patient_28,heart,dice,0.864592773140052,3,True
+Boundary v1,0,Patient_28,heart,hd95,22.92077902983938,3,True
+Boundary v1,0,Patient_28,trachea,assd,1.869001042107817,3,True
+Boundary v1,0,Patient_28,trachea,dice,0.8552298701922476,3,True
+Boundary v1,0,Patient_28,trachea,hd95,13.874023009840414,3,True
+Boundary v1,2,Patient_29,aorta,assd,2.788107913536976,3,True
+Boundary v1,2,Patient_29,aorta,dice,0.8979754781288763,3,True
+Boundary v1,2,Patient_29,aorta,hd95,29.548685844350114,3,True
+Boundary v1,2,Patient_29,esophagus,assd,1.5320225336887763,3,True
+Boundary v1,2,Patient_29,esophagus,dice,0.7918214050192486,3,True
+Boundary v1,2,Patient_29,esophagus,hd95,5.887252560306128,3,True
+Boundary v1,2,Patient_29,heart,assd,3.7495252478598817,3,True
+Boundary v1,2,Patient_29,heart,dice,0.8919510199677879,3,True
+Boundary v1,2,Patient_29,heart,hd95,12.51070524198557,3,True
+Boundary v1,2,Patient_29,trachea,assd,1.3344818167857844,3,True
+Boundary v1,2,Patient_29,trachea,dice,0.9069484569559886,3,True
+Boundary v1,2,Patient_29,trachea,hd95,11.519725718887747,3,True
+Boundary v1,0,Patient_30,aorta,assd,4.2093791489861365,3,True
+Boundary v1,0,Patient_30,aorta,dice,0.8215892296351597,3,True
+Boundary v1,0,Patient_30,aorta,hd95,35.41007605802927,3,True
+Boundary v1,0,Patient_30,esophagus,assd,4.73398850686831,3,True
+Boundary v1,0,Patient_30,esophagus,dice,0.6321289231279802,3,True
+Boundary v1,0,Patient_30,esophagus,hd95,36.29015068649148,3,True
+Boundary v1,0,Patient_30,heart,assd,9.566463740139211,3,True
+Boundary v1,0,Patient_30,heart,dice,0.7843429334050235,3,True
+Boundary v1,0,Patient_30,heart,hd95,78.65051199125168,3,True
+Boundary v1,0,Patient_30,trachea,assd,3.664581234323651,3,True
+Boundary v1,0,Patient_30,trachea,dice,0.7971318630953284,3,True
+Boundary v1,0,Patient_30,trachea,hd95,39.68729274126374,3,True
+Boundary v1,3,Patient_31,aorta,assd,0.743937933055546,3,True
+Boundary v1,3,Patient_31,aorta,dice,0.9485195234027284,3,True
+Boundary v1,3,Patient_31,aorta,hd95,2.8173142271120706,3,True
+Boundary v1,3,Patient_31,esophagus,assd,1.1914847582648906,3,True
+Boundary v1,3,Patient_31,esophagus,dice,0.8130011184459122,3,True
+Boundary v1,3,Patient_31,esophagus,hd95,4.8263043073833884,3,True
+Boundary v1,3,Patient_31,heart,assd,1.1820380636053118,3,True
+Boundary v1,3,Patient_31,heart,dice,0.9602116167518183,3,True
+Boundary v1,3,Patient_31,heart,hd95,4.154126279894195,3,True
+Boundary v1,3,Patient_31,trachea,assd,1.7263808807837686,3,True
+Boundary v1,3,Patient_31,trachea,dice,0.9035106168414236,3,True
+Boundary v1,3,Patient_31,trachea,hd95,10.888158229612655,3,True
+Boundary v1,3,Patient_32,aorta,assd,1.8659594370685049,3,True
+Boundary v1,3,Patient_32,aorta,dice,0.9205510000365452,3,True
+Boundary v1,3,Patient_32,aorta,hd95,18.04509640644909,3,True
+Boundary v1,3,Patient_32,esophagus,assd,2.264426844237619,3,True
+Boundary v1,3,Patient_32,esophagus,dice,0.804156726531259,3,True
+Boundary v1,3,Patient_32,esophagus,hd95,9.470714264618174,3,True
+Boundary v1,3,Patient_32,heart,assd,2.750375610478708,3,True
+Boundary v1,3,Patient_32,heart,dice,0.9256445808313684,3,True
+Boundary v1,3,Patient_32,heart,hd95,7.828478169088335,3,True
+Boundary v1,3,Patient_32,trachea,assd,2.0254285574182234,3,True
+Boundary v1,3,Patient_32,trachea,dice,0.878690916735536,3,True
+Boundary v1,3,Patient_32,trachea,hd95,8.998675289472429,3,True
+Boundary v1,3,Patient_33,aorta,assd,1.7865602241241791,3,True
+Boundary v1,3,Patient_33,aorta,dice,0.9036883303308331,3,True
+Boundary v1,3,Patient_33,aorta,hd95,7.676643907197445,3,True
+Boundary v1,3,Patient_33,esophagus,assd,2.722568324235217,3,True
+Boundary v1,3,Patient_33,esophagus,dice,0.6803991590274384,3,True
+Boundary v1,3,Patient_33,esophagus,hd95,16.76372568714989,3,True
+Boundary v1,3,Patient_33,heart,assd,2.332615094234519,3,True
+Boundary v1,3,Patient_33,heart,dice,0.9307769506571714,3,True
+Boundary v1,3,Patient_33,heart,hd95,8.986742184127332,3,True
+Boundary v1,3,Patient_33,trachea,assd,2.923237187687722,3,True
+Boundary v1,3,Patient_33,trachea,dice,0.8191005582781882,3,True
+Boundary v1,3,Patient_33,trachea,hd95,17.44097267593287,3,True
+Boundary v1,2,Patient_34,aorta,assd,3.07219798609739,3,True
+Boundary v1,2,Patient_34,aorta,dice,0.9012744205182011,3,True
+Boundary v1,2,Patient_34,aorta,hd95,23.890278584124832,3,True
+Boundary v1,2,Patient_34,esophagus,assd,4.173526132415728,3,True
+Boundary v1,2,Patient_34,esophagus,dice,0.5726017025448712,3,True
+Boundary v1,2,Patient_34,esophagus,hd95,16.764550685000426,3,True
+Boundary v1,2,Patient_34,heart,assd,4.011046209558585,3,True
+Boundary v1,2,Patient_34,heart,dice,0.8939105957800578,3,True
+Boundary v1,2,Patient_34,heart,hd95,19.16889189956798,3,True
+Boundary v1,2,Patient_34,trachea,assd,1.5011661443302848,3,True
+Boundary v1,2,Patient_34,trachea,dice,0.8597716617861102,3,True
+Boundary v1,2,Patient_34,trachea,hd95,9.679395191489514,3,True
+Boundary v1,0,Patient_35,aorta,assd,1.109451719193696,3,True
+Boundary v1,0,Patient_35,aorta,dice,0.9170354889026071,3,True
+Boundary v1,0,Patient_35,aorta,hd95,4.845623669565886,3,True
+Boundary v1,0,Patient_35,esophagus,assd,1.9419129643903101,3,True
+Boundary v1,0,Patient_35,esophagus,dice,0.732534305007662,3,True
+Boundary v1,0,Patient_35,esophagus,hd95,9.340501038985835,3,True
+Boundary v1,0,Patient_35,heart,assd,2.8227948327587646,3,True
+Boundary v1,0,Patient_35,heart,dice,0.9202750015043151,3,True
+Boundary v1,0,Patient_35,heart,hd95,10.970683165031986,3,True
+Boundary v1,0,Patient_35,trachea,assd,0.5389256729031621,3,True
+Boundary v1,0,Patient_35,trachea,dice,0.93281538087505,3,True
+Boundary v1,0,Patient_35,trachea,hd95,1.7890625,3,True
+Boundary v1,2,Patient_36,aorta,assd,3.1690537789733635,3,True
+Boundary v1,2,Patient_36,aorta,dice,0.829325424718491,3,True
+Boundary v1,2,Patient_36,aorta,hd95,15.767432258182899,3,True
+Boundary v1,2,Patient_36,esophagus,assd,1.796062707698172,3,True
+Boundary v1,2,Patient_36,esophagus,dice,0.7808537960726817,3,True
+Boundary v1,2,Patient_36,esophagus,hd95,6.770211414969224,3,True
+Boundary v1,2,Patient_36,heart,assd,1.591366981975052,3,True
+Boundary v1,2,Patient_36,heart,dice,0.9494453045395878,3,True
+Boundary v1,2,Patient_36,heart,hd95,4.055633168751958,3,True
+Boundary v1,2,Patient_36,trachea,assd,1.8281292681522439,3,True
+Boundary v1,2,Patient_36,trachea,dice,0.8879198003125923,3,True
+Boundary v1,2,Patient_36,trachea,hd95,6.108787714537095,3,True
+Boundary v1,2,Patient_37,aorta,assd,1.0982259099962255,3,True
+Boundary v1,2,Patient_37,aorta,dice,0.9231178454369001,3,True
+Boundary v1,2,Patient_37,aorta,hd95,4.014029632122985,3,True
+Boundary v1,2,Patient_37,esophagus,assd,2.0317214513355975,3,True
+Boundary v1,2,Patient_37,esophagus,dice,0.7885739902308394,3,True
+Boundary v1,2,Patient_37,esophagus,hd95,6.27239598840008,3,True
+Boundary v1,2,Patient_37,heart,assd,2.309054703611795,3,True
+Boundary v1,2,Patient_37,heart,dice,0.9323834970980087,3,True
+Boundary v1,2,Patient_37,heart,hd95,8.114700587217756,3,True
+Boundary v1,2,Patient_37,trachea,assd,1.0175204235110396,3,True
+Boundary v1,2,Patient_37,trachea,dice,0.8879495121205704,3,True
+Boundary v1,2,Patient_37,trachea,hd95,7.879194148980228,3,True
+Boundary v1,1,Patient_38,aorta,assd,1.4604444833358106,3,True
+Boundary v1,1,Patient_38,aorta,dice,0.9063726906657648,3,True
+Boundary v1,1,Patient_38,aorta,hd95,8.389759131474506,3,True
+Boundary v1,1,Patient_38,esophagus,assd,2.022009277371869,3,True
+Boundary v1,1,Patient_38,esophagus,dice,0.7077646208349698,3,True
+Boundary v1,1,Patient_38,esophagus,hd95,8.381617520079226,3,True
+Boundary v1,1,Patient_38,heart,assd,1.4429878870828041,3,True
+Boundary v1,1,Patient_38,heart,dice,0.9487343213787959,3,True
+Boundary v1,1,Patient_38,heart,hd95,5.031491596638478,3,True
+Boundary v1,1,Patient_38,trachea,assd,0.986554950748595,3,True
+Boundary v1,1,Patient_38,trachea,dice,0.9071994634577462,3,True
+Boundary v1,1,Patient_38,trachea,hd95,5.957065060102399,3,True
+Boundary v1,0,Patient_39,aorta,assd,1.0338305733149502,3,True
+Boundary v1,0,Patient_39,aorta,dice,0.926190529708176,3,True
+Boundary v1,0,Patient_39,aorta,hd95,4.713920835655763,3,True
+Boundary v1,0,Patient_39,esophagus,assd,1.873622668228607,3,True
+Boundary v1,0,Patient_39,esophagus,dice,0.7962578561345327,3,True
+Boundary v1,0,Patient_39,esophagus,hd95,7.205944509299665,3,True
+Boundary v1,0,Patient_39,heart,assd,2.5147113421470038,3,True
+Boundary v1,0,Patient_39,heart,dice,0.9340546723578846,3,True
+Boundary v1,0,Patient_39,heart,hd95,11.757905502455367,3,True
+Boundary v1,0,Patient_39,trachea,assd,1.3974280832481012,3,True
+Boundary v1,0,Patient_39,trachea,dice,0.8758537682656216,3,True
+Boundary v1,0,Patient_39,trachea,hd95,10.461471907697584,3,True
+Boundary v1,1,Patient_40,aorta,assd,1.6247892946740858,3,True
+Boundary v1,1,Patient_40,aorta,dice,0.9134890118233918,3,True
+Boundary v1,1,Patient_40,aorta,hd95,7.528517535179858,3,True
+Boundary v1,1,Patient_40,esophagus,assd,1.3101276372461013,3,True
+Boundary v1,1,Patient_40,esophagus,dice,0.7942846474299392,3,True
+Boundary v1,1,Patient_40,esophagus,hd95,5.814566969671358,3,True
+Boundary v1,1,Patient_40,heart,assd,1.504585307131954,3,True
+Boundary v1,1,Patient_40,heart,dice,0.9542156508307332,3,True
+Boundary v1,1,Patient_40,heart,hd95,4.685920330060104,3,True
+Boundary v1,1,Patient_40,trachea,assd,0.8006156022209779,3,True
+Boundary v1,1,Patient_40,trachea,dice,0.9231172915261957,3,True
+Boundary v1,1,Patient_40,trachea,hd95,4.898061828266225,3,True
+Boundary v2,0,Patient_01,aorta,assd,1.3154642353724395,3,True
+Boundary v2,0,Patient_01,aorta,dice,0.9118639989571733,3,True
+Boundary v2,0,Patient_01,aorta,hd95,7.450296494922678,3,True
+Boundary v2,0,Patient_01,esophagus,assd,1.6452716175360826,3,True
+Boundary v2,0,Patient_01,esophagus,dice,0.8004143720245301,3,True
+Boundary v2,0,Patient_01,esophagus,hd95,6.828048566930629,3,True
+Boundary v2,0,Patient_01,heart,assd,1.7324976887343153,3,True
+Boundary v2,0,Patient_01,heart,dice,0.9483833198240156,3,True
+Boundary v2,0,Patient_01,heart,hd95,4.714401265338309,3,True
+Boundary v2,0,Patient_01,trachea,assd,1.3537612205682394,3,True
+Boundary v2,0,Patient_01,trachea,dice,0.9174369967725539,3,True
+Boundary v2,0,Patient_01,trachea,hd95,12.369093337623715,3,True
+Boundary v2,0,Patient_02,aorta,assd,1.1824637694848283,3,True
+Boundary v2,0,Patient_02,aorta,dice,0.9274487450989546,3,True
+Boundary v2,0,Patient_02,aorta,hd95,5.031491596638478,3,True
+Boundary v2,0,Patient_02,esophagus,assd,2.1031478714174647,3,True
+Boundary v2,0,Patient_02,esophagus,dice,0.7097112761158048,3,True
+Boundary v2,0,Patient_02,esophagus,hd95,11.093931954751737,3,True
+Boundary v2,0,Patient_02,heart,assd,2.4972093993872573,3,True
+Boundary v2,0,Patient_02,heart,dice,0.9379359114510203,3,True
+Boundary v2,0,Patient_02,heart,hd95,6.868021216690713,3,True
+Boundary v2,0,Patient_02,trachea,assd,1.8989675280346627,3,True
+Boundary v2,0,Patient_02,trachea,dice,0.8705510612199253,3,True
+Boundary v2,0,Patient_02,trachea,hd95,17.937708306654887,3,True
+Boundary v2,3,Patient_03,aorta,assd,5.368755836213995,3,True
+Boundary v2,3,Patient_03,aorta,dice,0.6285988763811489,3,True
+Boundary v2,3,Patient_03,aorta,hd95,25.75249734774066,3,True
+Boundary v2,3,Patient_03,esophagus,assd,4.3885846034865255,3,True
+Boundary v2,3,Patient_03,esophagus,dice,0.44489195455818287,3,True
+Boundary v2,3,Patient_03,esophagus,hd95,22.48562556595964,3,True
+Boundary v2,3,Patient_03,heart,assd,2.431709259319836,3,True
+Boundary v2,3,Patient_03,heart,dice,0.9108253345295152,3,True
+Boundary v2,3,Patient_03,heart,hd95,8.24239549837813,3,True
+Boundary v2,3,Patient_03,trachea,assd,3.616961783538724,3,True
+Boundary v2,3,Patient_03,trachea,dice,0.7470320962283226,3,True
+Boundary v2,3,Patient_03,trachea,hd95,34.452635407599075,3,True
+Boundary v2,2,Patient_04,aorta,assd,1.4015711270249902,3,True
+Boundary v2,2,Patient_04,aorta,dice,0.9087192494936325,3,True
+Boundary v2,2,Patient_04,aorta,hd95,4.8684937141963625,3,True
+Boundary v2,2,Patient_04,esophagus,assd,2.094775030386647,3,True
+Boundary v2,2,Patient_04,esophagus,dice,0.7464218607890872,3,True
+Boundary v2,2,Patient_04,esophagus,hd95,8.539660094206035,3,True
+Boundary v2,2,Patient_04,heart,assd,1.8301324979673532,3,True
+Boundary v2,2,Patient_04,heart,dice,0.9486932476548479,3,True
+Boundary v2,2,Patient_04,heart,hd95,5.0,3,True
+Boundary v2,2,Patient_04,trachea,assd,1.2369373255675684,3,True
+Boundary v2,2,Patient_04,trachea,dice,0.887050645005147,3,True
+Boundary v2,2,Patient_04,trachea,hd95,8.247030088808705,3,True
+Boundary v2,2,Patient_05,aorta,assd,3.35394449881703,3,True
+Boundary v2,2,Patient_05,aorta,dice,0.8330507760813693,3,True
+Boundary v2,2,Patient_05,aorta,hd95,22.0,3,True
+Boundary v2,2,Patient_05,esophagus,assd,3.0307507958405466,3,True
+Boundary v2,2,Patient_05,esophagus,dice,0.5572868883087658,3,True
+Boundary v2,2,Patient_05,esophagus,hd95,8.880416986122233,3,True
+Boundary v2,2,Patient_05,heart,assd,7.551863998867483,3,True
+Boundary v2,2,Patient_05,heart,dice,0.888473459915983,3,True
+Boundary v2,2,Patient_05,heart,hd95,38.07917898571092,3,True
+Boundary v2,2,Patient_05,trachea,assd,5.162670038240806,3,True
+Boundary v2,2,Patient_05,trachea,dice,0.7440591480934765,3,True
+Boundary v2,2,Patient_05,trachea,hd95,38.735317300244056,3,True
+Boundary v2,1,Patient_06,aorta,assd,2.1802513614753742,3,True
+Boundary v2,1,Patient_06,aorta,dice,0.9095338954275003,3,True
+Boundary v2,1,Patient_06,aorta,hd95,16.11260211969436,3,True
+Boundary v2,1,Patient_06,esophagus,assd,2.4934187765054943,3,True
+Boundary v2,1,Patient_06,esophagus,dice,0.6739274836708654,3,True
+Boundary v2,1,Patient_06,esophagus,hd95,10.138150350387532,3,True
+Boundary v2,1,Patient_06,heart,assd,3.3800745906512475,3,True
+Boundary v2,1,Patient_06,heart,dice,0.9153371267499409,3,True
+Boundary v2,1,Patient_06,heart,hd95,13.818474708766887,3,True
+Boundary v2,1,Patient_06,trachea,assd,1.7073753091377675,3,True
+Boundary v2,1,Patient_06,trachea,dice,0.9084696731275965,3,True
+Boundary v2,1,Patient_06,trachea,hd95,11.520269144240288,3,True
+Boundary v2,2,Patient_07,aorta,assd,1.565841250904697,3,True
+Boundary v2,2,Patient_07,aorta,dice,0.8971903742971472,3,True
+Boundary v2,2,Patient_07,aorta,hd95,8.610934753733497,3,True
+Boundary v2,2,Patient_07,esophagus,assd,2.3614577950423947,3,True
+Boundary v2,2,Patient_07,esophagus,dice,0.7311855962884876,3,True
+Boundary v2,2,Patient_07,esophagus,hd95,14.074868824637141,3,True
+Boundary v2,2,Patient_07,heart,assd,4.7619621279294515,3,True
+Boundary v2,2,Patient_07,heart,dice,0.9282649920430425,3,True
+Boundary v2,2,Patient_07,heart,hd95,32.348252875511236,3,True
+Boundary v2,2,Patient_07,trachea,assd,2.12849507144776,3,True
+Boundary v2,2,Patient_07,trachea,dice,0.8887023847773646,3,True
+Boundary v2,2,Patient_07,trachea,hd95,15.386581316161275,3,True
+Boundary v2,1,Patient_08,aorta,assd,4.9102571210363175,3,True
+Boundary v2,1,Patient_08,aorta,dice,0.8653629501428273,3,True
+Boundary v2,1,Patient_08,aorta,hd95,50.03633642373985,3,True
+Boundary v2,1,Patient_08,esophagus,assd,2.9907774843422374,3,True
+Boundary v2,1,Patient_08,esophagus,dice,0.5415096727463579,3,True
+Boundary v2,1,Patient_08,esophagus,hd95,13.178591413128496,3,True
+Boundary v2,1,Patient_08,heart,assd,3.939390446933905,3,True
+Boundary v2,1,Patient_08,heart,dice,0.8675292179141268,3,True
+Boundary v2,1,Patient_08,heart,hd95,14.979949777019057,3,True
+Boundary v2,1,Patient_08,trachea,assd,3.2709078521832446,3,True
+Boundary v2,1,Patient_08,trachea,dice,0.8458261680074893,3,True
+Boundary v2,1,Patient_08,trachea,hd95,23.884086669149056,3,True
+Boundary v2,2,Patient_09,aorta,assd,2.807051347608296,3,True
+Boundary v2,2,Patient_09,aorta,dice,0.8616663555656898,3,True
+Boundary v2,2,Patient_09,aorta,hd95,16.20371602882948,3,True
+Boundary v2,2,Patient_09,esophagus,assd,1.7095559261757958,3,True
+Boundary v2,2,Patient_09,esophagus,dice,0.752289377614986,3,True
+Boundary v2,2,Patient_09,esophagus,hd95,9.166666666666666,3,True
+Boundary v2,2,Patient_09,heart,assd,3.521925822230926,3,True
+Boundary v2,2,Patient_09,heart,dice,0.9117837767572369,3,True
+Boundary v2,2,Patient_09,heart,hd95,11.666666666666666,3,True
+Boundary v2,2,Patient_09,trachea,assd,1.818659153941775,3,True
+Boundary v2,2,Patient_09,trachea,dice,0.9158048502057836,3,True
+Boundary v2,2,Patient_09,trachea,hd95,26.428110102313706,3,True
+Boundary v2,2,Patient_10,aorta,assd,1.3443710813326053,3,True
+Boundary v2,2,Patient_10,aorta,dice,0.91759897011478,3,True
+Boundary v2,2,Patient_10,aorta,hd95,7.4237771508294665,3,True
+Boundary v2,2,Patient_10,esophagus,assd,2.1259452826579808,3,True
+Boundary v2,2,Patient_10,esophagus,dice,0.770170467214441,3,True
+Boundary v2,2,Patient_10,esophagus,hd95,12.666666666666666,3,True
+Boundary v2,2,Patient_10,heart,assd,4.029324566405254,3,True
+Boundary v2,2,Patient_10,heart,dice,0.9167744085441388,3,True
+Boundary v2,2,Patient_10,heart,hd95,22.012868540281406,3,True
+Boundary v2,2,Patient_10,trachea,assd,0.9873376016529537,3,True
+Boundary v2,2,Patient_10,trachea,dice,0.9117456690984144,3,True
+Boundary v2,2,Patient_10,trachea,hd95,7.950870814590338,3,True
+Boundary v2,1,Patient_11,aorta,assd,1.1167167351289602,3,True
+Boundary v2,1,Patient_11,aorta,dice,0.9309054745011669,3,True
+Boundary v2,1,Patient_11,aorta,hd95,4.460178657101273,3,True
+Boundary v2,1,Patient_11,esophagus,assd,3.3536943718704006,3,True
+Boundary v2,1,Patient_11,esophagus,dice,0.6750725511512345,3,True
+Boundary v2,1,Patient_11,esophagus,hd95,17.09614081743749,3,True
+Boundary v2,1,Patient_11,heart,assd,1.7993300765937335,3,True
+Boundary v2,1,Patient_11,heart,dice,0.9498066899304657,3,True
+Boundary v2,1,Patient_11,heart,hd95,6.157087167420585,3,True
+Boundary v2,1,Patient_11,trachea,assd,1.9157118602868388,3,True
+Boundary v2,1,Patient_11,trachea,dice,0.8646965709621591,3,True
+Boundary v2,1,Patient_11,trachea,hd95,14.42025498741431,3,True
+Boundary v2,3,Patient_12,aorta,assd,2.789072539443152,3,True
+Boundary v2,3,Patient_12,aorta,dice,0.8619738668384037,3,True
+Boundary v2,3,Patient_12,aorta,hd95,13.333333333333334,3,True
+Boundary v2,3,Patient_12,esophagus,assd,2.1027769415073547,3,True
+Boundary v2,3,Patient_12,esophagus,dice,0.741455822033349,3,True
+Boundary v2,3,Patient_12,esophagus,hd95,9.961241709000207,3,True
+Boundary v2,3,Patient_12,heart,assd,4.334108992893626,3,True
+Boundary v2,3,Patient_12,heart,dice,0.8950005762974897,3,True
+Boundary v2,3,Patient_12,heart,hd95,14.666666666666666,3,True
+Boundary v2,3,Patient_12,trachea,assd,2.5374234102171624,3,True
+Boundary v2,3,Patient_12,trachea,dice,0.8765844988765973,3,True
+Boundary v2,3,Patient_12,trachea,hd95,12.647136305507743,3,True
+Boundary v2,0,Patient_13,aorta,assd,1.0523722592167906,3,True
+Boundary v2,0,Patient_13,aorta,dice,0.9324674328301978,3,True
+Boundary v2,0,Patient_13,aorta,hd95,3.5873786213366508,3,True
+Boundary v2,0,Patient_13,esophagus,assd,2.0411119186601576,3,True
+Boundary v2,0,Patient_13,esophagus,dice,0.7018545107319903,3,True
+Boundary v2,0,Patient_13,esophagus,hd95,9.236484703500482,3,True
+Boundary v2,0,Patient_13,heart,assd,2.3101225383135806,3,True
+Boundary v2,0,Patient_13,heart,dice,0.9341782516879834,3,True
+Boundary v2,0,Patient_13,heart,hd95,6.435530673236994,3,True
+Boundary v2,0,Patient_13,trachea,assd,1.0114957623770287,3,True
+Boundary v2,0,Patient_13,trachea,dice,0.9111017957387143,3,True
+Boundary v2,0,Patient_13,trachea,hd95,6.716984519746777,3,True
+Boundary v2,1,Patient_14,aorta,assd,3.4246254574067567,3,True
+Boundary v2,1,Patient_14,aorta,dice,0.7683065742236369,3,True
+Boundary v2,1,Patient_14,aorta,hd95,15.873097002757305,3,True
+Boundary v2,1,Patient_14,esophagus,assd,8.035876638319637,3,True
+Boundary v2,1,Patient_14,esophagus,dice,0.3303017162972797,3,True
+Boundary v2,1,Patient_14,esophagus,hd95,39.72000727096266,3,True
+Boundary v2,1,Patient_14,heart,assd,4.966841669568201,3,True
+Boundary v2,1,Patient_14,heart,dice,0.9144137738522412,3,True
+Boundary v2,1,Patient_14,heart,hd95,35.09015904283221,3,True
+Boundary v2,1,Patient_14,trachea,assd,7.770827699907177,3,True
+Boundary v2,1,Patient_14,trachea,dice,0.3900372335516044,3,True
+Boundary v2,1,Patient_14,trachea,hd95,29.618315780631136,3,True
+Boundary v2,1,Patient_15,aorta,assd,3.547047219243616,3,True
+Boundary v2,1,Patient_15,aorta,dice,0.8114220999242306,3,True
+Boundary v2,1,Patient_15,aorta,hd95,11.240939593446877,3,True
+Boundary v2,1,Patient_15,esophagus,assd,6.682811465751528,3,True
+Boundary v2,1,Patient_15,esophagus,dice,0.5329600583812484,3,True
+Boundary v2,1,Patient_15,esophagus,hd95,34.27307659778284,3,True
+Boundary v2,1,Patient_15,heart,assd,2.110942181848705,3,True
+Boundary v2,1,Patient_15,heart,dice,0.9497959581322516,3,True
+Boundary v2,1,Patient_15,heart,hd95,6.428767340004575,3,True
+Boundary v2,1,Patient_15,trachea,assd,1.3662977285540558,3,True
+Boundary v2,1,Patient_15,trachea,dice,0.908600245166156,3,True
+Boundary v2,1,Patient_15,trachea,hd95,8.606865347687753,3,True
+Boundary v2,0,Patient_16,aorta,assd,1.3549892285657708,3,True
+Boundary v2,0,Patient_16,aorta,dice,0.9326133217170334,3,True
+Boundary v2,0,Patient_16,aorta,hd95,9.70650657343122,3,True
+Boundary v2,0,Patient_16,esophagus,assd,1.5297149957743168,3,True
+Boundary v2,0,Patient_16,esophagus,dice,0.803203413749539,3,True
+Boundary v2,0,Patient_16,esophagus,hd95,7.278597477701783,3,True
+Boundary v2,0,Patient_16,heart,assd,2.757952472358614,3,True
+Boundary v2,0,Patient_16,heart,dice,0.9238886552964498,3,True
+Boundary v2,0,Patient_16,heart,hd95,6.352891745921248,3,True
+Boundary v2,0,Patient_16,trachea,assd,1.376926151881907,3,True
+Boundary v2,0,Patient_16,trachea,dice,0.8786898398777625,3,True
+Boundary v2,0,Patient_16,trachea,hd95,10.253522987537021,3,True
+Boundary v2,3,Patient_17,aorta,assd,2.059451657663025,3,True
+Boundary v2,3,Patient_17,aorta,dice,0.8794569213492709,3,True
+Boundary v2,3,Patient_17,aorta,hd95,22.11415937962077,3,True
+Boundary v2,3,Patient_17,esophagus,assd,1.793125153817608,3,True
+Boundary v2,3,Patient_17,esophagus,dice,0.7474063469678592,3,True
+Boundary v2,3,Patient_17,esophagus,hd95,7.715414583574286,3,True
+Boundary v2,3,Patient_17,heart,assd,1.368179528929818,3,True
+Boundary v2,3,Patient_17,heart,dice,0.9573224046998531,3,True
+Boundary v2,3,Patient_17,heart,hd95,5.280021528920421,3,True
+Boundary v2,3,Patient_17,trachea,assd,1.5728862773655239,3,True
+Boundary v2,3,Patient_17,trachea,dice,0.8882552152822712,3,True
+Boundary v2,3,Patient_17,trachea,hd95,19.591767714901327,3,True
+Boundary v2,1,Patient_18,aorta,assd,2.061685370726824,3,True
+Boundary v2,1,Patient_18,aorta,dice,0.8731034296082448,3,True
+Boundary v2,1,Patient_18,aorta,hd95,8.042057346029905,3,True
+Boundary v2,1,Patient_18,esophagus,assd,2.114023962403516,3,True
+Boundary v2,1,Patient_18,esophagus,dice,0.7548116380523711,3,True
+Boundary v2,1,Patient_18,esophagus,hd95,8.989913460532273,3,True
+Boundary v2,1,Patient_18,heart,assd,3.399852929370964,3,True
+Boundary v2,1,Patient_18,heart,dice,0.9342608054857994,3,True
+Boundary v2,1,Patient_18,heart,hd95,12.82404833216446,3,True
+Boundary v2,1,Patient_18,trachea,assd,0.6460260642547199,3,True
+Boundary v2,1,Patient_18,trachea,dice,0.9372821644556156,3,True
+Boundary v2,1,Patient_18,trachea,hd95,3.1674235032391613,3,True
+Boundary v2,2,Patient_19,aorta,assd,1.7548226854108038,3,True
+Boundary v2,2,Patient_19,aorta,dice,0.8677714371884134,3,True
+Boundary v2,2,Patient_19,aorta,hd95,6.644624815992302,3,True
+Boundary v2,2,Patient_19,esophagus,assd,1.9166247798406288,3,True
+Boundary v2,2,Patient_19,esophagus,dice,0.6906599958776493,3,True
+Boundary v2,2,Patient_19,esophagus,hd95,10.735790893802296,3,True
+Boundary v2,2,Patient_19,heart,assd,1.9733271440185227,3,True
+Boundary v2,2,Patient_19,heart,dice,0.9482838088082657,3,True
+Boundary v2,2,Patient_19,heart,hd95,5.833333333333333,3,True
+Boundary v2,2,Patient_19,trachea,assd,3.45580903668492,3,True
+Boundary v2,2,Patient_19,trachea,dice,0.8481052236461489,3,True
+Boundary v2,2,Patient_19,trachea,hd95,73.47918610083757,3,True
+Boundary v2,3,Patient_20,aorta,assd,4.959674770383093,3,True
+Boundary v2,3,Patient_20,aorta,dice,0.844067711141272,3,True
+Boundary v2,3,Patient_20,aorta,hd95,54.89874987399048,3,True
+Boundary v2,3,Patient_20,esophagus,assd,9.100827922086461,3,True
+Boundary v2,3,Patient_20,esophagus,dice,0.3907753898219672,3,True
+Boundary v2,3,Patient_20,esophagus,hd95,36.35735843413037,3,True
+Boundary v2,3,Patient_20,heart,assd,6.357376137953142,3,True
+Boundary v2,3,Patient_20,heart,dice,0.8670453466082081,3,True
+Boundary v2,3,Patient_20,heart,hd95,30.904092005576715,3,True
+Boundary v2,3,Patient_20,trachea,assd,4.064190520370502,3,True
+Boundary v2,3,Patient_20,trachea,dice,0.733138161953682,3,True
+Boundary v2,3,Patient_20,trachea,hd95,33.6292252014181,3,True
+Boundary v2,0,Patient_21,aorta,assd,1.267527808394549,3,True
+Boundary v2,0,Patient_21,aorta,dice,0.9302424083315423,3,True
+Boundary v2,0,Patient_21,aorta,hd95,11.365533193255798,3,True
+Boundary v2,0,Patient_21,esophagus,assd,2.0181238887889976,3,True
+Boundary v2,0,Patient_21,esophagus,dice,0.6565390799674228,3,True
+Boundary v2,0,Patient_21,esophagus,hd95,8.210244006919806,3,True
+Boundary v2,0,Patient_21,heart,assd,1.9918876121672884,3,True
+Boundary v2,0,Patient_21,heart,dice,0.9371919821498769,3,True
+Boundary v2,0,Patient_21,heart,hd95,9.400916444848157,3,True
+Boundary v2,0,Patient_21,trachea,assd,0.9604452869662068,3,True
+Boundary v2,0,Patient_21,trachea,dice,0.9093890006913125,3,True
+Boundary v2,0,Patient_21,trachea,hd95,10.833333333333334,3,True
+Boundary v2,0,Patient_22,aorta,assd,2.551629150470481,3,True
+Boundary v2,0,Patient_22,aorta,dice,0.9067961050471514,3,True
+Boundary v2,0,Patient_22,aorta,hd95,27.786447207132976,3,True
+Boundary v2,0,Patient_22,esophagus,assd,2.4411290066498643,3,True
+Boundary v2,0,Patient_22,esophagus,dice,0.6250473197028302,3,True
+Boundary v2,0,Patient_22,esophagus,hd95,9.100829608742233,3,True
+Boundary v2,0,Patient_22,heart,assd,3.3266759573322133,3,True
+Boundary v2,0,Patient_22,heart,dice,0.9262123131516325,3,True
+Boundary v2,0,Patient_22,heart,hd95,9.166666666666666,3,True
+Boundary v2,0,Patient_22,trachea,assd,0.7304300834584626,3,True
+Boundary v2,0,Patient_22,trachea,dice,0.9244669975288703,3,True
+Boundary v2,0,Patient_22,trachea,hd95,5.267704094663386,3,True
+Boundary v2,1,Patient_23,aorta,assd,2.3460414322843364,3,True
+Boundary v2,1,Patient_23,aorta,dice,0.8766489905801205,3,True
+Boundary v2,1,Patient_23,aorta,hd95,15.571622805609422,3,True
+Boundary v2,1,Patient_23,esophagus,assd,3.574943810372458,3,True
+Boundary v2,1,Patient_23,esophagus,dice,0.6125067968817494,3,True
+Boundary v2,1,Patient_23,esophagus,hd95,13.868032352490927,3,True
+Boundary v2,1,Patient_23,heart,assd,1.1164508758965523,3,True
+Boundary v2,1,Patient_23,heart,dice,0.9659512718555545,3,True
+Boundary v2,1,Patient_23,heart,hd95,3.4057958711304117,3,True
+Boundary v2,1,Patient_23,trachea,assd,1.4257467183184092,3,True
+Boundary v2,1,Patient_23,trachea,dice,0.898635249180774,3,True
+Boundary v2,1,Patient_23,trachea,hd95,10.619923494342387,3,True
+Boundary v2,1,Patient_24,aorta,assd,7.167220598240209,3,True
+Boundary v2,1,Patient_24,aorta,dice,0.5552054410168838,3,True
+Boundary v2,1,Patient_24,aorta,hd95,32.793675972715015,3,True
+Boundary v2,1,Patient_24,esophagus,assd,6.667566314826142,3,True
+Boundary v2,1,Patient_24,esophagus,dice,0.4127209829347884,3,True
+Boundary v2,1,Patient_24,esophagus,hd95,26.321498278964683,3,True
+Boundary v2,1,Patient_24,heart,assd,4.843552017376086,3,True
+Boundary v2,1,Patient_24,heart,dice,0.8843111594442363,3,True
+Boundary v2,1,Patient_24,heart,hd95,21.780267393331755,3,True
+Boundary v2,1,Patient_24,trachea,assd,1.5705451959780359,3,True
+Boundary v2,1,Patient_24,trachea,dice,0.840197446799361,3,True
+Boundary v2,1,Patient_24,trachea,hd95,9.36052919209022,3,True
+Boundary v2,3,Patient_25,aorta,assd,1.575024906318862,3,True
+Boundary v2,3,Patient_25,aorta,dice,0.90236552123496,3,True
+Boundary v2,3,Patient_25,aorta,hd95,10.012696301605517,3,True
+Boundary v2,3,Patient_25,esophagus,assd,6.478746520185603,3,True
+Boundary v2,3,Patient_25,esophagus,dice,0.6268164692283683,3,True
+Boundary v2,3,Patient_25,esophagus,hd95,31.737515828843062,3,True
+Boundary v2,3,Patient_25,heart,assd,2.281826281056731,3,True
+Boundary v2,3,Patient_25,heart,dice,0.9403796198614538,3,True
+Boundary v2,3,Patient_25,heart,hd95,6.666666666666667,3,True
+Boundary v2,3,Patient_25,trachea,assd,1.1885197985359988,3,True
+Boundary v2,3,Patient_25,trachea,dice,0.8850696308806579,3,True
+Boundary v2,3,Patient_25,trachea,hd95,8.031184324626194,3,True
+Boundary v2,3,Patient_26,aorta,assd,1.5588423598471044,3,True
+Boundary v2,3,Patient_26,aorta,dice,0.9144801005647712,3,True
+Boundary v2,3,Patient_26,aorta,hd95,9.472555082570647,3,True
+Boundary v2,3,Patient_26,esophagus,assd,1.3983088930008136,3,True
+Boundary v2,3,Patient_26,esophagus,dice,0.8265949168662905,3,True
+Boundary v2,3,Patient_26,esophagus,hd95,5.560912706829317,3,True
+Boundary v2,3,Patient_26,heart,assd,3.86009439986311,3,True
+Boundary v2,3,Patient_26,heart,dice,0.9024720951861301,3,True
+Boundary v2,3,Patient_26,heart,hd95,9.157853026469178,3,True
+Boundary v2,3,Patient_26,trachea,assd,1.7966889714884724,3,True
+Boundary v2,3,Patient_26,trachea,dice,0.8428975268428739,3,True
+Boundary v2,3,Patient_26,trachea,hd95,13.984770539434699,3,True
+Boundary v2,3,Patient_27,aorta,assd,2.031093990204805,3,True
+Boundary v2,3,Patient_27,aorta,dice,0.9054229977271566,3,True
+Boundary v2,3,Patient_27,aorta,hd95,15.358978191317567,3,True
+Boundary v2,3,Patient_27,esophagus,assd,2.2055460211034688,3,True
+Boundary v2,3,Patient_27,esophagus,dice,0.6616426522266052,3,True
+Boundary v2,3,Patient_27,esophagus,hd95,11.117436588075295,3,True
+Boundary v2,3,Patient_27,heart,assd,2.1131147905504015,3,True
+Boundary v2,3,Patient_27,heart,dice,0.936806051139104,3,True
+Boundary v2,3,Patient_27,heart,hd95,6.182502840177542,3,True
+Boundary v2,3,Patient_27,trachea,assd,1.920478408532502,3,True
+Boundary v2,3,Patient_27,trachea,dice,0.8738359781133246,3,True
+Boundary v2,3,Patient_27,trachea,hd95,8.666666666666666,3,True
+Boundary v2,0,Patient_28,aorta,assd,2.6317558782108215,3,True
+Boundary v2,0,Patient_28,aorta,dice,0.88863838333121,3,True
+Boundary v2,0,Patient_28,aorta,hd95,17.37999512029232,3,True
+Boundary v2,0,Patient_28,esophagus,assd,3.375283598608221,3,True
+Boundary v2,0,Patient_28,esophagus,dice,0.6266169397390239,3,True
+Boundary v2,0,Patient_28,esophagus,hd95,16.943723611392866,3,True
+Boundary v2,0,Patient_28,heart,assd,5.612154345517478,3,True
+Boundary v2,0,Patient_28,heart,dice,0.8769481147523367,3,True
+Boundary v2,0,Patient_28,heart,hd95,22.5,3,True
+Boundary v2,0,Patient_28,trachea,assd,1.4287158209598785,3,True
+Boundary v2,0,Patient_28,trachea,dice,0.8885691037694254,3,True
+Boundary v2,0,Patient_28,trachea,hd95,12.672972768733558,3,True
+Boundary v2,2,Patient_29,aorta,assd,1.967350620614841,3,True
+Boundary v2,2,Patient_29,aorta,dice,0.8945348052414355,3,True
+Boundary v2,2,Patient_29,aorta,hd95,13.674285720626253,3,True
+Boundary v2,2,Patient_29,esophagus,assd,1.4651616184520073,3,True
+Boundary v2,2,Patient_29,esophagus,dice,0.7747201557955479,3,True
+Boundary v2,2,Patient_29,esophagus,hd95,6.494487416593535,3,True
+Boundary v2,2,Patient_29,heart,assd,3.4837306514122184,3,True
+Boundary v2,2,Patient_29,heart,dice,0.8971499422288819,3,True
+Boundary v2,2,Patient_29,heart,hd95,14.185320650430176,3,True
+Boundary v2,2,Patient_29,trachea,assd,2.087887210020829,3,True
+Boundary v2,2,Patient_29,trachea,dice,0.8892416881256321,3,True
+Boundary v2,2,Patient_29,trachea,hd95,16.157108372041012,3,True
+Boundary v2,0,Patient_30,aorta,assd,4.595977401760625,3,True
+Boundary v2,0,Patient_30,aorta,dice,0.8119173012587929,3,True
+Boundary v2,0,Patient_30,aorta,hd95,31.80550490011288,3,True
+Boundary v2,0,Patient_30,esophagus,assd,3.3456214621705698,3,True
+Boundary v2,0,Patient_30,esophagus,dice,0.6050627287564864,3,True
+Boundary v2,0,Patient_30,esophagus,hd95,10.123248327766351,3,True
+Boundary v2,0,Patient_30,heart,assd,10.604182753494488,3,True
+Boundary v2,0,Patient_30,heart,dice,0.7577035910003099,3,True
+Boundary v2,0,Patient_30,heart,hd95,31.298777821345812,3,True
+Boundary v2,0,Patient_30,trachea,assd,2.3839956006687433,3,True
+Boundary v2,0,Patient_30,trachea,dice,0.8127332156704088,3,True
+Boundary v2,0,Patient_30,trachea,hd95,15.405321631781247,3,True
+Boundary v2,3,Patient_31,aorta,assd,0.9473787549964457,3,True
+Boundary v2,3,Patient_31,aorta,dice,0.9497644787401066,3,True
+Boundary v2,3,Patient_31,aorta,hd95,3.215247472699104,3,True
+Boundary v2,3,Patient_31,esophagus,assd,1.2511728552530335,3,True
+Boundary v2,3,Patient_31,esophagus,dice,0.7989376605785011,3,True
+Boundary v2,3,Patient_31,esophagus,hd95,5.007053483561819,3,True
+Boundary v2,3,Patient_31,heart,assd,1.2267656280591754,3,True
+Boundary v2,3,Patient_31,heart,dice,0.9597606049544248,3,True
+Boundary v2,3,Patient_31,heart,hd95,3.948648087563854,3,True
+Boundary v2,3,Patient_31,trachea,assd,1.2300012617284048,3,True
+Boundary v2,3,Patient_31,trachea,dice,0.9015905092957683,3,True
+Boundary v2,3,Patient_31,trachea,hd95,9.899374822986129,3,True
+Boundary v2,3,Patient_32,aorta,assd,2.3827138873212053,3,True
+Boundary v2,3,Patient_32,aorta,dice,0.9008167006247026,3,True
+Boundary v2,3,Patient_32,aorta,hd95,23.771152968939305,3,True
+Boundary v2,3,Patient_32,esophagus,assd,1.7226913490426623,3,True
+Boundary v2,3,Patient_32,esophagus,dice,0.8214001865984643,3,True
+Boundary v2,3,Patient_32,esophagus,hd95,7.515502546700401,3,True
+Boundary v2,3,Patient_32,heart,assd,4.63259434317898,3,True
+Boundary v2,3,Patient_32,heart,dice,0.9332181986560583,3,True
+Boundary v2,3,Patient_32,heart,hd95,35.41137339313159,3,True
+Boundary v2,3,Patient_32,trachea,assd,1.4186836742562583,3,True
+Boundary v2,3,Patient_32,trachea,dice,0.8667944044568617,3,True
+Boundary v2,3,Patient_32,trachea,hd95,10.104611193206958,3,True
+Boundary v2,3,Patient_33,aorta,assd,1.2502439682670314,3,True
+Boundary v2,3,Patient_33,aorta,dice,0.9094916104613198,3,True
+Boundary v2,3,Patient_33,aorta,hd95,4.703044685999157,3,True
+Boundary v2,3,Patient_33,esophagus,assd,2.2257006060558604,3,True
+Boundary v2,3,Patient_33,esophagus,dice,0.6800027744197293,3,True
+Boundary v2,3,Patient_33,esophagus,hd95,10.712137534427285,3,True
+Boundary v2,3,Patient_33,heart,assd,4.053919377706026,3,True
+Boundary v2,3,Patient_33,heart,dice,0.9304418092404267,3,True
+Boundary v2,3,Patient_33,heart,hd95,53.30439794695417,3,True
+Boundary v2,3,Patient_33,trachea,assd,3.5389011810634368,3,True
+Boundary v2,3,Patient_33,trachea,dice,0.7814634907678079,3,True
+Boundary v2,3,Patient_33,trachea,hd95,23.986796095808955,3,True
+Boundary v2,2,Patient_34,aorta,assd,2.3032434080169804,3,True
+Boundary v2,2,Patient_34,aorta,dice,0.9030113639483344,3,True
+Boundary v2,2,Patient_34,aorta,hd95,16.5197643431589,3,True
+Boundary v2,2,Patient_34,esophagus,assd,4.701815114774209,3,True
+Boundary v2,2,Patient_34,esophagus,dice,0.6058699268185616,3,True
+Boundary v2,2,Patient_34,esophagus,hd95,18.721697460732376,3,True
+Boundary v2,2,Patient_34,heart,assd,3.60069447859591,3,True
+Boundary v2,2,Patient_34,heart,dice,0.900524928951863,3,True
+Boundary v2,2,Patient_34,heart,hd95,16.728729733720442,3,True
+Boundary v2,2,Patient_34,trachea,assd,1.387155088370801,3,True
+Boundary v2,2,Patient_34,trachea,dice,0.8713723040094573,3,True
+Boundary v2,2,Patient_34,trachea,hd95,10.513538924236357,3,True
+Boundary v2,0,Patient_35,aorta,assd,1.171348491404669,3,True
+Boundary v2,0,Patient_35,aorta,dice,0.9221945591413517,3,True
+Boundary v2,0,Patient_35,aorta,hd95,6.631246329503818,3,True
+Boundary v2,0,Patient_35,esophagus,assd,1.960705428273913,3,True
+Boundary v2,0,Patient_35,esophagus,dice,0.7289862362504068,3,True
+Boundary v2,0,Patient_35,esophagus,hd95,10.43205200996013,3,True
+Boundary v2,0,Patient_35,heart,assd,1.6936098427402797,3,True
+Boundary v2,0,Patient_35,heart,dice,0.9484483395545595,3,True
+Boundary v2,0,Patient_35,heart,hd95,5.4696280691821775,3,True
+Boundary v2,0,Patient_35,trachea,assd,0.5848974486591227,3,True
+Boundary v2,0,Patient_35,trachea,dice,0.933237049066765,3,True
+Boundary v2,0,Patient_35,trachea,hd95,1.7890625,3,True
+Boundary v2,2,Patient_36,aorta,assd,2.740306130033407,3,True
+Boundary v2,2,Patient_36,aorta,dice,0.8206605751025681,3,True
+Boundary v2,2,Patient_36,aorta,hd95,14.639839179583404,3,True
+Boundary v2,2,Patient_36,esophagus,assd,1.6367345271553821,3,True
+Boundary v2,2,Patient_36,esophagus,dice,0.7793127668931357,3,True
+Boundary v2,2,Patient_36,esophagus,hd95,5.621702213350365,3,True
+Boundary v2,2,Patient_36,heart,assd,1.6343510615747048,3,True
+Boundary v2,2,Patient_36,heart,dice,0.9453384702495923,3,True
+Boundary v2,2,Patient_36,heart,hd95,5.2778613151838485,3,True
+Boundary v2,2,Patient_36,trachea,assd,1.4813043880559589,3,True
+Boundary v2,2,Patient_36,trachea,dice,0.8768759620363266,3,True
+Boundary v2,2,Patient_36,trachea,hd95,7.491495696387432,3,True
+Boundary v2,2,Patient_37,aorta,assd,0.9838269611099074,3,True
+Boundary v2,2,Patient_37,aorta,dice,0.9186989666966947,3,True
+Boundary v2,2,Patient_37,aorta,hd95,3.0448988327617528,3,True
+Boundary v2,2,Patient_37,esophagus,assd,1.6608277242261078,3,True
+Boundary v2,2,Patient_37,esophagus,dice,0.787091987756535,3,True
+Boundary v2,2,Patient_37,esophagus,hd95,8.268023699825891,3,True
+Boundary v2,2,Patient_37,heart,assd,2.4163178091390507,3,True
+Boundary v2,2,Patient_37,heart,dice,0.9305463909951005,3,True
+Boundary v2,2,Patient_37,heart,hd95,12.60646131666392,3,True
+Boundary v2,2,Patient_37,trachea,assd,0.6469529301842728,3,True
+Boundary v2,2,Patient_37,trachea,dice,0.9187090195615054,3,True
+Boundary v2,2,Patient_37,trachea,hd95,4.166666666666667,3,True
+Boundary v2,1,Patient_38,aorta,assd,1.1931182838183843,3,True
+Boundary v2,1,Patient_38,aorta,dice,0.9204242552505337,3,True
+Boundary v2,1,Patient_38,aorta,hd95,7.420674233408124,3,True
+Boundary v2,1,Patient_38,esophagus,assd,1.8427411731029455,3,True
+Boundary v2,1,Patient_38,esophagus,dice,0.7216007644988052,3,True
+Boundary v2,1,Patient_38,esophagus,hd95,7.396806564568801,3,True
+Boundary v2,1,Patient_38,heart,assd,1.3405703761366414,3,True
+Boundary v2,1,Patient_38,heart,dice,0.9517663838445037,3,True
+Boundary v2,1,Patient_38,heart,hd95,6.012563472401875,3,True
+Boundary v2,1,Patient_38,trachea,assd,1.830794259483057,3,True
+Boundary v2,1,Patient_38,trachea,dice,0.8887471290241679,3,True
+Boundary v2,1,Patient_38,trachea,hd95,10.138886467123934,3,True
+Boundary v2,0,Patient_39,aorta,assd,1.2083397532660383,3,True
+Boundary v2,0,Patient_39,aorta,dice,0.9211860263705726,3,True
+Boundary v2,0,Patient_39,aorta,hd95,7.104047042998204,3,True
+Boundary v2,0,Patient_39,esophagus,assd,1.90528697571311,3,True
+Boundary v2,0,Patient_39,esophagus,dice,0.8032231918124181,3,True
+Boundary v2,0,Patient_39,esophagus,hd95,13.367571447430478,3,True
+Boundary v2,0,Patient_39,heart,assd,1.8469757540717833,3,True
+Boundary v2,0,Patient_39,heart,dice,0.9441641221915824,3,True
+Boundary v2,0,Patient_39,heart,hd95,5.7626310924425015,3,True
+Boundary v2,0,Patient_39,trachea,assd,1.1287964416966338,3,True
+Boundary v2,0,Patient_39,trachea,dice,0.8966608727442118,3,True
+Boundary v2,0,Patient_39,trachea,hd95,8.279057815185162,3,True
+Boundary v2,1,Patient_40,aorta,assd,1.412406336997184,3,True
+Boundary v2,1,Patient_40,aorta,dice,0.9230593679066358,3,True
+Boundary v2,1,Patient_40,aorta,hd95,5.171491260240198,3,True
+Boundary v2,1,Patient_40,esophagus,assd,1.3932244619215588,3,True
+Boundary v2,1,Patient_40,esophagus,dice,0.7930939931792205,3,True
+Boundary v2,1,Patient_40,esophagus,hd95,5.2192366318861785,3,True
+Boundary v2,1,Patient_40,heart,assd,1.5227451001365833,3,True
+Boundary v2,1,Patient_40,heart,dice,0.9586406170285503,3,True
+Boundary v2,1,Patient_40,heart,hd95,3.9132446097069455,3,True
+Boundary v2,1,Patient_40,trachea,assd,1.1443068337284723,3,True
+Boundary v2,1,Patient_40,trachea,dice,0.9116316206155455,3,True
+Boundary v2,1,Patient_40,trachea,hd95,6.122425497586309,3,True

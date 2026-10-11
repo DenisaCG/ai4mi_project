@@ -1,0 +1,65 @@
+architecture,variant,experiment,label,score,mean_2d,mean_25d,mean_delta,ci_low,ci_high,n_patients
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,1,top_err_mm,10.1,10.3125,0.2124999999999999,-5.8,5.616666666666666,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,1,bottom_err_mm,7.2625,9.008333333333333,1.7458333333333331,-2.9751041666666658,6.546145833333328,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,1,top_missed_mm,1.5583333333333331,1.6583333333333337,0.1,-0.5709375000000001,0.7,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,1,bottom_missed_mm,2.2875,2.841666666666667,0.5541666666666666,0.08749999999999998,1.0458333333333332,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,2,top_err_mm,-4.3375,-3.6291666666666664,0.7083333333333335,-0.3374999999999998,1.7334374999999984,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,2,bottom_err_mm,-3.7875,-1.8375,1.9500000000000004,0.625,3.4709374999999993,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,2,top_missed_mm,0.8166666666666668,1.15,0.3333333333333333,0.029166666666666657,0.6791666666666666,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,2,bottom_missed_mm,0.8833333333333334,0.6791666666666666,-0.20416666666666666,-0.5916666666666666,0.1416666666666667,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,3,top_err_mm,-0.7791666666666666,-1.2458333333333333,-0.4666666666666669,-1.7001041666666665,0.6708333333333333,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,3,bottom_err_mm,-5.666666666666667,-6.958333333333334,-1.2916666666666665,-3.0041666666666664,0.19177083333333203,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,3,top_missed_mm,1.3333333333333335,1.1791666666666667,-0.15416666666666673,-0.75,0.35416666666666663,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,3,bottom_missed_mm,0.775,0.4291666666666667,-0.3458333333333333,-0.7291666666666666,-0.025,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,4,top_err_mm,-1.1791666666666667,-1.4166666666666667,-0.2375000000000001,-1.275,0.8541666666666666,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,4,bottom_err_mm,1.3499999999999996,3.4791666666666665,2.1291666666666664,-1.7084375,7.820937499999996,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,4,top_missed_mm,0.6708333333333333,0.6541666666666667,-0.016666666666666666,-0.19583333333333336,0.16666666666666666,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1,4,bottom_missed_mm,4.0791666666666675,3.929166666666667,-0.15,-1.0375,0.7333333333333332,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,1,top_err_mm,10.1,7.6833333333333345,-2.416666666666667,-8.041770833333333,3.429166666666667,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,1,bottom_err_mm,7.2625,8.125,0.8625000000000002,-3.208541666666666,4.875,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,1,top_missed_mm,1.5583333333333331,1.6083333333333336,0.050000000000000044,-0.40843749999999995,0.5209374999999985,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,1,bottom_missed_mm,2.2875,3.104166666666667,0.8166666666666667,0.10416666666666674,1.4500000000000002,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,2,top_err_mm,-4.3375,-7.258333333333335,-2.9208333333333334,-4.808333333333333,-1.3291666666666664,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,2,bottom_err_mm,-3.7875,-3.0666666666666673,0.7208333333333334,-0.5458333333333333,2.1416666666666666,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,2,top_missed_mm,0.8166666666666668,0.5166666666666667,-0.3,-0.6333333333333334,0.012499999999999978,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,2,bottom_missed_mm,0.8833333333333334,0.7416666666666667,-0.14166666666666666,-0.5333333333333333,0.19583333333333336,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,3,top_err_mm,-0.7791666666666666,-2.225,-1.4458333333333335,-3.166666666666667,0.20833333333333334,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,3,bottom_err_mm,-5.666666666666667,-4.183333333333333,1.4833333333333334,-0.37927083333333345,3.508333333333333,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,3,top_missed_mm,1.3333333333333335,0.9625000000000001,-0.3708333333333334,-0.9416666666666668,0.06260416666666518,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,3,bottom_missed_mm,0.775,0.8416666666666668,0.06666666666666668,-0.18333333333333335,0.3416666666666667,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,4,top_err_mm,-1.1791666666666667,-1.2791666666666668,-0.09999999999999998,-0.4833333333333334,0.2666666666666667,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,4,bottom_err_mm,1.3499999999999996,-0.7708333333333334,-2.120833333333333,-5.1209375,0.75,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,4,top_missed_mm,0.6708333333333333,0.5625,-0.10833333333333332,-0.3041666666666667,0.08333333333333334,40
+Residual-encoder U-Net,"2.5D, 3 slices, stride 4 (±10 mm)",full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,4,bottom_missed_mm,4.0791666666666675,3.85,-0.22916666666666669,-1.0625,0.5708333333333332,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,1,top_err_mm,14.525,12.545833333333334,-1.9791666666666672,-8.012812499999999,4.08427083333332,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,1,bottom_err_mm,12.666666666666668,12.670833333333333,0.00416666666666643,-7.4378125,8.07927083333333,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,1,top_missed_mm,2.845833333333333,2.7916666666666665,-0.054166666666666564,-0.775,0.6501041666666653,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,1,bottom_missed_mm,3.083333333333333,2.625,-0.45833333333333337,-1.379375,0.4502083333333305,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,2,top_err_mm,-5.391666666666667,-4.725,0.6666666666666666,-1.2624999999999997,2.820833333333333,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,2,bottom_err_mm,-2.7875,-1.6625,1.125,-0.55,2.7375,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,2,top_missed_mm,0.9583333333333334,0.7875,-0.1708333333333333,-0.7333333333333333,0.3626041666666651,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,2,bottom_missed_mm,0.9916666666666668,0.8375,-0.15416666666666667,-0.6875,0.39999999999999997,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,3,top_err_mm,-0.6083333333333332,1.35,1.9583333333333335,-0.4376041666666668,4.9334374999999975,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,3,bottom_err_mm,-2.9125,-4.229166666666667,-1.3166666666666664,-4.8334375,1.0375,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,3,top_missed_mm,2.6291666666666673,2.629166666666667,-8.881784197001253e-17,-0.6251041666666668,0.6208333333333332,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,3,bottom_missed_mm,0.8416666666666666,0.6583333333333334,-0.1833333333333333,-0.5334375000000001,0.15833333333333335,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,4,top_err_mm,-0.9416666666666664,-1.1791666666666667,-0.2374999999999999,-0.7416666666666666,0.27927083333333197,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,4,bottom_err_mm,9.05,7.0791666666666675,-1.9708333333333339,-7.6046875,2.438020833333325,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,4,top_missed_mm,0.9916666666666668,0.7125,-0.2791666666666667,-0.5541666666666667,0.012500000000000006,40
+ENet,"2.5D, 3 slices, stride 1 (±2.5 mm)",full_cv4_enet_dice_ce_25d_c1,4,bottom_missed_mm,4.554166666666667,4.625,0.07083333333333339,-0.775,0.9416666666666667,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,1,top_err_mm,14.525,10.929166666666665,-3.5958333333333337,-10.454375,2.8296874999999915,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,1,bottom_err_mm,12.666666666666668,17.25416666666667,4.5875,-2.9171874999999994,12.813020833333326,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,1,top_missed_mm,2.845833333333333,2.8291666666666666,-0.016666666666666562,-0.7499999999999998,0.6500000000000001,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,1,bottom_missed_mm,3.083333333333333,2.5833333333333335,-0.4999999999999999,-1.1166666666666667,0.06250000000000004,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,2,top_err_mm,-5.391666666666667,-5.5875,-0.19583333333333358,-1.9001041666666674,1.4876041666666653,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,2,bottom_err_mm,-2.7875,-1.8166666666666669,0.9708333333333334,-0.8959374999999997,2.6791666666666663,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,2,top_missed_mm,0.9583333333333334,0.675,-0.2833333333333333,-0.9501041666666666,0.3416666666666667,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,2,bottom_missed_mm,0.9916666666666668,1.1208333333333333,0.1291666666666667,-0.47916666666666663,0.7708333333333334,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,3,top_err_mm,-0.6083333333333332,-0.42500000000000016,0.1833333333333332,-1.3458333333333334,1.6709374999999984,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,3,bottom_err_mm,-2.9125,-4.529166666666667,-1.616666666666666,-5.104270833333333,0.9626041666666655,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,3,top_missed_mm,2.6291666666666673,2.466666666666667,-0.1625,-0.7333333333333334,0.37916666666666665,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,3,bottom_missed_mm,0.8416666666666666,0.8541666666666667,0.012500000000000006,-0.24166666666666664,0.2791666666666667,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,4,top_err_mm,-0.9416666666666664,-0.29999999999999993,0.6416666666666666,-0.32093750000000004,1.675,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,4,bottom_err_mm,9.05,10.270833333333332,1.2208333333333328,-4.512604166666668,7.071145833333328,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,4,top_missed_mm,0.9916666666666668,0.7875,-0.2041666666666667,-0.4833333333333333,0.04999999999999998,40
+ENet,"2.5D, 5 slices, stride 1 (±5 mm)",full_cv4_enet_dice_ce_25d_c2,4,bottom_missed_mm,4.554166666666667,4.995833333333334,0.4416666666666667,-0.6083333333333334,1.5459374999999989,40

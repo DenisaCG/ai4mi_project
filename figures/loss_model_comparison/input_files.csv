@@ -1,0 +1,48 @@
+model,fold,seed,path
+CE + Dice,0,seed0,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_fold0/seed0/metrics_3d.csv
+CE + Dice,0,seed1,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_fold0/seed1/metrics_3d.csv
+CE + Dice,0,seed2,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_fold0/seed2/metrics_3d.csv
+CE + Dice,1,seed0,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_fold1/seed0/metrics_3d.csv
+CE + Dice,1,seed1,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_fold1/seed1/metrics_3d.csv
+CE + Dice,1,seed2,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_fold1/seed2/metrics_3d.csv
+CE + Dice,2,seed0,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_fold2/seed0/metrics_3d.csv
+CE + Dice,2,seed1,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_fold2/seed1/metrics_3d.csv
+CE + Dice,2,seed2,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_fold2/seed2/metrics_3d.csv
+CE + Dice,3,seed0,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_fold3/seed0/metrics_3d.csv
+CE + Dice,3,seed1,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_fold3/seed1/metrics_3d.csv
+CE + Dice,3,seed2,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_fold3/seed2/metrics_3d.csv
+Weighted CE + Dice,0,seed0,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_weighted_dice_ce_preprocessing_fold0/seed0/metrics_3d.csv
+Weighted CE + Dice,0,seed1,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_weighted_dice_ce_preprocessing_fold0/seed1/metrics_3d.csv
+Weighted CE + Dice,1,seed0,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_weighted_dice_ce_preprocessing_fold1/seed0/metrics_3d.csv
+Weighted CE + Dice,1,seed1,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_weighted_dice_ce_preprocessing_fold1/seed1/metrics_3d.csv
+Weighted CE + Dice,1,seed2,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_weighted_dice_ce_preprocessing_fold1/seed2/metrics_3d.csv
+Weighted CE + Dice,2,seed0,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_weighted_dice_ce_preprocessing_fold2/seed0/metrics_3d.csv
+Weighted CE + Dice,2,seed1,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_weighted_dice_ce_preprocessing_fold2/seed1/metrics_3d.csv
+Weighted CE + Dice,2,seed2,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_weighted_dice_ce_preprocessing_fold2/seed2/metrics_3d.csv
+Weighted CE + Dice,3,seed0,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_weighted_dice_ce_preprocessing_fold3/seed0/metrics_3d.csv
+Weighted CE + Dice,3,seed1,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_weighted_dice_ce_preprocessing_fold3/seed1/metrics_3d.csv
+Weighted CE + Dice,3,seed2,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_weighted_dice_ce_preprocessing_fold3/seed2/metrics_3d.csv
+Boundary v1,0,seed0,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_preprocessing_fold0/seed0/metrics_3d.csv
+Boundary v1,0,seed1,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_preprocessing_fold0/seed1/metrics_3d.csv
+Boundary v1,0,seed2,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_preprocessing_fold0/seed2/metrics_3d.csv
+Boundary v1,1,seed0,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_preprocessing_fold1/seed0/metrics_3d.csv
+Boundary v1,1,seed1,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_preprocessing_fold1/seed1/metrics_3d.csv
+Boundary v1,1,seed2,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_preprocessing_fold1/seed2/metrics_3d.csv
+Boundary v1,2,seed0,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_preprocessing_fold2/seed0/metrics_3d.csv
+Boundary v1,2,seed1,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_preprocessing_fold2/seed1/metrics_3d.csv
+Boundary v1,2,seed2,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_preprocessing_fold2/seed2/metrics_3d.csv
+Boundary v1,3,seed0,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_preprocessing_fold3/seed0/metrics_3d.csv
+Boundary v1,3,seed1,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_preprocessing_fold3/seed1/metrics_3d.csv
+Boundary v1,3,seed2,/gpfs/home5/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_preprocessing_fold3/seed2/metrics_3d.csv
+Boundary v2,0,seed0,/home/scur0049/ai4mi_boundary/metrics/full_cv4_enet_dice_ce_boundary_v2_fold0/seed0/metrics_3d.csv
+Boundary v2,0,seed1,/home/scur0049/ai4mi_boundary/metrics/full_cv4_enet_dice_ce_boundary_v2_fold0/seed1/metrics_3d.csv
+Boundary v2,0,seed2,/home/scur0049/ai4mi_boundary/metrics/full_cv4_enet_dice_ce_boundary_v2_fold0/seed2/metrics_3d.csv
+Boundary v2,1,seed0,/home/scur0049/ai4mi_boundary/metrics/full_cv4_enet_dice_ce_boundary_v2_fold1/seed0/metrics_3d.csv
+Boundary v2,1,seed1,/home/scur0049/ai4mi_boundary/metrics/full_cv4_enet_dice_ce_boundary_v2_fold1/seed1/metrics_3d.csv
+Boundary v2,1,seed2,/home/scur0049/ai4mi_boundary/metrics/full_cv4_enet_dice_ce_boundary_v2_fold1/seed2/metrics_3d.csv
+Boundary v2,2,seed0,/home/scur0049/ai4mi_boundary/metrics/full_cv4_enet_dice_ce_boundary_v2_fold2/seed0/metrics_3d.csv
+Boundary v2,2,seed1,/home/scur0049/ai4mi_boundary/metrics/full_cv4_enet_dice_ce_boundary_v2_fold2/seed1/metrics_3d.csv
+Boundary v2,2,seed2,/home/scur0049/ai4mi_boundary/metrics/full_cv4_enet_dice_ce_boundary_v2_fold2/seed2/metrics_3d.csv
+Boundary v2,3,seed0,/home/scur0049/ai4mi_boundary/metrics/full_cv4_enet_dice_ce_boundary_v2_fold3/seed0/metrics_3d.csv
+Boundary v2,3,seed1,/home/scur0049/ai4mi_boundary/metrics/full_cv4_enet_dice_ce_boundary_v2_fold3/seed1/metrics_3d.csv
+Boundary v2,3,seed2,/home/scur0049/ai4mi_boundary/metrics/full_cv4_enet_dice_ce_boundary_v2_fold3/seed2/metrics_3d.csv

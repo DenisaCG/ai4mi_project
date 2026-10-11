@@ -1,0 +1,33 @@
+# One run using fold 0 of the original four-fold split (30 train / 10 validation patients).
+# num_folds preserves the preprocessing identity of that CV fold without launching all folds.
+experiment: full_enet_weighted_ce_dice_preprocessing_smoke
+notes: Two-epoch smoke test of weighted CE + foreground Dice with full preprocessing, fold 0
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 0, num_folds: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+  num_workers: 0
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: weighted_ce_dice
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+train:
+  epochs: 2
+  debug_samples: 16
+  max_failed_batches: 0
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled

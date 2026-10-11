@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "started": "2026-10-09T00:16:23",
+  "config_hash": "71c1ebf778ad",
+  "smoke": false,
+  "user": "scur0049",
+  "host": "gcn24.local.snellius.surf.nl",
+  "slurm_job_id": "27791671",
+  "python": "3.11.16",
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "git_commit": "5b15cf15b266c142139760b439134a8214c746e4",
+  "git_branch": "standardized_pipeline",
+  "git_dirty": true,
+  "command": "/gpfs/home5/scur0049/ai4mi_project/src/train.py --config configs/full_cv4_enet_ce_dice_boundary_preprocessing.yaml --fold 3 --set seed=1",
+  "finished": "2026-10-09T00:37:19"
+}

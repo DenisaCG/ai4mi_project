@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "patients": 40,
+  "geometry_rows": 40,
+  "intensity_rows": 200,
+  "label_rows": 160,
+  "adjacency_rows": 240,
+  "comparison_quantities": 81,
+  "inputs_checked": 130,
+  "figures": [
+    "esophagus_components_per_patient.png",
+    "geometry_per_patient.png",
+    "hu_per_patient.png",
+    "organ_volume_per_patient.png"
+  ],
+  "midterm_identical_patients": 3
+}

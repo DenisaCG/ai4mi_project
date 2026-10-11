@@ -1,0 +1,836 @@
+{
+  "data_dir": "data/segthor_train_full/train",
+  "git_commit": "f9de3888dbda5c047e1148af572c5b86b82883f2",
+  "started": "2026-10-09T14:19:03.060550+00:00",
+  "finished": "2026-10-09T14:19:23.026566+00:00",
+  "bin_mm": 2.5,
+  "min_patients": 10,
+  "anchor": "heart",
+  "labels_drawn": [
+    "esophagus",
+    "heart",
+    "trachea",
+    "aorta"
+  ],
+  "organ_edges_mm": {
+    "esophagus": {
+      "top_mm": 123.25,
+      "bottom_mm": -101.0
+    },
+    "heart": {
+      "top_mm": 0.0,
+      "bottom_mm": -90.0
+    },
+    "trachea": {
+      "top_mm": 124.5,
+      "bottom_mm": 11.0
+    },
+    "aorta": {
+      "top_mm": 74.5,
+      "bottom_mm": -141.0
+    }
+  },
+  "patients": [
+    {
+      "patient": "Patient_01",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "shape": [
+        512,
+        512,
+        229
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_02",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        246
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_03",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        147
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_04",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        158
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_05",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "shape": [
+        512,
+        512,
+        284
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_06",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        199
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_07",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "shape": [
+        512,
+        512,
+        179
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_08",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        171
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_09",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        154
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_10",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "shape": [
+        512,
+        512,
+        163
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_11",
+      "orientation": "LPS",
+      "spacing_mm": [
+        1.269531011581421,
+        1.269531011581421,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        180
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_12",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "shape": [
+        512,
+        512,
+        171
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_13",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "shape": [
+        512,
+        512,
+        228
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_14",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        162
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_15",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.8964840173721313,
+        0.8964840173721313,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        150
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_16",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        166
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_17",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        166
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_18",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        183
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_19",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        190
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_20",
+      "orientation": "LPS",
+      "spacing_mm": [
+        1.3671879768371582,
+        1.3671879768371582,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        206
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_21",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        158
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_22",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        181
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_23",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        153
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_24",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        168
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_25",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        150
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_26",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "shape": [
+        512,
+        512,
+        247
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_27",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "shape": [
+        512,
+        512,
+        213
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_28",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        179
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_29",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        173
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_30",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        171
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_31",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        148
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_32",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        157
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_33",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "shape": [
+        512,
+        512,
+        263
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_34",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        192
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_35",
+      "orientation": "LPS",
+      "spacing_mm": [
+        1.3671875,
+        1.3671875,
+        2.0
+      ],
+      "shape": [
+        512,
+        512,
+        181
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_36",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "shape": [
+        512,
+        512,
+        188
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_37",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        176
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_38",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        159
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_39",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "shape": [
+        512,
+        512,
+        228
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "patient": "Patient_40",
+      "orientation": "LPS",
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "shape": [
+        512,
+        512,
+        203
+      ],
+      "labels_present": [
+        1,
+        2,
+        3,
+        4
+      ]
+    }
+  ],
+  "failed": []
+}

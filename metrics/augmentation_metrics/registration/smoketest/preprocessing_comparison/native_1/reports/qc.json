@@ -1,0 +1,1016 @@
+{
+  "condition": "native",
+  "repeat": 1,
+  "pair": {
+    "fold": 0,
+    "source": "Patient_26",
+    "target": "Patient_19",
+    "pairing_seed": 42
+  },
+  "registration_input_paths": {
+    "native_source_ct": "/gpfs/home5/scur0049/ai4mi_project/data/segthor_train_full/train/Patient_26/Patient_26.nii.gz",
+    "native_target_ct": "/gpfs/home5/scur0049/ai4mi_project/data/segthor_train_full/train/Patient_19/Patient_19.nii.gz"
+  },
+  "all_input_sha256_unchanged": {
+    "native_source_ct": "2b3821833db3053284c9ca990856c5fa76446e5b3f937153f499c6e62066b964",
+    "native_source_gt": "ebcbc134e8505356903dea849cdb08b0cab79bf60bc246a36bd38e6948ff8111",
+    "native_target_ct": "5b6d70469acf602553b581e0934479c1fb7074851d7c39add9074deabbe7d8b0",
+    "native_target_gt": "9049dfc2def8219a8393abdee4fc4981d38b493976fe55cd1e6c836ec8cfbb67",
+    "resampled_source_ct": "66e75c15a57b963811f70bb2ca3172a0e601a2741dcbc6ca86248e87bc2241ee",
+    "resampled_source_gt": "887fd78fa279a6e58b36f2770e206ac9210b556362453e1ad0c3e5bcac697e68",
+    "resampled_target_ct": "56c922776e82e18f9576ca4e2c12396e4c8d3e8829cca2cfafecfdac74ed19ab",
+    "resampled_target_gt": "1851979f755e16d55fb1237953181a3779de2b30863aee0b779388d13ee71530"
+  },
+  "geometry": {
+    "native_source_ct": {
+      "size_xyz": [
+        512,
+        512,
+        247
+      ],
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "origin_mm": [
+        -249.51171875,
+        -417.51171875,
+        -602.5999755859375
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "native_source_gt": {
+      "size_xyz": [
+        512,
+        512,
+        247
+      ],
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.0
+      ],
+      "origin_mm": [
+        -249.51171875,
+        -417.51171875,
+        -602.5999755859375
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "native_target_ct": {
+      "size_xyz": [
+        512,
+        512,
+        190
+      ],
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "origin_mm": [
+        -250.0,
+        -250.0,
+        -220.5
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "native_target_gt": {
+      "size_xyz": [
+        512,
+        512,
+        190
+      ],
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "origin_mm": [
+        -250.0,
+        -250.0,
+        -220.5
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "resampled_source_ct": {
+      "size_xyz": [
+        512,
+        512,
+        198
+      ],
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.4949495792388916
+      ],
+      "origin_mm": [
+        -249.51171875,
+        -417.51171875,
+        -602.3524780273438
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "resampled_source_gt": {
+      "size_xyz": [
+        512,
+        512,
+        198
+      ],
+      "spacing_mm": [
+        0.9765625,
+        0.9765625,
+        2.4949495792388916
+      ],
+      "origin_mm": [
+        -249.51171875,
+        -417.51171875,
+        -602.3524780273438
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "resampled_target_ct": {
+      "size_xyz": [
+        512,
+        512,
+        190
+      ],
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "origin_mm": [
+        -250.0,
+        -250.0,
+        -220.5
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "resampled_target_gt": {
+      "size_xyz": [
+        512,
+        512,
+        190
+      ],
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "origin_mm": [
+        -250.0,
+        -250.0,
+        -220.5
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  },
+  "simpleitk_version": "2.5.6",
+  "threads": {
+    "simpleitk": 1,
+    "omp": "1",
+    "itk_global": "1"
+  },
+  "registration_parameters": {
+    "estimation_spacing": [
+      2.0,
+      2.0,
+      2.5
+    ],
+    "hu_window": [
+      -1000.0,
+      400.0
+    ],
+    "body_threshold_hu": -500.0,
+    "mi_bins": 50,
+    "sampling_fraction": 0.05,
+    "metric_seed": 4242,
+    "shrink_factors": [
+      4,
+      2,
+      1
+    ],
+    "smoothing_sigmas_mm": [
+      4.0,
+      2.0,
+      0.0
+    ],
+    "bspline_spacing_mm": 80.0,
+    "bspline_coefficient_bound_mm": 10.0,
+    "rigid_iterations": 150,
+    "bspline_iterations": 75,
+    "threads": 1
+  },
+  "optimizer": {
+    "rigid": {
+      "metric": -0.07182776631408834,
+      "iterations": 150,
+      "stop": "RegularStepGradientDescentOptimizerv4: Maximum number of iterations (150) exceeded.",
+      "runtime_seconds": 23.2
+    },
+    "bspline": {
+      "metric": -0.08007909473380494,
+      "iterations": 38,
+      "stop": "LBFGSBOptimizerv4: Function tolerance reached after 38 iterations. The relative reduction of the cost function <= 2.22045e-09 = CostFunctionConvergenceFactor (1e+07) * machine precision (2.22045e-16).",
+      "mesh_size": [
+        6,
+        6,
+        6
+      ],
+      "runtime_seconds": 366.93
+    }
+  },
+  "stages": {
+    "initial": {
+      "organs": {
+        "Esophagus": {
+          "warped_volume_mm3": 43055.9691530755,
+          "source_volume_mm3": 43159.48486328125,
+          "target_volume_mm3": 38590.39352742013,
+          "warped_vs_source_volume_change_pct": -0.23984463793685906,
+          "warped_vs_target_dice_qc_only": 0.0,
+          "warped_vs_target_centroid_mm_qc_only": 43.18805162441629,
+          "warped_centroid_mm": [
+            3.726863432672502,
+            -20.067744321473015,
+            -0.2919320006644739
+          ],
+          "target_centroid_mm": [
+            -17.004162887935962,
+            14.434847481507347,
+            -15.944519955517109
+          ]
+        },
+        "Heart": {
+          "warped_volume_mm3": 795027.4332917328,
+          "source_volume_mm3": 793556.2133789062,
+          "target_volume_mm3": 856935.1410844544,
+          "warped_vs_source_volume_change_pct": 0.18539580284580026,
+          "warped_vs_target_dice_qc_only": 0.15617621420035677,
+          "warped_vs_target_centroid_mm_qc_only": 66.00772874756247,
+          "warped_centroid_mm": [
+            21.971836698373806,
+            -64.8523813248527,
+            -51.58487850080519
+          ],
+          "target_centroid_mm": [
+            -8.592743031194715,
+            -19.117961013056572,
+            -88.0703484732559
+          ]
+        },
+        "Trachea": {
+          "warped_volume_mm3": 24147.010110324416,
+          "source_volume_mm3": 24492.263793945312,
+          "target_volume_mm3": 48007.918205123664,
+          "warped_vs_source_volume_change_pct": -1.4096438227414687,
+          "warped_vs_target_dice_qc_only": 0.0,
+          "warped_vs_target_centroid_mm_qc_only": 40.37396935232505,
+          "warped_centroid_mm": [
+            -0.700145795447014,
+            -34.483907871242565,
+            64.96282582938386
+          ],
+          "target_centroid_mm": [
+            -35.8926077882449,
+            -19.294593771298736,
+            52.280840286054854
+          ]
+        },
+        "Aorta": {
+          "warped_volume_mm3": 208823.4769483595,
+          "source_volume_mm3": 209022.52197265625,
+          "target_volume_mm3": 170740.91449849654,
+          "warped_vs_source_volume_change_pct": -0.09522659205251083,
+          "warped_vs_target_dice_qc_only": 0.0,
+          "warped_vs_target_centroid_mm_qc_only": 45.72566185598007,
+          "warped_centroid_mm": [
+            9.30442780448385,
+            -24.779623840007815,
+            -12.628797652619653
+          ],
+          "target_centroid_mm": [
+            -11.443150600698658,
+            12.804780524548164,
+            -28.3700393777753
+          ]
+        }
+      },
+      "images": {
+        "body_proxy": "native target-grid CT > -500 HU; no GT or morphological cleanup",
+        "fixed_body_voxels": 8058378,
+        "warped_body_voxels": 16101069,
+        "body_dice": 0.48378905361534147,
+        "fixed_body_covered_fraction": 0.7252126916855973,
+        "ct_similarity_mask": "same fixed-target CT > -500 HU voxels for every stage and run",
+        "ct_similarity_window_hu": [
+          -1000,
+          400
+        ],
+        "ct_mae_hu": 340.1656494140625,
+        "ct_rmse_hu": 481.1976623535156,
+        "ct_pearson": 0.31299149221238637
+      },
+      "ct_geometry": {
+        "size_xyz": [
+          512,
+          512,
+          190
+        ],
+        "spacing_mm": [
+          0.9765620231628418,
+          0.9765620231628418,
+          2.5
+        ],
+        "origin_mm": [
+          -250.0,
+          -250.0,
+          -220.5
+        ],
+        "direction": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "gt_geometry": {
+        "size_xyz": [
+          512,
+          512,
+          190
+        ],
+        "spacing_mm": [
+          0.9765620231628418,
+          0.9765620231628418,
+          2.5
+        ],
+        "origin_mm": [
+          -250.0,
+          -250.0,
+          -220.5
+        ],
+        "direction": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "rigid": {
+      "organs": {
+        "Esophagus": {
+          "warped_volume_mm3": 43282.466582032925,
+          "source_volume_mm3": 43159.48486328125,
+          "target_volume_mm3": 38590.39352742013,
+          "warped_vs_source_volume_change_pct": 0.28494714230544727,
+          "warped_vs_target_dice_qc_only": 0.0,
+          "warped_vs_target_centroid_mm_qc_only": 53.89870031793866,
+          "warped_centroid_mm": [
+            -19.94433304430092,
+            -37.304264181627104,
+            -1.129337886967079
+          ],
+          "target_centroid_mm": [
+            -17.004162887935962,
+            14.434847481507347,
+            -15.944519955517109
+          ]
+        },
+        "Heart": {
+          "warped_volume_mm3": 794338.4042710097,
+          "source_volume_mm3": 793556.2133789062,
+          "target_volume_mm3": 856935.1410844544,
+          "warped_vs_source_volume_change_pct": 0.09856779884225286,
+          "warped_vs_target_dice_qc_only": 0.14436142334264612,
+          "warped_vs_target_centroid_mm_qc_only": 66.62960121592191,
+          "warped_centroid_mm": [
+            -2.583792081115206,
+            -77.46297563372724,
+            -56.45934507908876
+          ],
+          "target_centroid_mm": [
+            -8.592743031194715,
+            -19.117961013056572,
+            -88.0703484732559
+          ]
+        },
+        "Trachea": {
+          "warped_volume_mm3": 24182.772862265065,
+          "source_volume_mm3": 24492.263793945312,
+          "target_volume_mm3": 48007.918205123664,
+          "warped_vs_source_volume_change_pct": -1.263627299967085,
+          "warped_vs_target_dice_qc_only": 0.0,
+          "warped_vs_target_centroid_mm_qc_only": 40.88224580046333,
+          "warped_centroid_mm": [
+            -25.102570407996808,
+            -57.46602648883885,
+            62.17401163363894
+          ],
+          "target_centroid_mm": [
+            -35.8926077882449,
+            -19.294593771298736,
+            52.280840286054854
+          ]
+        },
+        "Aorta": {
+          "warped_volume_mm3": 208911.69173647973,
+          "source_volume_mm3": 209022.52197265625,
+          "target_volume_mm3": 170740.91449849654,
+          "warped_vs_source_volume_change_pct": -0.053023107333394215,
+          "warped_vs_target_dice_qc_only": 0.013740438839975383,
+          "warped_vs_target_centroid_mm_qc_only": 55.53244567681712,
+          "warped_centroid_mm": [
+            -14.294645645118237,
+            -40.83555834888486,
+            -14.283324203414566
+          ],
+          "target_centroid_mm": [
+            -11.443150600698658,
+            12.804780524548164,
+            -28.3700393777753
+          ]
+        }
+      },
+      "images": {
+        "body_proxy": "native target-grid CT > -500 HU; no GT or morphological cleanup",
+        "fixed_body_voxels": 8058378,
+        "warped_body_voxels": 16007099,
+        "body_dice": 0.4521014896151861,
+        "fixed_body_covered_fraction": 0.675076175379214,
+        "ct_similarity_mask": "same fixed-target CT > -500 HU voxels for every stage and run",
+        "ct_similarity_window_hu": [
+          -1000,
+          400
+        ],
+        "ct_mae_hu": 385.9471130371094,
+        "ct_rmse_hu": 532.4630126953125,
+        "ct_pearson": 0.2619647498028156
+      },
+      "ct_geometry": {
+        "size_xyz": [
+          512,
+          512,
+          190
+        ],
+        "spacing_mm": [
+          0.9765620231628418,
+          0.9765620231628418,
+          2.5
+        ],
+        "origin_mm": [
+          -250.0,
+          -250.0,
+          -220.5
+        ],
+        "direction": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "gt_geometry": {
+        "size_xyz": [
+          512,
+          512,
+          190
+        ],
+        "spacing_mm": [
+          0.9765620231628418,
+          0.9765620231628418,
+          2.5
+        ],
+        "origin_mm": [
+          -250.0,
+          -250.0,
+          -220.5
+        ],
+        "direction": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "final": {
+      "organs": {
+        "Esophagus": {
+          "warped_volume_mm3": 43203.78852776351,
+          "source_volume_mm3": 43159.48486328125,
+          "target_volume_mm3": 38590.39352742013,
+          "warped_vs_source_volume_change_pct": 0.10265105022129184,
+          "warped_vs_target_dice_qc_only": 0.0,
+          "warped_vs_target_centroid_mm_qc_only": 48.35686432661018,
+          "warped_centroid_mm": [
+            -22.423486452506324,
+            -31.824586761135265,
+            -2.9413663705093427
+          ],
+          "target_centroid_mm": [
+            -17.004162887935962,
+            14.434847481507347,
+            -15.944519955517109
+          ]
+        },
+        "Heart": {
+          "warped_volume_mm3": 861078.8519426439,
+          "source_volume_mm3": 793556.2133789062,
+          "target_volume_mm3": 856935.1410844544,
+          "warped_vs_source_volume_change_pct": 8.508866470370258,
+          "warped_vs_target_dice_qc_only": 0.17846536439685368,
+          "warped_vs_target_centroid_mm_qc_only": 63.095134137469124,
+          "warped_centroid_mm": [
+            -3.65729699997749,
+            -70.98057105516588,
+            -52.47671134640041
+          ],
+          "target_centroid_mm": [
+            -8.592743031194715,
+            -19.117961013056572,
+            -88.0703484732559
+          ]
+        },
+        "Trachea": {
+          "warped_volume_mm3": 24032.56930411435,
+          "source_volume_mm3": 24492.263793945312,
+          "target_volume_mm3": 48007.918205123664,
+          "warped_vs_source_volume_change_pct": -1.8768966956194677,
+          "warped_vs_target_dice_qc_only": 0.0,
+          "warped_vs_target_centroid_mm_qc_only": 36.57796459784752,
+          "warped_centroid_mm": [
+            -26.16636518419736,
+            -54.10747102271944,
+            57.885416666666686
+          ],
+          "target_centroid_mm": [
+            -35.8926077882449,
+            -19.294593771298736,
+            52.280840286054854
+          ]
+        },
+        "Aorta": {
+          "warped_volume_mm3": 212743.07456105432,
+          "source_volume_mm3": 209022.52197265625,
+          "target_volume_mm3": 170740.91449849654,
+          "warped_vs_source_volume_change_pct": 1.7799768911432423,
+          "warped_vs_target_dice_qc_only": 0.010618918834903167,
+          "warped_vs_target_centroid_mm_qc_only": 51.675143092668726,
+          "warped_centroid_mm": [
+            -15.754912667932274,
+            -36.19882290736123,
+            -12.546766258363135
+          ],
+          "target_centroid_mm": [
+            -11.443150600698658,
+            12.804780524548164,
+            -28.3700393777753
+          ]
+        }
+      },
+      "images": {
+        "body_proxy": "native target-grid CT > -500 HU; no GT or morphological cleanup",
+        "fixed_body_voxels": 8058378,
+        "warped_body_voxels": 15798135,
+        "body_dice": 0.4458373275256111,
+        "fixed_body_covered_fraction": 0.6599419883256904,
+        "ct_similarity_mask": "same fixed-target CT > -500 HU voxels for every stage and run",
+        "ct_similarity_window_hu": [
+          -1000,
+          400
+        ],
+        "ct_mae_hu": 398.7245178222656,
+        "ct_rmse_hu": 544.7055053710938,
+        "ct_pearson": 0.26594338285454183
+      },
+      "ct_geometry": {
+        "size_xyz": [
+          512,
+          512,
+          190
+        ],
+        "spacing_mm": [
+          0.9765620231628418,
+          0.9765620231628418,
+          2.5
+        ],
+        "origin_mm": [
+          -250.0,
+          -250.0,
+          -220.5
+        ],
+        "direction": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "gt_geometry": {
+        "size_xyz": [
+          512,
+          512,
+          190
+        ],
+        "spacing_mm": [
+          0.9765620231628418,
+          0.9765620231628418,
+          2.5
+        ],
+        "origin_mm": [
+          -250.0,
+          -250.0,
+          -220.5
+        ],
+        "direction": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      }
+    }
+  },
+  "deformation": {
+    "grid": {
+      "size_xyz": [
+        126,
+        126,
+        95
+      ],
+      "spacing_mm": [
+        4.0,
+        4.0,
+        5.0
+      ],
+      "origin_mm": [
+        -250.0,
+        -250.0,
+        -220.5
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "mapping": "target physical point to source physical point",
+    "bspline_displacement_mm": {
+      "min": 0.00020482733089011163,
+      "median": 4.364890098571777,
+      "max": 13.626079559326172,
+      "nonfinite_voxels": 0
+    },
+    "full_displacement_mm": {
+      "min": 373.7874450683594,
+      "median": 404.84661865234375,
+      "max": 435.8777160644531,
+      "nonfinite_voxels": 0
+    },
+    "full_jacobian_determinant": {
+      "min": 0.8171898126602173,
+      "median": 0.9955615997314453,
+      "max": 1.2593728303909302,
+      "nonfinite_voxels": 0,
+      "nonpositive_voxels": 0,
+      "nonpositive_fraction": 0.0
+    },
+    "figure": "/gpfs/home5/scur0049/ai4mi_project/metrics/augmentation_metrics/registration/smoketest/preprocessing_comparison/native_1/figures/deformation.png"
+  },
+  "preprocessing_qc": {
+    "real_cache": "/gpfs/home5/scur0049/ai4mi_project/data/sliced_12749947",
+    "fold_train_patients": [
+      "Patient_03",
+      "Patient_04",
+      "Patient_05",
+      "Patient_06",
+      "Patient_07",
+      "Patient_08",
+      "Patient_09",
+      "Patient_10",
+      "Patient_11",
+      "Patient_12",
+      "Patient_14",
+      "Patient_15",
+      "Patient_17",
+      "Patient_18",
+      "Patient_19",
+      "Patient_20",
+      "Patient_23",
+      "Patient_24",
+      "Patient_25",
+      "Patient_26",
+      "Patient_27",
+      "Patient_29",
+      "Patient_31",
+      "Patient_32",
+      "Patient_33",
+      "Patient_34",
+      "Patient_36",
+      "Patient_37",
+      "Patient_38",
+      "Patient_40"
+    ],
+    "normalization_stats": {
+      "lo": -982.0,
+      "hi": 270.0,
+      "mean": 16.615342558478005,
+      "std": 177.20525532341566,
+      "percentiles": [
+        0.5,
+        99.5
+      ],
+      "normalize": "ct_window_zscore",
+      "n_foreground_voxels": 14564064,
+      "train_patients": [
+        "Patient_08",
+        "Patient_06",
+        "Patient_11",
+        "Patient_14",
+        "Patient_15",
+        "Patient_38",
+        "Patient_23",
+        "Patient_40",
+        "Patient_24",
+        "Patient_18",
+        "Patient_09",
+        "Patient_36",
+        "Patient_04",
+        "Patient_34",
+        "Patient_10",
+        "Patient_05",
+        "Patient_37",
+        "Patient_07",
+        "Patient_29",
+        "Patient_19",
+        "Patient_12",
+        "Patient_31",
+        "Patient_20",
+        "Patient_26",
+        "Patient_32",
+        "Patient_33",
+        "Patient_17",
+        "Patient_03",
+        "Patient_27",
+        "Patient_25"
+      ],
+      "target_spacing": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ]
+    },
+    "roi_metadata": {
+      "size": 288,
+      "margin": 15,
+      "multiple": 32,
+      "centre": "body bounding box (image only)",
+      "required_train": {
+        "Patient_08": 144.0,
+        "Patient_06": 242.0,
+        "Patient_11": 244.0,
+        "Patient_14": 232.0,
+        "Patient_15": 214.0,
+        "Patient_38": 222.0,
+        "Patient_23": 210.0,
+        "Patient_40": 188.0,
+        "Patient_24": 218.0,
+        "Patient_18": 242.0,
+        "Patient_09": 192.0,
+        "Patient_36": 224.0,
+        "Patient_04": 230.0,
+        "Patient_34": 226.0,
+        "Patient_10": 230.0,
+        "Patient_05": 180.0,
+        "Patient_37": 206.0,
+        "Patient_07": 180.0,
+        "Patient_29": 216.0,
+        "Patient_19": 180.0,
+        "Patient_12": 234.0,
+        "Patient_31": 206.0,
+        "Patient_20": 258.0,
+        "Patient_26": 198.0,
+        "Patient_32": 230.0,
+        "Patient_33": 210.0,
+        "Patient_17": 160.0,
+        "Patient_03": 166.0,
+        "Patient_27": 226.0,
+        "Patient_25": 192.0
+      },
+      "target_spacing": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ]
+    },
+    "resampled_gt_geometry": {
+      "size_xyz": [
+        512,
+        512,
+        190
+      ],
+      "spacing_mm": [
+        0.9765620231628418,
+        0.9765620231628418,
+        2.5
+      ],
+      "origin_mm": [
+        -250.0,
+        -250.0,
+        -220.5
+      ],
+      "direction": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "resampled_gt_organs": {
+      "Esophagus": {
+        "voxels": 18121,
+        "volume_mm3": 43203.78852776351
+      },
+      "Heart": {
+        "voxels": 361163,
+        "volume_mm3": 861078.8519426439
+      },
+      "Trachea": {
+        "voxels": 10080,
+        "volume_mm3": 24032.56930411435
+      },
+      "Aorta": {
+        "voxels": 89231,
+        "volume_mm3": 212743.07456105432
+      }
+    },
+    "roi_window": {
+      "start": [
+        91,
+        58
+      ],
+      "size": 288,
+      "resampled_shape": [
+        512,
+        512,
+        190
+      ],
+      "retained": 1.0
+    },
+    "post_roi_png_slices": 190,
+    "post_roi_organs": {
+      "Esophagus": {
+        "voxels": 18121,
+        "volume_mm3": 43203.78852776351,
+        "retained_fraction_of_resampled": 1.0
+      },
+      "Heart": {
+        "voxels": 361163,
+        "volume_mm3": 861078.8519426439,
+        "retained_fraction_of_resampled": 1.0
+      },
+      "Trachea": {
+        "voxels": 10080,
+        "volume_mm3": 24032.56930411435,
+        "retained_fraction_of_resampled": 1.0
+      },
+      "Aorta": {
+        "voxels": 89231,
+        "volume_mm3": 212743.07456105432,
+        "retained_fraction_of_resampled": 1.0
+      }
+    }
+  },
+  "figure": "/gpfs/home5/scur0049/ai4mi_project/metrics/augmentation_metrics/registration/smoketest/preprocessing_comparison/native_1/figures/initial_rigid_final_organs.png",
+  "runtime": {
+    "wall_seconds": 570.4174042029772,
+    "user_cpu_seconds": 558.78458,
+    "system_cpu_seconds": 4.578812999999999,
+    "peak_rss_kib": 3423396
+  }
+}

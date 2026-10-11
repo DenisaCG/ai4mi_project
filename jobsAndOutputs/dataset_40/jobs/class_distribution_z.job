@@ -1,0 +1,18 @@
+#!/bin/bash
+#SBATCH --job-name=class_distribution_z
+#SBATCH --partition=rome
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=00:30:00
+#SBATCH --output=jobsAndOutputs/dataset_40/outputs/%x_%j.out
+
+# Per-slice organ presence and pixel share along z for the 40-patient SegTHOR set (corrected labels).
+# Usage: sbatch jobsAndOutputs/dataset_40/jobs/class_distribution_z.job   (from the repo root)
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+python -B dataset_analysis/profile_figures/class_distribution_z.py \
+    --data-dir data/segthor_train_full/train --out-dir figures/dataset_40
+echo "[$(date -Is)] done"

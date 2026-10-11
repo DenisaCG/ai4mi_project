@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH --job-name=fold1_loss_variants
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=00:10:00
+#SBATCH --output=jobsAndOutputs/fold1_loss_variants/outputs/%x_%j.out
+
+# CPU only. Figures + table comparing, on fold 0 (ENet, full preprocessing, 25 epochs), the Dice+CE baseline with weighted CE + Dice and
+# two boundary-loss variants (v1 in this repo, v2 from the sibling ai4mi_boundary checkout), read-only on their metrics folders.
+# Output: figures/fold1_loss_variants. Usage: sbatch jobsAndOutputs/fold1_loss_variants/jobs/plot_fold1_loss_variants.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=1 MPLBACKEND=Agg
+BOUNDARY_REPO="${BOUNDARY_REPO:-$HOME/ai4mi_boundary}"
+python dataset_analysis/fold1_loss_variants.py \
+    --groups "Dice + CE\n(baseline)=metrics/full_cv4_enet_dice_ce_fold1" \
+             "Weighted CE\n+ Dice=metrics/full_cv4_enet_weighted_dice_ce_preprocessing_fold1" \
+             "CE + Dice\n+ boundary (v1)=metrics/full_cv4_enet_dice_ce_boundary_preprocessing_fold1" \
+             "CE + Dice\n+ boundary (v2)=$BOUNDARY_REPO/metrics/full_cv4_enet_dice_ce_boundary_v2_fold1" \
+    --note "40-patient SEGTHOR train set (corrected labels), median spacing + HU window + z-score + ROI crop, 25 epochs, Adam lr 5e-4" \
+    --out figures/fold1_loss_variants
+echo "[$(date -Is)] done: figures/fold1_loss_variants"
