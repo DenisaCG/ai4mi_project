@@ -11,7 +11,7 @@ box:     per architecture the 12 run means (mean over the fold's 10 validation p
 paired:  per patient (averaged over seeds), Dice of the architecture minus Dice of the upgraded baseline, as a box plot with
          the patients as points whose shape is their fold; the dashed line is no difference. The columns on the right give
          the median difference and the number of the 40 patients with a higher Dice than the baseline.
-Writes architecture_option_<name>.png.
+Writes architecture_<name>.png.
 """
 
 import argparse
@@ -42,17 +42,17 @@ SIZE = (7.9, 4.85)
 COLORS_BY_EXPERIMENT = {
     "full_cv4_enet_dice_ce": "#2F5D8C",
     "full_cv4_enet_dice_ce_25d_c1": "#5B8FC4",
-    "full_cv4_enet_dice_ce_25d_c2": "#8FB4D8",
     "full_cv4_unet_dice_ce": "#C8702A",
     "full_cv4_attention_unet_dice_ce": "#E0A030",
     "full_cv4_ds_unet_dice_ce": "#A8452A",
     "full_cv4_resenc_unet_dice_ce": "#3E8F6E",
     "full_cv4_resenc_ds_unet_dice_ce": "#1F5C4F",
     "full_cv4_resenc_ds_unet_dice_ce_25d_c1": "#7DBE9A",
+    "full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4": "#5FA37F",
     "full_cv4_dino_unet_dice_ce": "#D2574B",
 }
 COLOR_OF = COLORS_BY_EXPERIMENT
-FAMILY_STARTS = {KEYS[i] for i in (3, 7)}
+FAMILY_STARTS = {"full_cv4_unet_dice_ce", "full_cv4_resenc_unet_dice_ce"}
 FOLD_MARKERS = "osD^"
 
 
@@ -199,32 +199,55 @@ def box_panel(
                       linewidth=0.5, legend=False, zorder=4)  # fmt: skip
 
 
+def mark_means(ax, runs: pd.DataFrame) -> None:
+    """White star at the mean of every architecture's runs, and a dashed line at the baseline's mean."""
+    means = runs.groupby("arch")["mean"].mean()
+    ax.axvline(means[KEYS[0]], color="#555555", lw=1.2, ls="--", zorder=1)
+    for i, key in enumerate(KEYS):
+        ax.scatter(
+            means[key],
+            i,
+            marker="*",
+            s=170,
+            color="white",
+            edgecolor=INK,
+            lw=1.0,
+            zorder=6,
+        )
+
+
 def option_box(df: pd.DataFrame, plt):
-    """Box plot of the 12 run means (mean of the four organs) per architecture."""
+    """Box plot of the 12 run means (mean of the four organs) per architecture, with the mean marked."""
     runs = run_table(df)
     dist = df.groupby(["arch", "fold", "seed"])["hd95"].mean().groupby("arch").mean()
     eso = runs.groupby("arch")["esophagus"].mean()
+    widths = [3.6, 0.9, 0.9]
     fig, axs = plt.subplots(
         1,
-        3,
+        len(widths),
         figsize=SIZE,
-        gridspec_kw={"wspace": 0.08, "width_ratios": [3.6, 0.9, 0.9]},
+        gridspec_kw={"wspace": 0.08, "width_ratios": widths},
     )
     ax = axs[0]
     ax.set_ylim(len(KEYS) - 0.5, -0.5)
     row_decor(ax, KEYS)
     box_panel(ax, runs, "mean", KEYS, 5, 0.14)
+    mark_means(ax, runs)
     style(ax, 0.76, 0.92, 0.04, "Dice, mean of four organs", DISPLAY)
     for other in axs[1:]:
         other.set_ylim(len(KEYS) - 0.5, -0.5)
-    text_column(axs[1], KEYS, [f"{eso[a]:.3f}" for a in KEYS], "Esophagus\nDice")
-    text_column(axs[2], KEYS, [f"{dist[a]:.1f}" for a in KEYS], "HD95\n(mm)")
+    text_column(axs[-2], KEYS, [f"{eso[a]:.3f}" for a in KEYS], "Esophagus\nDice")
+    text_column(axs[-1], KEYS, [f"{dist[a]:.1f}" for a in KEYS], "HD95\n(mm)")
+    star = plt.Line2D(
+        [], [], marker="*", color="white", mec=INK, ls="", markersize=12, label="mean"
+    )
+    line = plt.Line2D([], [], color="#555555", ls="--", lw=1.2, label="baseline mean")
     finish(
         fig,
         axs,
         "Run means by architecture",
         "Dice (3D, original CT grid), one point per run",
-        fold_handles(plt),
+        fold_handles(plt) + [star, line],
         left=0.3,
     )
     return fig
@@ -277,7 +300,10 @@ def option_paired(df: pd.DataFrame, plt):
     return fig
 
 
-OPTIONS = {"box": option_box, "paired": option_paired}
+OPTIONS = {
+    "progression": option_box,
+    "paired": option_paired,
+}
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -292,7 +318,7 @@ def main(argv: list[str] | None = None) -> None:
     df = load_frame(args.metrics_dir)
     for name, build in OPTIONS.items():
         fig = build(df, plt)
-        fig.savefig(args.out / f"architecture_option_{name}.png")
+        fig.savefig(args.out / f"architecture_{name}.png")
         plt.close(fig)
 
 

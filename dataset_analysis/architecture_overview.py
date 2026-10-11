@@ -34,7 +34,6 @@ DINO = "full_cv4_dino_unet_dice_ce"
 ARCHITECTURES = [
     ("Upgraded baseline", BASELINE),
     ("+ 2.5D ±1 slice", "full_cv4_enet_dice_ce_25d_c1"),
-    ("+ 2.5D ±2 slices", "full_cv4_enet_dice_ce_25d_c2"),
     ("U-Net", "full_cv4_unet_dice_ce"),
     ("+ attention gates", "full_cv4_attention_unet_dice_ce"),
     ("+ deep supervision", "full_cv4_ds_unet_dice_ce"),
@@ -42,6 +41,7 @@ ARCHITECTURES = [
     ("ResEnc U-Net", "full_cv4_resenc_unet_dice_ce"),
     ("+ deep supervision", "full_cv4_resenc_ds_unet_dice_ce"),
     ("+ 2.5D ±1 slice", "full_cv4_resenc_ds_unet_dice_ce_25d_c1"),
+    ("+ 2.5D ±1, 4 apart", "full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4"),
 ]
 NO_PARAMETER_COUNT = "frozen ViT-S/14\nencoder"
 
