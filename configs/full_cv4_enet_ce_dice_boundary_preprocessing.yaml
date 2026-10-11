@@ -19,8 +19,10 @@ loss:
   kwargs:
     ce_idk: [0, 1, 2, 3, 4]   # CE sees background
     dice_idk: [1, 2, 3, 4]
+    boundary_idk: [1, 2, 3, 4]
     ce_weight: 1.0
     dice_weight: 1.0
+    boundary_weight: 0.08
 
 eval:
   classes: [1, 2, 3, 4]

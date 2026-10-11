@@ -24,6 +24,11 @@ the same four seed-0 runs without augmentation (mean Dice 0.8376); the 12-run co
 | Brightness/contrast | p=0.15, 0.75-1.25 | 0.8345 | -0.0031 | 14.0 | 2.68 | 2/4 |
 | Gamma | p=0.2, 0.7-1.5 | 0.8324 | -0.0051 | 13.2 | 2.65 | 0/4 |
 
+![Individual augmentation screening: foreground Dice change for all eight transforms](../figures/augmentation_selection/screening_individual_augmentations.png)
+
+The solid bars use saved 3D evaluations; hatched bars reproduce the five historical
+values in the table above without treating them as independently verified results.
+
 The shear, Gaussian noise, Gaussian blur, brightness/contrast and gamma rows preserve
 historically reported values. Their saved 3D evaluations are unavailable in the current
 repository and scratch run store, so those rows cannot be independently verified here.
@@ -57,6 +62,15 @@ Each model is compared with its own no-augmentation control, paired by fold and 
 | BASE ENet | `full_cv4_enet_ce_augmented` | `full_cv4_enet_ce` | 0.707 | 0.741 | +0.033 | 12/12 |
 | Improved ENet | `full_cv4_enet_dice_ce_augmented` | `full_cv4_enet_dice_ce` | 0.835 | 0.851 | +0.016 | 12/12 |
 | ResEnc + DS U-Net | `full_cv4_resenc_ds_unet_dice_ce_augmented` | `full_cv4_resenc_ds_unet_dice_ce` | 0.867 | 0.880 | +0.012 | 12/12 |
+
+![Rotation, scaling and shift alone and together across the three model baselines](../figures/augmentation_selection/selected_augmentations_by_model.png)
+
+The figure shows matched-control Dice gains and augmented Dice. The three individual
+transforms have saved evaluations only for Improved ENet (four seed-0 runs each);
+the joint recipe has 12-run results for all three models. Gray cells mean those
+individual model/transform combinations have no saved evaluation, not zero gain.
+Single-transform and joint cells use different seed protocols and should not be
+compared as a matched 12-run experiment.
 
 Full results, mean +/- std over 12 runs (4 folds x 3 seeds), 3D metrics:
 

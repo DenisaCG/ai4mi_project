@@ -84,6 +84,23 @@ class CvConfigTests(unittest.TestCase):
         self.assertEqual(kwargs["ce_idk"], baseline["loss"]["kwargs"]["ce_idk"])
         self.assertEqual(kwargs["tversky_idk"], baseline["loss"]["kwargs"]["dice_idk"])
 
+    def test_25d_configs_differ_from_their_2d_twin_only_in_the_slices(self):
+        for twin in ("full_cv4_enet_dice_ce", "full_cv4_resenc_ds_unet_dice_ce"):
+            plain, stacked = load(twin), load(f"{twin}_25d_c1")
+            self.assertEqual(stacked["experiment"], f"{twin}_25d_c1")
+            self.assertTrue(is_cv(stacked))
+            self.assertEqual(
+                {k for k in plain if plain[k] != stacked[k]},
+                {"experiment", "notes", "data"},
+            )
+            self.assertEqual(
+                {k for k in plain["data"] if plain["data"][k] != stacked["data"][k]},
+                {"context", "in_channels"},
+            )
+            self.assertEqual(
+                (stacked["data"]["context"], stacked["data"]["in_channels"]), (1, 3)
+            )
+
     def test_only_preprocessing_loss_and_names_differ(self):
         starter, current = load(STARTER), load(CURRENT)
         different = {k for k in starter if starter[k] != current[k]}
