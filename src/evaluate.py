@@ -92,6 +92,8 @@ def evaluate(run_dir: Path, device: torch.device) -> dict:
     cfg = read_yaml((run_dir / "config.yaml").read_text())
     log = setup_logging(run_dir / "eval.log")
     d, names = cfg["data"], cfg["data"]["class_names"]
+    if "pretrained" in cfg["model"]["kwargs"]:
+        cfg["model"]["kwargs"]["pretrained"] = False  # the weights come from the checkpoint
     net = build_model(cfg, device)
     best = load_checkpoint(run_dir / "checkpoints" / "best.pt")
     net.load_state_dict(best["model"])

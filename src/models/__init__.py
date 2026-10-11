@@ -2,3 +2,4 @@
 from . import baseline  # noqa: F401  enet, shallow_cnn
 from . import unet  # noqa: F401  unet
 from . import dino_unet  # noqa: F401  dino_unet
+from . import resnet_unet  # noqa: F401  resnet34_unet

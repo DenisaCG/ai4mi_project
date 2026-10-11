@@ -112,6 +112,8 @@ class UNet(nn.Module):
         deep_supervision: Whether, in train mode, to return the logits of every decoder stage as a list
             (full resolution first, then half, a quarter, ...). Eval mode returns the full-resolution
             logits only.
+        features: Feature maps per stage, replacing the `base_features` / `max_features` rule. A subclass
+            that replaces `encoder` must pass the widths of its own stages.
     """
 
     def __init__(
@@ -124,6 +126,7 @@ class UNet(nn.Module):
         block: str = "plain",
         attention: bool = False,
         deep_supervision: bool = False,
+        features: list[int] | None = None,
     ):
         super().__init__()
         if deep_supervision and n_stages < 3:
@@ -133,7 +136,7 @@ class UNet(nn.Module):
         if block not in ("plain", "residual"):
             raise ValueError(f"block must be 'plain' or 'residual', got {block!r}")
         self.multiple = 2 ** (n_stages - 1)
-        self.features = [
+        self.features = features or [
             min(base_features * 2**i, max_features) for i in range(n_stages)
         ]
         ins = [in_channels, *self.features[:-1]]
@@ -183,6 +186,14 @@ class UNet(nn.Module):
                 nn.init.kaiming_normal_(m.weight, a=0.01)
                 nn.init.zeros_(m.bias)
 
+    def encode(self, x: torch.Tensor) -> list[torch.Tensor]:
+        """Outputs of every encoder stage, full resolution first, bottleneck last."""
+        outputs = []
+        for stage in self.encoder:
+            x = stage(x)
+            outputs.append(x)
+        return outputs
+
     def forward(self, x: torch.Tensor) -> torch.Tensor | list[torch.Tensor]:
         """Maps (B, in_channels, H, W) to logits (B, num_classes, H, W).
 
@@ -193,11 +204,8 @@ class UNet(nn.Module):
                 f"input size {tuple(x.shape[-2:])} must be divisible by {self.multiple} "
                 f"(2 ** (n_stages - 1) with n_stages={len(self.features)})"
             )
-        skips = []
-        for stage in self.encoder:
-            x = stage(x)
-            skips.append(x)
-        skips.pop()  # the bottleneck output feeds the decoder directly
+        skips = self.encode(x)
+        x = skips.pop()  # the bottleneck output feeds the decoder directly
         features = []
         for i in reversed(range(len(self.decoder))):
             up, skip = self.upsample[i](x), skips.pop()
