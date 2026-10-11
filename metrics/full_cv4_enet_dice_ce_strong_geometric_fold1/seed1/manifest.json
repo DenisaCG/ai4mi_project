@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "started": "2026-10-08T18:37:28",
+  "config_hash": "f5972fe07b36",
+  "smoke": false,
+  "user": "igardner1",
+  "host": "gcn20.local.snellius.surf.nl",
+  "slurm_job_id": "27779957",
+  "python": "3.11.17",
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "git_commit": "6401e11fd3ba8f3fefb8add3a4fc3df1b6481dbd",
+  "git_branch": "registration-augmentation",
+  "git_dirty": true,
+  "command": "/gpfs/home6/igardner1/ai4mi_project/src/train.py --config configs/full_cv4_enet_dice_ce_strong_geometric.yaml --fold 1 --set seed=1",
+  "finished": "2026-10-08T18:55:44"
+}

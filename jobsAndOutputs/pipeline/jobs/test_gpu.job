@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH --job-name=pipeline_tests_gpu
+#SBATCH --partition=gpu_a100
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --gpus=1
+#SBATCH --time=00:20:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Unit + end-to-end tests on CPU (legacy parity, resume, stitching, metric conventions).
+# Usage: sbatch jobsAndOutputs/pipeline/jobs/test_gpu.job  (same as test.job, on gpu_a100 because the CPU budget is exhausted)
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+python -m unittest discover -s tests -v

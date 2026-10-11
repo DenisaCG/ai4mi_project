@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "started": "2026-10-07T13:59:27",
+  "config_hash": "d5e9e206020a",
+  "smoke": false,
+  "user": "igardner1",
+  "host": "gcn55.local.snellius.surf.nl",
+  "slurm_job_id": "27712918",
+  "python": "3.11.17",
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "git_commit": "4f3c3ceb6a128d2f0087c1da4e94c8b6547fcb1a",
+  "git_branch": "registration-augmentation",
+  "git_dirty": true,
+  "command": "/gpfs/home6/igardner1/ai4mi_project/src/train.py --config configs/full_cv4_enet_dice_ce_nnunet_rot_scale_shift.yaml --fold 2 --set wandb.mode=disabled seed=0",
+  "finished": "2026-10-07T14:16:59"
+}

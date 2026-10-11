@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "started": "2026-10-06T23:06:17",
+  "config_hash": "984bfa8a55f4",
+  "smoke": false,
+  "user": "igardner1",
+  "host": "gcn41.local.snellius.surf.nl",
+  "slurm_job_id": "27685028",
+  "python": "3.11.17",
+  "torch": "2.14.0+cu130",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "git_commit": "cbdeb9de878d011a16563f90bc0e6bd0d7d76ae3",
+  "git_branch": "tversky-loss",
+  "git_dirty": true,
+  "command": "/gpfs/home6/igardner1/ai4mi_tversky/src/train.py --config configs/full_cv4_resenc_ds_unet_tversky_ce.yaml --fold 1 --set seed=0",
+  "finished": "2026-10-06T23:35:01"
+}

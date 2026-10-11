@@ -1,0 +1,11 @@
+experiment,trainable_parameters
+full_cv4_enet_ce,284003
+full_cv4_enet_dice_ce,284003
+full_cv4_enet_dice_ce_25d_c1,284073
+full_cv4_enet_dice_ce_25d_c2,284071
+full_cv4_unet_dice_ce,20617253
+full_cv4_attention_unet_dice_ce,20967930
+full_cv4_resenc_unet_dice_ce,72079397
+full_cv4_ds_unet_dice_ce,20622073
+full_cv4_resenc_ds_unet_dice_ce,72084217
+full_cv4_resenc_ds_unet_dice_ce_25d_c1,72084793

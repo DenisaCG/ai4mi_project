@@ -213,6 +213,7 @@ def build_dataset(cfg: dict, split: str) -> Dataset:
         "boundary",
         "ce_dice_boundary",
         "weighted_ce_dice_boundary",
+        "ce_dice_hd",
     ):
         classes = cfg["loss"]["kwargs"].get("boundary_idk")
         dataset = WithDistanceMaps(

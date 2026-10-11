@@ -1,0 +1,95 @@
+experiment: full_cv4_dino_unet_dice_ce_fold3
+seed: 0
+device: cuda
+notes: 'step 6 of the architecture comparison - 2D U-Net decoder (step-1 widths) on
+  a frozen pretrained DINOv2 ViT-S/14 encoder, blocks 2/5/8/11 (Dino U-Net, arXiv:2508.20909;
+  weights dinov2_vits14_pretrain.pth from torch.hub, /scratch-shared/$USER/torch_cache/hub/checkpoints/dinov2_vits14_pretrain.pth,
+  sha256 b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9) + trainable
+  conv stem at full and half resolution + CE (all classes) + soft Dice (foreground),
+  full preprocessing (median spacing + HU window + z-score + ROI crop/pad), 4-fold
+  CV on the full 40-patient SEGTHOR train set. Hypothesis: ViT features are at 1/14
+  resolution, which may limit thin structures; the stem adds the high-resolution detail.
+  Caveat: best_model.pkl pickles the hub-loaded ViT by reference to the dinov2 module,
+  so unpickling it in a fresh process needs the cached repo (<torch_home>/hub/facebookresearch_dinov2_main)
+  on sys.path; the pipeline itself rebuilds the model and loads best.pt.'
+data:
+  root: data/sliced_e5985fec
+  preprocess:
+    shape:
+    - 256
+    - 256
+    retains: 10
+    fold: 3
+    seed: 0
+    source_dir: data/segthor_train_full
+    gt_version: corrected
+    resample: median
+    normalize: ct_window_zscore
+    crop: roi
+    num_folds: 4
+  num_classes: 5
+  class_names:
+  - background
+  - esophagus
+  - heart
+  - trachea
+  - aorta
+  label_scale: 63
+  patient_regex: (Patient_\d+)_\d{4}
+  in_channels: 1
+  context: 0
+  batch_size: 8
+  num_workers: 5
+  augment: []
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+  test_source_pattern: null
+model:
+  name: dino_unet
+  kwargs: {}
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    dice_idk:
+    - 1
+    - 2
+    - 3
+    - 4
+    ce_weight: 1.0
+    dice_weight: 1.0
+optim:
+  name: adam
+  kwargs:
+    lr: 0.0005
+    betas:
+    - 0.9
+    - 0.999
+scheduler:
+  name: none
+  kwargs: {}
+train:
+  epochs: 25
+  select_metric: val_dice_fg
+  max_failed_batches: 5
+  debug_samples: 0
+  train_patients: 0
+eval:
+  classes:
+  - 1
+  - 2
+  - 3
+  - 4
+wandb:
+  mode: disabled
+  entity: ''
+  project: ai4mi-segthor
+  tags: []
+  image_every: 5
+paths:
+  run_root: runs
+  metrics_dir: metrics

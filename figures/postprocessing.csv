@@ -1,0 +1,8 @@
+method,n_runs,dice,hd95,delta_dice,delta_hd95,uses_ground_truth
+base,12,0.8674,13.8,0.0,0.0,False
+gating_oracle:lcc,12,0.8555,18.32,-0.0119,4.52,False
+gating_oracle:lcc_heart_trachea,12,0.8677,12.03,0.0003,-1.77,False
+gating_oracle:heart_hull,12,0.8609,12.51,-0.0065,-1.29,False
+seed_ensemble:seed_vote,4,0.8762,11.41,0.0088,-2.39,False
+seed_ensemble:seed_vote_lcc_heart_trachea,4,0.8765,10.38,0.0091,-3.41,False
+gating_oracle:gate,12,0.8825,8.59,0.0151,-5.21,True

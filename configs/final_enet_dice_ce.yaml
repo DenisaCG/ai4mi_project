@@ -1,0 +1,34 @@
+# FINAL model 1/2: midterm improved ENet (full_cv4_enet_dice_ce recipe: Dice(fg)+CE(all), no augmentation, 50 epochs),
+# trained on ALL 40 labelled patients (train + val), then predicts the 20 test CTs. See docs/final_training.md.
+# NEEDS CODE SUPPORT (docs/final_training.md step 1): retains: 0 = no validation split, last-epoch checkpoint, test split sliced.
+# Until then slice_segthor's validate_split rejects retains 0, so this fails fast instead of silently using a holdout.
+experiment: final_enet_dice_ce
+notes: Final run, midterm improved ENet on all 40 train+val patients, last epoch, predicts the 20 test patients
+seed: 0   # 0 is the default; final runs use seeds 0, 1, 2 via --set seed=k
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 0, fold: 0, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: null
+  test_source_pattern: data/segthor_train_full/test/{patient}.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+train:
+  epochs: 50
+  select_metric: train_dice_fg   # no val set: no checkpoint selection, final model = last epoch
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled

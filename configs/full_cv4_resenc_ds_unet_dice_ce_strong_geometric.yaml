@@ -1,0 +1,34 @@
+# full_cv4_resenc_ds_unet_dice_ce_strong_geometric: ResEnc DS U-Net with stronger joint geometric (p0.7, rot +-15, scale 0.8-1.2, shift 10%). Everything else as full_cv4_resenc_ds_unet_dice_ce_augmented.
+# Same 4-fold cross-validation, preprocessing and loss as full_cv4_unet_dice_ce.yaml (40 patients, 30 train / 10 val per fold,
+# split seed 0, run seeds 0-2 from cv.job); only the model changes: U-Net with the residual encoder (full_cv4_resenc_unet_dice_ce) and
+# deep supervision (full_cv4_ds_unet_dice_ce) combined. Constant LR, 25 epochs.
+# Runs as full_cv4_resenc_ds_unet_dice_ce_fold0..3.
+experiment: full_cv4_resenc_ds_unet_dice_ce_strong_geometric
+notes: ResEnc DS U-Net with stronger joint geometric (p0.7, rot +-15, scale 0.8-1.2, shift 10%)
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+  augment:
+    - {name: random_rotation, kwargs: {p: 0.7, degrees: [-15.0, 15.0], fill: ct_window_low}}
+    - {name: random_scaling, kwargs: {p: 0.7, scales: [0.8, 1.2], fill: ct_window_low}}
+    - {name: random_shift, kwargs: {p: 0.7, max_fraction: 0.1, fill: ct_window_low}}
+
+model:
+  name: unet
+  kwargs: {block: residual, deep_supervision: true}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled

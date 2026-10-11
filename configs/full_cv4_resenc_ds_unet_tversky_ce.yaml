@@ -1,0 +1,29 @@
+# Same 4-fold cross-validation, preprocessing, model (residual encoder, deep supervision), optimizer and schedule as
+# full_cv4_resenc_ds_unet_dice_ce.yaml; only the loss changes: the soft Dice term becomes a soft Tversky term with
+# alpha 0.3 on false positives and beta 0.7 on false negatives (recall-weighted). Run seed 0 only (cv.job --array=0-3).
+# Runs as full_cv4_resenc_ds_unet_tversky_ce_fold0..3.
+experiment: full_cv4_resenc_ds_unet_tversky_ce
+notes: residual-encoder 2D U-Net (stem conv, 1/3/4/6/6/6 residual blocks per encoder stage, 1 conv per decoder stage, ResNet-D skips) with deep supervision (auxiliary heads at the decoder stages, weights 1, 1/2, 1/4, ..., lowest resolution 0) + CE (all classes) + soft Tversky (foreground, alpha 0.3, beta 0.7), constant LR, full preprocessing (median spacing + HU window + z-score + ROI crop/pad), 4-fold CV on the full 40-patient SEGTHOR train set
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+
+model:
+  name: unet
+  kwargs: {block: residual, deep_supervision: true}
+
+loss:
+  name: tversky_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    tversky_idk: [1, 2, 3, 4]
+    alpha: 0.3                # false-positive weight
+    beta: 0.7                 # false-negative weight
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled

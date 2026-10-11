@@ -1,0 +1,11 @@
+architecture,experiment,source,trainable_parameters,dice,hd95,assd,n_runs,esophagus_dice,dice_seed_std,dice_fold_std,hd95_seed_std,hd95_fold_std,esophagus_seed_std,esophagus_fold_std
+Upgraded baseline,full_cv4_enet_dice_ce,metrics,284003,0.8353,14.9101,2.6515,12,0.6776,0.002,0.0242,0.3627,1.3766,0.0047,0.0503
++ 2.5D ±1 slice,full_cv4_enet_dice_ce_25d_c1,metrics,284073,0.8373,13.879,2.5421,12,0.6815,0.001,0.0212,0.7493,2.2238,0.006,0.0484
++ 2.5D ±2 slices,full_cv4_enet_dice_ce_25d_c2,metrics,284071,0.8341,13.459,2.5889,12,0.6729,0.0018,0.0197,1.3702,1.9719,0.0044,0.0472
+U-Net,full_cv4_unet_dice_ce,metrics,20617253,0.8515,17.2912,2.9104,12,0.7354,0.0007,0.0225,1.2071,3.5984,0.0071,0.0476
++ attention gates,full_cv4_attention_unet_dice_ce,metrics,20967930,0.8494,21.3664,3.1653,12,0.7417,0.0045,0.0214,0.8094,5.298,0.0072,0.0441
++ deep supervision,full_cv4_ds_unet_dice_ce,metrics,20622073,0.8606,15.0082,2.4837,12,0.7501,0.0018,0.0187,1.5565,2.679,0.0058,0.041
++ frozen DINOv2,full_cv4_dino_unet_dice_ce,snellius inventory,,0.8371,16.8898,2.9414,12,0.6908,0.01,0.014,0.3703,2.75,0.0188,0.0321
+ResEnc U-Net,full_cv4_resenc_unet_dice_ce,metrics,72079397,0.8576,18.2313,2.9619,12,0.7471,0.0046,0.0169,1.6263,5.138,0.0067,0.0374
++ deep supervision,full_cv4_resenc_ds_unet_dice_ce,metrics,72084217,0.8674,13.7983,2.4245,12,0.7627,0.0018,0.0141,0.8866,1.7485,0.0045,0.0321
++ 2.5D ±1 slice,full_cv4_resenc_ds_unet_dice_ce_25d_c1,snellius inventory,72084793,0.8674,14.4364,2.4522,12,0.7577,0.0038,0.0168,1.4924,2.3638,0.0077,0.0416

@@ -1,0 +1,29 @@
+# Same 4-fold cross-validation as full_cv4_enet_ce.yaml (40 patients, 30 train / 10 val per fold, split seed 0, run seeds 0-2 from cv.job),
+# with the current recipe: ENet + CE (all classes) + soft Dice (foreground) and the full preprocessing stack (median spacing,
+# HU window + z-score, ROI crop/pad). The window size T comes from each fold's 30 training patients, so it can differ per fold
+# (see <dataset>/roi_crop.json). Runs as full_cv4_enet_tversky_ce_fold0..3. Only the loss differs from full_cv4_enet_dice_ce (src/losses/tversky.py).
+experiment: full_cv4_enet_tversky_ce
+notes: ENet + CE (all classes) + soft Tversky (foreground, alpha 0.3, beta 0.7), same preprocessing, folds and seed 0 as full_cv4_enet_dice_ce
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: tversky_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    tversky_idk: [1, 2, 3, 4]
+    alpha: 0.3                # false-positive weight
+    beta: 0.7                 # false-negative weight
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled

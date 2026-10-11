@@ -1,0 +1,89 @@
+#!/bin/bash
+#SBATCH --job-name=nnunet_no_tta
+#SBATCH --partition=gpu_mig
+#SBATCH --nodes=1
+#SBATCH --gpus=1
+#SBATCH --time=00:30:00
+#SBATCH --output=jobsAndOutputs/nnunet/outputs/nnunet_no_tta_%j.out
+
+# Predict the five validation patients with the final checkpoint and test-time augmentation OFF, then score
+# them with nnU-Net's own evaluator. nnU-Net's built-in validation (fold_0/validation) uses mirroring TTA;
+# this run is the single-forward-pass counterpart, comparable to the ENet runs. Both summaries are printed.
+# Needs run_nnunet.job to have finished. Submit from the project root:
+#     sbatch jobsAndOutputs/nnunet/jobs/predict_no_tta.job
+set -euo pipefail
+
+PROJECT_DIR="${SLURM_SUBMIT_DIR:-$HOME/ai4mi_project}"
+VENV="$HOME/.venv_nnunet_ai4mi"
+CONFIGURATION=2d   # keep in sync with run_nnunet.job
+TRAINER=nnUNetTrainer_100epochs
+DATASET=Dataset102_SegTHOR_corrected
+
+module purge
+module load 2025
+module load Python/3.13.1-GCCcore-14.2.0
+
+source "$VENV/bin/activate"
+unset PYTHONPATH PYTHONHOME
+export PYTHONNOUSERSITE=1
+
+export TEMP="$TMPDIR" TMP="$TMPDIR"
+export nnUNet_raw="$PROJECT_DIR/data/nnUNet_raw"
+export nnUNet_preprocessed="$PROJECT_DIR/data/nnUNet_preprocessed"
+export nnUNet_results="$PROJECT_DIR/results/nnunet"
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+
+cd "$PROJECT_DIR"
+
+TRAINER_DIR="$nnUNet_results/$DATASET/${TRAINER}__nnUNetPlans__$CONFIGURATION"
+FOLD_DIR="$TRAINER_DIR/fold_0"
+INPUT_DIR="$FOLD_DIR/no_tta_input"
+OUT_DIR="$FOLD_DIR/validation_no_tta"
+export DATASET FOLD_DIR INPUT_DIR
+
+[ -f "$FOLD_DIR/checkpoint_final.pth" ] && [ -f "$FOLD_DIR/validation/summary.json" ] \
+    || { echo "fold 0 is not trained and validated yet: run run_nnunet.job first"; exit 1; }
+
+echo "python : $(which python)"
+nvidia-smi --query-gpu=name,memory.total --format=csv
+
+echo "--- link the validation patients' CTs ---"
+python - <<'PY'
+import json
+import os
+from pathlib import Path
+
+split = json.loads((Path(os.environ["nnUNet_preprocessed"]) / os.environ["DATASET"] / "splits_final.json").read_text())[0]
+images = Path(os.environ["nnUNet_raw"]) / os.environ["DATASET"] / "imagesTr"
+out = Path(os.environ["INPUT_DIR"])
+out.mkdir(parents=True, exist_ok=True)
+for case in split["val"]:
+    link = out / f"{case}_0000.nii.gz"
+    link.unlink(missing_ok=True)
+    link.symlink_to(images / link.name)
+print(f"linked {len(split['val'])} validation CTs into {out}")
+PY
+
+echo "--- predict without TTA (final checkpoint) ---"
+nnUNetv2_predict -i "$INPUT_DIR" -o "$OUT_DIR" -d 102 -c "$CONFIGURATION" -tr "$TRAINER" -f 0 \
+    -chk checkpoint_final.pth --disable_tta --continue_prediction
+
+echo "--- score (only the files in the prediction folder are evaluated) ---"
+nnUNetv2_evaluate_folder "$nnUNet_raw/$DATASET/labelsTr" "$OUT_DIR" \
+    -djfile "$TRAINER_DIR/dataset.json" -pfile "$TRAINER_DIR/plans.json" --chill
+
+echo "--- foreground Dice, classes 1-4, mean over the 5 validation patients ---"
+python - <<'PY'
+import json
+import os
+from pathlib import Path
+
+fold = Path(os.environ["FOLD_DIR"])
+for name, path in (("with TTA (nnU-Net default)", fold / "validation" / "summary.json"),
+                   ("without TTA", fold / "validation_no_tta" / "summary.json")):
+    s = json.loads(path.read_text())
+    per_class = " ".join(f"{k}:{v['Dice']:.4f}" for k, v in s["mean"].items() if k != "0")
+    print(f"{name:28s} fg Dice {s['foreground_mean']['Dice']:.4f} | class {per_class}")
+PY
+echo "[$(date -Is)] done: $OUT_DIR"

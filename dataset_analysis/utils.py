@@ -9,8 +9,10 @@ import json
 import os
 from pathlib import Path
 import re
+import statistics
 import subprocess
 import sys
+from collections import defaultdict
 from datetime import datetime, timezone
 
 import nibabel as nib
@@ -20,6 +22,10 @@ from PIL import Image
 CLASSES = {1: "esophagus", 2: "heart", 3: "trachea", 4: "aorta"}
 NAMES = {k: name.capitalize() for k, name in CLASSES.items()}
 REPO = Path(__file__).resolve().parents[1]
+N_FOLDS, N_SEEDS = 4, 3  # cross-validation protocol, as in src.aggregate
+METRICS = ("dice", "hd95", "assd")
+INVENTORY = REPO / "deck/snellius_inventory/igardner1/arch_summary.csv"
+PER_PATIENT = REPO / "deck/snellius_inventory/scur0049/arch_per_patient.csv"
 
 # Figures share the repo-wide theme in tools/plot_style.py, with its earthy organ colors.
 os.environ.setdefault("MPLCONFIGDIR", str(REPO / "dataset_analysis/results/.matplotlib"))
@@ -115,10 +121,115 @@ def write_csv(path: Path, rows: list[dict]) -> None:
                              and not np.isfinite(v) else v for k, v in row.items()})
 
 
+def load_cv_runs(metrics_dir: Path, experiment: str, keys=("dice",)) -> list[dict]:
+    """Read the validation metrics of every run of a 4-fold x 3-seed experiment.
+
+    Args:
+        metrics_dir: Folder holding one `<experiment>_fold<k>/seed<s>/metrics_3d.csv` per run.
+        experiment: Experiment name without the fold suffix.
+        keys: Columns of metrics_3d.csv to read, as floats.
+
+    Returns:
+        One row per fold, seed, patient and organ with the requested metrics.
+    """
+    rows = []
+    for fold in range(N_FOLDS):
+        for seed in range(N_SEEDS):
+            path = metrics_dir / f"{experiment}_fold{fold}" / f"seed{seed}" / "metrics_3d.csv"
+            for r in read_csv(path):
+                if r["split"] == "val":
+                    rows.append({"fold": fold, "seed": seed, "patient": r["patient"], "organ": r["class_name"],
+                                 **{k: float(r[k]) for k in keys}})
+    return rows
+
+
 def read_csv(path: Path) -> list[dict]:
     """Load generated tables, retaining strings until explicitly converted."""
     with path.open(newline="") as f:
         return list(csv.DictReader(f))
+
+
+def load_arch_runs(metrics_dir: Path, experiment: str) -> tuple[list[dict], str]:
+    """Read the validation metrics of every run of an experiment, from the local metrics or else the Snellius inventory.
+
+    Args:
+        metrics_dir: Folder holding the local runs, as for load_cv_runs.
+        experiment: Experiment name without the fold suffix.
+
+    Returns:
+        The rows of load_cv_runs (all of METRICS) and the name of the source they came from.
+    """
+    if (metrics_dir / f"{experiment}_fold0").exists():
+        return load_cv_runs(metrics_dir, experiment, METRICS), "metrics"
+    rows = [
+        {"fold": int(r["fold"]), "seed": int(r["seed"]), "patient": r["patient"], "organ": r["organ"],
+         **{k: float(r[k]) for k in METRICS}}
+        for r in read_csv(PER_PATIENT) if r["experiment"] == experiment
+    ]
+    return rows, "snellius inventory"
+
+
+def spreads(runs: dict[tuple[int, int], float]) -> tuple[float, float]:
+    """Standard deviation of a per-run value over seeds and over folds.
+
+    Args:
+        runs: Value of every run, keyed by (fold, seed).
+
+    Returns:
+        Sample std over seeds of the fold-averaged value, and over folds of the seed-averaged value; NaN where
+        fewer than two seeds or folds are present.
+    """
+    folds = sorted({f for f, _ in runs})
+    seeds = sorted({s for _, s in runs})
+    by_seed = [statistics.fmean(runs[f, s] for f in folds) for s in seeds]
+    by_fold = [statistics.fmean(runs[f, s] for s in seeds) for f in folds]
+    return tuple(statistics.stdev(v) if len(v) > 1 else float("nan") for v in (by_seed, by_fold))
+
+
+def summarise(rows: list[dict]) -> dict:
+    """Mean over the runs of the per-run patient means, for the mean over organs and the esophagus.
+
+    Args:
+        rows: Validation metrics of one experiment, from load_cv_runs (all of METRICS read).
+
+    Returns:
+        The metrics of the mean over organs, plus the esophagus Dice and the seed and fold std of the Dice, the HD95
+        and the esophagus Dice.
+    """
+    cells = defaultdict(list)
+    for r in rows:
+        for key in METRICS:
+            cells[key, r["fold"], r["seed"], r["organ"]].append(r[key])
+    runs = {key: defaultdict(dict) for key in METRICS}
+    for (key, fold, seed, organ), values in cells.items():
+        runs[key][fold, seed][organ] = statistics.fmean(values)
+    mean_runs = {key: {run: statistics.fmean(v.values()) for run, v in runs[key].items()} for key in METRICS}
+    esophagus_runs = {run: v["esophagus"] for run, v in runs["dice"].items()}
+    out = {key: statistics.fmean(mean_runs[key].values()) for key in METRICS}
+    out["n_runs"] = len(mean_runs["dice"])
+    out["esophagus_dice"] = statistics.fmean(esophagus_runs.values())
+    out["dice_seed_std"], out["dice_fold_std"] = spreads(mean_runs["dice"])
+    out["hd95_seed_std"], out["hd95_fold_std"] = spreads(mean_runs["hd95"])
+    out["esophagus_seed_std"], out["esophagus_fold_std"] = spreads(esophagus_runs)
+    return out
+
+
+def inventory_row(experiment: str) -> dict:
+    """Mean metrics of one experiment from the Snellius inventory, in the layout of summarise()."""
+    rows = [r for r in read_csv(INVENTORY) if r["experiment"] == experiment]
+    mean = next(r for r in rows if r["organ"] == "mean")
+    esophagus = next(r for r in rows if r["organ"] == "esophagus")
+    return {
+        **{key: float(mean[key]) for key in METRICS},
+        "n_runs": int(mean["n_runs"]),
+        "esophagus_dice": float(esophagus["dice"]),
+        "dice_seed_std": float(mean["seed_std"] or "nan"),
+        "dice_fold_std": float(mean["fold_std"] or "nan"),
+        "hd95_seed_std": None,
+        "hd95_fold_std": None,
+        "esophagus_seed_std": None,
+        "esophagus_fold_std": None,
+    }
 
 
 def identity(path: Path) -> tuple[str, int]:

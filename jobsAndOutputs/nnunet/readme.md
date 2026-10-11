@@ -23,6 +23,10 @@ nnU-Net writes to `results/nnunet/Dataset102_SegTHOR_corrected/<trainer>__nnUNet
 - `checkpoint_final.pth`: the trained weights.
 - `validation/*.nii.gz` and `validation/summary.json`: predictions for the five validation patients at original resolution, with per-class 3D Dice and IoU.
 
+## Without test-time augmentation
+
+nnU-Net's own validation (`fold_0/validation`) uses mirroring TTA and Gaussian sliding-window prediction, while the ENet runs do one forward pass. To get the matching number, submit `sbatch jobsAndOutputs/nnunet/jobs/predict_no_tta.job` after training has finished. It predicts the five validation patients with `nnUNetv2_predict --disable_tta`, scores them with `nnUNetv2_evaluate_folder`, and prints foreground Dice with and without TTA. Predictions and `summary.json` go to `fold_0/validation_no_tta/`.
+
 ## Tests
 
 The conversion tests need `nnunetv2` importable, so run them from the nnU-Net venv:

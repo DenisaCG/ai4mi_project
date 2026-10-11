@@ -150,6 +150,8 @@ def validate(cfg: dict) -> None:
     stride = cfg["data"]["stride"]
     if type(stride) is not int or stride < 1:
         raise ValueError(f"data.stride must be an integer >= 1, got {stride!r}")
+    if bool(cfg["train"]["presence_weight"]) != bool(cfg["model"]["kwargs"].get("slice_presence")):
+        raise ValueError("train.presence_weight > 0 and model.kwargs.slice_presence: true go together")
     validate_component_names(cfg)
 
 
@@ -181,6 +183,6 @@ def config_hash(cfg: dict) -> str:
         and (k != "stride" or v != 1)
         and (k != "registration" or v is not None)
     }
-    return hashlib.sha256(json.dumps(relevant, sort_keys=True).encode()).hexdigest()[
-        :12
-    ]
+    # train.presence_weight == 0 (no presence head) is left out, so runs from before the key existed keep their hash
+    relevant["train"] = {k: v for k, v in cfg["train"].items() if k != "presence_weight" or v}
+    return hashlib.sha256(json.dumps(relevant, sort_keys=True).encode()).hexdigest()[:12]

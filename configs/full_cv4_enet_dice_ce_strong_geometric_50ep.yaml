@@ -1,0 +1,33 @@
+# full_cv4_enet_dice_ce_strong_geometric_50ep: ENet with stronger joint geometric (p0.7, rot +-15, scale 0.8-1.2, shift 10%), 50 epochs. Everything else as full_cv4_enet_dice_ce_rot_scale_shift.
+experiment: full_cv4_enet_dice_ce_strong_geometric_50ep
+notes: ENet with stronger joint geometric (p0.7, rot +-15, scale 0.8-1.2, shift 10%), 50 epochs
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+  augment:
+    - {name: random_rotation, kwargs: {p: 0.7, degrees: [-15.0, 15.0], fill: ct_window_low}}
+    - {name: random_scaling, kwargs: {p: 0.7, scales: [0.8, 1.2], fill: ct_window_low}}
+    - {name: random_shift, kwargs: {p: 0.7, max_fraction: 0.1, fill: ct_window_low}}
+
+model:
+  name: enet
+  kwargs: {kernels: 8, factor: 2}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+eval:
+  classes: [1, 2, 3, 4]
+
+train:
+  epochs: 50
+
+wandb:
+  mode: disabled

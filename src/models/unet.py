@@ -114,6 +114,9 @@ class UNet(nn.Module):
             logits only.
         features: Feature maps per stage, replacing the `base_features` / `max_features` rule. A subclass
             that replaces `encoder` must pass the widths of its own stages.
+        slice_presence: Whether to add a linear head on the global average of the bottleneck features with one
+            logit per foreground class; the latest logits, shape (B, num_classes - 1), are kept in
+            `presence_logits` after every forward pass.
     """
 
     def __init__(
@@ -127,6 +130,7 @@ class UNet(nn.Module):
         attention: bool = False,
         deep_supervision: bool = False,
         features: list[int] | None = None,
+        slice_presence: bool = False,
     ):
         super().__init__()
         if deep_supervision and n_stages < 3:
@@ -176,6 +180,10 @@ class UNet(nn.Module):
             if deep_supervision
             else None
         )
+        self.presence = (
+            nn.Linear(self.features[-1], num_classes - 1) if slice_presence else None
+        )
+        self.presence_logits: torch.Tensor | None = None
         self.gates = (
             nn.ModuleList(AttentionGate(f, f, f // 2) for f in skips)
             if attention
@@ -206,6 +214,8 @@ class UNet(nn.Module):
             )
         skips = self.encode(x)
         x = skips.pop()  # the bottleneck output feeds the decoder directly
+        if self.presence is not None:
+            self.presence_logits = self.presence(x.mean(dim=(2, 3)))
         features = []
         for i in reversed(range(len(self.decoder))):
             up, skip = self.upsample[i](x), skips.pop()
@@ -229,6 +239,7 @@ def build_unet(
     block: str = "plain",
     attention: bool = False,
     deep_supervision: bool = False,
+    slice_presence: bool = False,
 ) -> nn.Module:
     """Builds the U-Net; see `UNet`."""
     return UNet(
@@ -240,4 +251,5 @@ def build_unet(
         block=block,
         attention=attention,
         deep_supervision=deep_supervision,
+        slice_presence=slice_presence,
     )

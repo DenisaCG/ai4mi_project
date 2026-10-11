@@ -9,6 +9,7 @@ CONFIGS = REPO / "configs"
 STARTER, CURRENT = "full_cv4_enet_ce", "full_cv4_enet_dice_ce"
 AUGMENTED = ("full_cv4_enet_dice_ce_rotation", "full_cv4_enet_dice_ce_scaling",
              "full_cv4_enet_dice_ce_gaussian_noise")
+BASELINE, TVERSKY = "full_cv4_resenc_ds_unet_dice_ce", "full_cv4_resenc_ds_unet_tversky_ce"
 HAS_DATA = (REPO / "data" / "segthor_train_full" / "train").is_dir()
 
 
@@ -69,6 +70,18 @@ class CvConfigTests(unittest.TestCase):
             for key in ("model", "loss", "optim", "scheduler", "train", "eval"):
                 self.assertEqual(cfg[key], current[key])
             self.assertEqual(len(cfg["data"]["augment"]), 1)
+
+    def test_tversky_config_differs_from_the_baseline_only_in_the_loss(self):
+        baseline, tversky = load(BASELINE), load(TVERSKY)
+        self.assertEqual(tversky["experiment"], TVERSKY)
+        self.assertTrue(is_cv(tversky))
+        different = {k for k in baseline if baseline[k] != tversky[k]}
+        self.assertEqual(different, {"experiment", "notes", "loss"})
+        self.assertEqual(tversky["loss"]["name"], "tversky_ce")
+        kwargs = tversky["loss"]["kwargs"]
+        self.assertEqual((kwargs["alpha"], kwargs["beta"]), (0.3, 0.7))
+        self.assertEqual(kwargs["ce_idk"], baseline["loss"]["kwargs"]["ce_idk"])
+        self.assertEqual(kwargs["tversky_idk"], baseline["loss"]["kwargs"]["dice_idk"])
 
     def test_only_preprocessing_loss_and_names_differ(self):
         starter, current = load(STARTER), load(CURRENT)

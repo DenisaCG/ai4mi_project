@@ -1,0 +1,128 @@
+#!/bin/bash
+#SBATCH --job-name=nnunet_3d
+#SBATCH --partition=gpu_a100
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --gpus=1
+#SBATCH --time=06:00:00
+#SBATCH --output=jobsAndOutputs/nnunet/outputs/nnunet_3d_%j.out
+
+# nnU-Net 3d_fullres on the corrected SegTHOR data, fold 0 (same five validation patients as the 2D run),
+# 100 epochs of 250 iterations like the 2D run. Steps: convert, plan and preprocess, write the split, train,
+# nnU-Net's own validation (mirroring TTA), then a no-TTA prediction of the validation patients scored with
+# nnU-Net's evaluator, and a printout of both. Submit from the project root:
+#     sbatch jobsAndOutputs/nnunet/jobs/run_nnunet_3d.job
+# Resubmitting continues where the last run stopped and skips finished steps.
+# For the full 1000 epochs set TRAINER=nnUNetTrainer (about ten times longer: raise --time first).
+set -euo pipefail
+
+PROJECT_DIR="${SLURM_SUBMIT_DIR:-$HOME/ai4mi_project}"
+VENV="$HOME/.venv_nnunet_ai4mi"
+CONFIGURATION=3d_fullres
+TRAINER=nnUNetTrainer_100epochs
+DATASET=Dataset102_SegTHOR_corrected
+
+module purge
+module load 2025
+module load Python/3.13.1-GCCcore-14.2.0
+
+source "$VENV/bin/activate"
+unset PYTHONPATH PYTHONHOME
+export PYTHONNOUSERSITE=1
+
+export TEMP="$TMPDIR" TMP="$TMPDIR"
+export nnUNet_raw="$PROJECT_DIR/data/nnUNet_raw"
+export nnUNet_preprocessed="$PROJECT_DIR/data/nnUNet_preprocessed"
+export nnUNet_results="$PROJECT_DIR/results/nnunet"
+export nnUNet_n_proc_DA=12
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+
+cd "$PROJECT_DIR"
+
+TRAINER_DIR="$nnUNet_results/$DATASET/${TRAINER}__nnUNetPlans__$CONFIGURATION"
+FOLD_DIR="$TRAINER_DIR/fold_0"
+INPUT_DIR="$FOLD_DIR/no_tta_input"
+OUT_DIR="$FOLD_DIR/validation_no_tta"
+export DATASET FOLD_DIR INPUT_DIR
+
+echo "python : $(which python)"
+nvidia-smi
+
+python - <<'PY'
+import sys
+
+import torch
+
+if not torch.cuda.is_available():
+    sys.exit("torch.cuda.is_available() is False, aborting")
+print("torch", torch.__version__, "| CUDA", torch.version.cuda, "|", torch.cuda.get_device_name(0))
+PY
+
+[ -d data/segthor_part1_corrected/train ] || { echo "data/segthor_part1_corrected/train missing"; exit 1; }
+
+echo "--- convert to nnU-Net raw format ---"
+python nnunet/prepare_dataset.py convert
+
+PREPROCESSED="$nnUNet_preprocessed/$DATASET"
+MARKER="$PREPROCESSED/.preprocessed_$CONFIGURATION"
+if [ -f "$MARKER" ] && [ -d "$PREPROCESSED/nnUNetPlans_$CONFIGURATION" ]; then
+    echo "--- $CONFIGURATION already preprocessed, skipping ---"
+else
+    echo "--- plan and preprocess ($CONFIGURATION) ---"
+    nnUNetv2_plan_and_preprocess -d 102 --verify_dataset_integrity -c "$CONFIGURATION"
+    touch "$MARKER"
+fi
+
+echo "--- write the fixed train/val split ---"
+python nnunet/prepare_dataset.py splits
+
+if [ -f "$FOLD_DIR/checkpoint_final.pth" ] && [ -f "$FOLD_DIR/validation/summary.json" ]; then
+    echo "--- fold 0 ($CONFIGURATION) already trained and validated, skipping ---"
+else
+    echo "--- train fold 0 ($CONFIGURATION) ---"
+    srun nnUNetv2_train 102 "$CONFIGURATION" 0 -tr "$TRAINER" --c
+fi
+
+echo "--- link the validation patients' CTs ---"
+python - <<'PY'
+import json
+import os
+from pathlib import Path
+
+split = json.loads((Path(os.environ["nnUNet_preprocessed"]) / os.environ["DATASET"] / "splits_final.json").read_text())[0]
+images = Path(os.environ["nnUNet_raw"]) / os.environ["DATASET"] / "imagesTr"
+out = Path(os.environ["INPUT_DIR"])
+out.mkdir(parents=True, exist_ok=True)
+for case in split["val"]:
+    link = out / f"{case}_0000.nii.gz"
+    link.unlink(missing_ok=True)
+    link.symlink_to(images / link.name)
+print(f"linked {len(split['val'])} validation CTs into {out}")
+PY
+
+echo "--- predict without TTA (final checkpoint) ---"
+nnUNetv2_predict -i "$INPUT_DIR" -o "$OUT_DIR" -d 102 -c "$CONFIGURATION" -tr "$TRAINER" -f 0 \
+    -chk checkpoint_final.pth --disable_tta --continue_prediction
+
+echo "--- score (only the files in the prediction folder are evaluated) ---"
+nnUNetv2_evaluate_folder "$nnUNet_raw/$DATASET/labelsTr" "$OUT_DIR" \
+    -djfile "$TRAINER_DIR/dataset.json" -pfile "$TRAINER_DIR/plans.json" --chill
+
+echo "--- foreground Dice, classes 1-4, mean over the 5 validation patients ---"
+python - <<'PY'
+import json
+import os
+from pathlib import Path
+
+fold = Path(os.environ["FOLD_DIR"])
+for name, path in (("with TTA (nnU-Net default)", fold / "validation" / "summary.json"),
+                   ("without TTA", fold / "validation_no_tta" / "summary.json")):
+    s = json.loads(path.read_text())
+    per_class = " ".join(f"{k}:{v['Dice']:.4f}" for k, v in s["mean"].items() if k != "0")
+    print(f"{name:28s} fg Dice {s['foreground_mean']['Dice']:.4f} | class {per_class}")
+PY
+echo "[$(date -Is)] done: $FOLD_DIR"
+ls "$FOLD_DIR"
