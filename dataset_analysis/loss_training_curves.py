@@ -1,12 +1,12 @@
-"""Training curves of the post-midterm loss and optimiser changes, sized for a slide.
+"""Training curves of the post-midterm loss and optimiser changes, sized for the figure slot of a slide (7.9 x 4.85 in).
 
     python dataset_analysis/loss_training_curves.py [--out figures]
 
 Validation Dice logged after every epoch of training: per patient from counts summed over its slices, on the 256 x 256 model
 grid (not the original CT grid of the evaluation). Both panels use seed 0 only, the one seed every variant has for all 4 folds
 (4 runs per line, mean over the folds).
-Left panel: the ResEnc deep-supervision U-Net with Dice + CE (the reference) and with a boundary loss, a Tversky loss, a
-slice-presence head and AdamW. Right panel: ENet with Dice + CE (the reference) and with a constant-weight boundary loss, a
+Top panel: the ResEnc deep-supervision U-Net with Dice + CE (the reference) and with a boundary loss, a Tversky loss, a
+slice-presence head and AdamW. Bottom panel: ENet with Dice + CE (the reference) and with a constant-weight boundary loss, a
 boundary loss whose weight rises over training and a class-weighted CE. Lines are the 3-epoch moving average of the fold mean, from epoch 3. The reference runs are read from metrics/, the variants from the
 folders pulled from Snellius (deck/snellius_inventory/loss_runs).
 Writes loss_training_curves.{png,pdf} and loss_training_curves.csv (one row per panel, variant and epoch).
@@ -171,7 +171,7 @@ def draw_panel(ax, rows: list[dict], ylim: tuple[float, float], title: str) -> N
         epochs, ref, color=INK, lw=3, ls=(0, (1, 1.6)), zorder=4, dash_capstyle="round"
     )
     ends[rows[0]["label"]] = (ref[-1], INK)
-    spacing = 0.09 * (ylim[1] - ylim[0])
+    spacing = 0.11 * (ylim[1] - ylim[0])
     last = ylim[1]
     for label, (end, color) in sorted(ends.items(), key=lambda kv: -kv[1][0]):
         last = (
@@ -191,9 +191,12 @@ def draw_panel(ax, rows: list[dict], ylim: tuple[float, float], title: str) -> N
     ax.set_xlim(3, 25)
     ax.set_ylim(*ylim)
     ax.set_xticks(range(3, 26, 2))
-    ticks = np.arange(ylim[0], ylim[1] + 1e-9, 0.005)
-    ax.set_yticks(ticks, [f"{v:.3f}" for v in ticks])
+    ticks = np.arange(ylim[0], ylim[1] + 1e-9, 0.01)
+    ax.set_yticks(ticks, [f"{v:.2f}" for v in ticks])
+    ax.set_yticks(np.arange(ylim[0], ylim[1] + 1e-9, 0.005), minor=True)
     ax.grid(color="#DADADA", lw=0.7, ls=(0, (3, 3)))
+    ax.grid(which="minor", axis="y", color="#EDEDED", lw=0.5, ls=(0, (3, 3)))
+    ax.tick_params(which="minor", length=0)
     ax.spines[["top", "right"]].set_visible(False)
     ax.tick_params(labelsize=11)
     ax.set_title(title, fontsize=12, fontweight="bold", loc="left", pad=6)
@@ -212,18 +215,25 @@ def main(argv: list[str] | None = None) -> None:
 
     table = collect(args.metrics_dir, args.runs_dir)
     plt = pyplot()
-    fig = plt.figure(figsize=(11.9, 3.0))
-    ax_res = fig.add_axes((0.075, 0.24, 0.285, 0.6))
-    ax_enet = fig.add_axes((0.57, 0.24, 0.265, 0.6))
+    fig = plt.figure(figsize=(7.9, 4.85))
+    ax_res = fig.add_axes((0.105, 0.625, 0.58, 0.285))
+    ax_enet = fig.add_axes((0.105, 0.145, 0.58, 0.285))
     draw_panel(
         ax_res, [r for r in table if r["index"] == 0], (0.82, 0.87), PANELS[0][0]
     )
     draw_panel(
-        ax_enet, [r for r in table if r["index"] == 1], (0.78, 0.835), PANELS[1][0]
+        ax_enet, [r for r in table if r["index"] == 1], (0.78, 0.84), PANELS[1][0]
     )
-    for ax in (ax_res, ax_enet):
-        ax.set_xlabel("Epoch", fontsize=12)
-    ax_res.set_ylabel("Validation Dice, 256 × 256", fontsize=12)
+    ax_enet.set_xlabel("Epoch", fontsize=12)
+    fig.text(
+        0.012,
+        0.5,
+        "Validation Dice, 256 × 256",
+        rotation=90,
+        ha="left",
+        va="center",
+        fontsize=12,
+    )
     fig.text(
         0.5,
         0.995,

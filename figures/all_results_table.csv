@@ -1,0 +1,19 @@
+group,model,esophagus_dice,heart_dice,trachea_dice,aorta_dice,OVERALL_dice,OVERALL_hd95,OVERALL_assd
+"Our models, single runs",Base ENet,0.5191,0.8876,0.7704,0.7727,0.7375,22.9926,4.2387
+"Our models, single runs",Improved ENet,0.6902,0.9221,0.8654,0.882,0.8399,13.3995,2.5037
+"Our models, single runs",Final model,0.8033,0.9413,0.9023,0.9235,0.8926,9.7622,1.7546
+"Final model, prediction pipeline",+ test-time augmentation,0.8052,0.9419,0.9029,0.9245,0.8936,9.2985,1.6736
+"Final model, prediction pipeline",+ largest component,0.8033,0.9417,0.9053,0.9235,0.8935,8.7969,1.6144
+"Final model, prediction pipeline",+ 3-seed average,0.8152,0.9461,0.9069,0.9294,0.8994,7.7579,1.4802
+"Final model, prediction pipeline","+ seed average, largest component",0.8152,0.9461,0.9096,0.9294,0.9001,7.534,1.4511
+"Final model, prediction pipeline","+ seed average, test-time aug.",0.817,0.9466,0.9078,0.93,0.9003,7.6793,1.4548
+"Final model, prediction pipeline",Full pipeline,0.817,0.9466,0.9106,0.93,0.901,7.4695,1.4292
+nnU-Net,nnU-Net 2D,0.803,0.9368,0.9044,0.9256,0.8925,9.7852,1.7347
+nnU-Net,"nnU-Net 2D, mirroring TTA",0.8039,0.9397,0.9058,0.93,0.8949,8.9081,1.6117
+nnU-Net,nnU-Net 3D,0.836,0.9504,0.9047,0.9379,0.9073,7.0118,1.3852
+nnU-Net,"nnU-Net 3D, mirroring TTA",0.8396,0.9519,0.9057,0.9412,0.9096,8.2541,1.4039
+Earlier and side runs,"Base ENet, 25 epochs",0.4685,0.8769,0.743,0.7414,0.7074,25.767,4.9072
+Earlier and side runs,"Improved ENet, 25 epochs",0.6776,0.9221,0.8641,0.8774,0.8353,14.9101,2.6515
+Earlier and side runs,"ResEnc U-Net, 25 epochs",0.7627,0.9205,0.8856,0.9008,0.8674,13.7983,2.4245
+Earlier and side runs,"Pretrained ResNet34, 25 epochs",0.7367,0.9371,0.8852,0.9082,0.8668,13.4135,2.1943
+Earlier and side runs,"Final recipe, cosine LR",0.8034,0.9422,0.9023,0.9209,0.8922,10.1856,1.8385
