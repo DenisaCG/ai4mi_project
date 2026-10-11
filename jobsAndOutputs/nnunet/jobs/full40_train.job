@@ -1,0 +1,49 @@
+#!/bin/bash
+#SBATCH --job-name=nnunet40_train
+#SBATCH --partition=gpu_a100
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --gpus=1
+#SBATCH --time=08:00:00
+#SBATCH --array=0-3
+#SBATCH --output=jobsAndOutputs/nnunet/outputs/%x_%A_%a.out
+
+# One fold per array task (task t = fold t). The fold's validation patients are those of our 4-fold CV.
+# nnU-Net validates the final checkpoint itself (mirroring TTA); this job then also predicts without TTA
+# (one forward pass per patch, comparable to our runs). Resubmitting resumes from the last checkpoint.
+# Usage: sbatch --export=ALL,CONFIGURATION=2d  --time=04:00:00 jobsAndOutputs/nnunet/jobs/full40_train.job
+#        sbatch --export=ALL,CONFIGURATION=3d_fullres          jobsAndOutputs/nnunet/jobs/full40_train.job
+set -euo pipefail
+CONFIGURATION="${CONFIGURATION:?set CONFIGURATION=2d or 3d_fullres via --export}"
+source jobsAndOutputs/nnunet/jobs/full40_env.sh
+FOLD=$SLURM_ARRAY_TASK_ID
+[ -f "$nnUNet_preprocessed/$DATASET/.prepared" ] || { echo "run full40_prepare.job first"; exit 1; }
+nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv
+
+FOLD_DIR="$nnUNet_results/$DATASET/${TRAINER}__nnUNetPlans__$CONFIGURATION/fold_$FOLD"
+if [ -f "$FOLD_DIR/checkpoint_final.pth" ] && [ -f "$FOLD_DIR/validation/summary.json" ]; then
+    echo "--- fold $FOLD ($CONFIGURATION) already trained and validated ---"
+else
+    echo "--- train fold $FOLD ($CONFIGURATION, $TRAINER) ---"
+    nnUNetv2_train "$DATASET_ID" "$CONFIGURATION" "$FOLD" -tr "$TRAINER" --c
+fi
+
+echo "--- predict without TTA ---"
+INPUT_DIR="$FOLD_DIR/no_tta_input"; OUT_DIR="$FOLD_DIR/validation_no_tta"
+mkdir -p "$INPUT_DIR"
+export DATASET FOLD INPUT_DIR
+python - <<'PY'
+import json, os
+from pathlib import Path
+split = json.loads((Path(os.environ["nnUNet_preprocessed"]) / os.environ["DATASET"] / "splits_final.json").read_text())[int(os.environ["FOLD"])]
+images = Path(os.environ["nnUNet_raw"]) / os.environ["DATASET"] / "imagesTr"
+for case in split["val"]:
+    link = Path(os.environ["INPUT_DIR"]) / f"{case}_0000.nii.gz"
+    link.unlink(missing_ok=True)
+    link.symlink_to(images / link.name)
+print(f"linked {len(split['val'])} validation CTs")
+PY
+nnUNetv2_predict -i "$INPUT_DIR" -o "$OUT_DIR" -d "$DATASET_ID" -c "$CONFIGURATION" -tr "$TRAINER" -f "$FOLD" \
+    -chk checkpoint_final.pth --disable_tta --continue_prediction
+echo "[$(date -Is)] done: $FOLD_DIR"

@@ -103,6 +103,20 @@ class SplitTests(unittest.TestCase):
         self.assertEqual(sorted(fold["train"] + fold["val"]), IDS)
         self.assertFalse(set(fold["train"]) & set(fold["val"]))
 
+    def test_one_nnunet_fold_per_validation_list(self):
+        folds = [IDS[i::4] for i in range(4)]
+        write_splits(self.dataset, self.preprocessed, folds)
+        split = self.read()
+        self.assertEqual([f["val"] for f in split], folds)
+        for fold in split:
+            self.assertEqual(sorted(fold["train"] + fold["val"]), IDS)
+            self.assertFalse(set(fold["train"]) & set(fold["val"]))
+
+    def test_patient_in_two_folds(self):
+        with self.assertRaisesRegex(ValueError, "two folds"):
+            write_splits(self.dataset, self.preprocessed, [IDS[:3], IDS[2:5]])
+        self.assertFalse((self.preprocessed / "splits_final.json").exists())
+
     def test_deterministic_output(self):
         write_splits(self.dataset, self.preprocessed)
         first = (self.preprocessed / "splits_final.json").read_bytes()

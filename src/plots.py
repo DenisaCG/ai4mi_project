@@ -13,10 +13,11 @@ def plot_curves(csv_path: Path, out_path: Path, dice_columns: list[str]) -> None
     epochs = [int(r["epoch"]) for r in rows]
     fig, (ax_loss, ax_dice) = plt.subplots(1, 2, figsize=(11, 4))
     for col in ("train_loss", "val_loss"):
-        ax_loss.plot(epochs, [float(r[col]) for r in rows], label=col)
+        if col in rows[0]:  # a final run (no val split) has no val columns
+            ax_loss.plot(epochs, [float(r[col]) for r in rows], label=col)
     for col in dice_columns:
-        ax_dice.plot(epochs, [float(r[col]) for r in rows], label=col.removeprefix("val_dice_"),
-                     linewidth=2.5 if col == "val_dice_fg" else 1.2)
+        ax_dice.plot(epochs, [float(r[col]) for r in rows], label=col.removeprefix("val_dice_").removeprefix("train_dice_"),
+                     linewidth=2.5 if col.endswith("dice_fg") else 1.2)
     ax_loss.set(xlabel="epoch", ylabel="loss", title="Loss")
     ax_dice.set(xlabel="epoch", ylabel="Dice", title="Validation Dice (patient-level)", ylim=(0, 1))
     for ax in (ax_loss, ax_dice):

@@ -30,6 +30,12 @@ from src.registry import build
 from utils import class2one_hot
 
 
+def has_val(cfg: dict) -> bool:
+    """False for a final run (data.preprocess.retains == 0): every labelled patient trains, there is no val split."""
+    p = cfg["data"]["preprocess"]
+    return not (p and p.get("retains") == 0)
+
+
 def ensure_sliced(cfg: dict) -> None:
     """Build data.root with slice_segthor.py from data.preprocess unless it already exists.
     Slices into a temp dir and renames, so a crash never leaves a half-built dataset behind."""

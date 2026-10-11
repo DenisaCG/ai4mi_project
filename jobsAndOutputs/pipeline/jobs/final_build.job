@@ -1,0 +1,60 @@
+#!/bin/bash
+#SBATCH --job-name=final_build
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=24
+#SBATCH --time=01:30:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Build the sliced dataset of a final config (data.preprocess.retains: 0) on CPU: all 40 labelled patients in train/, no val/,
+# and the test CTs in test/ when <source_dir>/test/Patient_*.nii.gz exist (otherwise add them later with
+# python slice_segthor.py --source_dir <source_dir> --dest_dir data/<sliced_hash> --test_only; src.predict_test does it itself).
+# Normalisation window, target spacing and ROI size come from the 40 labelled patients only.
+# The dataset goes to /scratch-shared/$USER/ai4mi_project/<sliced_hash> and is linked as data/<sliced_hash>.
+# Usage: sbatch --export=ALL,CONFIG=configs/final_best_model.yaml jobsAndOutputs/pipeline/jobs/final_build.job
+#   PROCS (optional, default 12): slicing workers (each holds a whole CT volume).
+set -euo pipefail
+CONFIG="${CONFIG:?set CONFIG=configs/<experiment>.yaml via --export}"
+PROCS="${PROCS:-12}"
+SCRATCH_ROOT="${SCRATCH_ROOT:-/scratch-shared/$USER/ai4mi_project}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+
+python -B - "$CONFIG" "$PROCS" "$SCRATCH_ROOT" <<'PY'
+import json, shutil, subprocess, sys, time
+from pathlib import Path
+from src.config import REPO, load_config
+from src.data import has_val
+from src.folds import slice_command
+
+config, procs, scratch = sys.argv[1], int(sys.argv[2]), Path(sys.argv[3])
+cfg = load_config(config)
+assert not has_val(cfg), f"{config} is not a final config (data.preprocess.retains must be 0)"
+p = cfg["data"]["preprocess"]
+name = Path(cfg["data"]["root"]).name
+link, dest, tmp = REPO / cfg["data"]["root"], scratch / name, scratch / f"{name}_tmp"
+scratch.mkdir(parents=True, exist_ok=True)
+if link.is_symlink() and not link.exists():
+    link.unlink()  # scratch was wiped: rebuild
+if not link.exists():
+    if not dest.exists():
+        shutil.rmtree(tmp, ignore_errors=True)
+        command = slice_command(cfg, str(tmp), procs)
+        print(" ".join(command), flush=True)
+        start = time.time()
+        subprocess.run(command, cwd=REPO, check=True)
+        print(f"sliced in {time.time() - start:.0f}s")
+        tmp.rename(dest)
+    link.symlink_to(dest)
+patients = sorted({q.name.rsplit("_", 1)[0] for q in (link / "train" / "img").glob("*.png")})
+assert len(patients) == 40, f"{len(patients)} training patients in {link}, expected 40"
+assert not (link / "val").exists(), f"{link / 'val'} must not exist for a final run"
+test = sorted({q.name.rsplit("_", 1)[0] for q in (link / "test" / "img").glob("*.png")}) if (link / "test").is_dir() else []
+print(f"{link} -> {link.resolve()}: {len(patients)} train patients, no val, {len(test)} test patients {test[:3]}...")
+if (link / "roi_crop.json").exists():  # the very base model has no ROI crop and no normalisation statistics
+    print("ROI window T =", json.loads((link / "roi_crop.json").read_text())["size"], "px")
+if (link / "ct_norm_stats.json").exists():
+    print("normalisation:", {k: round(v, 3) for k, v in json.loads((link / "ct_norm_stats.json").read_text()).items() if k in ("lo", "hi", "mean", "std")})
+PY
+echo "[$(date -Is)] done"

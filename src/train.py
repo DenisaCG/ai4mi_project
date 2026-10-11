@@ -16,7 +16,7 @@ import torch
 
 from src.checkpoint import seed_everything
 from src.config import config_hash, load_config
-from src.data import ensure_sliced
+from src.data import ensure_sliced, has_val
 from src.engine import fit
 from src.folds import run_configs
 from src.plots import plot_curves
@@ -92,15 +92,16 @@ def train_one(cfg: dict, force: bool = False, smoke: bool = False) -> None:
 
     summary = summarize(run_dir, cfg, best_epoch)
     write_json(run_dir / "summary.json", summary)
-    dice_cols = [f"val_dice_{cfg['data']['class_names'][k]}" for k in cfg["eval"]["classes"]] + ["val_dice_fg"]
+    prefix = "val" if has_val(cfg) else "train"  # a final run (retains 0) has no val split
+    dice_cols = [f"{prefix}_dice_{cfg['data']['class_names'][k]}" for k in cfg["eval"]["classes"]] + [f"{prefix}_dice_fg"]
     plot_curves(run_dir / "epochs.csv", run_dir / "plots" / "curves.png", dice_cols)
     update_manifest(run_dir, status="completed", finished=summary["finished"])
     wb.summary({f"best/{k}": v for k, v in summary["best"].items()} | {"best_epoch": best_epoch})
     wb.finish()
     dest = copy_back(run_dir, cfg)
     (run_dir / ".done").touch()
-    log.info("done: best epoch %d, val dice fg %.4f; results in %s%s", best_epoch,
-             summary["best"]["val_dice_fg"], run_dir, f", copied to {dest}" if dest else "")
+    log.info("done: best epoch %d, %s dice fg %.4f; results in %s%s", best_epoch, prefix,
+             summary["best"][f"{prefix}_dice_fg"], run_dir, f", copied to {dest}" if dest else "")
 
 
 if __name__ == "__main__":

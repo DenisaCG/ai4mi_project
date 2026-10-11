@@ -1,0 +1,32 @@
+# Same as full_cv4_resnet34_pretrained_unet_dice_ce.yaml (ImageNet-pretrained ResNet34 U-Net, deep supervision, Dice+CE, full preprocessing,
+# 4-fold CV, constant LR, 25 epochs); only strong joint geometric augmentation (rotation +-15, scaling 0.8-1.2, shift 10%, each p=0.7)
+# is added, with the same settings as full_cv4_resenc_ds_unet_dice_ce_strong_geometric.yaml. Runs as <experiment>_fold0..3, seeds 0-2.
+experiment: full_cv4_resnet34_pretrained_unet_dice_ce_strong_geometric
+notes: "2D U-Net with a ResNet34 encoder (ImageNet-pretrained; z-scored slice repeated to 3 channels, no ImageNet mean/std) at strides 2-32 plus the trainable full-resolution stage 0 of the residual-encoder U-Net, same decoder and deep supervision, CE (all classes) + soft Dice (foreground), constant LR, strong joint rotation + scaling + shift augmentation (p0.7, +-15, 0.8-1.2, 10%), full preprocessing, 4-fold CV on the full 40-patient SEGTHOR train set. Compared with the residual-encoder baseline this changes four things at once: encoder, norm (BatchNorm in the ResNet34), block layout (3/4/6/3) and stem."
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+  augment:
+    - {name: random_rotation, kwargs: {p: 0.7, degrees: [-15.0, 15.0], fill: ct_window_low}}
+    - {name: random_scaling, kwargs: {p: 0.7, scales: [0.8, 1.2], fill: ct_window_low}}
+    - {name: random_shift, kwargs: {p: 0.7, max_fraction: 0.1, fill: ct_window_low}}
+
+model:
+  name: resnet34_unet
+  kwargs: {pretrained: true, deep_supervision: true}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled

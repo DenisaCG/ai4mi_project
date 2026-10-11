@@ -114,8 +114,8 @@ def resolve_preprocess(cfg: dict) -> None:
     p = cfg["data"]["preprocess"] = PREPROCESS_DEFAULTS | p
     if type(p["fold"]) is not int or p["fold"] < 0:
         raise ValueError("data.preprocess.fold must be a non-negative integer")
-    if type(p["retains"]) is not int or p["retains"] < 1:
-        raise ValueError("data.preprocess.retains must be a positive integer")
+    if type(p["retains"]) is not int or p["retains"] < 0:
+        raise ValueError("data.preprocess.retains must be a positive integer, or 0 to train on all patients (no val split)")
     if p.get("num_folds") is not None:
         if type(p["num_folds"]) is not int or p["num_folds"] < 2:
             raise ValueError("data.preprocess.num_folds must be an integer >= 2")
@@ -138,7 +138,8 @@ def validate(cfg: dict) -> None:
         raise ValueError(f"eval.classes {bad} outside 1..num_classes-1")
     if cfg["train"]["epochs"] < 1:
         raise ValueError(f"train.epochs must be >= 1, got {cfg['train']['epochs']}")
-    if cfg["train"]["select_metric"] not in ("val_dice_fg", "val_dice_legacy_fg"):
+    final = (cfg["data"]["preprocess"] or {}).get("retains") == 0  # no val split: the last epoch is the model
+    if cfg["train"]["select_metric"] not in ("val_dice_fg", "val_dice_legacy_fg") + (("train_dice_fg",) if final else ()):
         raise ValueError(f"unknown train.select_metric {cfg['train']['select_metric']}")
     context, in_channels = cfg["data"]["context"], cfg["data"]["in_channels"]
     if type(context) is not int or context < 0:

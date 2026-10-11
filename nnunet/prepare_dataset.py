@@ -33,7 +33,9 @@ def link(src: Path, dst: Path) -> None:
         shutil.copy2(src, dst)
 
 
-def convert(data_dir: Path, dataset_dir: Path) -> list[str]:
+def convert(
+    data_dir: Path, dataset_dir: Path, dataset_name: str = DATASET_NAME
+) -> list[str]:
     """Put every patient's CT and ground truth into nnU-Net's raw layout.
 
     Only Patient_XX.nii.gz and GT.nii.gz are used; the other files in a patient
@@ -42,6 +44,7 @@ def convert(data_dir: Path, dataset_dir: Path) -> list[str]:
     Args:
         data_dir: Folder holding one Patient_XX folder per patient.
         dataset_dir: nnU-Net raw dataset folder to fill (imagesTr, labelsTr, dataset.json).
+        dataset_name: Name written into dataset.json.
 
     Returns:
         The patient IDs that were converted, sorted.
@@ -74,45 +77,56 @@ def convert(data_dir: Path, dataset_dir: Path) -> list[str]:
         labels=LABELS,
         num_training_cases=len(patients),
         file_ending=SUFFIX,
-        dataset_name=DATASET_NAME,
+        dataset_name=dataset_name,
         description="SegTHOR part 1 with corrected labels",
         converted_by="nnunet/prepare_dataset.py",
     )
     return [p.name for p in patients]
 
 
-def write_splits(dataset_dir: Path, preprocessed_dir: Path) -> None:
-    """Write nnU-Net's splits_final.json with a single fold.
+def write_splits(
+    dataset_dir: Path,
+    preprocessed_dir: Path,
+    folds: list[list[str]] | None = None,
+) -> None:
+    """Write nnU-Net's splits_final.json.
 
-    The fold validates on VAL_IDS and trains on every other patient.
+    Without `folds` there is a single fold that validates on VAL_IDS. With `folds` (one list of
+    validation patients per fold) there is one nnU-Net fold per list. Each fold trains on every
+    other patient.
 
     Args:
         dataset_dir: nnU-Net raw dataset folder, used to list the patients.
         preprocessed_dir: Preprocessed dataset folder; must already exist, so
             planning has to run first.
+        folds: Validation patients of each fold; they must not overlap.
 
     Raises:
-        ValueError: If a validation patient is not in the dataset.
+        ValueError: If a validation patient is not in the dataset or in two folds.
     """
     ids = sorted(
         p.name.removesuffix(SUFFIX)
         for p in (dataset_dir / "labelsTr").glob("*" + SUFFIX)
     )
-    unknown = sorted(set(VAL_IDS) - set(ids))
+    folds = [VAL_IDS] if folds is None else folds
+    flat = [i for fold in folds for i in fold]
+    unknown = sorted(set(flat) - set(ids))
     if unknown:
         raise ValueError(f"validation patients not in the dataset: {unknown}")
-    split = [{"train": [i for i in ids if i not in VAL_IDS], "val": VAL_IDS}]
+    if len(flat) != len(set(flat)):
+        raise ValueError("a patient is in the validation set of two folds")
+    split = [{"train": [i for i in ids if i not in fold], "val": fold} for fold in folds]
     (preprocessed_dir / "splits_final.json").write_text(
         json.dumps(split, indent=2) + "\n"
     )
 
 
-def env_dir(var: str) -> Path:
-    """Return the dataset folder inside the directory named by an nnU-Net environment variable."""
+def env_dir(var: str, name: str = DATASET_NAME) -> Path:
+    """Return the dataset folder `name` inside the directory named by an nnU-Net environment variable."""
     root = os.environ.get(var)
     if not root:
         sys.exit(f"{var} is not set")
-    return Path(root) / DATASET_NAME
+    return Path(root) / name
 
 
 def main() -> None:
@@ -127,15 +141,25 @@ def main() -> None:
     c.add_argument(
         "--data-dir", type=Path, default=REPO / "data/segthor_part1_corrected/train"
     )
-    sub.add_parser("splits", help="write splits_final.json into nnUNet_preprocessed")
+    s = sub.add_parser("splits", help="write splits_final.json into nnUNet_preprocessed")
+    s.add_argument(
+        "--folds-json",
+        type=Path,
+        help="JSON list with the validation patients of each fold (default: the single fold)",
+    )
+    for q in (c, s):
+        q.add_argument("--dataset-name", default=DATASET_NAME)
     args = p.parse_args()
 
     if args.command == "convert":
-        ids = convert(args.data_dir, env_dir("nnUNet_raw"))
-        print(f"converted {len(ids)} patients into {env_dir('nnUNet_raw')}")
+        raw = env_dir("nnUNet_raw", args.dataset_name)
+        ids = convert(args.data_dir, raw, args.dataset_name)
+        print(f"converted {len(ids)} patients into {raw}")
     else:
-        write_splits(env_dir("nnUNet_raw"), env_dir("nnUNet_preprocessed"))
-        print(f"wrote {env_dir('nnUNet_preprocessed') / 'splits_final.json'}")
+        preprocessed = env_dir("nnUNet_preprocessed", args.dataset_name)
+        folds = json.loads(args.folds_json.read_text()) if args.folds_json else None
+        write_splits(env_dir("nnUNet_raw", args.dataset_name), preprocessed, folds)
+        print(f"wrote {preprocessed / 'splits_final.json'}")
 
 
 if __name__ == "__main__":

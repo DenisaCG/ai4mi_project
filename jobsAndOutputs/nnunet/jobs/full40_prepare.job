@@ -1,0 +1,28 @@
+#!/bin/bash
+#SBATCH --job-name=nnunet40_prepare
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=02:00:00
+#SBATCH --output=jobsAndOutputs/nnunet/outputs/%x_%j.out
+
+# CPU only: convert the 40 corrected patients, plan + preprocess 2d and 3d_fullres, write the 4 folds of
+# nnunet/folds_cv4.json (the validation patients of our own cross-validation, so the folds match exactly).
+# Submit from the repo root: sbatch jobsAndOutputs/nnunet/jobs/full40_prepare.job
+set -euo pipefail
+source jobsAndOutputs/nnunet/jobs/full40_env.sh
+
+echo "--- unit tests ---"
+(cd nnunet && python -m unittest -v test_prepare)
+
+echo "--- convert ---"
+python nnunet/prepare_dataset.py convert --data-dir "$DATA_DIR" --dataset-name "$DATASET"
+
+echo "--- plan and preprocess ---"
+nnUNetv2_plan_and_preprocess -d "$DATASET_ID" --verify_dataset_integrity -c 2d 3d_fullres -np "$SLURM_CPUS_PER_TASK" "$SLURM_CPUS_PER_TASK"
+
+echo "--- write the 4 folds ---"
+python nnunet/prepare_dataset.py splits --dataset-name "$DATASET" --folds-json nnunet/folds_cv4.json
+cat "$nnUNet_preprocessed/$DATASET/splits_final.json" | python -c "import json,sys; [print(i, len(f['train']), len(f['val'])) for i, f in enumerate(json.load(sys.stdin))]"
+touch "$nnUNet_preprocessed/$DATASET/.prepared"

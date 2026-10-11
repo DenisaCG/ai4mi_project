@@ -34,3 +34,5 @@ jobsAndOutputs/augmentation/outputs/registration/*
 runs
 wandb/
 metrics/comparison*
+
+predictions

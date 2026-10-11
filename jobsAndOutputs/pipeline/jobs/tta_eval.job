@@ -1,0 +1,21 @@
+#!/bin/bash
+#SBATCH --job-name=tta_eval
+#SBATCH --partition=gpu_a100
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --gpus=1
+#SBATCH --time=01:00:00
+#SBATCH --array=0-11
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%A_%a.out
+
+# Test-time augmentation on the finished cross-validation runs of one experiment (no retraining): task t = fold t % 4, seed t / 4.
+# Writes runs/<experiment>_fold<k>/seed<s>/eval/metrics_3d_tta.csv (src/eval_tta.py), then run src/aggregate_tta.py.
+# Usage: sbatch --job-name=tta_strong50 --export=ALL,EXPERIMENT=full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep jobsAndOutputs/pipeline/jobs/tta_eval.job
+set -euo pipefail
+EXPERIMENT="${EXPERIMENT:?set EXPERIMENT=<experiment name> via --export}"
+FOLD=$((SLURM_ARRAY_TASK_ID % 4)); SEED=$((SLURM_ARRAY_TASK_ID / 4))
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+RUN="runs/${EXPERIMENT}_fold${FOLD}/seed${SEED}"
+[ -f "$RUN/eval/.done" ] || { echo "$RUN is not evaluated"; exit 1; }
+python -m src.eval_tta --run "$RUN"

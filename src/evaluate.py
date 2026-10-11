@@ -32,7 +32,7 @@ from torch.utils.data import DataLoader
 from slice_segthor import paste_window_inplane
 from src.checkpoint import load_checkpoint
 from src.config import REPO, read_yaml
-from src.data import build_dataset, patient_of
+from src.data import build_dataset, has_val, patient_of
 from src.engine import build_model
 from src.metrics_3d import METRICS, volume_metrics
 from src.presence import gate_prediction, presence_counts, presence_target
@@ -167,7 +167,7 @@ def evaluate(run_dir: Path, device: torch.device) -> dict:
     spacing_pkl = REPO / d["root"] / "spacing.pkl"
     sliced_spacing = pickle.loads(spacing_pkl.read_bytes()) if spacing_pkl.exists() else {}
 
-    splits = {"val": d["source_pattern"]}
+    splits = {"val": d["source_pattern"]} if has_val(cfg) else {}  # a final run (retains 0) has only a test split
     if d["test_source_pattern"] and (REPO / d["root"] / "test").is_dir():
         splits["test"] = d["test_source_pattern"]
     rows, gated_rows, presence_rows, block = [], [], [], {}

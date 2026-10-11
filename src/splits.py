@@ -3,8 +3,13 @@
 
 def validate_split(patient_count: int, retains: int, fold: int,
                    num_folds: int | None = None) -> None:
+    """`retains: 0` is a final run: every labelled patient trains and there is no validation split."""
+    if retains == 0 and type(retains) is int:
+        if fold != 0 or num_folds is not None:
+            raise ValueError("retains 0 (train on all patients) needs fold 0 and no num_folds")
+        return
     if type(retains) is not int or not 0 < retains < patient_count:
-        raise ValueError(f"retains must be between 1 and {patient_count - 1}")
+        raise ValueError(f"retains must be 0 (all patients train) or between 1 and {patient_count - 1}")
     if type(fold) is not int or fold < 0:
         raise ValueError("fold must be a non-negative integer index")
     if num_folds is not None:
