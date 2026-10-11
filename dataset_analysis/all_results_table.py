@@ -1,12 +1,13 @@
-"""Every result of the project on one heat-map table: per-organ Dice, mean Dice, HD95 and ASSD.
+"""Every result of the final model's comparison on one figure: per-organ Dice, mean Dice, HD95 and ASSD.
 
     python dataset_analysis/all_results_table.py [--data-dir deck/results_for_figures] [--out figures]
 
-all_results_table.{png,pdf}: one row per model or pipeline step, grouped (our three models, the steps of the final
-model's prediction pipeline, nnU-Net, earlier and side runs); each cell is shaded from light to dark teal by how good
-the value is among all rows of its column (higher Dice, lower HD95 and ASSD are darker), the best value of a column is
-bold, and the full pipeline is outlined. Our single-run scores use the best epoch of every run (about 0.005 optimistic),
-nnU-Net its final checkpoint. All are 3D on the original CT grid, over the 40 validation patients of the 4 folds.
+all_results_table.{png,pdf}: one row per model or pipeline step, tinted by group (our three models, the steps of the
+final model's prediction pipeline, nnU-Net). The dots give the Dice of the four organs on one axis, a star the mean of
+the four, and the dashed line the full pipeline's mean; the mean Dice, HD95 and ASSD sit to the right, with the change
+of HD95 to the full pipeline in a pill (teal: lower, brick: higher). Our single-run scores use the best epoch of every
+run (about 0.005 optimistic), nnU-Net its final checkpoint. All are 3D on the original CT grid, over the 40 validation
+patients of the 4 folds.
 Writes also all_results_table.csv.
 """
 
@@ -15,10 +16,12 @@ import csv
 import sys
 from pathlib import Path
 
+from final_model_comparison import ORGAN_COLORS
+from postprocessing_figure import BETTER, WORSE, change_text
 from utils import REPO, pyplot, read_csv, write_csv
 
 sys.path.insert(0, str(REPO / "tools"))
-from plot_style import EARTH  # noqa: E402
+from plot_style import EARTH, PALETTE, tint  # noqa: E402
 
 DATA_DIR = REPO / "deck/results_for_figures"
 ABLATION = "final_pipeline_ablation"
@@ -53,26 +56,22 @@ GROUPS = [
             ("nnU-Net 3D, mirroring TTA", "models", "nnunet_3d_fullres_tta"),
         ],
     ),
-    (
-        "Earlier and side runs",
-        [
-            ("Base ENet, 25 epochs", "models", "x_base_enet_ce_25ep"),
-            ("Improved ENet, 25 epochs", "models", "x_improved_enet_dice_ce_25ep"),
-            ("ResEnc U-Net, 25 epochs", "models", "x_resenc_ds_baseline_25ep"),
-            ("Pretrained ResNet34, 25 epochs", "models", "x_resnet34_pretrained_25ep"),
-            ("Final recipe, cosine LR", "models", "x_final_recipe_cosine_decay"),
-        ],
-    ),
 ]
 COLUMNS = [(o.capitalize(), o, "dice") for o in ORGANS] + [
     ("Dice", "OVERALL", "dice"),
     ("HD95 (mm)", "OVERALL", "hd95"),
     ("ASSD (mm)", "OVERALL", "assd"),
 ]
-LOWER_IS_BETTER = {"hd95", "assd"}
+NEUTRAL = "#888888"  # a change of HD95 below 0.05 mm
+# (fill, line) colours of the rows of each group, by the name of the group in GROUPS.
+BOX_COLORS = {
+    "Our models, single runs": ("#AAAAAA", "#555555"),
+    "Final model, prediction pipeline": (PALETTE[5], EARTH[0]),
+    "nnU-Net": (PALETTE[0], "#3F6A8F"),
+}
+DICE_LIM = (0.45, 1.0)
 FULL = "Full pipeline"
 TEXT = "#1A1A1A"
-DARK = EARTH[1]  # teal
 
 
 def pipeline_scores(data_dir: Path) -> dict:
@@ -125,97 +124,104 @@ def collect(data_dir: Path) -> list[dict]:
     return rows
 
 
-def shade(value: float, lo: float, hi: float, lower_is_better: bool) -> float:
-    """Position of a value in its column's range, 1 for the best row and 0 for the worst."""
-    t = (value - lo) / (hi - lo)
-    return 1 - t if lower_is_better else t
-
-
 def figure(rows: list[dict], plt):
-    """The heat-map table.
+    """The figure: the organs' Dice as dots on one axis, with the mean Dice, HD95, ASSD and the HD95 change beside it.
 
     Args:
         rows: Output of collect().
         plt: matplotlib.pyplot.
 
     Returns:
-        The matplotlib figure.
+        The matplotlib figure; the reference of the dashed line and of the pills is the full pipeline.
     """
-    from matplotlib.colors import LinearSegmentedColormap
-
-    cmap = LinearSegmentedColormap.from_list("teal", ["#E4EBED", DARK])
-    lines = []  # (kind, payload)
-    last = None
-    for r in rows:
-        if r["group"] != last:
-            lines.append(("group", r["group"]))
-            last = r["group"]
-        lines.append(("row", r))
+    full = next(r for r in rows if r["label"] == FULL)["values"]
+    lines = []
+    for group, members in GROUPS:
+        lines.append(("group", group))
+        lines += [
+            ("row", r)
+            for r in rows
+            if r["group"] == group and r["label"] in {m[0] for m in members}
+        ]
     n = len(lines)
-    label_w, cell_w = 3.9, 1.1
     fig, ax = plt.subplots(figsize=(12.1, 5.0))
-    fig.subplots_adjust(left=0.01, right=0.99, top=0.995, bottom=0.075)
-    ax.set_xlim(0, label_w + cell_w * len(COLUMNS))
-    ax.set_ylim(n + 1.2, 0)
-    ax.axis("off")
-    ranges = {}
-    best = {}
-    for c, (_, organ, metric) in enumerate(COLUMNS):
-        values = [r["values"][organ, metric] for r in rows]
-        ranges[c] = (min(values), max(values))
-        best[c] = min(values) if metric in LOWER_IS_BETTER else max(values)
-    for c, (name, _, _) in enumerate(COLUMNS):
-        ax.text(
-            label_w + (c + 0.5) * cell_w, 0.6, name,
-            ha="center", va="center", fontsize=10.5, fontweight="bold", color=TEXT,
-        )  # fmt: skip
-    ax.plot([0, label_w + cell_w * len(COLUMNS)], [1.2, 1.2], color="#444444", lw=1)
+    fig.subplots_adjust(left=0.27, right=0.62, top=0.9, bottom=0.2)
     for i, (kind, item) in enumerate(lines):
-        y = i + 1.2
+        y = n - 1 - i
         if kind == "group":
             ax.text(
-                0.05, y + 0.5, item.upper(), ha="left", va="center", fontsize=8.5,
-                fontweight="bold", color="#6B6B6B",
+                -0.7, y, item.upper(), transform=ax.get_yaxis_transform(), ha="left", va="center",
+                fontsize=9, fontweight="bold", color="#6B6B6B",
             )  # fmt: skip
             continue
-        full = item["label"] == FULL
-        ax.text(
-            0.15, y + 0.5, item["label"], ha="left", va="center", fontsize=10.5,
-            fontweight="bold" if full else "normal", color=TEXT,
-        )  # fmt: skip
-        for c, (_, organ, metric) in enumerate(COLUMNS):
-            v = item["values"][organ, metric]
-            lo, hi = ranges[c]
-            t = shade(v, lo, hi, metric in LOWER_IS_BETTER)
-            x = label_w + c * cell_w
-            ax.add_patch(
-                plt.Rectangle((x + 0.03, y + 0.06), cell_w - 0.06, 0.88, color=cmap(t * 0.85), lw=0)
-            )  # fmt: skip
-            dark_text = t > 0.6
-            text = (
-                f"{v:.3f}"
-                if metric == "dice"
-                else f"{v:.1f}"
-                if metric == "hd95"
-                else f"{v:.2f}"
+        fill, line = BOX_COLORS[item["group"]]
+        ax.axhspan(y - 0.5, y + 0.5, color=tint(fill, 0.22), lw=0, zorder=0)
+        if lines[i - 1][0] == "group":
+            ax.axhline(y + 0.5, color="#666666", lw=0.8, zorder=1)
+        v = item["values"]
+        dice = [v[o, "dice"] for o in ORGANS]
+        ax.plot([min(dice), max(dice)], [y, y], color="#BBBBBB", lw=2, zorder=2)
+        for o, d in zip(ORGANS, dice):
+            ax.scatter(
+                d, y, s=46, color=ORGAN_COLORS[o], edgecolor="white", lw=0.8, zorder=3
             )
+        ax.scatter(
+            v["OVERALL", "dice"], y, marker="*", s=190, color="white",
+            edgecolor="#222222", lw=1.0, zorder=5,
+        )  # fmt: skip
+        ax.text(
+            -0.02, y, item["label"], transform=ax.get_yaxis_transform(), ha="right", va="center",
+            fontsize=11, fontweight="bold" if item["label"] == FULL else "normal", color=TEXT,
+        )  # fmt: skip
+        for x, text in (
+            (1.1, f"{v['OVERALL', 'dice']:.3f}"),
+            (1.3, f"{v['OVERALL', 'hd95']:.1f}"),
+            (1.5, f"{v['OVERALL', 'assd']:.2f}"),
+        ):
             ax.text(
-                x + cell_w / 2, y + 0.5, text, ha="center", va="center", fontsize=10,
-                fontweight="bold" if v == best[c] else "normal",
-                color="white" if dark_text else TEXT,
+                x, y, text, transform=ax.get_yaxis_transform(), ha="center", va="center",
+                fontsize=11, fontweight="bold", color=line,
             )  # fmt: skip
-        if full:
-            ax.add_patch(
-                plt.Rectangle(
-                    (0.02, y + 0.03), label_w + cell_w * len(COLUMNS) - 0.04, 0.94,
-                    fill=False, ec=EARTH[0], lw=1.8,
-                )
+        if item["label"] != FULL:
+            change = v["OVERALL", "hd95"] - full["OVERALL", "hd95"]
+            ax.text(
+                1.72, y, change_text(change), transform=ax.get_yaxis_transform(), ha="center",
+                va="center", fontsize=10.5, fontweight="bold", color="white",
+                bbox={
+                    "boxstyle": "round,pad=0.25", "ec": "none",
+                    "fc": NEUTRAL if abs(change) < 0.05 else BETTER if change < 0 else WORSE,
+                },
             )  # fmt: skip
-    fig.text(
-        0.01, 0.01, "Darker = better within a column; bold = best of the column. Our scores use the best epoch of each run "
-        "(about 0.005 optimistic);\n"
-        "nnU-Net uses its final checkpoint. 3D, 40 validation patients, 4 folds.",
-        ha="left", va="bottom", fontsize=8.5, color="#4D4D4D", style="italic",
+    ax.axvline(full["OVERALL", "dice"], color="#444444", lw=1.0, ls="--", zorder=1)
+    ax.set_xlim(*DICE_LIM)
+    ax.set_ylim(-0.5, n - 0.5)
+    ax.set_xticks([0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
+    ax.set_yticks([])
+    ax.grid(axis="x", color="#D0D0D0", lw=0.8)
+    ax.spines[["top", "right", "left"]].set_visible(False)
+    ax.tick_params(axis="x", labelsize=11, labelcolor=TEXT)
+    ax.set_xlabel("Dice of each organ (3D, original CT grid)", fontsize=11, color=TEXT)
+    for x, name in (
+        (1.1, "Dice"),
+        (1.3, "HD95\n(mm)"),
+        (1.5, "ASSD\n(mm)"),
+        (1.72, "\u0394 HD95"),
+    ):
+        ax.text(
+            x, n - 0.35, name, transform=ax.get_yaxis_transform(), ha="center", va="bottom",
+            fontsize=11, fontweight="bold", color=TEXT,
+        )  # fmt: skip
+    handles = [
+        plt.Line2D([], [], marker="o", ls="", color=ORGAN_COLORS[o], ms=7, label=o.capitalize())
+        for o in ORGANS
+    ]  # fmt: skip
+    handles += [
+        plt.Line2D([], [], marker="*", mfc="white", mec="#222222", color="#222222", ls="", ms=12, label="mean of the four"),
+        plt.Line2D([], [], color="#444444", ls="--", label="full pipeline mean"),
+    ]  # fmt: skip
+    fig.legend(
+        handles=handles, loc="lower center", ncol=len(handles), frameon=False, fontsize=10.5,
+        handletextpad=0.2, columnspacing=1.0, labelcolor=TEXT,
     )  # fmt: skip
     return fig
 
