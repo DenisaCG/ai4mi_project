@@ -1,126 +1,226 @@
-variant,experiment,epoch,val_dice_2d_mean_of_folds
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,1,0.7412
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,2,0.7878
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,3,0.8298
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,0.8401
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,5,0.8284
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,6,0.843
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,7,0.849
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,8,0.8474
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,9,0.8512
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,10,0.8507
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,11,0.8535
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,12,0.8371
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,13,0.854
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,14,0.8539
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,15,0.8607
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,16,0.8468
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,17,0.8507
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,18,0.8561
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,19,0.8551
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,20,0.8575
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,21,0.8566
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,22,0.8582
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,23,0.8577
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,24,0.8575
-Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,25,0.8451
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,1,0.7358
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,2,0.7868
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,3,0.8238
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,0.8364
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,5,0.8364
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,6,0.8432
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,7,0.8475
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,8,0.8555
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,9,0.8546
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,10,0.8484
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,11,0.8481
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,12,0.8497
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,13,0.8577
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,14,0.8604
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,15,0.8546
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,16,0.8544
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,17,0.8511
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,18,0.8549
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,19,0.8619
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,20,0.8665
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,21,0.8559
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,22,0.8572
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,23,0.8614
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,24,0.8642
-+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,25,0.8618
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,1,0.725
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,2,0.77
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,3,0.8147
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,0.8202
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,5,0.8307
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,6,0.8435
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,7,0.8463
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,8,0.8412
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,9,0.8384
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,10,0.8539
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,11,0.8457
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,12,0.8485
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,13,0.8566
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,14,0.8511
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,15,0.859
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,16,0.8551
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,17,0.8541
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,18,0.8527
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,19,0.8539
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,20,0.8506
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,21,0.8586
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,22,0.858
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,23,0.8584
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,24,0.8627
-Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,25,0.8562
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,1,0.7331
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,2,0.7901
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,3,0.804
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,0.8096
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,5,0.8289
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,6,0.8362
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,7,0.8365
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,8,0.8522
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,9,0.8353
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,10,0.844
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,11,0.8376
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,12,0.8393
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,13,0.849
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,14,0.8526
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,15,0.8497
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,16,0.8505
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,17,0.8493
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,18,0.8534
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,19,0.8462
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,20,0.8509
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,21,0.8543
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,22,0.8488
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,23,0.8535
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,24,0.8534
-+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,25,0.8444
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,1,0.725
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,2,0.7747
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,3,0.8194
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,0.8146
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,5,0.8408
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,6,0.8437
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,7,0.8486
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,8,0.844
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,9,0.8341
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,10,0.8449
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,11,0.8485
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,12,0.8522
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,13,0.8388
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,14,0.854
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,15,0.8557
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,16,0.8511
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,17,0.8568
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,18,0.8511
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,19,0.868
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,20,0.863
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,21,0.8585
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,22,0.8645
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,23,0.846
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,24,0.8623
-AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,25,0.85
+panel,variant,experiment,runs,epoch,val_dice_mean_of_runs
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,1,0.7412
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,2,0.7878
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,3,0.8298
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,4,0.8401
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,5,0.8284
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,6,0.843
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,7,0.849
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,8,0.8474
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,9,0.8512
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,10,0.8507
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,11,0.8535
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,12,0.8371
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,13,0.854
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,14,0.8539
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,15,0.8607
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,16,0.8468
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,17,0.8507
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,18,0.8561
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,19,0.8551
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,20,0.8575
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,21,0.8566
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,22,0.8582
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,23,0.8577
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,24,0.8575
+"ResEnc U-Net, seed 0 (4 runs)",Dice + CE (reference),full_cv4_resenc_ds_unet_dice_ce,4,25,0.8451
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,1,0.7358
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,2,0.7868
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,3,0.8238
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,4,0.8364
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,5,0.8364
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,6,0.8432
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,7,0.8475
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,8,0.8555
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,9,0.8546
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,10,0.8484
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,11,0.8481
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,12,0.8497
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,13,0.8577
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,14,0.8604
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,15,0.8546
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,16,0.8544
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,17,0.8511
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,18,0.8549
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,19,0.8619
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,20,0.8665
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,21,0.8559
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,22,0.8572
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,23,0.8614
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,24,0.8642
+"ResEnc U-Net, seed 0 (4 runs)",+ boundary loss,full_cv4_resenc_ds_unet_dice_ce_boundary,4,25,0.8618
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,1,0.725
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,2,0.77
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,3,0.8147
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,4,0.8202
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,5,0.8307
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,6,0.8435
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,7,0.8463
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,8,0.8412
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,9,0.8384
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,10,0.8539
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,11,0.8457
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,12,0.8485
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,13,0.8566
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,14,0.8511
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,15,0.859
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,16,0.8551
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,17,0.8541
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,18,0.8527
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,19,0.8539
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,20,0.8506
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,21,0.8586
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,22,0.858
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,23,0.8584
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,24,0.8627
+"ResEnc U-Net, seed 0 (4 runs)",Tversky loss + CE,full_cv4_resenc_ds_unet_tversky_ce,4,25,0.8562
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,1,0.7331
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,2,0.7901
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,3,0.804
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,4,0.8096
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,5,0.8289
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,6,0.8362
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,7,0.8365
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,8,0.8522
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,9,0.8353
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,10,0.844
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,11,0.8376
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,12,0.8393
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,13,0.849
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,14,0.8526
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,15,0.8497
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,16,0.8505
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,17,0.8493
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,18,0.8534
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,19,0.8462
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,20,0.8509
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,21,0.8543
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,22,0.8488
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,23,0.8535
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,24,0.8534
+"ResEnc U-Net, seed 0 (4 runs)",+ slice-presence head,full_cv4_resenc_ds_unet_dice_ce_presence,4,25,0.8444
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,1,0.725
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,2,0.7747
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,3,0.8194
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,4,0.8146
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,5,0.8408
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,6,0.8437
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,7,0.8486
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,8,0.844
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,9,0.8341
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,10,0.8449
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,11,0.8485
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,12,0.8522
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,13,0.8388
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,14,0.854
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,15,0.8557
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,16,0.8511
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,17,0.8568
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,18,0.8511
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,19,0.868
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,20,0.863
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,21,0.8585
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,22,0.8645
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,23,0.846
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,24,0.8623
+"ResEnc U-Net, seed 0 (4 runs)",AdamW optimiser,full_cv4_resenc_ds_unet_dice_ce_adamw,4,25,0.85
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,1,0.1319
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,2,0.4019
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,3,0.669
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,4,0.6849
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,5,0.7537
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,6,0.8074
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,7,0.8095
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,8,0.8144
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,9,0.8168
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,10,0.8172
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,11,0.8162
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,12,0.826
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,13,0.8312
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,14,0.8256
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,15,0.8252
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,16,0.8246
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,17,0.8252
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,18,0.8303
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,19,0.8258
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,20,0.8284
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,21,0.8323
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,22,0.8286
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,23,0.8205
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,24,0.8332
+"ENet, seed 0 (4 runs)",Dice + CE (reference),full_cv4_enet_dice_ce,4,25,0.8283
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,1,0.2039
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,2,0.3491
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,3,0.6293
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,4,0.677
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,5,0.7922
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,6,0.8141
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,7,0.8018
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,8,0.8156
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,9,0.8131
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,10,0.8102
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,11,0.8274
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,12,0.827
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,13,0.8308
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,14,0.8285
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,15,0.8252
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,16,0.8238
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,17,0.8258
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,18,0.8314
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,19,0.8316
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,20,0.831
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,21,0.8233
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,22,0.8315
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,23,0.839
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,24,0.8253
+"ENet, seed 0 (4 runs)",+ boundary loss,full_cv4_enet_dice_ce_boundary_preprocessing,4,25,0.832
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,1,0.1316
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,2,0.3913
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,3,0.6717
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,4,0.6838
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,5,0.7316
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,6,0.8042
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,7,0.8128
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,8,0.8178
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,9,0.806
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,10,0.8119
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,11,0.819
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,12,0.8242
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,13,0.8276
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,14,0.8245
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,15,0.8224
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,16,0.8222
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,17,0.8234
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,18,0.8239
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,19,0.8258
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,20,0.8252
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,21,0.8232
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,22,0.8263
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,23,0.8304
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,24,0.8303
+"ENet, seed 0 (4 runs)","Boundary loss, rising",full_cv4_enet_dice_ce_boundary_v2,4,25,0.8333
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,1,0.3823
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,2,0.6417
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,3,0.7724
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,4,0.7895
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,5,0.7944
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,6,0.8047
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,7,0.809
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,8,0.8082
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,9,0.8148
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,10,0.8149
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,11,0.8185
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,12,0.8049
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,13,0.8259
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,14,0.8217
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,15,0.818
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,16,0.8269
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,17,0.8298
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,18,0.8274
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,19,0.8238
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,20,0.8312
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,21,0.827
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,22,0.8255
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,23,0.8241
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,24,0.8308
+"ENet, seed 0 (4 runs)",Class-weighted CE,full_cv4_enet_weighted_dice_ce_preprocessing,4,25,0.8268

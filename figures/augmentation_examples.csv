@@ -1,0 +1,7 @@
+panel,patient,slice,draws
+Original,Patient_18,102,
+Rotation,Patient_18,102,-7.9367
+Scaling,Patient_18,102,0.9206
+Shift,Patient_18,102,-0.0794 -0.0208
+Joint,Patient_18,102,-7.9367 0.9310 -0.0197 0.0836
+Strong,Patient_18,102,-11.9050 0.8620 -0.0197 0.0836
