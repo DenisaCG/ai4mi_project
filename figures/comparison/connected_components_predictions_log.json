@@ -1,0 +1,57 @@
+{
+  "sources": [
+    [
+      "gt",
+      "Ground truth",
+      [
+        "data/segthor_train_full/train/Patient_*/GT.nii.gz"
+      ]
+    ],
+    [
+      "gt_midterm",
+      "Ground truth\n(midterm data)",
+      [
+        "data/segthor_part1_corrected/train/Patient_*/GT.nii.gz"
+      ]
+    ],
+    [
+      "midterm_20",
+      "Midterm ENet\n(20 patients)",
+      [
+        "runs/segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop/seed*/volumes/val/*.nii.gz"
+      ]
+    ],
+    [
+      "midterm_40",
+      "Midterm ENet recipe\n(40 patients, CV)",
+      [
+        "runs/full_cv4_enet_dice_ce_fold*/seed*/volumes/val/*.nii.gz"
+      ]
+    ],
+    [
+      "upgraded",
+      "Upgraded ENet\n(strong aug, 50 ep)",
+      [
+        "/scratch-shared/igardner1/share_enet_aug/full_cv4_enet_dice_ce_strong_geometric_50ep_fold*/seed*/volumes/val/*.nii.gz"
+      ]
+    ],
+    [
+      "final_unet",
+      "Final model: ResEnc\nU-Net (strong aug, 50 ep)",
+      [
+        "runs/full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_fold*/seed*/volumes/val/*.nii.gz"
+      ]
+    ]
+  ],
+  "n_volumes": {
+    "gt": 40,
+    "gt_midterm": 20,
+    "midterm_20": 15,
+    "midterm_40": 120,
+    "upgraded": 120,
+    "final_unet": 120
+  },
+  "git_commit": "82651e995c2739084fa341c9ce53ca3084fb4e72",
+  "started": "2026-10-11T15:21:31.605778+00:00",
+  "finished": "2026-10-11T15:21:37.185411+00:00"
+}

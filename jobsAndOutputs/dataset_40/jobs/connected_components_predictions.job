@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH --job-name=connected_components_predictions
+#SBATCH --partition=rome
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=48G
+#SBATCH --time=01:00:00
+#SBATCH --output=jobsAndOutputs/dataset_40/outputs/%x_%j.out
+
+# Connected components per label: ground truth vs midterm and upgraded ENet predictions.
+# Resumable: piece counts per volume are cached under figures/comparison/connected_components_predictions_cache.
+# Usage: sbatch jobsAndOutputs/dataset_40/jobs/connected_components_predictions.job   (from the repo root)
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+python -B dataset_analysis/connected_components_predictions.py --out-dir figures/comparison \
+    --workers "$SLURM_CPUS_PER_TASK"
+echo "[$(date -Is)] done"
