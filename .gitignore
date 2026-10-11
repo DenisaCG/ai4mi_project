@@ -38,3 +38,6 @@ metrics/comparison*
 predictions
 
 .claude/
+
+# large NIfTI volumes move via scp/rsync, not git
+metrics/**/*.nii.gz
