@@ -5,7 +5,7 @@ import torch
 
 import src.losses  # noqa: F401  registers losses
 from src.engine import supervised_loss
-from src.losses.boundary import foreground_dist_maps, one_hot2dist
+from src.losses.boundary_dice_ce import foreground_dist_maps, one_hot2dist
 from src.registry import build
 from utils import class2one_hot
 

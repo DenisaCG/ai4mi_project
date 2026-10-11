@@ -222,7 +222,7 @@ def write_cv_results(runs: list[dict], metrics_dir: Path) -> str:
     """
     sections = []
     for experiment, found in sorted(cv_runs(runs).items()):
-        output_dirs = {run_metrics_dir(metrics_dir, r).parent for r in found.values()}
+        output_dirs = {run_metrics_dir(metrics_dir, r).parent.parent for r in found.values()}
         if len(output_dirs) != 1:
             raise ValueError(f"{experiment}: runs span multiple metrics categories")
         output_dir = output_dirs.pop()
