@@ -138,6 +138,8 @@ def validate(cfg: dict) -> None:
         raise ValueError(f"eval.classes {bad} outside 1..num_classes-1")
     if cfg["train"]["epochs"] < 1:
         raise ValueError(f"train.epochs must be >= 1, got {cfg['train']['epochs']}")
+    if cfg["train"]["early_stop_patience"] < 0:
+        raise ValueError(f"train.early_stop_patience must be >= 0, got {cfg['train']['early_stop_patience']}")
     final = (cfg["data"]["preprocess"] or {}).get("retains") == 0  # no val split: the last epoch is the model
     if cfg["train"]["select_metric"] not in ("val_dice_fg", "val_dice_legacy_fg") + (("train_dice_fg",) if final else ()):
         raise ValueError(f"unknown train.select_metric {cfg['train']['select_metric']}")

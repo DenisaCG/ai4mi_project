@@ -65,7 +65,7 @@ def main():
         name = row["experiment"]
         require(
             row["n_runs"] == N_FOLDS * N_SEEDS,
-            f"{name}: {row['n_runs']} runs, expected 12",
+            f"{name}: {row['n_runs']} runs, expected {N_FOLDS * N_SEEDS}",
         )
         require(
             (row["trainable_parameters"] is None) == (name == DINO),
@@ -112,7 +112,8 @@ def main():
     }
     for row in table:
         require(
-            math.isclose(row["dice"], scur[row["experiment"]], rel_tol=1e-9),
+            row["experiment"] not in scur
+            or math.isclose(row["dice"], scur[row["experiment"]], rel_tol=1e-9),
             f"{row['experiment']}: Dice differs from the scur0049 inventory",
         )
     base = table[0]

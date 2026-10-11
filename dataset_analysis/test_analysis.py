@@ -18,6 +18,11 @@ from error_cases_figure import crop_render
 from augmentation_examples import best_slice, random_shift
 from augmentation_results import paired_change
 from loss_training_curves import smooth
+from loss_violins import gains, violin_profile
+from all_results_table import shade
+from final_model_comparison import MODEL, ORGANS, overall, table
+from postprocessing_figure import change_text, patient_values
+from postprocessing_schematic import convex_hull, largest_component, majority
 from utils import extent, load_png, normalized_z, overlap, spreads
 
 
@@ -263,6 +268,67 @@ class AugmentationTests(unittest.TestCase):
         self.assertEqual(n, 2)
         self.assertAlmostEqual(dice, 0.03)
         self.assertAlmostEqual(hd95, 1.5)  # HD95 fell by 2 and 1 mm
+
+    def test_density_peaks_at_the_centre_of_a_symmetric_sample(self):
+        grid, dens = violin_profile(
+            np.array([-2.0, -1.0, -1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 2.0])
+        )
+        self.assertAlmostEqual(dens.max(), 1.0)
+        self.assertTrue((dens >= 0).all())
+        self.assertAlmostEqual(grid[dens.argmax()], 0.0, delta=0.1)
+
+    def test_gains_are_positive_where_the_variant_is_better(self):
+        ref = {
+            ("P1", "heart"): {"dice": 0.8, "hd95": 10.0},
+            ("P2", "heart"): {"dice": 0.9, "hd95": 5.0},
+        }
+        var = {
+            ("P1", "heart"): {"dice": 0.85, "hd95": 14.0},
+            ("P2", "heart"): {"dice": 0.88, "hd95": 4.0},
+        }
+        np.testing.assert_allclose(gains(ref, var, "heart", "dice"), [0.05, -0.02])
+        np.testing.assert_allclose(gains(ref, var, "heart", "hd95"), [-4.0, 1.0])
+
+
+class PostprocessingTests(unittest.TestCase):
+    def test_patient_values_average_seeds_then_organs_and_skip_blank_hd95(self):
+        rows = [dict(patient="P1", organ=o, seed=f"seed{s}", hd95=h)
+                for o, hs in (("heart", ("2", "4")), ("trachea", ("", "10"))) for s, h in enumerate(hs)]
+        self.assertAlmostEqual(patient_values(rows, "hd95")["P1"], (3.0 + 10.0) / 2)
+
+    def test_change_text_is_signed_with_a_true_minus(self):
+        self.assertEqual(change_text(-1.84), "\u22121.8")
+        self.assertEqual(change_text(4.52), "+4.5")
+
+    def test_schematic_operations(self):
+        mask = np.zeros((40, 40), dtype=bool)
+        mask[5:15, 5:15] = True
+        mask[30:32, 30:32] = True
+        self.assertEqual(largest_component(mask).sum(), 100)
+        notched = np.zeros((40, 40), dtype=bool)
+        notched[10:30, 10:30] = True
+        notched[10:15, 10:15] = False
+        self.assertGreater(convex_hull(notched).sum(), notched.sum())
+        a, b, c = (np.zeros((4, 4), dtype=bool) for _ in range(3))
+        a[0, 0] = b[0, 0] = a[1, 1] = c[2, 2] = True
+        self.assertEqual(np.argwhere(majority([a, b, c])).tolist(), [[0, 0]])
+
+
+class FinalModelComparisonTests(unittest.TestCase):
+    def test_overall_is_the_mean_of_the_organ_means_and_table_is_relative_to_the_final_model(self):
+        def scores(dice):
+            return {(p, o): {"dice": d, "hd95": 10.0, "assd": 1.0}
+                    for o in ORGANS for p, d in zip(("P1", "P2"), dice)}
+        data = {MODEL: scores((0.9, 0.9)), "nnU-Net 3D": scores((0.8, 0.6)), "nnU-Net 2D": scores((0.7, 0.7))}
+        self.assertAlmostEqual(overall(data["nnU-Net 3D"], "dice"), 0.7)
+        rows = {r["model"]: r for r in table(data)}
+        self.assertAlmostEqual(rows["nnU-Net 3D"]["final_minus_model_dice"], 0.2)
+        self.assertEqual(rows[MODEL]["final_minus_model_hd95"], 0.0)
+
+    def test_table_shade_is_one_for_the_best_value_of_a_column(self):
+        self.assertEqual(shade(0.9, 0.5, 0.9, False), 1.0)
+        self.assertEqual(shade(7.0, 7.0, 23.0, True), 1.0)
+        self.assertEqual(shade(23.0, 7.0, 23.0, True), 0.0)
 
 
 if __name__ == "__main__":

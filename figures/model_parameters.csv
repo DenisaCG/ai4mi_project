@@ -9,3 +9,4 @@ full_cv4_resenc_unet_dice_ce,72079397
 full_cv4_ds_unet_dice_ce,20622073
 full_cv4_resenc_ds_unet_dice_ce,72084217
 full_cv4_resenc_ds_unet_dice_ce_25d_c1,72084793
+full_cv4_resenc_ds_unet_dice_ce_25d_c1_s4,72084793
