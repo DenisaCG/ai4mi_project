@@ -243,6 +243,8 @@ def build_dataset(cfg: dict, split: str) -> Dataset:
         )
     if split != "test" and cfg.get("loss", {}).get("name") == "boundary_dice_ce":
         dataset = WithDistMaps(dataset)
+    if cfg.get("loss", {}).get("name") == "boundary_dice_ce_scheduled":  # maps for every split, see src/losses/boundary_schedule.py
+        dataset = WithDistMaps(dataset)
     return dataset
 
 

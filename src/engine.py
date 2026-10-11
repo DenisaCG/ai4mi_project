@@ -144,6 +144,8 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
         LOG.info("Class weights: %s", loss_kwargs["weights"])
     if cfg["loss"]["name"] == "boundary_dice_ce":
         loss_kwargs["epochs"] = cfg["train"]["epochs"]  # the alpha schedule spans the whole run
+    if cfg["loss"]["name"] == "boundary_dice_ce_scheduled":
+        loss_kwargs["epochs"] = cfg["train"]["epochs"]  # the weight schedule runs over the configured epochs
     loss_fn = build("loss", cfg["loss"]["name"], num_classes=cfg["data"]["num_classes"],
                     **loss_kwargs)
     LOG.info("model %s: %.2fM parameters | train %d slices, val %s slices", cfg["model"]["name"],

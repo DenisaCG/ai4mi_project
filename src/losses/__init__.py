@@ -8,5 +8,6 @@ from . import weighted_cross_entropy  # noqa: F401
 from . import weightedCEdice
 from . import boundary
 from . import boundary_dice_ce  # noqa: F401
+from . import boundary_schedule  # noqa: F401
 from . import hausdorff  # noqa: F401
 
