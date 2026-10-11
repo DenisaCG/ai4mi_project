@@ -1,0 +1,4 @@
+model,dice,hd95,assd,final_minus_model_dice,final_minus_model_hd95
+Final model,0.901,7.47,1.43,0.0,0.0
+nnU-Net 3D,0.9073,7.01,1.39,-0.0062,0.46
+nnU-Net 2D,0.8925,9.79,1.73,0.0086,-2.32

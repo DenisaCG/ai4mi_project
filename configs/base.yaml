@@ -41,11 +41,12 @@ optim:
   kwargs: {lr: 0.0005, betas: [0.9, 0.999]}
 
 scheduler:
-  name: none              # none | cosine | step
+  name: none              # none | cosine | step | plateau (halves the LR when the select metric stalls)
   kwargs: {}
 
 train:
   epochs: 25
+  early_stop_patience: 0            # stop after this many epochs without a gain in select_metric; 0 = train all epochs
   select_metric: val_dice_fg        # checkpoint selection; val_dice_fg or val_dice_legacy_fg
   max_failed_batches: 5             # per epoch; a failing batch is logged and skipped up to this many
   debug_samples: 0                  # >0 keeps only the first N slices per split (smoke tests)

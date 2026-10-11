@@ -126,6 +126,11 @@ def overlay_samples(net: nn.Module, dataset, device, n: int = 4):
     return img[:, img.shape[1] // 2].cpu().numpy(), gts, pred, [it["stems"] for it in items]
 
 
+def should_stop(epoch: int, best_epoch: int, patience: int) -> bool:
+    """True once `patience` epochs have passed since the best one; patience 0 never stops."""
+    return patience > 0 and epoch - best_epoch >= patience
+
+
 def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int:
     """Train to cfg.train.epochs, resuming from checkpoints/last.pt if asked. Returns the best epoch."""
     net = build_model(cfg, device)
@@ -181,7 +186,9 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
             row |= epoch_metrics(split, counts, stems, cfg)
             if split == "val":
                 val_counts, val_stems = counts, stems
-        if scheduler:
+        if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+            scheduler.step(row[select])
+        elif scheduler:
             scheduler.step()
 
         improved = final or best_epoch < 0 or math.isnan(best) or row[select] > best  # final: every epoch overwrites best.pt
@@ -210,5 +217,9 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
             LOG.info("epoch %3d | train loss %.4f | val loss %.4f | val dice fg %.4f (legacy %.4f)%s | %.0fs",
                      epoch, row["train_loss"], row["val_loss"], row["val_dice_fg"],
                      row["val_dice_legacy_fg"], "  *best*" if improved else "", row["seconds"])
+        if should_stop(epoch, best_epoch, cfg["train"]["early_stop_patience"]):
+            LOG.info("early stop: no %s gain for %d epochs (best epoch %d)", select,
+                     cfg["train"]["early_stop_patience"], best_epoch)
+            break
 
     return best_epoch
