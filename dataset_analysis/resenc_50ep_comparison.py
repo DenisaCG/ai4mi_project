@@ -1,7 +1,7 @@
 """Compare the 50-epoch ResEnc DS U-Net CV runs: boundary loss (none / ramped / fixed 0.08) x input (2D / 2.5D).
 
-All runs: strong geometric augmentation, seed 0, 4-fold CV on the 40 patients (10 val per fold). The folds are shared, so each run is also
-compared with the 2D control fold by fold. Reads runs/<experiment>_fold<k>/seed0/{eval/metrics_3d.csv,epochs.csv}; each point is one fold.
+All runs: strong geometric augmentation, 3 seeds, 4-fold CV on the 40 patients (10 val per fold). The folds are shared, so each run is also
+compared with the 2D control fold by fold. Reads runs/<experiment>_fold<k>/seed*/{eval/metrics_3d.csv,epochs.csv} and averages the seeds of each fold, so each point is one fold (mean of its seeds).
 
     python dataset_analysis/resenc_50ep_comparison.py [--out figures/resenc_50ep_comparison]
 
@@ -39,25 +39,29 @@ METRICS = {  # key: (axis label, digits, higher is better)
     "hd95": ("3D HD95 (mm)", 1, False),
     "assd": ("3D ASSD (mm)", 2, False),
 }
-SUBTITLE = "ResEnc DS U-Net · strong geometric augmentation · 50 epochs · seed 0 · 4-fold CV, 10 val patients per fold"
+SUBTITLE = "ResEnc DS U-Net · strong geometric augmentation · 50 epochs · 4-fold CV, 10 val patients per fold · 3 seeds per fold"
 
 
 def load(experiment: str) -> dict:
-    """Per fold: patient-averaged 3D metric per organ (best checkpoint) and the 2D validation Dice per epoch."""
+    """Per fold: patient-averaged 3D metric per organ (best checkpoint) and the 2D validation Dice per epoch, both averaged over the seeds."""
     out = {"3d": [], "curve": []}
     for fold in FOLDS:
-        run = REPO / "runs" / f"{experiment}_fold{fold}" / "seed0"
-        with (run / "eval" / "metrics_3d.csv").open(newline="") as f:
-            rows = list(csv.DictReader(f))
-        per_organ = {}
-        for organ in ORGANS:
-            sel = [r for r in rows if r["class_name"] == organ]
-            per_organ[organ] = {k: float(np.nanmean([float(r[k]) for r in sel])) for k in METRICS}
-        per_organ[FG] = {k: float(np.mean([per_organ[o][k] for o in ORGANS])) for k in METRICS}
-        out["3d"].append(per_organ)
-        with (run / "epochs.csv").open(newline="") as f:
-            ep = list(csv.DictReader(f))
-        out["curve"].append({m: np.array([float(r[f"val_dice_{m}"]) for r in ep]) for m in (*ORGANS, FG)})
+        runs = sorted((REPO / "runs" / f"{experiment}_fold{fold}").glob("seed*"))
+        seed_3d, seed_curve = [], []
+        for run in runs:
+            with (run / "eval" / "metrics_3d.csv").open(newline="") as f:
+                rows = list(csv.DictReader(f))
+            per_organ = {}
+            for organ in ORGANS:
+                sel = [r for r in rows if r["class_name"] == organ]
+                per_organ[organ] = {k: float(np.nanmean([float(r[k]) for r in sel])) for k in METRICS}
+            per_organ[FG] = {k: float(np.mean([per_organ[o][k] for o in ORGANS])) for k in METRICS}
+            seed_3d.append(per_organ)
+            with (run / "epochs.csv").open(newline="") as f:
+                ep = list(csv.DictReader(f))
+            seed_curve.append({m: np.array([float(r[f"val_dice_{m}"]) for r in ep]) for m in (*ORGANS, FG)})
+        out["3d"].append({o: {k: float(np.mean([s[o][k] for s in seed_3d])) for k in METRICS} for o in (*ORGANS, FG)})
+        out["curve"].append({m: np.mean([c[m] for c in seed_curve], axis=0) for m in (*ORGANS, FG)})
     return out
 
 

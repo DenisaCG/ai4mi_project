@@ -1,101 +1,101 @@
 run,experiment,fold,organ,dice,hd95,assd
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,0,esophagus,0.8235315106294643,6.500519825908407,1.2879541752562353
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,0,heart,0.9450743188540311,24.41859357964822,4.645028042135809
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,0,trachea,0.910174116860681,8.493719432176562,1.1228002359365
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,0,aorta,0.9382051386523663,8.4670045290464,1.3504759687185675
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,0,fg,0.9042462712491357,11.969959341694898,2.1015646055117783
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,1,esophagus,0.7590627477172742,10.735094120591464,2.070783541041414
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,1,heart,0.9420902769768824,7.209366673806107,2.101057553837663
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,1,trachea,0.8961631333171491,9.57947699704678,1.2478095076990827
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,1,aorta,0.9107043077244702,19.586150197529744,2.6233539005090303
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,1,fg,0.877005116433944,11.777521997243525,2.0107511257717974
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,2,esophagus,0.8104772187661574,6.9039938548198,1.4999698060860174
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,2,heart,0.9430739965342836,8.418669586187658,2.139104846792949
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,2,trachea,0.898894877034088,6.605236386461101,1.2774081753997948
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,2,aorta,0.9187887660467269,10.37907425248437,1.5026679990113045
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,2,fg,0.8928087145953139,8.076743519988232,1.6047877068225165
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,3,esophagus,0.8066271923396563,9.662286879871758,1.835894603206377
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,3,heart,0.9449135315810185,6.500756989244621,1.9943899515884318
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,3,trachea,0.8913464529503072,10.843107064591443,1.3563310573498504
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,3,aorta,0.9314358001858374,5.074774798878657,0.9868076820528572
-2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,3,fg,0.8935807442642048,8.02023143314662,1.5433558235493792
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,0,esophagus,0.8331495312509862,5.362556392505189,1.306957316777999
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,0,heart,0.9362653085469643,26.81160713064501,7.057840381631117
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,0,trachea,0.9157596878514237,56.051591605598354,3.4763578248616924
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,0,aorta,0.9297292264235063,7.767635613263804,1.2631453038635527
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,0,fg,0.9037259385182201,23.998347685503088,3.2760752067835903
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,1,esophagus,0.7648221988853507,11.102925237809462,2.235309509243249
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,1,heart,0.9313629353442983,7.9768965182400695,2.3889646196487684
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,1,trachea,0.89415954059204,12.346515983212269,2.0490264418862725
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,1,aorta,0.9080188512135543,11.068593385437577,1.6761784601734309
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,1,fg,0.8745908815088108,10.623732781174844,2.08736975773793
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,2,esophagus,0.8094226871036746,6.784869285084066,1.652224397213456
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,2,heart,0.9393859848584762,10.39666981425279,2.424933851272811
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,2,trachea,0.898108483454158,9.661803343140773,1.3699726019385121
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,2,aorta,0.9137454700460224,17.210787610949826,2.019222674794194
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,2,fg,0.8901656563655826,11.013532513356864,1.8665883813047432
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,3,esophagus,0.8084980775077824,9.293491204594618,1.6346666082612447
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,3,heart,0.9369702426851564,6.924167109068348,2.2471822940001456
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,3,trachea,0.8909322166574677,9.302924787324844,1.3040890123704911
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,3,aorta,0.9243709985932099,10.72758827933268,1.3556888407532715
-2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,3,fg,0.8901928838609041,9.062042845080123,1.6354066888462881
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,0,esophagus,0.8251581172046141,6.98721029430223,1.3486446287256109
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,0,heart,0.9404412883217319,6.779900276654094,2.212980083864111
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,0,trachea,0.9184138545172154,6.451324187014182,0.9017796415459308
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,0,aorta,0.938714518389579,5.905308441335566,1.027033968205226
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,0,fg,0.905681944608285,6.530935799826518,1.3726095805852196
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,1,esophagus,0.7713371678931243,10.328359849325306,1.9281030814266535
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,1,heart,0.9395408035090209,8.122187476166543,2.2164374945601417
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,1,trachea,0.8928957094604687,12.020732209910715,1.424387453194188
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,1,aorta,0.9060732611569847,9.26152602984029,1.767746403111056
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,1,fg,0.8774617355048997,9.933201391310714,1.8341686080730097
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,2,esophagus,0.807607023846552,5.889845335246064,1.4411510615055936
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,2,heart,0.9420658297886642,9.82425123364131,2.243820192523143
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,2,trachea,0.8833619183819387,8.754383319605989,1.4099868922847762
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,2,aorta,0.9218564021922113,10.676829162849769,1.457900009980238
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,2,fg,0.8887227935523416,8.786327262835783,1.6382145390734375
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,3,esophagus,0.8141068032302012,13.731074512561928,2.211628065242162
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,3,heart,0.9405804067780477,7.071919460851615,2.2063701687765946
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,3,trachea,0.8955544314229824,8.957418512790117,1.1986674584831007
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,3,aorta,0.9240341079928465,12.132529740595322,1.66320222830591
-2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,3,fg,0.8935689373560194,10.473235556699745,1.819966980201942
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,0,esophagus,0.8310032116608402,6.266749747034966,1.241852366535118
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,0,heart,0.9479979452111207,5.637953233848414,1.9759756208308417
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,0,trachea,0.9111694037671751,7.6875174946827345,1.0656115608613592
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,0,aorta,0.9423952580026536,4.006470579246252,0.9046462819907877
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,0,fg,0.9081414546604474,5.899672763703092,1.2970214575545267
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,1,esophagus,0.7567828717547258,10.822043222182703,2.031690502216107
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,1,heart,0.9454050522879973,7.184235546005526,2.038534739945816
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,1,trachea,0.8994555680889583,6.601250069058722,1.095089101543517
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,1,aorta,0.9071491287675318,14.713061637718278,1.957829138126074
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,1,fg,0.8771981552248033,9.830147618741307,1.7807858704578785
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,2,esophagus,0.8204193595952821,6.967523034974964,1.451505141547696
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,2,heart,0.9471462006845096,7.887224750065613,1.959040289346771
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,2,trachea,0.9028140731017347,8.48801763527964,1.1144511565401471
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,2,aorta,0.9112391788171689,12.23215409258501,1.7290409889476739
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,2,fg,0.8954047030496738,8.893729878226306,1.563509394095572
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,3,esophagus,0.8110139375486023,11.249923137228718,2.092651691135349
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,3,heart,0.947104151899436,5.886699810437433,1.901607630609345
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,3,trachea,0.887379864716039,9.427780858159158,1.3698831559463587
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,3,aorta,0.9292082460064195,7.69516112793236,1.221782597775926
-2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,3,fg,0.8936765500426243,8.564891233439416,1.6464812688667445
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,0,esophagus,0.8349321346025453,7.2416360582525545,1.4016645867694322
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,0,heart,0.9507857901585766,5.385761252148121,1.9691135110201263
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,0,trachea,0.9202840770224062,8.098805877821736,0.9782707558664301
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,0,aorta,0.9354881427995005,4.768384364473978,1.056051671949048
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,0,fg,0.9103725361457572,6.373646888174097,1.351275131401259
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,1,esophagus,0.7592556718345789,10.217685518167624,1.9113644579607758
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,1,heart,0.9475237859194368,11.179385431659941,2.1668148647122147
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,1,trachea,0.9072450052835522,6.119560532404445,0.9493822302605835
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,1,aorta,0.904387458929326,9.428701319957977,1.6033045315085694
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,1,fg,0.8796029804917235,9.236333200547497,1.657716521110536
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,2,esophagus,0.8218867816125301,5.581162780825366,1.4021143021976286
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,2,heart,0.9417346217798304,9.678910983041394,2.2778300131316063
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,2,trachea,0.8896976261510199,8.993322358342825,1.5422530997586308
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,2,aorta,0.9241851234052735,8.059118718944005,1.3158425596607612
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,2,fg,0.8943760382371635,8.078128710288398,1.6345099936871568
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,3,esophagus,0.8019955157400472,10.686460213595408,2.0274252406970446
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,3,heart,0.9450384995877199,6.4857080135564,1.9391690466711065
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,3,trachea,0.892076037260248,8.759560722834594,1.187644193110609
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,3,aorta,0.9344103578912712,5.440524101912546,1.0117639003265966
-2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,3,fg,0.8933801026198216,7.843063262974736,1.5415005952013392
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,0,esophagus,0.8271457929634667,6.333382700438445,1.2437155076100046
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,0,heart,0.9459097176013772,15.289375820964906,3.2277694966927086
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,0,trachea,0.9147606312608896,7.486642233316168,1.147107646102556
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,0,aorta,0.9398103827812888,6.936040716801869,1.180441782225626
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,0,fg,0.9069066311517555,9.011360367880348,1.6997586081577236
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,1,esophagus,0.7608172654140791,11.11998773825965,2.171492507684249
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,1,heart,0.9385409302142976,8.489610803820687,2.258666644770481
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,1,trachea,0.9018516273084725,13.261840691730375,1.532011402798948
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,1,aorta,0.9037066706189583,15.027978050013038,2.177315674338001
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,1,fg,0.8762291233889519,11.97485432095594,2.03487155739792
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,2,esophagus,0.8151984652201096,6.369055504896012,1.4522467446858256
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,2,heart,0.9431472238517764,8.456866575979756,2.149660195068679
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,2,trachea,0.900872380612807,6.659075276918728,1.1663396577468677
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,2,aorta,0.9200993844117198,10.880390746967734,1.4923742977688397
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,2,fg,0.8948293635241032,8.091347026190556,1.5651552238175528
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,3,esophagus,0.8100151083909558,12.351780587752389,2.065239109363011
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,3,heart,0.9377863919807478,7.499843188226797,2.2025653755948795
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,3,trachea,0.8918472385218729,10.80264664348872,1.31187890459457
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,3,aorta,0.9305647910240111,9.230038733361113,1.2955316765975915
+2D · no boundary (control),full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,3,fg,0.8925533824793969,9.971077288207255,1.7188037665375129
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,0,esophagus,0.8275376114431449,6.5574338135322305,1.3097821653437198
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,0,heart,0.9383594052448285,20.0733363382726,4.129469142467769
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,0,trachea,0.9185866714438902,23.339898123323866,1.7855559942350858
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,0,aorta,0.9326559118312238,6.7686400976692696,1.1686211182630772
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,0,fg,0.9042848999907718,14.184827093199493,2.098357105077413
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,1,esophagus,0.7638292720237709,11.616028855209128,2.1915710911303288
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,1,heart,0.9404301745866072,7.432691457151026,2.192084369131236
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,1,trachea,0.898586045486745,10.821503091059865,1.5831241560056994
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,1,aorta,0.9065306132034978,10.352008527071296,1.665042148777926
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,1,fg,0.8773440263251553,10.05555798262283,1.9079554412612973
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,2,esophagus,0.8101397939878995,7.219281443275951,1.5477310429362212
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,2,heart,0.9401529655337733,9.84928711190325,2.3285470296748585
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,2,trachea,0.897836544330915,8.352256194269614,1.2293613043548122
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,2,aorta,0.9151755293247567,14.195668411953074,1.8048699502778494
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,2,fg,0.8908262082943361,9.904123290350473,1.7276273318109354
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,3,esophagus,0.8108394041287815,11.001821917987458,1.916562843422987
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,3,heart,0.9362401180450579,40.7112376362928,5.06326471954057
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,3,trachea,0.8857639467714068,9.992603094884572,1.3683678067843195
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,3,aorta,0.9268176303866925,10.506887723779426,1.3798673103846575
+2D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary,3,fg,0.8899152748329847,18.053137593236062,2.4320156700331332
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,0,esophagus,0.8285018022189791,6.642796001574648,1.290583986695353
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,0,heart,0.9421867645365364,7.097904904661658,2.2841149214257626
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,0,trachea,0.9154076924141566,8.986101556886085,1.3840924652467679
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,0,aorta,0.9347516177326644,5.828594854892849,1.0784442388516984
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,0,fg,0.9052119692255841,7.13884932950381,1.5093089030548956
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,1,esophagus,0.7643534282512952,10.670822938811213,2.0313348041729924
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,1,heart,0.941937380528508,7.734995034355691,2.1364910790542644
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,1,trachea,0.8958709515933339,11.132712463952197,1.4257070407302557
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,1,aorta,0.9080621301777038,13.09516455775963,1.8966958796875317
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,1,fg,0.8775559726377101,10.658423748719683,1.8725572009112608
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,2,esophagus,0.8090010913297162,5.351253321516899,1.3921341553617006
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,2,heart,0.9394798599517676,10.473192380918174,2.391299987213699
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,2,trachea,0.8942615083242343,8.143201512652418,1.2377417923544844
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,2,aorta,0.9217599647243752,10.281838526772974,1.44189286394951
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,2,fg,0.8911256060825234,8.562371435465117,1.6157671997198484
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,3,esophagus,0.8074370771963832,13.125204658599936,2.190563017861369
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,3,heart,0.942482869595593,6.966562461875572,2.086291649897922
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,3,trachea,0.8926560779047564,9.698037671668411,1.211546098188181
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,3,aorta,0.9254233215982884,11.767829267652516,1.5258340146702836
+2D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep_boundary_w008,3,fg,0.8919998365737554,10.389408514949109,1.7535586951544389
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,0,esophagus,0.8276752713556216,6.3217626122100015,1.2744181994766486
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,0,heart,0.9456226457469702,6.614817270048803,2.204704229459081
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,0,trachea,0.9131028005934759,19.64947152249513,1.6026883547525923
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,0,aorta,0.9402148466022647,4.427254701768325,0.9673773206449606
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,0,fg,0.906653891074583,9.253326526630564,1.5122970260833206
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,1,esophagus,0.762655749080095,11.307454439885447,2.147716431656099
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,1,heart,0.9443025135825529,7.8524094153542014,2.120059379026707
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,1,trachea,0.9015824430391876,9.207849600522573,1.1604690096719574
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,1,aorta,0.9027980557497558,13.072617056875236,1.9510190291858718
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,1,fg,0.8778346903628979,10.360082628159365,1.8448159623851588
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,2,esophagus,0.821981143111325,6.545664098464911,1.443518031908389
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,2,heart,0.9449244458579967,8.727214899042313,2.118661224300301
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,2,trachea,0.8996404079829973,7.928574477991543,1.1359062779109057
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,2,aorta,0.9147753071452981,11.77419366090303,1.6683497916180754
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,2,fg,0.8953303260244043,8.74391178410045,1.591608831434418
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,3,esophagus,0.8113569372946374,11.734623350064219,2.0628654840226464
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,3,heart,0.9446296824538019,7.034300514640027,2.110146301965943
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,3,trachea,0.8870062157872863,9.89592010394497,1.4211643104178435
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,3,aorta,0.9247170429182291,10.453195188862598,1.4449873593296447
+2.5D · ramped boundary,full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,3,fg,0.8919274696134888,9.779509789377952,1.7597908639340194
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,0,esophagus,0.8297412066673825,6.644904622649221,1.341961944921924
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,0,heart,0.9465908546293363,17.94775254278159,3.2138935025938538
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,0,trachea,0.9183965745434627,8.665795007310676,1.2666817261084544
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,0,aorta,0.9370944880350379,5.145436316207484,1.0563299971826956
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,0,fg,0.9079557809688049,9.600972122237243,1.7197167927017318
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,1,esophagus,0.7561097007004189,10.835201105574361,2.107727944303566
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,1,heart,0.943043687112873,9.258961424807238,2.179320833335409
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,1,trachea,0.9054045037319532,6.303018379064614,0.9913303372752568
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,1,aorta,0.899134601810955,12.969115165985643,1.9678088203419124
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,1,fg,0.87592312333905,9.841574018857964,1.8115469838140361
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,2,esophagus,0.8207993737557256,5.539698578390772,1.3976181369490923
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,2,heart,0.9423368376701177,9.72443641995864,2.270482961593147
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,2,trachea,0.8971920768326725,7.920479380455011,1.2885460976155634
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,2,aorta,0.9147270448091819,11.294019495827802,1.6648565475258676
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,2,fg,0.8937638332669245,8.619658468658054,1.6553759359209177
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,3,esophagus,0.8097246522534846,10.729223252764276,1.8933745063920515
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,3,heart,0.9445972199795197,10.973814208965857,2.237460127455781
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,3,trachea,0.8930911212651796,9.365606626499305,1.1809034563798846
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,3,aorta,0.9293939238882185,8.0279143292887,1.239655407565721
+2.5D · fixed boundary 0.08,full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,3,fg,0.8942017293466007,9.774139604379535,1.6378483744483594

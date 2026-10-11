@@ -84,6 +84,14 @@ full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,3,0,0.8936
 full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,3,1,0.89091,10.37705,1.87305
 full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep,3,2,0.8912,10.39659,1.75984
 full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,0,0,0.91037,6.37365,1.35128
+full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,0,1,0.90714,10.78427,1.62082
+full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,0,2,0.90635,11.645,2.18706
 full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,1,0,0.8796,9.23633,1.65772
+full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,1,1,0.87669,9.28409,1.8004
+full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,1,2,0.87148,11.0043,1.97653
 full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,2,0,0.89438,8.07813,1.63451
+full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,2,1,0.89228,10.20058,1.80225
+full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,2,2,0.89463,7.58026,1.52937
 full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,3,0,0.89338,7.84306,1.5415
+full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,3,1,0.89706,9.15816,1.48881
+full_cv4_resenc_ds_unet_dice_ce_25d_c1_strong_geometric_50ep_boundary_w008,3,2,0.89216,12.32119,1.88324
