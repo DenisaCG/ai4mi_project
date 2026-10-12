@@ -1,6 +1,6 @@
 """Audit the violin figure's numbers: patient counts, key uniqueness and agreement with the per-run tables of the Snellius accounts.
 
-    python dataset_analysis/validate_loss_violins.py [--metrics-dir metrics] [--runs-dir deck/snellius_inventory/loss_runs]
+    python dataset_analysis/validate_loss_violins.py [--metrics-dir metrics] [--runs-dir ~/snellius_inventory/loss_runs]
 
 Checks that every variant and its reference cover the same 40 validation patients x 4 organs, that every violin holds 40
 values and appears once, that the Dice and HD95 of every run (mean over patients and organs) equal loss_per_run.csv where the
@@ -19,7 +19,7 @@ from pathlib import Path
 import yaml
 
 from loss_violins import METRICS, MODELS, ORGANS, collect, load_patient_metrics
-from utils import N_FOLDS, REPO
+from utils import INPUTS, N_FOLDS, REPO
 from validate_loss_training_curves import inventory_runs, require, run_means
 
 
@@ -42,7 +42,7 @@ def main():
     )
     parser.add_argument("--metrics-dir", type=Path, default=REPO / "metrics")
     parser.add_argument(
-        "--runs-dir", type=Path, default=REPO / "deck/snellius_inventory/loss_runs"
+        "--runs-dir", type=Path, default=INPUTS / "snellius_inventory/loss_runs"
     )
     args = parser.parse_args()
     table = collect(args.metrics_dir, args.runs_dir)

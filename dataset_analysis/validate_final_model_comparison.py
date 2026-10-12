@@ -1,6 +1,6 @@
 """Audit the final-model comparison figure's numbers: patient and organ counts, bounds and agreement with the bundle.
 
-    python dataset_analysis/validate_final_model_comparison.py [--data-dir deck/results_for_figures]
+    python dataset_analysis/validate_final_model_comparison.py [--data-dir ~/results_for_figures]
 
 Checks that every model of the figure has one score per patient and organ for the 40 validation patients, the same patients
 for every model; that the plotted mean Dice, HD95 and ASSD equal the OVERALL rows of summary_per_organ_and_overall.csv

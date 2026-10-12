@@ -23,10 +23,12 @@ from PIL import Image
 CLASSES = {1: "esophagus", 2: "heart", 3: "trachea", 4: "aorta"}
 NAMES = {k: name.capitalize() for k, name in CLASSES.items()}
 REPO = Path(__file__).resolve().parents[1]
+# Folders pulled from Snellius (results_for_figures, the *_inventory_* and deficiencies_* folders); AI4MI_INPUTS overrides the home dir
+INPUTS = Path(os.environ.get("AI4MI_INPUTS", Path.home()))
 N_FOLDS, N_SEEDS = 4, 3  # cross-validation protocol, as in src.aggregate
 METRICS = ("dice", "hd95", "assd")
-INVENTORY = REPO / "deck/snellius_inventory/igardner1/arch_summary.csv"
-PER_PATIENT = REPO / "deck/snellius_inventory/scur0049/arch_per_patient.csv"
+INVENTORY = INPUTS / "arch_inventory_scur0049/arch_summary.csv"
+PER_PATIENT = INPUTS / "arch_inventory_scur0049/arch_per_patient.csv"
 
 # Figures share the repo-wide theme in tools/plot_style.py, with its earthy organ colors.
 os.environ.setdefault(

@@ -1,6 +1,6 @@
 """The final model against nnU-Net 3D and 2D on the same validation patients.
 
-    python dataset_analysis/final_model_comparison.py [--data-dir deck/results_for_figures] [--out figures]
+    python dataset_analysis/final_model_comparison.py [--data-dir ~/results_for_figures] [--out figures]
 
 final_model_comparison.{png,pdf}, the slide: one scatter per nnU-Net model with its Dice of a patient and organ on the x
 axis and the final model's on the y axis, so a point above the dashed diagonal is a case the final model segments better
@@ -17,12 +17,12 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-from utils import REPO, pyplot, read_csv, write_csv
+from utils import INPUTS, REPO, pyplot, read_csv, write_csv
 
 sys.path.insert(0, str(REPO / "tools"))
 from plot_style import EARTH, EARTH_LABEL_COLORS  # noqa: E402
 
-DATA_DIR = REPO / "deck/results_for_figures"
+DATA_DIR = INPUTS / "results_for_figures"
 ABLATION = "final_pipeline_ablation"
 FULL_PIPELINE = "seeds_tta_lcc"
 MODEL = "Final model"

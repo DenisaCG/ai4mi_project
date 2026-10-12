@@ -1,6 +1,6 @@
 """Audit the training-curve figure's numbers: run and epoch counts, key uniqueness and agreement with the Snellius inventories.
 
-    python dataset_analysis/validate_loss_training_curves.py [--metrics-dir metrics] [--runs-dir deck/snellius_inventory/loss_runs]
+    python dataset_analysis/validate_loss_training_curves.py [--metrics-dir metrics] [--runs-dir ~/snellius_inventory/loss_runs]
 
 Checks that every variant has seed 0 of all 4 folds with 25 epochs each, appears once and has Dice values in [0, 1]; that each
 run's best epoch is the epoch of its highest validation Dice; that the best Dice of every run equals loss_curves_summary.csv
@@ -14,10 +14,10 @@ import statistics
 from pathlib import Path
 
 from loss_training_curves import PANELS, VARIANTS, collect
-from utils import CLASSES, N_FOLDS, REPO, read_csv
+from utils import INPUTS, CLASSES, N_FOLDS, REPO, read_csv
 
 EPOCHS = 25
-INVENTORY = REPO / "deck/snellius_inventory"
+INVENTORY = INPUTS / "snellius_inventory"
 
 
 def require(condition, message):

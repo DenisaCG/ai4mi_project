@@ -2,7 +2,7 @@
 
     python dataset_analysis/error_cases_figure.py [--out figures]
 
-The existing renders of the Snellius analysis (deck/snellius_inventory/deficiencies_scur0049/cases), cropped and
+The existing renders of the Snellius analysis (~/deficiencies_scur0049/cases), cropped and
 re-labelled, not re-rendered: white outline = ground truth, coloured outline = prediction of the upgraded baseline
 (ENet, Dice + CE, full pre-processing). Under each case the Dice and HD95 of that organ, patient and seed (3D, original
 CT grid, best checkpoint). Writes error_cases.{png,pdf}.
@@ -15,13 +15,13 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-from utils import CLASSES, REPO, load_cv_runs, pyplot, read_csv
+from utils import INPUTS, CLASSES, REPO, load_cv_runs, pyplot, read_csv
 
 sys.path.insert(0, str(REPO / "tools"))
 from plot_style import EARTH_LABEL_COLORS  # noqa: E402
 
 EXPERIMENT = "full_cv4_enet_dice_ce"
-CASE_DIR = REPO / "deck/snellius_inventory/deficiencies_scur0049"
+CASE_DIR = INPUTS / "deficiencies_scur0049"
 ORGAN_COLORS = {name: EARTH_LABEL_COLORS[idx] for idx, name in CLASSES.items()}
 # (fold, seed, patient, organ): chosen after viewing the renders of every ENet case with HD95 above 50 mm and of the
 # lowest-Dice esophagus.

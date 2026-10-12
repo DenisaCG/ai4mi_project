@@ -24,6 +24,7 @@ from pathlib import Path
 import matplotlib.patheffects as pe
 
 from utils import (
+    INPUTS,
     METRICS,
     REPO,
     load_cv_runs,
@@ -37,7 +38,7 @@ sys.path.insert(0, str(REPO / "tools"))
 from plot_style import EARTH, GRID_COLOR, PALETTE, tint  # noqa: E402
 
 BASE_EXPERIMENT = "full_cv4_resenc_ds_unet_dice_ce"
-PP_DIR = REPO / "deck/snellius_inventory/igardner1_pp"
+PP_DIR = INPUTS / "snellius_inventory/igardner1_pp"
 # (key in the inventory, label, group, is the ground truth used)
 METHODS = [
     ("postprocess:lcc", "Largest comp., all organs", "filter"),

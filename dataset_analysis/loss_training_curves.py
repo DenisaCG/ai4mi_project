@@ -8,7 +8,7 @@ grid (not the original CT grid of the evaluation). Both panels use seed 0 only, 
 Top panel: the ResEnc deep-supervision U-Net with Dice + CE (the reference) and with a boundary loss, a Tversky loss, a
 slice-presence head and AdamW. Bottom panel: ENet with Dice + CE (the reference) and with a constant-weight boundary loss, a
 boundary loss whose weight rises over training and a class-weighted CE. Lines are the 3-epoch moving average of the fold mean, from epoch 3. The reference runs are read from metrics/, the variants from the
-folders pulled from Snellius (deck/snellius_inventory/loss_runs).
+folders pulled from Snellius (~/snellius_inventory/loss_runs).
 Writes loss_training_curves.{png,pdf} and loss_training_curves.csv (one row per panel, variant and epoch).
 """
 
@@ -17,7 +17,7 @@ from pathlib import Path
 
 import numpy as np
 
-from utils import INK, N_FOLDS, REPO, pyplot, read_csv, write_csv
+from utils import INPUTS, INK, N_FOLDS, REPO, pyplot, read_csv, write_csv
 from plot_style import EARTH  # tools/ is on the path once utils is imported
 
 SMOOTH = 3
@@ -208,7 +208,7 @@ def main(argv: list[str] | None = None) -> None:
     )
     parser.add_argument("--metrics-dir", type=Path, default=REPO / "metrics")
     parser.add_argument(
-        "--runs-dir", type=Path, default=REPO / "deck/snellius_inventory/loss_runs"
+        "--runs-dir", type=Path, default=INPUTS / "snellius_inventory/loss_runs"
     )
     parser.add_argument("--out", type=Path, default=REPO / "figures")
     args = parser.parse_args(argv)

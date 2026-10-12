@@ -3,7 +3,7 @@
     python dataset_analysis/dataset_overview_figure.py [--out figures]
 
 Left: the 40 CT scans of the full training set (tables of the Snellius analysis in
-deck/snellius_inventory/deficiencies_scur0049): slices per scan split by slice thickness, and a ring of the pooled voxel
+~/deficiencies_scur0049): slices per scan split by slice thickness, and a ring of the pooled voxel
 share of the four organs among the foreground voxels, the background share in its centre. Right: the upgraded baseline
 (ENet, Dice + CE, full pre-processing; 4 folds x 3 seeds, 40 validation patients) per organ: the kernel density of the
 120 patient-seed values of 3D Dice and of HD95, the tick under a curve being the median, and the number of values with
@@ -20,13 +20,13 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import FancyBboxPatch, Rectangle
 from scipy.stats import gaussian_kde
 
-from utils import CLASSES, REPO, load_cv_runs, pyplot, read_csv, write_csv
+from utils import INPUTS, CLASSES, REPO, load_cv_runs, pyplot, read_csv, write_csv
 
 sys.path.insert(0, str(REPO / "tools"))
 from plot_style import BACKGROUND_COLOR, EARTH_LABEL_COLORS, GRID_COLOR, PALETTE  # noqa: E402
 
 EXPERIMENT = "full_cv4_enet_dice_ce"
-DATA_DIR = REPO / "deck/snellius_inventory/deficiencies_scur0049"
+DATA_DIR = INPUTS / "deficiencies_scur0049"
 ORGANS = list(CLASSES.values())
 ORGAN_COLORS = {name: EARTH_LABEL_COLORS[idx] for idx, name in CLASSES.items()}
 FIG_W, FIG_H = 11.9, 3.3  # inches, the slide slot

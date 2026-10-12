@@ -1,6 +1,6 @@
 """Every result of the final model's comparison on one figure: per-organ Dice, mean Dice, HD95 and ASSD.
 
-    python dataset_analysis/all_results_table.py [--data-dir deck/results_for_figures] [--out figures]
+    python dataset_analysis/all_results_table.py [--data-dir ~/results_for_figures] [--out figures]
 
 all_results_table.{png,pdf}: one row per model or pipeline step, tinted by group (our three models, the steps of the
 final model's prediction pipeline, nnU-Net). The dots give the Dice of the four organs on one axis, a star the mean of
@@ -18,12 +18,12 @@ from pathlib import Path
 
 from final_model_comparison import ORGAN_COLORS
 from postprocessing_figure import BETTER, WORSE, change_text
-from utils import REPO, pyplot, read_csv, write_csv
+from utils import INPUTS, REPO, pyplot, read_csv, write_csv
 
 sys.path.insert(0, str(REPO / "tools"))
 from plot_style import EARTH, PALETTE, tint  # noqa: E402
 
-DATA_DIR = REPO / "deck/results_for_figures"
+DATA_DIR = INPUTS / "results_for_figures"
 ABLATION = "final_pipeline_ablation"
 ORGANS = ("esophagus", "heart", "trachea", "aorta")
 # (group, then (label, source, key)): source "models" = all_models_per_patient_3d_metrics.csv summary, "pipeline" = ablation

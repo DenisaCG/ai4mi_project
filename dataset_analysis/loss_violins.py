@@ -9,7 +9,7 @@ distance-weighted error term, and a boundary loss with weight 0.08, with weight 
 A violin is the density of the 40 changes of one organ, blue above zero (the variant is better on those patients) and red
 below; the box is the quartiles, the diamond the mean, and the number under the organ name is how many of the 40 patients
 improved. HD95 reductions beyond +-30 mm are drawn as triangles on the edge. The reference runs are read from metrics/, the
-variants from the folders pulled from Snellius (deck/snellius_inventory/loss_runs). Drawn at the size of its slide slot.
+variants from the folders pulled from Snellius (~/snellius_inventory/loss_runs). Drawn at the size of its slide slot.
 Writes loss_violins.{png,pdf} and loss_violins.csv (one row per variant, organ and metric).
 """
 
@@ -18,7 +18,7 @@ from pathlib import Path
 
 import numpy as np
 
-from utils import CLASSES, INK, N_FOLDS, REPO, pyplot, read_csv, write_csv
+from utils import INPUTS, CLASSES, INK, N_FOLDS, REPO, pyplot, read_csv, write_csv
 
 SLOT_WIDTH, SLOT_HEIGHT = (
     11.4,
@@ -192,7 +192,7 @@ def main(argv: list[str] | None = None) -> None:
     )
     parser.add_argument("--metrics-dir", type=Path, default=REPO / "metrics")
     parser.add_argument(
-        "--runs-dir", type=Path, default=REPO / "deck/snellius_inventory/loss_runs"
+        "--runs-dir", type=Path, default=INPUTS / "snellius_inventory/loss_runs"
     )
     parser.add_argument("--out", type=Path, default=REPO / "figures")
     args = parser.parse_args(argv)

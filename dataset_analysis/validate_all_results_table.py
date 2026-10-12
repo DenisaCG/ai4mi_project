@@ -1,6 +1,6 @@
 """Audit the all-results table's numbers: row counts, uniqueness, bounds and agreement with the bundle.
 
-    python dataset_analysis/validate_all_results_table.py [--data-dir deck/results_for_figures]
+    python dataset_analysis/validate_all_results_table.py [--data-dir ~/results_for_figures]
 
 Checks that every row of the table appears once with all seven values; that the rows of a model equal its OVERALL and
 per-organ rows of summary_per_organ_and_overall.csv; that the mean Dice of a row equals the mean of its four organ
