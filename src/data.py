@@ -22,10 +22,17 @@ from torch.utils.data import DataLoader, Dataset
 
 from dataset import SliceDataset
 from src.distance_maps import WithDistanceMaps
+from src.losses.boundary_schedule import WithDistMaps
 import src.augment  # noqa: F401  registers online augmentations
 from src.config import REPO
 from src.registry import build
 from utils import class2one_hot
+
+
+def has_val(cfg: dict) -> bool:
+    """False for a final run (data.preprocess.retains == 0): every labelled patient trains, there is no val split."""
+    p = cfg["data"]["preprocess"]
+    return not (p and p.get("retains") == 0)
 
 
 def ensure_sliced(cfg: dict) -> None:
@@ -153,6 +160,8 @@ def build_dataset(cfg: dict, split: str) -> Dataset:
     if split != "test" and cfg.get("loss", {}).get("name") in ("boundary", "ce_dice_boundary", "weighted_ce_dice_boundary", "ce_dice_hd"):
         classes = cfg["loss"]["kwargs"].get("boundary_idk")
         dataset = WithDistanceMaps(dataset, list(range(1, d["num_classes"])) if classes is None else classes)
+    if cfg.get("loss", {}).get("name") == "boundary_dice_ce":  # scheduled boundary loss: maps for every split, see src/losses/boundary_schedule.py
+        dataset = WithDistMaps(dataset)
     return dataset
 
 

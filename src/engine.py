@@ -15,7 +15,7 @@ import src.losses  # noqa: F401  registers losses
 import src.models  # noqa: F401  registers models
 import src.optim  # noqa: F401  registers optimizers / schedulers
 from src.checkpoint import load_checkpoint, rng_state, save_checkpoint, set_rng_state
-from src.data import build_loader
+from src.data import build_loader, has_val
 from src.metrics import epoch_metrics, slice_counts
 from src.presence import presence_loss
 from src.registry import build
@@ -70,6 +70,8 @@ def run_epoch(split: str, net: nn.Module, loader, loss_fn, optimizer, device, cf
                 if dist_maps is not None:
                     dist_maps = dist_maps.to(device)
                 loss, probs = supervised_loss(net(img), gt, loss_fn, dist_maps)
+                if hasattr(loss_fn, "combine") and dist_maps is not None:  # scheduled boundary loss: once, at full resolution, after the deep-supervision sum
+                    loss = loss_fn.combine(loss, probs, dist_maps)
                 if cfg["train"]["presence_weight"]:
                     loss = loss + cfg["train"]["presence_weight"] * presence_loss(net.presence_logits, gt)
                 if training:
@@ -130,7 +132,9 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
     optimizer = build("optim", cfg["optim"]["name"], params=net.parameters(), **cfg["optim"]["kwargs"])
     scheduler = build("scheduler", cfg["scheduler"]["name"], optimizer=optimizer,
                       epochs=cfg["train"]["epochs"], **cfg["scheduler"]["kwargs"])
-    loaders = {split: build_loader(cfg, split, device) for split in ("train", "val")}
+    final = not has_val(cfg)  # retains 0: all labelled patients train, no val split; the last epoch is the model
+    splits = ("train",) if final else ("train", "val")
+    loaders = {split: build_loader(cfg, split, device) for split in splits}
     loss_kwargs = dict(cfg["loss"]["kwargs"])
     if cfg["loss"]["name"] in ("weighted_ce", "weighted_ce_dice", "weighted_ce_dice_boundary"):
         loss_kwargs["weights"] = compute_class_weights(
@@ -138,11 +142,13 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
             num_classes=cfg["data"]["num_classes"],
         )
         LOG.info("Class weights: %s", loss_kwargs["weights"])
+    if cfg["loss"]["name"] == "boundary_dice_ce":
+        loss_kwargs["epochs"] = cfg["train"]["epochs"]  # the weight schedule runs over the configured epochs
     loss_fn = build("loss", cfg["loss"]["name"], num_classes=cfg["data"]["num_classes"],
                     **loss_kwargs)
-    LOG.info("model %s: %.2fM parameters | train %d slices, val %d slices", cfg["model"]["name"],
+    LOG.info("model %s: %.2fM parameters | train %d slices, val %s slices", cfg["model"]["name"],
              sum(p.numel() for p in net.parameters()) / 1e6,
-             len(loaders["train"].dataset), len(loaders["val"].dataset))
+             len(loaders["train"].dataset), "no" if final else len(loaders["val"].dataset))
 
     ckpt_dir, csv_path = run_dir / "checkpoints", run_dir / "epochs.csv"
     select = cfg["train"]["select_metric"]
@@ -162,9 +168,11 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
 
     for epoch in range(start, cfg["train"]["epochs"]):
         t0 = time.time()
+        if hasattr(loss_fn, "set_epoch"):
+            loss_fn.set_epoch(epoch)
         lr = optimizer.param_groups[0]["lr"]
         row = {"epoch": epoch}
-        for split, opt in (("train", optimizer), ("val", None)):
+        for split, opt in ((s, optimizer if s == "train" else None) for s in splits):
             loss, counts, stems = run_epoch(split, net, loaders[split], loss_fn, opt, device, cfg,
                                             f">> {split:5s} ({epoch:4d})")
             row[f"{split}_loss"] = loss
@@ -174,12 +182,13 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
         if scheduler:
             scheduler.step()
 
-        improved = best_epoch < 0 or math.isnan(best) or row[select] > best
+        improved = final or best_epoch < 0 or math.isnan(best) or row[select] > best  # final: every epoch overwrites best.pt
         if improved:
             best, best_epoch = row[select], epoch
             save_checkpoint(ckpt_dir / "best.pt", {"epoch": epoch, "model": net.state_dict(), "config": cfg})
             torch.save(net, ckpt_dir / "best_model.pkl")  # whole pickled net, as the submission asks
-            np.savez_compressed(run_dir / "val_counts_best.npz", counts=val_counts, stems=np.array(val_stems))
+            if not final:
+                np.savez_compressed(run_dir / "val_counts_best.npz", counts=val_counts, stems=np.array(val_stems))
         row |= {"lr": lr, "seconds": round(time.time() - t0, 1), "is_best": improved}
         write_row(csv_path, row)
         save_checkpoint(ckpt_dir / "last.pt", {
@@ -189,11 +198,15 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
 
         wb.log(row, step=epoch)
         every = cfg["wandb"]["image_every"]
-        if wb.run and every and (epoch % every == 0 or epoch == cfg["train"]["epochs"] - 1):
+        if not final and wb.run and every and (epoch % every == 0 or epoch == cfg["train"]["epochs"] - 1):
             wb.log_overlays(*overlay_samples(net, loaders["val"].dataset, device),
                             cfg["data"]["class_names"], step=epoch)
-        LOG.info("epoch %3d | train loss %.4f | val loss %.4f | val dice fg %.4f (legacy %.4f)%s | %.0fs",
-                 epoch, row["train_loss"], row["val_loss"], row["val_dice_fg"],
-                 row["val_dice_legacy_fg"], "  *best*" if improved else "", row["seconds"])
+        if final:
+            LOG.info("epoch %3d | train loss %.4f | train dice fg %.4f | %.0fs",
+                     epoch, row["train_loss"], row["train_dice_fg"], row["seconds"])
+        else:
+            LOG.info("epoch %3d | train loss %.4f | val loss %.4f | val dice fg %.4f (legacy %.4f)%s | %.0fs",
+                     epoch, row["train_loss"], row["val_loss"], row["val_dice_fg"],
+                     row["val_dice_legacy_fg"], "  *best*" if improved else "", row["seconds"])
 
     return best_epoch

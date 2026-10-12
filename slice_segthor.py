@@ -341,14 +341,44 @@ def get_splits(src_path: Path, retains: int, fold: int, num_folds: int | None = 
     training_ids: list[str] = [e for e in ids if e not in validation_ids]
     assert (len(training_ids) + len(validation_ids)) == len(ids)
 
-    test_ids: list[str] = sorted(map_(lambda p: Path(p.stem).stem, (src_path / 'test').glob('*')))
+    test_ids: list[str] = sorted(map_(lambda p: Path(p.stem).stem, (src_path / 'test').glob('Patient_*.nii.gz')))  # not test.zip, which sits next to the CTs
     print(f"Founds {len(test_ids)} test ids")
     print(test_ids[:10])
 
     return training_ids, validation_ids, test_ids
 
 
+def slice_test_only(args: argparse.Namespace) -> None:
+    """Slice <source_dir>/test into an already built final dataset (--dest_dir) with ITS settings.
+
+    The HU window / z-score, target spacing and ROI size come from the files the training patients wrote
+    (ct_norm_stats.json, roi_crop.json) and are never recomputed from the test CTs. Use it when the test CTs
+    arrive after the final model was trained. Appends the test patients to spacing.pkl.
+    """
+    src_path, dest_path = Path(args.source_dir), Path(args.dest_dir)
+    assert dest_path.is_dir(), f"{dest_path} is not a built dataset"
+    assert not (dest_path / "test").exists(), f"{dest_path / 'test'} already exists"
+    stats_file, crop_file = dest_path / NORM_STATS_FILE, dest_path / "roi_crop.json"
+    norm_stats = json.loads(stats_file.read_text()) if stats_file.exists() else None
+    crop = json.loads(crop_file.read_text()) if crop_file.exists() else None
+    spacing_source = crop or norm_stats or {}
+    target_spacing = tuple(spacing_source["target_spacing"]) if spacing_source.get("target_spacing") else None
+    crop_size = crop["size"] if crop else None
+    test_ids = sorted(Path(p.stem).stem for p in (src_path / "test").glob("Patient_*.nii.gz"))
+    assert test_ids, f"no Patient_*.nii.gz in {src_path / 'test'}"
+    print(f"Slicing {len(test_ids)} test CTs into {dest_path / 'test'} (target spacing {target_spacing}, crop {crop_size})")
+    pfun = partial(slice_patient, dest_path=dest_path / "test", source_path=src_path,
+                   shape=(crop_size, crop_size) if crop_size else tuple(args.shape), test_mode=True,
+                   gt_version=None, target_spacing=target_spacing, norm_stats=norm_stats, crop_size=crop_size)
+    resolutions = list(map(pfun, tqdm_(test_ids))) if args.process == 1 else Pool(args.process).map(pfun, test_ids)
+    spacing_file = dest_path / "spacing.pkl"
+    spacing = pickle.loads(spacing_file.read_bytes()) if spacing_file.exists() else {}
+    spacing_file.write_bytes(pickle.dumps(spacing | dict(zip(test_ids, resolutions)), pickle.HIGHEST_PROTOCOL))
+
+
 def main(args: argparse.Namespace):
+    if args.test_only:
+        return slice_test_only(args)
     src_path: Path = Path(args.source_dir)
     dest_path: Path = Path(args.dest_dir)
 
@@ -399,7 +429,10 @@ def main(args: argparse.Namespace):
     resolution_dict: dict[str, tuple[float, float, float]] = {}
 
     split_ids: list[str]
-    for mode, split_ids in zip(["train", "val"], [training_ids, validation_ids]):
+    # val is empty for a final run (--retains 0); test is sliced when <source>/test has CTs (image only, no GT)
+    for mode, split_ids in zip(["train", "val", "test"], [training_ids, validation_ids, test_ids]):
+        if not split_ids or (mode == "test" and args.retains != 0):  # test only for a final run: CV datasets stay as they were
+            continue
         dest_mode: Path = dest_path / mode
         print(f"Slicing {len(split_ids)} pairs to {dest_mode}")
 
@@ -432,8 +465,8 @@ def main(args: argparse.Namespace):
         for i in validation_ids:
             if retained[i] != 1.0:
                 print(f"WARNING: ROI window clips {i}: only {100 * retained[i]:.4f}% of its label voxels are retained")
-        print(f"ROI crop retention: train {min(retained[i] for i in training_ids):.4%} (min), "
-              f"val {min(retained[i] for i in validation_ids):.4%} (min)")
+        print(f"ROI crop retention: train {min(retained[i] for i in training_ids):.4%} (min)"
+              + (f", val {min(retained[i] for i in validation_ids):.4%} (min)" if validation_ids else ""))
 
     with open(dest_path / "spacing.pkl", 'wb') as f:
         pickle.dump(resolution_dict, f, pickle.HIGHEST_PROTOCOL)
@@ -461,6 +494,9 @@ def get_args() -> argparse.Namespace:
                              "(image-derived), T from the training labels; replaces the resize to --shape (needs --resample)")
     parser.add_argument('--gt_version', choices=list(EXPECTED_LABELS), default=None,
                         help="SEGTHOR version of the GT; asserts every patient has exactly its labels (default: no check)")
+    parser.add_argument('--test_only', action='store_true',
+                        help="slice only <source_dir>/test into the existing --dest_dir, with that dataset's own normalisation, "
+                             "spacing and ROI size (final run whose test CTs arrived after training)")
     parser.add_argument('--process', '-p', type=int, default=1,
                         help="The number of cores to use for processing")
     args = parser.parse_args()

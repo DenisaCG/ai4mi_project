@@ -11,7 +11,7 @@ class HoldoutTests(unittest.TestCase):
         validate_split(20, 5, 3)  # the last of four holdout splits
 
     def test_holdout_needs_fewer_validation_patients_than_patients(self):
-        for retains in (0, -1, 40, 41):
+        for retains in (-1, 40, 41):  # 0 is valid: a final run trains on every patient (tests/test_final_training.py)
             with self.assertRaises(ValueError, msg=retains):
                 validate_split(40, retains, 0)
 
