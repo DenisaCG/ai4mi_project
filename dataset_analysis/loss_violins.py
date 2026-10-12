@@ -4,8 +4,8 @@
 
 Top row: Dice gain, bottom row: HD95 reduction (so up always means better), for every validation patient (40) and organ of the
 four folds, seed 0 only (the one seed every variant has for all folds). Each variant is compared with the upgraded ENet
-(Dice + CE, full pre-processing) on the same patients: a class-weighted CE, a Tversky loss in place of the Dice term, a
-distance-weighted error term, and a boundary loss with weight 0.08, with weight 1.0 and with a weight that rises over training.
+(Dice + CE, full pre-processing) on the same patients: a class-weighted CE, a Tversky loss in place of the Dice term, and a
+boundary loss with weight 0.08, with weight 1.0 and with a weight that rises over training.
 A violin is the density of the 40 changes of one organ, blue above zero (the variant is better on those patients) and red
 below; the box is the quartiles, the diamond the mean, and the number under the organ name is how many of the 40 patients
 improved. HD95 reductions beyond +-30 mm are drawn as triangles on the edge. The reference runs are read from metrics/, the
@@ -40,7 +40,6 @@ MODELS = [
         [
             ("Class-weighted CE", "full_cv4_enet_weighted_dice_ce_preprocessing"),
             ("Tversky + CE", "full_cv4_enet_tversky_ce"),
-            ("Distance-weighted", "full_cv4_enet_dice_ce_hd"),
             ("Boundary 0.08", "full_cv4_enet_dice_ce_boundary_preprocessing"),
             ("Boundary 1.0", "full_cv4_enet_dice_ce_boundary_w1"),
             ("Boundary, rising", "full_cv4_enet_dice_ce_boundary_v2"),
