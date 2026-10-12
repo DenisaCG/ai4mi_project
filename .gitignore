@@ -20,3 +20,5 @@ jobsAndOutputs/*/outputs/
 runs
 wandb/
 metrics/comparison*
+
+predictions
