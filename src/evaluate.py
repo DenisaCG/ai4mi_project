@@ -1,6 +1,7 @@
 """3D evaluation of a run's best checkpoint.
 
     python -m src.evaluate --run runs/segthor_enet_ce/seed0
+    python -m src.evaluate --run runs/segthor_enet_ce/seed0 --rescore   # score the saved volumes again, no network
 
 Writes into the run directory:
   predictions/<split>/<stem>.png     2D predictions, grey = class * label_scale (viewer-compatible)
@@ -103,7 +104,7 @@ def score_volumes(preds: dict[str, np.ndarray], split: str, pattern: str, vol_di
                   sliced_spacing: dict, log) -> tuple[list[dict], dict]:
     """Stitches the 2D predictions of a split into volumes in `vol_dir` and scores them against the source GT
     (the test split is only stitched). Returns the metrics_3d.csv rows and the per-patient metric arrays."""
-    d, names = cfg["data"], cfg["data"]["class_names"]
+    d = cfg["data"]
     rows, per_metric = [], {m: {} for m in METRICS}
     for patient, slices in group_by_patient(preds, d["patient_regex"]).items():
         ref = nib.load(REPO / pattern.format(patient=patient))
@@ -121,16 +122,40 @@ def score_volumes(preds: dict[str, np.ndarray], split: str, pattern: str, vol_di
         nib.save(nib.Nifti1Image(vol, ref.affine, ref.header), out)
         if split == "test":
             continue
-        gt = np.asarray(ref.dataobj)
+        score_patient(split, patient, np.asarray(ref.dataobj), vol, spacing, cfg, rows, per_metric)
+    return rows, per_metric
+
+
+def score_patient(split: str, patient: str, gt: np.ndarray, vol: np.ndarray, spacing, cfg: dict,
+                  rows: list[dict], per_metric: dict) -> None:
+    """Scores one stitched volume against its GT: appends its metrics_3d.csv rows and fills per_metric."""
+    d, names = cfg["data"], cfg["data"]["class_names"]
+    for m in METRICS:
+        per_metric[m][patient] = np.full(d["num_classes"], np.nan)
+    for k in range(1, d["num_classes"]):
+        values = volume_metrics(gt == k, vol == k, spacing)
         for m in METRICS:
-            per_metric[m][patient] = np.full(d["num_classes"], np.nan)
-        for k in range(1, d["num_classes"]):
-            values = volume_metrics(gt == k, vol == k, spacing)
-            for m in METRICS:
-                per_metric[m][patient][k] = values[m]
-            rows.append({"split": split, "patient": patient, "class_idx": k, "class_name": names[k],
-                         "gt_voxels": int(np.count_nonzero(gt == k)),
-                         "pred_voxels": int(np.count_nonzero(vol == k)), **values})
+            per_metric[m][patient][k] = values[m]
+        rows.append({"split": split, "patient": patient, "class_idx": k, "class_name": names[k],
+                     "gt_voxels": int(np.count_nonzero(gt == k)),
+                     "pred_voxels": int(np.count_nonzero(vol == k)), **values})
+
+
+def rescore_volumes(split: str, pattern: str, vol_dir: Path, cfg: dict, log) -> tuple[list[dict], dict]:
+    """Scores the volumes an earlier evaluation saved in `vol_dir` again, e.g. after a metric change.
+    Needs neither the network nor the sliced data, and scores exactly the voxels that were scored before."""
+    rows, per_metric = [], {m: {} for m in METRICS}
+    for path in sorted(vol_dir.glob("*.nii.gz")):
+        patient = path.name.removesuffix(".nii.gz")
+        ref = nib.load(REPO / pattern.format(patient=patient))
+        spacing = tuple(float(s) for s in ref.header.get_zooms()[:3])
+        vol = np.asarray(nib.load(path).dataobj)
+        if vol.shape != ref.shape:
+            raise ValueError(f"{path}: shape {vol.shape} differs from the GT {ref.shape}")
+        log.info("%s %s: rescoring %s, spacing %s mm", split, patient, path, np.round(spacing, 3).tolist())
+        score_patient(split, patient, np.asarray(ref.dataobj), vol, spacing, cfg, rows, per_metric)
+    if not rows:
+        raise FileNotFoundError(f"no saved volumes in {vol_dir}")
     return rows, per_metric
 
 
@@ -150,16 +175,22 @@ def write_csv(path: Path, rows: list[dict]) -> None:
         writer.writerows(rows)
 
 
-def evaluate(run_dir: Path, device: torch.device) -> dict:
+def evaluate(run_dir: Path, device: torch.device, rescore: bool = False) -> dict:
     cfg = read_yaml((run_dir / "config.yaml").read_text())
     log = setup_logging(run_dir / "eval.log")
     d, names = cfg["data"], cfg["data"]["class_names"]
-    if "pretrained" in cfg["model"]["kwargs"]:
-        cfg["model"]["kwargs"]["pretrained"] = False  # the weights come from the checkpoint
-    net = build_model(cfg, device)
-    best = load_checkpoint(run_dir / "checkpoints" / "best.pt")
-    net.load_state_dict(best["model"])
-    log.info("evaluating %s, best epoch %d, on %s", run_dir, best["epoch"], device)
+    if rescore:
+        if cfg["model"]["kwargs"].get("slice_presence"):
+            raise ValueError("--rescore does not redo the presence-gated volumes; evaluate this run in full")
+        best = {"epoch": read_json(run_dir / "summary.json")["eval"]["best_epoch"]}
+        log.info("rescoring the saved volumes of %s (best epoch %d)", run_dir, best["epoch"])
+    else:
+        if "pretrained" in cfg["model"]["kwargs"]:
+            cfg["model"]["kwargs"]["pretrained"] = False  # the weights come from the checkpoint
+        net = build_model(cfg, device)
+        best = load_checkpoint(run_dir / "checkpoints" / "best.pt")
+        net.load_state_dict(best["model"])
+        log.info("evaluating %s, best epoch %d, on %s", run_dir, best["epoch"], device)
 
     spacing_pkl = REPO / d["root"] / "spacing.pkl"
     sliced_spacing = pickle.loads(spacing_pkl.read_bytes()) if spacing_pkl.exists() else {}
@@ -169,11 +200,18 @@ def evaluate(run_dir: Path, device: torch.device) -> dict:
         splits["test"] = d["test_source_pattern"]
     rows, gated_rows, presence_rows, block = [], [], [], {}
     for split, pattern in splits.items():
-        preds, presence, targets = predict(net, cfg, split, device, run_dir / "predictions" / split)
-        log.info("%s: predicted %d slices -> %s", split, len(preds), run_dir / "predictions" / split)
-        if pattern is None:
-            continue
-        split_rows, per_metric = score_volumes(preds, split, pattern, run_dir / "volumes" / split, cfg, sliced_spacing, log)
+        if rescore:
+            if split == "test":
+                continue  # test volumes are only stitched, never scored
+            split_rows, per_metric = rescore_volumes(split, pattern, run_dir / "volumes" / split, cfg, log)
+            presence = {}
+        else:
+            preds, presence, targets = predict(net, cfg, split, device, run_dir / "predictions" / split)
+            log.info("%s: predicted %d slices -> %s", split, len(preds), run_dir / "predictions" / split)
+            if pattern is None:
+                continue
+            split_rows, per_metric = score_volumes(preds, split, pattern, run_dir / "volumes" / split, cfg,
+                                                   sliced_spacing, log)
         rows += split_rows
         if presence:
             gated = {stem: gate_prediction(pred, presence[stem]) for stem, pred in preds.items()}
@@ -201,7 +239,7 @@ def evaluate(run_dir: Path, device: torch.device) -> dict:
     log.info("3D %s", scores or "no scored split (data.source_pattern is null): predictions only")
 
     manifest = read_json(run_dir / "manifest.json")
-    if manifest.get("wandb_id"):
+    if manifest.get("wandb_id") and not rescore:
         wb = WandbLogger(cfg, run_dir, run_name=f"{cfg['experiment']}/seed{cfg['seed']}",
                          run_id=manifest["wandb_id"], job_type="eval")
         wb.summary({f"eval3d/{k}": v for k, v in block.items()})
@@ -219,8 +257,11 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--run", type=Path, required=True, help="run directory, e.g. runs/<experiment>/seed0")
     parser.add_argument("--device", choices=("cuda", "cpu"), default="cuda",
                         help="falls back to cpu when no GPU is visible")
+    parser.add_argument("--rescore", action="store_true",
+                        help="score the volumes saved by an earlier evaluation again (e.g. after a metric change); "
+                             "no network, no sliced data needed")
     args = parser.parse_args(argv)
-    evaluate(args.run.resolve(), resolve_device(args.device))
+    evaluate(args.run.resolve(), resolve_device(args.device), rescore=args.rescore)
 
 
 if __name__ == "__main__":
