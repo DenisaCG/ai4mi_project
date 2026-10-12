@@ -1,0 +1,29 @@
+#!/bin/bash
+#SBATCH --job-name=final_predict
+#SBATCH --partition=gpu_a100
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --gpus=1
+#SBATCH --time=00:45:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Predict the test CTs with the final runs of one experiment (seeds 0-2): seed average, largest component of heart and
+# trachea, stitched onto each CT's grid. Also records the forward-pass time per patient (inference_time.csv).
+# Run it once per model on the same partition (gpu_a100) so the inference times are comparable.
+# Output: predictions/<experiment>/final/Patient_XX.nii.gz (the submission), plus ensemble_no_lcc/, seed<k>/, checks.csv.
+# Usage: sbatch --job-name=predict_final_best_model --export=ALL,EXPERIMENT=final_best_model jobsAndOutputs/pipeline/jobs/final_predict.job
+#   SEEDS (optional, default "0 1 2").  TTA=1: also average over the geometric test-time augmentations (src/eval_tta.py),
+#   written to predictions/<experiment>_tta so the plain predictions are kept.
+set -euo pipefail
+EXPERIMENT="${EXPERIMENT:?set EXPERIMENT=<experiment name> via --export}"
+SEEDS="${SEEDS:-0 1 2}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+RUNS=""; for s in $SEEDS; do RUNS="$RUNS runs/$EXPERIMENT/seed$s"; done
+for r in $RUNS; do [ -f "$r/.done" ] || { echo "$r is not finished"; exit 1; }; done
+nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv
+if [ "${TTA:-0}" = "1" ]; then
+  python -m src.predict_test --runs $RUNS --out "predictions/${EXPERIMENT}_tta" --device cuda --tta
+else
+  python -m src.predict_test --runs $RUNS --out "predictions/$EXPERIMENT" --device cuda
+fi

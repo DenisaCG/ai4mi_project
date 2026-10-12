@@ -1,6 +1,6 @@
 # FINAL model 1/2: midterm improved ENet (full_cv4_enet_dice_ce recipe: Dice(fg)+CE(all), no augmentation, 50 epochs),
 # trained on ALL 40 labelled patients (train + val), then predicts the 20 test CTs. See docs/final_training.md.
-# NEEDS CODE SUPPORT (docs/final_training.md step 1): retains: 0 = no validation split, last-epoch checkpoint, test split sliced.
+# Needs retains: 0 (all patients train, no val split), the last epoch as the model, and the test split: see docs/final_training.md.
 # Until then slice_segthor's validate_split rejects retains 0, so this fails fast instead of silently using a holdout.
 experiment: final_enet_dice_ce
 notes: Final run, midterm improved ENet on all 40 train+val patients, last epoch, predicts the 20 test patients

@@ -1,0 +1,81 @@
+#!/bin/bash
+#SBATCH --job-name=final_smoke
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=01:30:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# CPU smoke test of the whole final path on a 6-patient stand-in (real test CTs are not needed):
+#   unit tests -> two tiny final runs (retains 0, no val) -> test CTs appear AFTER training (slice_segthor --test_only)
+#   -> src.predict_test: seed average + LCC(heart, trachea), checks, inference time.
+# Also checks that --test_only gives the same test slices as slicing the test CTs together with training.
+# Usage: sbatch jobsAndOutputs/pipeline/jobs/final_smoke.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
+echo "--- unit tests (final path) ---"
+python -m unittest -v tests.test_final_training tests.test_tta
+
+SCR="/scratch-shared/$USER/final_smoke"; rm -rf "$SCR"; mkdir -p "$SCR/src/train" "$SCR/src_with_test/train" "$SCR/src_with_test/test"
+SRC_DATA="$PWD/data/segthor_train_full/train"
+for i in 01 02 03 04 05 06; do
+  ln -s "$SRC_DATA/Patient_$i" "$SCR/src/train/Patient_$i"; ln -s "$SRC_DATA/Patient_$i" "$SCR/src_with_test/train/Patient_$i"
+done
+# stand-in test CTs: two labelled patients' CTs under new ids (CT only is read in test mode)
+ln -s "$SRC_DATA/Patient_07/Patient_07.nii.gz" "$SCR/src_with_test/test/Patient_91.nii.gz"
+ln -s "$SRC_DATA/Patient_08/Patient_08.nii.gz" "$SCR/src_with_test/test/Patient_92.nii.gz"
+echo "not a patient" > "$SCR/src_with_test/test/test.zip"
+
+SET=(data.preprocess.source_dir="$SCR/src" "data.test_source_pattern=$SCR/src_with_test/test/{patient}.nii.gz"
+     data.num_workers=0 data.batch_size=4 paths.run_root="$SCR/runs" paths.metrics_dir="$SCR/metrics")
+echo "--- two tiny final runs (no test CTs yet) ---"
+for seed in 0 1; do
+  python -O -m src.train --config configs/final_best_model.yaml --smoke --device cpu --set seed=$seed "${SET[@]}"
+done
+RUNS=$(ls -d "$SCR"/runs/final_best_model/seed*)
+echo "runs: $RUNS"
+for r in $RUNS; do test -f "$r/checkpoints/best.pt" && test ! -f "$r/val_counts_best.npz" && echo "ok $r: best.pt, no val files"; done
+python - <<PY
+import csv, glob
+for f in sorted(glob.glob("$SCR/runs/final_best_model/seed*/epochs.csv")):
+    rows = list(csv.DictReader(open(f))); print(f, "columns:", [c for c in rows[0] if c.startswith("val_")] or "no val_ columns", "epochs", len(rows))
+PY
+
+echo "--- predict (test CTs added after training: --test_only runs inside) ---"
+# the run's source_dir has no test/: put the test CTs there now
+mkdir "$SCR/src/test"; ln -s "$SCR/src_with_test/test/Patient_91.nii.gz" "$SCR/src/test/"; ln -s "$SCR/src_with_test/test/Patient_92.nii.gz" "$SCR/src/test/"; echo x > "$SCR/src/test/test.zip"
+python -m src.predict_test --runs $RUNS --out "$SCR/predictions" --device cpu --batch-size 8
+python - <<PY
+import csv, nibabel as nib
+for r in csv.DictReader(open("$SCR/predictions/inference_time.csv")):
+    if r["run"].endswith("seed0"):
+        ct = nib.load("$SCR/src_with_test/test/" + r["patient"] + ".nii.gz")
+        assert int(r["slices"]) > 16, f"only {r['slices']} slices predicted: the smoke debug_samples cap leaked into prediction"
+        print(r["patient"], "slices predicted:", r["slices"], "| CT z:", ct.shape[2])
+PY
+cat "$SCR/predictions/checks.csv"; cat "$SCR/predictions/inference_time.csv"
+echo "--- same with --tta (separate output, plain probabilities and timings of the runs are kept) ---"
+python -m src.predict_test --runs $RUNS --out "$SCR/predictions_tta" --device cpu --batch-size 8 --tta
+cat "$SCR/predictions_tta/checks.csv"
+ls $(echo $RUNS | cut -d" " -f1)/probs_tta/test $(echo $RUNS | cut -d" " -f1)/eval/inference_time_tta.csv $(echo $RUNS | cut -d" " -f1)/eval/inference_time.csv
+python - <<PY
+import nibabel as nib, numpy as np
+a = nib.load("$SCR/predictions/final/Patient_91.nii.gz").get_fdata(); b = nib.load("$SCR/predictions_tta/final/Patient_91.nii.gz").get_fdata()
+print("plain vs TTA prediction, Patient_91: voxels that differ", int((a != b).sum()), "of", a.size, "| TTA labels", np.unique(b).astype(int).tolist())
+PY
+ls "$SCR/predictions" "$SCR/predictions/final"
+
+echo "--- --test_only equals slicing the test CTs together with training ---"
+python slice_segthor.py --source_dir "$SCR/src_with_test" --dest_dir "$SCR/direct" --retains 0 --resample median \
+    --normalize ct_window_zscore --crop roi --gt_version corrected -p 4 > "$SCR/direct.log"
+ROOT=$(python - <<PY
+from src.config import load_config
+print(load_config("configs/final_best_model.yaml", ["data.preprocess.source_dir=$SCR/src"])["data"]["root"])
+PY
+)
+echo "dataset of the runs: $ROOT"
+ls "$ROOT"; ls "$SCR/direct"
+diff -r "$ROOT/test/img" "$SCR/direct/test/img" && echo "test slices identical (test_only vs sliced with training)"

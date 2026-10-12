@@ -1,6 +1,6 @@
 # FINAL model 2/2: our best model, on ALL 40 labelled patients, then predicts the 20 test CTs. See docs/final_training.md.
 # Best model by CV (docs/final_training.md): ResEnc DS U-Net + strong geometric, 50 epochs. CV counterpart: full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep.
-# NEEDS CODE SUPPORT: same as final_enet_dice_ce.yaml (retains: 0, no val, last epoch, test split).
+# Needs retains: 0 (all patients train, no val split), the last epoch as the model, and the test split: see docs/final_training.md.
 experiment: final_best_model
 notes: Final run, best model (ResEnc DS U-Net + strong geometric, 50 epochs) on all 40 train+val patients
 seed: 0   # 0 is the default; final runs use seeds 0, 1, 2 via --set seed=k

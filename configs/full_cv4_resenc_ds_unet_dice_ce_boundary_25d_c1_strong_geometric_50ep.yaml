@@ -1,0 +1,43 @@
+# Held-out estimate for a 2.5D + boundary variant of final_best_model. Combines three existing CV configs, nothing else changes:
+# - full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep: model, strong geometric augmentation (p0.7, rot +-15, scale 0.8-1.2, shift 10%), 50 epochs
+# - full_cv4_resenc_ds_unet_dice_ce_25d_c1: data.context 1 / in_channels 3 (slice +-1 neighbours as channels, centre-slice target)
+# - full_cv4_resenc_ds_unet_dice_ce_boundary: boundary_dice_ce loss, alpha 1.0 -> 0.1 linear over the 50 epochs
+# Same 4-fold CV on the 40 patients (30 train / 10 val, split seed 0), same preprocessing. Report the LAST epoch. No early stopping (not implemented).
+# Runs as full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep_fold0..3.
+experiment: full_cv4_resenc_ds_unet_dice_ce_boundary_25d_c1_strong_geometric_50ep
+notes: 2.5D (3 slices as channels) + boundary loss (alpha 1.0 -> 0.1 over 50 epochs) + strong geometric augmentation, 50 epochs; residual-encoder deep-supervised U-Net, constant LR, full preprocessing, 4-fold CV on the 40-patient SEGTHOR train set
+seed: 0
+
+data:
+  context: 1
+  in_channels: 3
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+  augment:
+    - {name: random_rotation, kwargs: {p: 0.7, degrees: [-15.0, 15.0], fill: ct_window_low}}
+    - {name: random_scaling, kwargs: {p: 0.7, scales: [0.8, 1.2], fill: ct_window_low}}
+    - {name: random_shift, kwargs: {p: 0.7, max_fraction: 0.1, fill: ct_window_low}}
+
+model:
+  name: unet
+  kwargs: {block: residual, deep_supervision: true}
+
+loss:
+  name: boundary_dice_ce
+  kwargs:
+    alpha_start: 1.0
+    alpha_end: 0.1
+    boundary_idk: [1, 2, 3, 4]
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled
+
+train:
+  epochs: 50

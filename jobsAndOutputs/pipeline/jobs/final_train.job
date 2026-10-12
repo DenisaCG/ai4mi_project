@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH --job-name=final_train
+#SBATCH --partition=gpu_a100
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --gpus=1
+#SBATCH --time=02:30:00
+#SBATCH --array=0-2
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%A_%a.out
+
+# Train one final model (all 40 labelled patients, no validation, last epoch) per array task; task t = seed t.
+# Run final_build.job for the config first (slicing 40 patients inside a GPU job would use one core).
+# Resubmitting resumes a crashed/timed-out run and is a no-op for a finished one.
+# Usage: sbatch --job-name=final_best_model --export=ALL,CONFIG=configs/final_best_model.yaml jobsAndOutputs/pipeline/jobs/final_train.job
+#   Run the first seed alone with --array=0-0 before 1-2. The doc's estimate: ~1.5 h (ResEnc DS, 50 ep), ~1 h (ENet, 50 ep).
+set -euo pipefail
+CONFIG="${CONFIG:?set CONFIG=configs/<experiment>.yaml via --export}"
+SET="${SET:-}"
+SEED=$SLURM_ARRAY_TASK_ID
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv
+echo "$CONFIG seed $SEED"
+python -O -m src.train --config "$CONFIG" --set $SET seed=$SEED
+echo "[$(date -Is)] done: $CONFIG seed $SEED"
