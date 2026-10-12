@@ -53,13 +53,13 @@ The existing path is **config → dataset → training-only `Augmented` wrapper 
 registered augmentation factory** in [`src/augment.py`](../src/augment.py).
 Augmentation is online: dataset length and optimizer steps per epoch do not
 increase, and the same slice can be augmented on one presentation and unchanged
-on another. The six configs are:
+on another. The three configs, all on the improved ENet (`full_cv4_enet_dice_ce`), are:
 
-| BASE (`full_cv4_enet_ce`) | Improved (`full_cv4_enet_dice_ce`) |
-|---|---|
-| [`configs/full_cv4_enet_ce_rotation.yaml`](../configs/full_cv4_enet_ce_rotation.yaml) | [`configs/full_cv4_enet_dice_ce_rotation.yaml`](../configs/full_cv4_enet_dice_ce_rotation.yaml) |
-| [`configs/full_cv4_enet_ce_scaling.yaml`](../configs/full_cv4_enet_ce_scaling.yaml) | [`configs/full_cv4_enet_dice_ce_scaling.yaml`](../configs/full_cv4_enet_dice_ce_scaling.yaml) |
-| [`configs/full_cv4_enet_ce_gaussian_noise.yaml`](../configs/full_cv4_enet_ce_gaussian_noise.yaml) | [`configs/full_cv4_enet_dice_ce_gaussian_noise.yaml`](../configs/full_cv4_enet_dice_ce_gaussian_noise.yaml) |
+| Improved (`full_cv4_enet_dice_ce`) |
+|---|
+| [`configs/full_cv4_enet_dice_ce_rotation.yaml`](../configs/full_cv4_enet_dice_ce_rotation.yaml) |
+| [`configs/full_cv4_enet_dice_ce_scaling.yaml`](../configs/full_cv4_enet_dice_ce_scaling.yaml) |
+| [`configs/full_cv4_enet_dice_ce_gaussian_noise.yaml`](../configs/full_cv4_enet_dice_ce_gaussian_noise.yaml) |
 
 Single-transform metrics are stored under `metrics/augmentation_metrics/screening/`.
 The joint recipe's metrics are under `metrics/augmentation_metrics/joint/`.
