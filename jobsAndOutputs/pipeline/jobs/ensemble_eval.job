@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH --job-name=ensemble_eval
+#SBATCH --partition=gpu_a100
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --gpus=1
+#SBATCH --time=01:00:00
+#SBATCH --array=0-3
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%A_%a.out
+
+# Held-out score of the full prediction pipeline (seed average, geometric TTA, heart/trachea largest component) on the
+# labelled data, no retraining: task t = fold t, using that fold's seeds 0-2 (src/eval_ensemble.py). Then aggregate:
+#   python -m src.eval_ensemble --experiment <experiment> --aggregate
+# Usage: sbatch --job-name=ens_strong50 --export=ALL,EXPERIMENT=full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep jobsAndOutputs/pipeline/jobs/ensemble_eval.job
+set -euo pipefail
+EXPERIMENT="${EXPERIMENT:?set EXPERIMENT=<experiment name> via --export}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+python -m src.eval_ensemble --experiment "$EXPERIMENT" --fold "$SLURM_ARRAY_TASK_ID"

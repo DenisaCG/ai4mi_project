@@ -44,3 +44,5 @@ metrics/**/*.nii.gz
 
 # per-volume piece-count cache for connected_components_predictions.py (regenerated)
 figures/comparison/connected_components_predictions_cache/
+
+metrics/**/smoketest/

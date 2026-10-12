@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH --job-name=eval_tta
+#SBATCH --partition=gpu_mig
+#SBATCH --gpus=1
+#SBATCH --cpus-per-task=9
+#SBATCH --time=02:00:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Test-time augmentation on the finished CV runs of one experiment: src.eval_tta for every fold and seed, writing
+# eval/metrics_3d_tta.csv into each run (same checkpoints, same validation patients; the "none" variant must reproduce
+# eval/metrics_3d.csv). Then src.aggregate_tta pools them.
+# Usage: sbatch --export=ALL,EXPERIMENT=full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep jobsAndOutputs/pipeline/jobs/eval_tta.job
+set -euo pipefail
+EXPERIMENT="${EXPERIMENT:?set EXPERIMENT=<cv experiment without _fold<k>> via --export}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=1
+for fold in 0 1 2 3; do
+  for seed in 0 1 2; do
+    python -O -m src.eval_tta --run "runs/${EXPERIMENT}_fold${fold}/seed${seed}"
+    echo "[$(date -Is)] done: fold ${fold} seed ${seed}"
+  done
+done
+python -O -m src.aggregate_tta --experiment "$EXPERIMENT"
+echo "[$(date -Is)] done: TTA eval for ${EXPERIMENT}"

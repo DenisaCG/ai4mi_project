@@ -13,7 +13,7 @@ against the source GT with src.metrics_3d. Variants (per fold; seeds' probabilit
   avg_conf_<tau>       organ removed on slices where its highest probability on the slice is below tau
   avg_crf_<name>       DenseCRF on the averaged probabilities, per axial slice, on the 256x256 network grid
   seed0_crf_<name>     DenseCRF on seed 0's probabilities alone
-Reference rows (baseline, gate, lcc_heart_trachea, seed_vote*) are read from results/seed_ensemble/rows.csv.
+Reference rows (baseline, lcc_heart_trachea, seed_vote*) are read from results/seed_ensemble/rows.csv.
 The CRF configurations are a small grid picked on the scored folds, so its numbers are slightly optimistic.
 """
 
@@ -29,7 +29,7 @@ import numpy as np
 from PIL import Image
 
 from src.config import REPO, read_yaml
-from tools.gating_oracle import largest_component, recovery_table, run_dirs, table, volume_rows, write_csv
+from tools.postprocess_eval import largest_component, run_dirs, table, volume_rows, write_csv
 from tools.postprocess_filters import take_organs
 from tools.seed_ensemble import scaled_count_table
 
@@ -228,7 +228,7 @@ def main(argv: list[str] | None = None) -> None:
 
     repro = [r for r in rows if r["class_idx"] == -1]
     rows = [r for r in rows if r["class_idx"] != -1]
-    reference = read_rows(args.reference, ("baseline", "gate", "lcc_heart_trachea", "seed_vote", "seed_vote_lcc_heart_trachea"))
+    reference = read_rows(args.reference, ("baseline", "lcc_heart_trachea", "seed_vote", "seed_vote_lcc_heart_trachea"))
     reference += [r | {"variant": "baseline_seed0"} for r in reference if r["variant"] == "baseline" and r["run"].endswith("/seed0")]
     rows = reference + rows
     args.out.mkdir(parents=True, exist_ok=True)
@@ -239,7 +239,7 @@ def main(argv: list[str] | None = None) -> None:
         f"# Probability-based post-processing: {args.experiment}, {len(args.seeds)} seeds, {args.folds} folds, {len(tasks)} patients",
         "",
         f"Re-predicted argmax vs the stored volumes: {sum(v for *_, v in voxels)} voxels differ in total, at most {worst} in one patient volume (GPU rounding; 0 expected otherwise).",
-        "Reference rows (baseline, gate, lcc_heart_trachea, seed_vote*) come from results/seed_ensemble/rows.csv; baseline_seed0 is seed 0 alone.",
+        "Reference rows (baseline, lcc_heart_trachea, seed_vote*) come from results/seed_ensemble/rows.csv; baseline_seed0 is seed 0 alone.",
         "avg*: seeds' probabilities averaged, one result per fold. CRF settings (sxy, compat; sxy, srgb, compat): "
         + "; ".join(f"{n} gauss {c['gauss']} bilateral {c['bilateral']}" for n, c in CRF_CONFIGS.items()) + f"; {CRF_ITERATIONS} iterations.",
         "",
@@ -248,8 +248,6 @@ def main(argv: list[str] | None = None) -> None:
         table("fg HD95 and per-organ HD95 (mm)", "hd95", rows, classes, names, ".2f"),
         "",
         table("fg ASSD and per-organ ASSD (mm)", "assd", rows, classes, names, ".3f"),
-        "",
-        recovery_table(rows, classes),
         "",
         scaled_count_table(f"Rows with HD95 above {LONG_HD95:.0f} mm, per 40 patient x fold rows", rows, classes, names,
                            lambda r: int(r["hd95"] > LONG_HD95)),
