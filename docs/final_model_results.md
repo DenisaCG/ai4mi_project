@@ -4,13 +4,15 @@ Validation only (the 40 labelled patients, 4-fold cross-validation × 3 seeds). 
 
 Each value is the mean over the 12 runs (4 folds × 3 seeds), best checkpoint, unless marked otherwise.
 
+All five columns are the ResEnc U-Net with deep supervision, strong geometric augmentation and 50 epochs (`full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep`); the four others add a boundary loss and/or 2.5D input to it.
+
 - **Bold** is the best value in each row. The number in parentheses is its margin over the next-best value.
 - <u>Underline</u> is the second-best value.
 - For Dice higher is better. For HD95 and ASSD lower is better.
 - Post-processing: 3-seed softmax average, argmax, then largest connected component for heart and trachea only. With TTA, the softmax averaged over the seeds is the TTA-averaged softmax.
 - Raw TTA: the `all` variant of `src/eval_tta.py` (rotation, scale and shift), averaged over the runs.
 
-| Metric | 2D Dice+CE (final model) | 2D + boundary, ramped | 2D + boundary, fixed 0.08 | 2.5D + boundary, ramped | 2.5D + boundary, fixed 0.08 |
+| Metric | ResEnc DS U-Net, 2D Dice+CE (final model) | 2D + boundary, ramped | 2D + boundary, fixed 0.08 | 2.5D + boundary, ramped | 2.5D + boundary, fixed 0.08 |
 |---|---|---|---|---|---|
 | **Raw, no TTA** | | | | | |
 | Foreground Dice | 0.8926 | 0.8906 | 0.8915 | <u>0.8929</u> | **0.8930 (0.0001)** |
@@ -49,10 +51,10 @@ A margin of (0.0000) means the two best values are equal at the printed precisio
 
 ## Sources
 
-- Raw, no TTA: `runs/<experiment>_fold*/seed*/eval/metrics_3d.csv`, pooled in the same way as `results/pp_*/summary.md`.
-- Post-processed, no TTA: `results/pp_ctrl`, `results/pp_bnd`, `results/pp_w008`, `results/pp_25d`, `results/pp_25d_fixed08` (`summary.md`, row `avg_lcc_heart_trachea`).
+- Raw, no TTA: `metrics/<experiment>_fold*/seed*/metrics_3d.csv` (the 2.5D, fixed 0.08 arm is in `metrics/augmentation_metrics/joint/`), pooled in the same way as `metrics/postprocessing/pp_*/summary.md`.
+- Post-processed, no TTA: `metrics/postprocessing/pp_ctrl`, `pp_bnd`, `pp_w008`, `pp_25d`, `pp_25d_fixed08` (`summary.md`, row `avg_lcc_heart_trachea`).
 - Raw TTA: `runs/<experiment>_fold*/seed*/eval/metrics_3d_tta.csv` (written by `src/eval_tta.py`), variant `all`, pooled per run (organ mean over patients, foreground = mean of the four organs), then averaged over the 12 runs. The `none` variant of the same files reproduces the Raw, no TTA column.
-- Post-processed + TTA: `results/pp_tta_ctrl`, `results/pp_tta_bnd`, `results/pp_tta_w008`, `results/pp_tta_25d`, `results/pp_tta_25d_fixed08` (`rows.csv`, variant `avg_lcc_heart_trachea`), pooled with `tools.postprocess_eval.aggregate` like the `results/pp_*` tables. The `--save-probs` option of `src/eval_tta.py` (not yet on this branch) stores the TTA-averaged softmax and `tools.prob_postprocess score` post-processes it. As a check, running the same pipeline on the plain (`none`) predictions of the 2D Dice+CE arm reproduces `results/pp_ctrl` exactly (0.9001 / 7.53 / 1.451).
+- Post-processed + TTA: `results/pp_tta_ctrl`, `results/pp_tta_bnd`, `results/pp_tta_w008`, `results/pp_tta_25d`, `results/pp_tta_25d_fixed08` (`rows.csv`, variant `avg_lcc_heart_trachea`), pooled with `tools.postprocess_eval.aggregate` like the `metrics/postprocessing/pp_*` tables. The `--save-probs` option of `src/eval_tta.py` (not yet on this branch) stores the TTA-averaged softmax and `tools.prob_postprocess score` post-processes it. As a check, running the same pipeline on the plain (`none`) predictions of the 2D Dice+CE arm reproduces `results/pp_ctrl` exactly (0.9001 / 7.53 / 1.451).
 
 ## Updating this table
 
