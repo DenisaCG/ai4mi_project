@@ -10,8 +10,7 @@ giving the fold; the mean Dice and HD95 sit to its right, with the change of HD9
 postprocessing_all.{png,pdf}: every method, one row each. The line runs from the base mean to the mean of the method,
 teal where the metric improves and brick where it worsens; small dots are the 40 patients (mean over the seeds and over
 the 4 organs, beyond the axis drawn at its edge as triangles); the dashed line and bands are the base with its seed and
-fold spread. The oracle gates organs per slice with the ground truth, so it is an upper bound (hatched row, open marker),
-not a method. Methods scored on seed 0 only (CRF on seed 0, the slice-presence head) start from the base of their own
+fold spread. Methods scored on seed 0 only (CRF on seed 0, the slice-presence head) start from the base of their own
 runs, marked by a small tick.
 Writes also postprocessing.csv (every method).
 """
@@ -41,108 +40,98 @@ BASE_EXPERIMENT = "full_cv4_resenc_ds_unet_dice_ce"
 PP_DIR = REPO / "deck/snellius_inventory/igardner1_pp"
 # (key in the inventory, label, group, is the ground truth used)
 METHODS = [
-    ("gating_oracle:lcc", "Largest comp., all organs", "filter", False),
-    ("gating_oracle:lcc_esophagus", "Largest comp., esophagus", "filter", False),
-    ("gating_oracle:lcc_heart", "Largest comp., heart", "filter", False),
-    ("gating_oracle:lcc_trachea", "Largest comp., trachea", "filter", False),
-    ("gating_oracle:lcc_aorta", "Largest comp., aorta", "filter", False),
+    ("postprocess:lcc", "Largest comp., all organs", "filter"),
+    ("postprocess:lcc_esophagus", "Largest comp., esophagus", "filter"),
+    ("postprocess:lcc_heart", "Largest comp., heart", "filter"),
+    ("postprocess:lcc_trachea", "Largest comp., trachea", "filter"),
+    ("postprocess:lcc_aorta", "Largest comp., aorta", "filter"),
     (
-        "gating_oracle:lcc_heart_trachea",
+        "postprocess:lcc_heart_trachea",
         "Largest comp., heart + trachea",
         "filter",
-        False,
     ),
     (
-        "gating_oracle:esophagus_size_0.2x",
+        "postprocess:esophagus_size_0.2x",
         "Esophagus size filter 0.2x",
         "filter",
-        False,
     ),
     (
-        "gating_oracle:esophagus_size_0.05x",
+        "postprocess:esophagus_size_0.05x",
         "Esophagus size filter 0.05x",
         "filter",
-        False,
     ),
     (
-        "gating_oracle:esophagus_size_500vox",
+        "postprocess:esophagus_size_500vox",
         "Esophagus size filter 500 vox",
         "filter",
-        False,
     ),
-    ("gating_oracle:area_gate_5", "Area gate 5", "filter", False),
-    ("gating_oracle:area_gate_10", "Area gate 10", "filter", False),
-    ("gating_oracle:area_gate_25", "Area gate 25", "filter", False),
-    ("gating_oracle:area_gate_50", "Area gate 50", "filter", False),
-    ("gating_oracle:adjacent_gate", "Adjacent-slice gate", "filter", False),
-    ("postprocess_extra:zrun_3", "Min z-run 3", "filter", False),
-    ("postprocess_extra:zrun_5", "Min z-run 5", "filter", False),
-    ("postprocess_extra:zextent_0", "z-extent 0", "filter", False),
-    ("postprocess_extra:zextent_5", "z-extent 5", "filter", False),
-    ("postprocess_extra:slice_cc_0.1", "Per-slice component 0.1", "filter", False),
-    ("postprocess_extra:slice_cc_0.25", "Per-slice component 0.25", "filter", False),
-    ("postprocess_extra2:contiguous_z_0", "Contiguous z, gap 0", "filter", False),
-    ("postprocess_extra2:contiguous_z_2", "Contiguous z, gap 2", "filter", False),
-    ("postprocess_extra2:contiguous_z_5", "Contiguous z, gap 5", "filter", False),
-    ("postprocess_extra2:trachea_anchor_20", "Trachea anchor 20", "filter", False),
-    ("postprocess_extra2:trachea_anchor_40", "Trachea anchor 40", "filter", False),
-    ("postprocess_extra2:trachea_anchor_60", "Trachea anchor 60", "filter", False),
-    ("gating_oracle:heart_hull", "Heart convex hull", "shape", False),
-    ("gating_oracle:combo", "Combination 1", "combo", False),
-    ("postprocess_extra:combo", "Combination 2", "combo", False),
-    ("postprocess_extra:combo_hd95", "Combination 2, HD95-tuned", "combo", False),
-    ("postprocess_extra2:combo", "Combination 3", "combo", False),
-    ("postprocess_extra2:combo_hd95", "Combination 3, HD95-tuned", "combo", False),
-    ("seed_ensemble:seed_vote", "3-seed majority vote", "vote", False),
+    ("postprocess:area_gate_5", "Area gate 5", "filter"),
+    ("postprocess:area_gate_10", "Area gate 10", "filter"),
+    ("postprocess:area_gate_25", "Area gate 25", "filter"),
+    ("postprocess:area_gate_50", "Area gate 50", "filter"),
+    ("postprocess:adjacent_gate", "Adjacent-slice gate", "filter"),
+    ("postprocess_extra:zrun_3", "Min z-run 3", "filter"),
+    ("postprocess_extra:zrun_5", "Min z-run 5", "filter"),
+    ("postprocess_extra:zextent_0", "z-extent 0", "filter"),
+    ("postprocess_extra:zextent_5", "z-extent 5", "filter"),
+    ("postprocess_extra:slice_cc_0.1", "Per-slice component 0.1", "filter"),
+    ("postprocess_extra:slice_cc_0.25", "Per-slice component 0.25", "filter"),
+    ("postprocess_extra2:contiguous_z_0", "Contiguous z, gap 0", "filter"),
+    ("postprocess_extra2:contiguous_z_2", "Contiguous z, gap 2", "filter"),
+    ("postprocess_extra2:contiguous_z_5", "Contiguous z, gap 5", "filter"),
+    ("postprocess_extra2:trachea_anchor_20", "Trachea anchor 20", "filter"),
+    ("postprocess_extra2:trachea_anchor_40", "Trachea anchor 40", "filter"),
+    ("postprocess_extra2:trachea_anchor_60", "Trachea anchor 60", "filter"),
+    ("postprocess:heart_hull", "Heart convex hull", "shape"),
+    ("postprocess:combo", "Combination 1", "combo"),
+    ("postprocess_extra:combo", "Combination 2", "combo"),
+    ("postprocess_extra:combo_hd95", "Combination 2, HD95-tuned", "combo"),
+    ("postprocess_extra2:combo", "Combination 3", "combo"),
+    ("postprocess_extra2:combo_hd95", "Combination 3, HD95-tuned", "combo"),
+    ("seed_ensemble:seed_vote", "3-seed majority vote", "vote"),
     (
         "seed_ensemble:seed_vote_lcc_heart_trachea",
         "Vote + largest comp., heart + trachea",
         "vote",
-        False,
     ),
-    ("seed_ensemble:vote_t1", "Vote, 1 of 3 seeds", "vote", False),
-    ("seed_ensemble:vote_t2", "Vote, 2 of 3 seeds", "vote", False),
-    ("seed_ensemble:vote_t3", "Vote, 3 of 3 seeds", "vote", False),
-    ("seed_ensemble:vote_per_organ", "Vote, per-organ threshold", "vote", False),
+    ("seed_ensemble:vote_t1", "Vote, 1 of 3 seeds", "vote"),
+    ("seed_ensemble:vote_t2", "Vote, 2 of 3 seeds", "vote"),
+    ("seed_ensemble:vote_t3", "Vote, 3 of 3 seeds", "vote"),
+    ("seed_ensemble:vote_per_organ", "Vote, per-organ threshold", "vote"),
     (
         "seed_ensemble:vote_per_organ_lcc_heart_trachea",
         "Per-organ vote + largest comp.",
         "vote",
-        False,
     ),
-    ("seed_ensemble:vote_per_organ_hd95", "Per-organ vote, HD95-tuned", "vote", False),
+    ("seed_ensemble:vote_per_organ_hd95", "Per-organ vote, HD95-tuned", "vote"),
     (
         "seed_ensemble:vote_per_organ_hd95_lcc_heart_trachea",
         "HD95-tuned vote + largest comp.",
         "vote",
-        False,
     ),
-    ("prob_postprocess:avg", "Softmax average", "softmax", False),
+    ("prob_postprocess:avg", "Softmax average", "softmax"),
     (
         "prob_postprocess:avg_lcc_heart_trachea",
         "Softmax avg + largest comp., heart + trachea",
         "softmax",
-        False,
     ),
-    ("prob_postprocess:avg_conf_0.6", "Softmax avg, confidence 0.6", "softmax", False),
-    ("prob_postprocess:avg_conf_0.8", "Softmax avg, confidence 0.8", "softmax", False),
-    ("prob_postprocess:avg_conf_0.9", "Softmax avg, confidence 0.9", "softmax", False),
-    ("prob_postprocess:avg_crf_a", "Softmax avg + CRF a", "softmax", False),
-    ("prob_postprocess:avg_crf_b", "Softmax avg + CRF b", "softmax", False),
-    ("prob_postprocess:avg_crf_c", "Softmax avg + CRF c", "softmax", False),
-    ("prob_postprocess:seed0_crf_a", "CRF a, seed 0 only", "softmax", False),
-    ("prob_postprocess:seed0_crf_b", "CRF b, seed 0 only", "softmax", False),
-    ("prob_postprocess:seed0_crf_c", "CRF c, seed 0 only", "softmax", False),
-    ("presence:presence_head_gated", "Slice-presence head (4 runs)", "learned", False),
-    ("gating_oracle:gate", "Oracle gating (upper bound)", "oracle", True),
-    ("gating_oracle:gate_lcc", "Oracle gating + largest comp.", "oracle", True),
+    ("prob_postprocess:avg_conf_0.6", "Softmax avg, confidence 0.6", "softmax"),
+    ("prob_postprocess:avg_conf_0.8", "Softmax avg, confidence 0.8", "softmax"),
+    ("prob_postprocess:avg_conf_0.9", "Softmax avg, confidence 0.9", "softmax"),
+    ("prob_postprocess:avg_crf_a", "Softmax avg + CRF a", "softmax"),
+    ("prob_postprocess:avg_crf_b", "Softmax avg + CRF b", "softmax"),
+    ("prob_postprocess:avg_crf_c", "Softmax avg + CRF c", "softmax"),
+    ("prob_postprocess:seed0_crf_a", "CRF a, seed 0 only", "softmax"),
+    ("prob_postprocess:seed0_crf_b", "CRF b, seed 0 only", "softmax"),
+    ("prob_postprocess:seed0_crf_c", "CRF c, seed 0 only", "softmax"),
+    ("presence:presence_head_gated", "Slice-presence head (4 runs)", "learned"),
 ]
 # The rows of the slide figure, with the two-line labels it uses.
 SLIDE = {
-    "gating_oracle:lcc": "Largest comp., all organs",
-    "gating_oracle:lcc_heart": "Largest comp., heart only",
-    "gating_oracle:lcc_heart_trachea": "Largest comp., heart+trachea",
-    "gating_oracle:heart_hull": "Heart convex hull",
+    "postprocess:lcc": "Largest comp., all organs",
+    "postprocess:lcc_heart": "Largest comp., heart only",
+    "postprocess:lcc_heart_trachea": "Largest comp., heart+trachea",
+    "postprocess:heart_hull": "Heart convex hull",
     "postprocess_extra2:combo_hd95": "Combination, HD95-tuned",
     "seed_ensemble:seed_vote": "3-seed majority vote",
     "seed_ensemble:seed_vote_lcc_heart_trachea": "Vote + largest comp.",
@@ -157,7 +146,6 @@ GROUPS = {
     "vote": ("Vote", tint(PALETTE[1], 0.25)),
     "softmax": ("Softmax", tint(PALETTE[6], 0.4)),
     "learned": ("Learned", tint(PALETTE[4], 0.3)),
-    "oracle": ("Oracle", "none"),
 }
 TEXT = "#1A1A1A"
 VALUE = "#0A0A0A"
@@ -209,7 +197,7 @@ def collect(metrics_dir: Path, pp_dir: Path = PP_DIR) -> dict:
 
     Returns:
         The base summary (dice, hd95, seed and fold stds, per-patient values) and one dict per method of METHODS with
-        its label, group, oracle flag, run count, means, the base of its own runs and its per-patient values.
+        its label, group, run count, means, the base of its own runs and its per-patient values.
     """
     runs = load_cv_runs(metrics_dir, BASE_EXPERIMENT, METRICS)
     base = summarise(runs)
@@ -224,14 +212,13 @@ def collect(metrics_dir: Path, pp_dir: Path = PP_DIR) -> dict:
         for r in read_csv(pp_dir / f"pp_per_patient{name}.csv"):
             cells[r["method"] if tag else f"presence:{r['method']}"].append(r)
     methods = []
-    for key, label, group, oracle in METHODS:
+    for key, label, group in METHODS:
         row, rows = summary[key], cells[key]
         methods.append(
             {
                 "key": key,
                 "label": label,
                 "group": group,
-                "oracle": oracle,
                 "n_runs": int(row["n_runs"]),
                 "dice": float(row["dice"]),
                 "hd95": float(row["hd95"]),
@@ -440,10 +427,6 @@ def panel(ax, data: dict, metric: str, limits, higher_is_better: bool) -> None:
         background = GROUPS[m["group"]][1]
         if background != "none":
             ax.axhspan(y - 0.5, y + 0.5, color=background, lw=0, zorder=-1)
-        if m["oracle"]:
-            ax.axhspan(
-                y - 0.5, y + 0.5, facecolor="none", hatch="///", edgecolor=GRID_COLOR, lw=0
-            )  # fmt: skip
         improved = (m[metric] > start) == higher_is_better
         color = BETTER if improved else WORSE
         draw_cloud(ax, m[f"patient_{metric}"], y, limits, color)
@@ -451,11 +434,11 @@ def panel(ax, data: dict, metric: str, limits, higher_is_better: bool) -> None:
             ax.scatter(start, y, marker="|", s=90, color="#444444", lw=1.5, zorder=3)
         ax.plot(
             [start, m[metric]], [y, y], color=color, lw=2,
-            ls="--" if m["oracle"] else "-", solid_capstyle="butt", zorder=4,
+            ls="-", solid_capstyle="butt", zorder=4,
         )  # fmt: skip
         ax.scatter(
             min(max(m[metric], limits[0]), limits[1]), y, s=24, zorder=5,
-            color="white" if m["oracle"] else color, edgecolor=color, lw=1.5,
+            color=color, edgecolor=color, lw=1.5,
         )  # fmt: skip
     ax.set_xlim(*limits)
     ax.set_ylim(-0.6, n + 0.7)
@@ -494,7 +477,6 @@ def all_methods_figure(data: dict, plt):
     handles = [
         plt.Line2D([], [], color=BETTER, lw=2.2, label="improves"),
         plt.Line2D([], [], color=WORSE, lw=2.2, label="worsens"),
-        plt.Line2D([], [], marker="o", mfc="white", mec=BETTER, mew=2, ls="--", color=BETTER, label="oracle"),
         plt.Line2D([], [], marker="o", color="#777777", alpha=0.6, ls="", ms=4, label="patient"),
         plt.Rectangle((0, 0), 1, 1, fc=FOLD_BAND, alpha=0.34, label="seed \u00b11 SD"),
         plt.Rectangle((0, 0), 1, 1, fc=FOLD_BAND, alpha=0.18, label="fold \u00b11 SD"),
@@ -553,7 +535,6 @@ def table(data: dict) -> list[dict]:
                 "hd95": round(m["hd95"], 2),
                 "delta_dice": round(m["dice"] - m["own_base_dice"], 4),
                 "delta_hd95": round(m["hd95"] - m["own_base_hd95"], 2),
-                "uses_ground_truth": m["oracle"],
                 "on_slide": m["key"] in SLIDE,
             }
         )

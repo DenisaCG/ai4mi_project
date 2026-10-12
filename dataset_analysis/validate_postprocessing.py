@@ -8,7 +8,7 @@ patient and organ (12 runs for the single-model rows, 4 for the vote, softmax-av
 patients; that the plotted means equal the mean over the patients behind the dots; that the base of the runs a method was
 scored against equals the base model's (except for the seed-0 and slice-presence rows, which have their own); that a method
 repeated in several result folders of the inventory has identical numbers; that the slide rows are a subset of the methods;
-that only the two oracle rows use the ground truth; and that the metrics are in physical bounds.
+and that the metrics are in physical bounds.
 """
 
 import argparse
@@ -21,7 +21,6 @@ from utils import CLASSES, N_FOLDS, N_SEEDS, REPO, read_csv
 from validate_architecture_overview import require, summary_dice
 
 N_PATIENTS = 40
-ORACLES = {"gating_oracle:gate", "gating_oracle:gate_lcc"}
 OWN_BASE = (
     "presence:",
     "seed0_crf",
@@ -47,10 +46,6 @@ def main():
     )
     keys = [m["key"] for m in data["methods"]]
     require(len(set(keys)) == len(keys), "Duplicate method")
-    require(
-        {m["key"] for m in data["methods"] if m["oracle"]} == ORACLES,
-        "Only the two oracle rows may be marked as using the ground truth",
-    )
     require(set(SLIDE) <= set(keys), "A slide row is not a method")
     for m in data["methods"]:
         name = m["key"]
