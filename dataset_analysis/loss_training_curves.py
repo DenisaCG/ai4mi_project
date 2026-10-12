@@ -5,8 +5,7 @@
 Validation Dice logged after every epoch of training: per patient from counts summed over its slices, on the 256 x 256 model
 grid (not the original CT grid of the evaluation). Both panels use seed 0 only, the one seed every variant has for all 4 folds
 (4 runs per line, mean over the folds).
-Top panel: the ResEnc deep-supervision U-Net with Dice + CE (the reference) and with a boundary loss, a Tversky loss, a
-slice-presence head and AdamW. Bottom panel: ENet with Dice + CE (the reference) and with a constant-weight boundary loss, a
+Top panel: the ResEnc deep-supervision U-Net with Dice + CE (the reference) and with a Tversky loss. Bottom panel: ENet with Dice + CE (the reference) and with a constant-weight boundary loss, a
 boundary loss whose weight rises over training and a class-weighted CE. Lines are the 3-epoch moving average of the fold mean, from epoch 3. The reference runs are read from metrics/, the variants from the
 folders pulled from Snellius (~/snellius_inventory/loss_runs).
 Writes loss_training_curves.{png,pdf} and loss_training_curves.csv (one row per panel, variant and epoch).
@@ -39,12 +38,6 @@ PANELS = [
                 "full_cv4_resenc_ds_unet_tversky_ce",
                 "loss_runs",
                 EARTH[1],
-            ),
-            (
-                "AdamW optimiser",
-                "full_cv4_resenc_ds_unet_dice_ce_adamw",
-                "loss_runs",
-                EARTH[3],
             ),
         ],
     ),
