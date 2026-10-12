@@ -35,43 +35,6 @@
 | all runs (12 runs) | 2.64 ± 0.63 | 4.39 ± 1.72 | 2.93 ± 1.66 | 2.70 ± 0.63 | 3.17 ± 0.66 |
 | std of fold means | 0.50 | 1.48 | 0.94 | 0.58 | 0.54 |
 
-## full_cv4_dino_nostem_unet_dice_ce
-
-4/12 runs found: INCOMPLETE, missing fold0/seed1, fold0/seed2, fold1/seed1, fold1/seed2, fold2/seed1, fold2/seed2, fold3/seed1, fold3/seed2
-
-### Dice
-
-|  | esophagus | heart | trachea | aorta | fg |
-|---|---|---|---|---|---|
-| fold 0 (1 runs) | 0.631 | 0.896 | 0.851 | 0.880 | 0.815 |
-| fold 1 (1 runs) | 0.584 | 0.918 | 0.838 | 0.845 | 0.796 |
-| fold 2 (1 runs) | 0.664 | 0.910 | 0.799 | 0.872 | 0.811 |
-| fold 3 (1 runs) | 0.642 | 0.923 | 0.826 | 0.876 | 0.817 |
-| all runs (4 runs) | 0.630 ± 0.034 | 0.912 ± 0.012 | 0.828 ± 0.022 | 0.868 ± 0.016 | 0.810 ± 0.009 |
-| std of fold means | 0.034 | 0.012 | 0.022 | 0.016 | 0.009 |
-
-### HD95 mm
-
-|  | esophagus | heart | trachea | aorta | fg |
-|---|---|---|---|---|---|
-| fold 0 (1 runs) | 26.0 | 13.5 | 19.1 | 22.7 | 20.3 |
-| fold 1 (1 runs) | 15.6 | 16.6 | 31.8 | 10.3 | 18.6 |
-| fold 2 (1 runs) | 7.9 | 14.5 | 19.9 | 16.6 | 14.7 |
-| fold 3 (1 runs) | 15.6 | 13.4 | 14.9 | 21.2 | 16.3 |
-| all runs (4 runs) | 16.3 ± 7.4 | 14.5 ± 1.5 | 21.4 ± 7.3 | 17.7 ± 5.6 | 17.5 ± 2.5 |
-| std of fold means | 7.4 | 1.5 | 7.3 | 5.6 | 2.5 |
-
-### ASSD mm
-
-|  | esophagus | heart | trachea | aorta | fg |
-|---|---|---|---|---|---|
-| fold 0 (1 runs) | 3.94 | 3.94 | 2.83 | 3.12 | 3.46 |
-| fold 1 (1 runs) | 3.97 | 3.72 | 2.79 | 2.50 | 3.25 |
-| fold 2 (1 runs) | 2.26 | 3.45 | 2.91 | 2.53 | 2.79 |
-| fold 3 (1 runs) | 3.24 | 3.07 | 2.10 | 2.91 | 2.83 |
-| all runs (4 runs) | 3.35 ± 0.80 | 3.55 ± 0.37 | 2.66 ± 0.37 | 2.76 ± 0.30 | 3.08 ± 0.33 |
-| std of fold means | 0.80 | 0.37 | 0.37 | 0.30 | 0.33 |
-
 ## full_cv4_dino_unet_dice_ce
 
 12/12 runs found: complete
@@ -923,43 +886,6 @@
 | all runs (12 runs) | 2.38 ± 0.64 | 4.14 ± 2.28 | 1.66 ± 0.62 | 2.29 ± 0.90 | 2.62 ± 0.73 |
 | std of fold means | 0.67 | 1.43 | 0.25 | 0.86 | 0.51 |
 
-## full_cv4_resenc_ds_unet_dice_ce_adamw
-
-4/12 runs found: INCOMPLETE, missing fold0/seed1, fold0/seed2, fold1/seed1, fold1/seed2, fold2/seed1, fold2/seed2, fold3/seed1, fold3/seed2
-
-### Dice
-
-|  | esophagus | heart | trachea | aorta | fg |
-|---|---|---|---|---|---|
-| fold 0 (1 runs) | 0.805 | 0.919 | 0.911 | 0.920 | 0.889 |
-| fold 1 (1 runs) | 0.717 | 0.930 | 0.871 | 0.890 | 0.852 |
-| fold 2 (1 runs) | 0.798 | 0.926 | 0.879 | 0.907 | 0.877 |
-| fold 3 (1 runs) | 0.771 | 0.921 | 0.877 | 0.902 | 0.868 |
-| all runs (4 runs) | 0.773 ± 0.040 | 0.924 ± 0.005 | 0.885 ± 0.018 | 0.905 ± 0.012 | 0.871 ± 0.016 |
-| std of fold means | 0.040 | 0.005 | 0.018 | 0.012 | 0.016 |
-
-### HD95 mm
-
-|  | esophagus | heart | trachea | aorta | fg |
-|---|---|---|---|---|---|
-| fold 0 (1 runs) | 8.6 | 28.1 | 30.5 | 10.6 | 19.4 |
-| fold 1 (1 runs) | 15.7 | 15.2 | 11.5 | 13.1 | 13.9 |
-| fold 2 (1 runs) | 6.2 | 13.9 | 9.4 | 17.9 | 11.9 |
-| fold 3 (1 runs) | 15.6 | 10.5 | 10.9 | 19.6 | 14.2 |
-| all runs (4 runs) | 11.5 ± 4.9 | 16.9 ± 7.7 | 15.6 ± 10.0 | 15.3 ± 4.2 | 14.8 ± 3.2 |
-| std of fold means | 4.9 | 7.7 | 10.0 | 4.2 | 3.2 |
-
-### ASSD mm
-
-|  | esophagus | heart | trachea | aorta | fg |
-|---|---|---|---|---|---|
-| fold 0 (1 runs) | 1.54 | 6.88 | 1.94 | 1.75 | 3.03 |
-| fold 1 (1 runs) | 3.00 | 2.82 | 1.78 | 1.97 | 2.39 |
-| fold 2 (1 runs) | 1.50 | 3.15 | 1.51 | 2.20 | 2.09 |
-| fold 3 (1 runs) | 2.44 | 2.76 | 1.55 | 2.44 | 2.30 |
-| all runs (4 runs) | 2.12 ± 0.73 | 3.90 ± 1.99 | 1.69 ± 0.20 | 2.09 ± 0.30 | 2.45 ± 0.40 |
-| std of fold means | 0.73 | 1.99 | 0.20 | 0.30 | 0.40 |
-
 ## full_cv4_resenc_ds_unet_dice_ce_augmented
 
 12/12 runs found: complete
@@ -996,80 +922,6 @@
 | fold 3 (3 runs) | 2.33 ± 0.25 | 2.38 ± 0.12 | 1.46 ± 0.08 | 2.29 ± 0.64 | 2.11 ± 0.21 |
 | all runs (12 runs) | 1.91 ± 0.56 | 3.26 ± 1.66 | 1.42 ± 0.29 | 1.91 ± 0.62 | 2.13 ± 0.36 |
 | std of fold means | 0.58 | 1.41 | 0.24 | 0.51 | 0.19 |
-
-## full_cv4_resenc_ds_unet_dice_ce_boundary
-
-4/12 runs found: INCOMPLETE, missing fold0/seed1, fold0/seed2, fold1/seed1, fold1/seed2, fold2/seed1, fold2/seed2, fold3/seed1, fold3/seed2
-
-### Dice
-
-|  | esophagus | heart | trachea | aorta | fg |
-|---|---|---|---|---|---|
-| fold 0 (1 runs) | 0.795 | 0.923 | 0.903 | 0.930 | 0.888 |
-| fold 1 (1 runs) | 0.700 | 0.932 | 0.884 | 0.877 | 0.848 |
-| fold 2 (1 runs) | 0.787 | 0.930 | 0.875 | 0.916 | 0.877 |
-| fold 3 (1 runs) | 0.770 | 0.913 | 0.873 | 0.901 | 0.864 |
-| all runs (4 runs) | 0.763 ± 0.043 | 0.925 ± 0.009 | 0.884 ± 0.014 | 0.906 ± 0.023 | 0.869 ± 0.017 |
-| std of fold means | 0.043 | 0.009 | 0.014 | 0.023 | 0.017 |
-
-### HD95 mm
-
-|  | esophagus | heart | trachea | aorta | fg |
-|---|---|---|---|---|---|
-| fold 0 (1 runs) | 7.1 | 27.0 | 29.9 | 7.2 | 17.8 |
-| fold 1 (1 runs) | 13.6 | 24.3 | 28.7 | 13.5 | 20.0 |
-| fold 2 (1 runs) | 7.3 | 13.1 | 12.6 | 13.1 | 11.5 |
-| fold 3 (1 runs) | 15.0 | 15.3 | 12.6 | 17.6 | 15.1 |
-| all runs (4 runs) | 10.8 ± 4.2 | 20.0 ± 6.8 | 21.0 ± 9.7 | 12.8 ± 4.3 | 16.1 ± 3.7 |
-| std of fold means | 4.2 | 6.8 | 9.7 | 4.3 | 3.7 |
-
-### ASSD mm
-
-|  | esophagus | heart | trachea | aorta | fg |
-|---|---|---|---|---|---|
-| fold 0 (1 runs) | 1.49 | 6.63 | 2.14 | 1.44 | 2.93 |
-| fold 1 (1 runs) | 2.73 | 4.08 | 3.14 | 2.29 | 3.06 |
-| fold 2 (1 runs) | 1.68 | 3.02 | 1.58 | 1.68 | 1.99 |
-| fold 3 (1 runs) | 2.82 | 3.19 | 1.53 | 2.13 | 2.42 |
-| all runs (4 runs) | 2.18 ± 0.69 | 4.23 ± 1.67 | 2.10 ± 0.75 | 1.88 ± 0.40 | 2.60 ± 0.49 |
-| std of fold means | 0.69 | 1.67 | 0.75 | 0.40 | 0.49 |
-
-## full_cv4_resenc_ds_unet_dice_ce_presence
-
-4/12 runs found: INCOMPLETE, missing fold0/seed1, fold0/seed2, fold1/seed1, fold1/seed2, fold2/seed1, fold2/seed2, fold3/seed1, fold3/seed2
-
-### Dice
-
-|  | esophagus | heart | trachea | aorta | fg |
-|---|---|---|---|---|---|
-| fold 0 (1 runs) | 0.757 | 0.925 | 0.900 | 0.900 | 0.871 |
-| fold 1 (1 runs) | 0.700 | 0.927 | 0.874 | 0.881 | 0.846 |
-| fold 2 (1 runs) | 0.775 | 0.926 | 0.886 | 0.900 | 0.872 |
-| fold 3 (1 runs) | 0.755 | 0.928 | 0.866 | 0.888 | 0.859 |
-| all runs (4 runs) | 0.747 ± 0.032 | 0.926 ± 0.001 | 0.881 ± 0.015 | 0.892 ± 0.010 | 0.862 ± 0.012 |
-| std of fold means | 0.032 | 0.001 | 0.015 | 0.010 | 0.012 |
-
-### HD95 mm
-
-|  | esophagus | heart | trachea | aorta | fg |
-|---|---|---|---|---|---|
-| fold 0 (1 runs) | 10.2 | 27.2 | 8.0 | 22.9 | 17.1 |
-| fold 1 (1 runs) | 15.9 | 12.1 | 23.0 | 16.0 | 16.8 |
-| fold 2 (1 runs) | 7.3 | 12.4 | 10.0 | 27.5 | 14.3 |
-| fold 3 (1 runs) | 13.5 | 8.0 | 11.1 | 18.2 | 12.7 |
-| all runs (4 runs) | 11.8 ± 3.8 | 14.9 ± 8.4 | 13.0 ± 6.8 | 21.2 ± 5.1 | 15.2 ± 2.1 |
-| std of fold means | 3.8 | 8.4 | 6.8 | 5.1 | 2.1 |
-
-### ASSD mm
-
-|  | esophagus | heart | trachea | aorta | fg |
-|---|---|---|---|---|---|
-| fold 0 (1 runs) | 2.21 | 6.20 | 1.75 | 2.22 | 3.10 |
-| fold 1 (1 runs) | 3.11 | 2.66 | 2.81 | 2.51 | 2.77 |
-| fold 2 (1 runs) | 1.68 | 2.85 | 1.30 | 3.14 | 2.24 |
-| fold 3 (1 runs) | 2.69 | 2.58 | 1.64 | 2.32 | 2.31 |
-| all runs (4 runs) | 2.42 ± 0.62 | 3.57 ± 1.76 | 1.88 ± 0.65 | 2.55 ± 0.41 | 2.60 ± 0.40 |
-| std of fold means | 0.62 | 1.76 | 0.65 | 0.41 | 0.40 |
 
 ## full_cv4_resenc_ds_unet_tversky_ce
 
