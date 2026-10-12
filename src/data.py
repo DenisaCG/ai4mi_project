@@ -32,7 +32,7 @@ from utils import class2one_hot
 
 def has_val(cfg: dict) -> bool:
     """False for a final run (data.preprocess.retains == 0): every labelled patient trains, there is no val split."""
-    p = cfg["data"]["preprocess"]
+    p = cfg["data"].get("preprocess")  # saved configs of runs from before data.preprocess existed lack the key
     return not (p and p.get("retains") == 0)
 
 
