@@ -186,9 +186,7 @@ def fit(cfg: dict, run_dir: Path, device: torch.device, resume: bool, wb) -> int
             row |= epoch_metrics(split, counts, stems, cfg)
             if split == "val":
                 val_counts, val_stems = counts, stems
-        if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
-            scheduler.step(row[select])
-        elif scheduler:
+        if scheduler:
             scheduler.step()
 
         improved = final or best_epoch < 0 or math.isnan(best) or row[select] > best  # final: every epoch overwrites best.pt
