@@ -1,0 +1,31 @@
+# Same 4-fold cross-validation, preprocessing, loss, optimizer and deep supervision as full_cv4_resenc_ds_unet_dice_ce.yaml
+# (40 patients, 30 train / 10 val per fold, split seed 0, constant LR, 25 epochs); only the encoder changes: ResNet34
+# (src/models/resnet_unet.py), randomly initialised, instead of the residual encoder. The arms full_cv4_resnet34_pretrained_unet_dice_ce
+# and full_cv4_resnet34_scratch_unet_dice_ce differ only in model.kwargs.pretrained. Runs as <experiment>_fold0..3 (seed 0).
+# Pretrained weights must be cached on the login node first: ~/torch_cache/hub/checkpoints/resnet34-b627a593.pth
+# (https://download.pytorch.org/models/resnet34-b627a593.pth, sha256 b627a593bcbe140c234610266fe4f8ae95ea42fc881d091c9b6052e6b1d0590f).
+experiment: full_cv4_resnet34_scratch_unet_dice_ce
+notes: "2D U-Net with a ResNet34 encoder (randomly initialised; z-scored slice repeated to 3 channels, no ImageNet mean/std) at strides 2-32 plus the trainable full-resolution stage 0 of the residual-encoder U-Net, same decoder and deep supervision, CE (all classes) + soft Dice (foreground), constant LR, full preprocessing, 4-fold CV on the full 40-patient SEGTHOR train set. Compared with the residual-encoder baseline this changes four things at once: encoder, norm (BatchNorm in the ResNet34), block layout (3/4/6/3) and stem."
+seed: 0
+
+data:
+  preprocess: {source_dir: data/segthor_train_full, gt_version: corrected, retains: 10, fold: 4, seed: 0, resample: median, normalize: ct_window_zscore, crop: roi}
+  source_pattern: data/segthor_train_full/train/{patient}/GT.nii.gz
+
+model:
+  name: resnet34_unet
+  kwargs: {pretrained: false, deep_supervision: true}
+
+loss:
+  name: dice_ce
+  kwargs:
+    ce_idk: [0, 1, 2, 3, 4]   # CE sees background
+    dice_idk: [1, 2, 3, 4]
+    ce_weight: 1.0
+    dice_weight: 1.0
+
+eval:
+  classes: [1, 2, 3, 4]
+
+wandb:
+  mode: disabled
