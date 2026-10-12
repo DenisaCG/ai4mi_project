@@ -47,3 +47,6 @@ metrics/**/smoketest/
 
 # generated figures (code in dataset_analysis/ and tools/)
 figures/
+
+# illustrations and local data
+assets/

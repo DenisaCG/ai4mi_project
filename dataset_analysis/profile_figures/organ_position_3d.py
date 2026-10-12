@@ -12,10 +12,7 @@ Usage:
 
 from __future__ import annotations
 
-<<<<<<< HEAD
 import itertools
-=======
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 import sys
 from pathlib import Path
 
@@ -33,10 +30,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools"))
 from plot_style import EARTH_LABEL_COLORS  # noqa: E402
 from profile_figures.common import build_arg_parser, out_subdir, title_block  # noqa: E402
-<<<<<<< HEAD
-=======
-from profile_figures.label_bounding_box import REFERENCE_LABEL, _box_faces, box_edges, label_boxes  # noqa: E402
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 from profile_figures.label_makeup_rings import ORDER  # noqa: E402
 from utils import CLASSES  # noqa: E402
 
@@ -44,7 +37,6 @@ LIMITS = [(-130, 130), (-110, 130), (-160, 240)]
 BOX_ASPECT = (1, 1.2, 1.7)
 AXIS_NAMES = ("left–right (mm)", "anterior–posterior (mm)", "superior–inferior (mm)")
 INK = "#333333"
-<<<<<<< HEAD
 REFERENCE_LABEL = 2
 
 
@@ -104,8 +96,6 @@ def box_faces(start: np.ndarray, size: np.ndarray) -> list[np.ndarray]:
             face[:, v] += size[v] * np.array([0, 0, 1, 1])
             faces.append(face)
     return faces
-=======
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
 
 def organ_centers(labels: pd.DataFrame, label: int) -> np.ndarray:
@@ -124,13 +114,9 @@ def organ_centers(labels: pd.DataFrame, label: int) -> np.ndarray:
     return rows[columns].to_numpy() - reference[columns].to_numpy()
 
 
-<<<<<<< HEAD
 def axis_angle(
     ax, start: tuple[float, float, float], end: tuple[float, float, float]
 ) -> float:
-=======
-def axis_angle(ax, start: tuple[float, float, float], end: tuple[float, float, float]) -> float:
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     """On-screen angle of a line in a 3D axes, folded so text along it is never upside down.
 
     Args:
@@ -141,7 +127,6 @@ def axis_angle(ax, start: tuple[float, float, float], end: tuple[float, float, f
     Returns:
         Angle in degrees within [-90, 90].
     """
-<<<<<<< HEAD
     points = [
         ax.transData.transform(proj3d.proj_transform(*p, ax.get_proj())[:2])
         for p in (start, end)
@@ -149,10 +134,6 @@ def axis_angle(ax, start: tuple[float, float, float], end: tuple[float, float, f
     angle = np.degrees(
         np.arctan2(points[1][1] - points[0][1], points[1][0] - points[0][0])
     )
-=======
-    points = [ax.transData.transform(proj3d.proj_transform(*p, ax.get_proj())[:2]) for p in (start, end)]
-    angle = np.degrees(np.arctan2(points[1][1] - points[0][1], points[1][0] - points[0][0]))
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     return angle - 180 if angle > 90 else (angle + 180 if angle < -90 else angle)
 
 
@@ -164,13 +145,9 @@ def style_axes(ax) -> None:
     ax.set_box_aspect(BOX_ASPECT)
     for axis, name in zip((ax.xaxis, ax.yaxis, ax.zaxis), AXIS_NAMES):
         axis.set_major_locator(MultipleLocator(50))
-<<<<<<< HEAD
         axis.set_major_formatter(
             FuncFormatter(lambda v, _: f"{v:.0f}" if v % 100 == 0 else "")
         )
-=======
-        axis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:.0f}" if v % 100 == 0 else ""))
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
         axis.pane.set_facecolor("white")
         axis.pane.set_edgecolor("#DDDDDD")
         axis.set_label_text(name, fontsize=8.5, fontweight="bold")
@@ -200,7 +177,6 @@ def draw_organ(ax, labels: pd.DataFrame, label: int) -> None:
     """
     color = EARTH_LABEL_COLORS[label]
     starts, sizes = label_boxes(labels, label, reference=REFERENCE_LABEL)
-<<<<<<< HEAD
     edges = [
         edge for start, size in zip(starts, sizes) for edge in box_edges(start, size)
     ]
@@ -227,13 +203,6 @@ def draw_organ(ax, labels: pd.DataFrame, label: int) -> None:
         depthshade=False,
         zorder=5,
     )
-=======
-    edges = [edge for start, size in zip(starts, sizes) for edge in box_edges(start, size)]
-    ax.add_collection3d(Line3DCollection(edges, colors=color, linewidths=0.8, alpha=0.4, zorder=1))
-    ax.add_collection3d(Line3DCollection(box_edges(np.median(starts, axis=0), np.median(sizes, axis=0)), colors=color, linewidths=2.1, zorder=2))
-    x, y, z = organ_centers(labels, label).T
-    ax.scatter(x, y, z, s=20, color=color, edgecolor="white", linewidth=0.8, depthshade=False, zorder=5)
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
 
 def draw_all_organs(ax, labels: pd.DataFrame, present: list[int]) -> None:
@@ -248,7 +217,6 @@ def draw_all_organs(ax, labels: pd.DataFrame, present: list[int]) -> None:
         color = EARTH_LABEL_COLORS[label]
         starts, sizes = label_boxes(labels, label, reference=REFERENCE_LABEL)
         start, size = np.median(starts, axis=0), np.median(sizes, axis=0)
-<<<<<<< HEAD
         ax.add_collection3d(
             Poly3DCollection(
                 box_faces(start, size),
@@ -275,12 +243,6 @@ def draw_all_organs(ax, labels: pd.DataFrame, present: list[int]) -> None:
             depthshade=False,
             zorder=5,
         )
-=======
-        ax.add_collection3d(Poly3DCollection(_box_faces(start, size), facecolor=color, alpha=0.07, edgecolor="none", zorder=1))
-        ax.add_collection3d(Line3DCollection(box_edges(start, size), colors=color, linewidths=1.3, zorder=2))
-        x, y, z = np.median(organ_centers(labels, label), axis=0)
-        ax.scatter([x], [y], [z], s=30, color=color, edgecolor="white", linewidth=1.0, depthshade=False, zorder=5)
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
 
 def main():
@@ -292,21 +254,16 @@ def main():
     present = [k for k in ORDER if k in set(labels.label)]
 
     fig = plt.figure(figsize=(3.44 * (len(present) + 1), 5.6))
-<<<<<<< HEAD
     title_block(
         fig,
         "Organ Position and Extent in 3D",
         "One box per patient, bold box = median, dot = organ center; positions relative to the heart center.",
     )
-=======
-    title_block(fig, "Organ Position and Extent in 3D", "One box per patient, bold box = median, dot = organ center; positions relative to the heart center.")
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     axes = []
     for i in range(len(present) + 1):
         ax = fig.add_subplot(1, len(present) + 1, i + 1, projection="3d")
         if i < len(present):
             draw_organ(ax, labels, present[i])
-<<<<<<< HEAD
             ax.set_title(
                 CLASSES[present[i]],
                 fontsize=15,
@@ -319,12 +276,6 @@ def main():
             ax.set_title(
                 "all organs", fontsize=15, fontweight="bold", color=INK, pad=-4
             )
-=======
-            ax.set_title(CLASSES[present[i]], fontsize=15, fontweight="bold", color=EARTH_LABEL_COLORS[present[i]], pad=-4)
-        else:
-            draw_all_organs(ax, labels, present)
-            ax.set_title("all organs", fontsize=15, fontweight="bold", color=INK, pad=-4)
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
         style_axes(ax)
         axes.append(ax)
     fig.subplots_adjust(left=0.0, right=1.0, top=0.86, bottom=0.02, wspace=-0.02)

@@ -57,7 +57,6 @@ from utils import CLASSES  # noqa: E402
 # actually have voxels before drawing.
 ALL_LABELS = list(CLASSES)
 # (rule name, dimensions, scipy connectivity rank)
-<<<<<<< HEAD
 RULES = [
     ("2D · 4", 2, 1),
     ("2D · 8", 2, 2),
@@ -65,9 +64,6 @@ RULES = [
     ("3D · 18", 3, 2),
     ("3D · 26", 3, 3),
 ]
-=======
-RULES = [("2D · 4", 2, 1), ("2D · 8", 2, 2), ("3D · 6", 3, 1), ("3D · 18", 3, 2), ("3D · 26", 3, 3)]
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 MAX_PIECES = 3
 # Organs that the first dataset has merged into another label, as new label -> label it was part of.
 SPLIT_FROM = {4: 1}
@@ -91,13 +87,9 @@ def piece_counts(mask: np.ndarray) -> dict[str, np.ndarray]:
     for name, dims, rank in RULES:
         structure = generate_binary_structure(dims, rank)
         if dims == 2:
-<<<<<<< HEAD
             counts[name] = np.array(
                 [label(mask[:, :, z], structure)[1] for z in slices]
             )
-=======
-            counts[name] = np.array([label(mask[:, :, z], structure)[1] for z in slices])
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
         else:
             counts[name] = np.array([label(mask, structure)[1]])
     return counts
@@ -114,15 +106,11 @@ def piece_shares(counts: pd.DataFrame) -> pd.DataFrame:
         counts above MAX_PIECES are added to the last column.
     """
     capped = counts.assign(pieces=counts.pieces.clip(upper=MAX_PIECES))
-<<<<<<< HEAD
     table = (
         capped.groupby(["label", "rule", "pieces"])
         .size()
         .unstack("pieces", fill_value=0)
     )
-=======
-    table = capped.groupby(["label", "rule", "pieces"]).size().unstack("pieces", fill_value=0)
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     table = table.reindex(columns=range(1, MAX_PIECES + 1), fill_value=0)
     return 100 * table.div(table.sum(axis=1), axis=0)
 
@@ -138,7 +126,6 @@ def unchanged(before: pd.DataFrame, after: pd.DataFrame, label_id: int) -> bool:
     Returns:
         True if the label is in both tables and every share is equal.
     """
-<<<<<<< HEAD
     labels = (
         before.index.get_level_values("label"),
         after.index.get_level_values("label"),
@@ -148,12 +135,6 @@ def unchanged(before: pd.DataFrame, after: pd.DataFrame, label_id: int) -> bool:
     return np.allclose(
         before.loc[label_id].sort_index(), after.loc[label_id].sort_index()
     )
-=======
-    labels = before.index.get_level_values("label"), after.index.get_level_values("label")
-    if label_id not in labels[0] or label_id not in labels[1]:
-        return False
-    return np.allclose(before.loc[label_id].sort_index(), after.loc[label_id].sort_index())
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
 
 def column_slots(top: list[int], row: list[int]) -> dict[int, int]:
@@ -185,7 +166,6 @@ def draw_split_arrow(fig, source, target, color, text: str) -> None:
     a, b = source.get_position(), target.get_position()
     x = (a.x1 + b.x0) / 2
     y0, y1 = a.y0 + a.height / 2, b.y0 + b.height / 2
-<<<<<<< HEAD
     fig.add_artist(
         Line2D(
             [a.x1, x, x],
@@ -218,11 +198,6 @@ def draw_split_arrow(fig, source, target, color, text: str) -> None:
         fontsize=9,
         color=color,
     )
-=======
-    fig.add_artist(Line2D([a.x1, x, x], [y0, y0, y1], color=color, linewidth=2, transform=fig.transFigure))
-    fig.add_artist(FancyArrowPatch((x, y1), (b.x0, y1), arrowstyle="-|>", mutation_scale=16, color=color, linewidth=2, shrinkA=0, shrinkB=0, transform=fig.transFigure))
-    fig.text(x + 0.008, (y0 + y1) / 2, text, rotation=90, ha="left", va="center", fontsize=9, color=color)
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
 
 def count_pieces(data_dir: Path) -> pd.DataFrame:
@@ -247,7 +222,6 @@ def main():
     """Count pieces for every patient and draw the pooled heatmaps, one row per dataset."""
     ap = build_arg_parser(__doc__)
     ap.add_argument("--data-dir", type=Path, default=Path("data/segthor_part1/train"))
-<<<<<<< HEAD
     ap.add_argument(
         "--before-data-dir", type=Path, help="A second dataset, drawn above --data-dir."
     )
@@ -262,11 +236,6 @@ def main():
         type=Path,
         help="Where to write the PNG; default <profile-dir>/connected_components.",
     )
-=======
-    ap.add_argument("--before-data-dir", type=Path, help="A second dataset, drawn above --data-dir.")
-    ap.add_argument("--names", nargs=2, metavar=("BEFORE", "AFTER"), help="Row names when --before-data-dir is given.")
-    ap.add_argument("--out-dir", type=Path, help="Where to write the PNG; default <profile-dir>/connected_components.")
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     args = ap.parse_args()
     if args.before_data_dir and not args.names:
         ap.error("--before-data-dir needs --names")
@@ -278,7 +247,6 @@ def main():
     labels = sorted({int(v) for rows_df in tables for v in rows_df.label.unique()})
     shares = [piece_shares(rows_df) for rows_df in tables]
     counts = [len(list(d.glob("Patient_*"))) for d in dirs]
-<<<<<<< HEAD
     n_patients = (
         f"{counts[0]} per dataset"
         if len(counts) == 2 and counts[0] == counts[1]
@@ -293,19 +261,11 @@ def main():
             if k in table.index.get_level_values("label")
             and not (r > 0 and unchanged(shares[0], table, k))
         ]
-=======
-    n_patients = f"{counts[0]} per dataset" if len(counts) == 2 and counts[0] == counts[1] else " and ".join(map(str, counts))
-
-    sns.set_theme(style="white", font_scale=1.1)
-    shown = [
-        [k for k in labels if k in table.index.get_level_values("label") and not (r > 0 and unchanged(shares[0], table, k))]
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
         for r, table in enumerate(shares)
     ]
     slots = [column_slots(shown[0], row) for row in shown]
     n_columns = max(len(row) for row in shown)
     height = 2.3 * len(dirs) + 1.7
-<<<<<<< HEAD
     fig, axes = plt.subplots(
         len(dirs),
         n_columns,
@@ -313,9 +273,6 @@ def main():
         sharey=True,
         squeeze=False,
     )
-=======
-    fig, axes = plt.subplots(len(dirs), n_columns, figsize=(3.5 * n_columns + 1.8, height), sharey=True, squeeze=False)
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     for r, table_shares in enumerate(shares):
         by_column = {c: k for k, c in slots[r].items()}
         for c, ax in enumerate(axes[r]):
@@ -323,7 +280,6 @@ def main():
                 ax.axis("off")
                 continue
             k = by_column[c]
-<<<<<<< HEAD
             cmap = LinearSegmentedColormap.from_list(
                 f"label{k}", ["#FFFFFF", EARTH_LABEL_COLORS[k]]
             )
@@ -347,15 +303,6 @@ def main():
             ax.set(
                 xlabel="connected components" if r == len(dirs) - 1 else "", ylabel=""
             )
-=======
-            cmap = LinearSegmentedColormap.from_list(f"label{k}", ["#FFFFFF", EARTH_LABEL_COLORS[k]])
-            sns.heatmap(
-                table_shares.loc[k].reindex([name for name, _, _ in RULES]), ax=ax, cmap=cmap, vmin=0, vmax=100,
-                linewidths=2, linecolor="white", cbar=False,
-            )
-            ax.set_title(CLASSES[k], fontsize=16, fontweight="bold", loc="left", color=EARTH_LABEL_COLORS[k])
-            ax.set(xlabel="connected components" if r == len(dirs) - 1 else "", ylabel="")
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
             ax.set_xticklabels([*map(str, range(1, MAX_PIECES)), f"{MAX_PIECES}+"])
             ax.tick_params(axis="y", rotation=0)
     title_block(
@@ -364,7 +311,6 @@ def main():
         f"Patients pooled (n={n_patients}); each cell = % of axial slices (2D rows) or patients (3D rows) with "
         "that many connected components.",
     )
-<<<<<<< HEAD
     fig.subplots_adjust(
         left=0.1 if args.names else 0.07,
         right=0.9,
@@ -373,14 +319,10 @@ def main():
         wspace=0.16,
         hspace=0.4,
     )
-=======
-    fig.subplots_adjust(left=0.1 if args.names else 0.07, right=0.9, top=1 - 1.25 / height, bottom=0.8 / height, wspace=0.16, hspace=0.4)
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     for r in range(1, len(dirs)):
         for k, column in slots[r].items():
             source = SPLIT_FROM.get(k)
             if k not in slots[0] and source in slots[0]:
-<<<<<<< HEAD
                 draw_split_arrow(
                     fig,
                     axes[0][slots[0][source]],
@@ -395,18 +337,11 @@ def main():
             LinearSegmentedColormap.from_list("share", ["#FFFFFF", "#444444"]),
         ),
         cax=cax,
-=======
-                draw_split_arrow(fig, axes[0][slots[0][source]], axes[r][column], EARTH_LABEL_COLORS[k], f"{CLASSES[k]} was part of the {CLASSES[source]} label")
-    cax = fig.add_axes([0.925, 0.25, 0.012, 0.45])
-    fig.colorbar(
-        ScalarMappable(Normalize(0, 100), LinearSegmentedColormap.from_list("share", ["#FFFFFF", "#444444"])), cax=cax,
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
         label="% of slices (2D) or patients (3D)",
     )
     if args.names:  # dataset name at the left of each row
         for name, row in zip(args.names, axes):
             box = row[0].get_position()
-<<<<<<< HEAD
             fig.text(
                 0.012,
                 (box.y0 + box.y1) / 2,
@@ -421,10 +356,6 @@ def main():
     out = (
         args.out_dir or out_subdir(args.profile_dir, "connected_components")
     ) / "connected_components.png"
-=======
-            fig.text(0.012, (box.y0 + box.y1) / 2, name, rotation=90, ha="left", va="center", fontsize=13, fontweight="bold", color="#444444")
-    out = (args.out_dir or out_subdir(args.profile_dir, "connected_components")) / "connected_components.png"
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, dpi=150)
     print(f"wrote {out}")

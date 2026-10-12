@@ -41,24 +41,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools"))
 from dataset_profile import hist_stats, load_tables  # noqa: E402
 from plot_style import EARTH_LABEL_COLORS, tint  # noqa: E402
 from profile_figures.common import apply_ticks_style, out_subdir, title_block  # noqa: E402
-<<<<<<< HEAD
-=======
-from profile_figures.label_intensity import binned_counts  # noqa: E402
-from profile_figures.scan_intensity.common import pool_histograms  # noqa: E402
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 from utils import CLASSES  # noqa: E402
 
 LOW_HU = -1050
 SQUEEZED_HU = (-900, -200)  # the stretch between air and soft tissue, drawn narrower
 SQUEEZE = 6  # how many times narrower
 MIN_TISSUE_HIGH = 300
-<<<<<<< HEAD
 NNUNET_FOREGROUND_SAMPLES = (
     10e7  # labeled voxels nnU-Net samples over all cases for its statistics
 )
-=======
-NNUNET_FOREGROUND_SAMPLES = 10e7  # labeled voxels nnU-Net samples over all cases for its statistics
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 BIN_HU = 10
 WIDTH_IN = 12
 HALF_IN = 3.3  # height of one half
@@ -73,13 +64,9 @@ AXIS_WIDTH = 2.2  # the HU axis between the two halves
 AXIS_COLOR = "#222222"
 JUMP_COLOR = "#7B6FA6"  # marks the squeezed stretch; no bar uses it
 GRID_COLOR = "#E3E3E3"
-<<<<<<< HEAD
 LIGHT_BOLD = [
     pe.withStroke(linewidth=0.4, foreground="#262626")
 ]  # axis labels: a stroke thickens the letters lightly
-=======
-LIGHT_BOLD = [pe.withStroke(linewidth=0.4, foreground="#262626")]  # axis labels: a stroke thickens the letters lightly
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 FIXED_TICKS = (-1000, -900, -600)  # labeled ticks below the soft-tissue window
 NNUNET_COLOR = "#111111"  # nnU-Net's statistics of the labeled voxels
 NNUNET_LINES = (  # label, key in foreground_stats(), line style, side of its line (1 right, -1 left), label height in the top axis
@@ -90,7 +77,6 @@ NNUNET_LINES = (  # label, key in foreground_stats(), line style, side of its li
 )
 
 
-<<<<<<< HEAD
 def pool_histograms(parts: list[tuple[np.ndarray, int]]) -> tuple[np.ndarray, int]:
     """Add 1 HU histograms that may start at different values.
 
@@ -132,8 +118,6 @@ def binned_counts(
     return np.arange(lo, hi, width) + width / 2, dense.reshape(-1, width).sum(axis=1)
 
 
-=======
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 def tissue_high(p99_5: float) -> int:
     """Upper edge of the plotted HU window.
 
@@ -146,13 +130,9 @@ def tissue_high(p99_5: float) -> int:
     return max(MIN_TISSUE_HIGH, int(np.ceil((p99_5 + 50) / 50) * 50))
 
 
-<<<<<<< HEAD
 def share_outside(
     counts: np.ndarray, start: int, windows: list[tuple[int, int]]
 ) -> float:
-=======
-def share_outside(counts: np.ndarray, start: int, windows: list[tuple[int, int]]) -> float:
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     """Percentage of voxels whose HU lies outside every window.
 
     Args:
@@ -182,13 +162,9 @@ def warp(hu) -> np.ndarray:
     hu = np.asarray(hu, dtype=float)
     lo, hi = SQUEEZED_HU
     inside = lo + (hu - lo) / SQUEEZE
-<<<<<<< HEAD
     return np.where(
         hu < lo, hu, np.where(hu <= hi, inside, lo + (hi - lo) / SQUEEZE + hu - hi)
     )
-=======
-    return np.where(hu < lo, hu, np.where(hu <= hi, inside, lo + (hi - lo) / SQUEEZE + hu - hi))
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
 
 def tick_positions(high: int) -> tuple[list[int], list[int]]:
@@ -204,15 +180,11 @@ def tick_positions(high: int) -> tuple[list[int], list[int]]:
     """
     lo, hi = SQUEEZED_HU
     major = [*FIXED_TICKS, *range(hi, high + 1, 100)]
-<<<<<<< HEAD
     minor = [
         t
         for t in range(-1050, high + 1, 50)
         if t not in major and (t <= lo or t >= hi or t % 100 == 0)
     ]
-=======
-    minor = [t for t in range(-1050, high + 1, 50) if t not in major and (t <= lo or t >= hi or t % 100 == 0)]
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     return major, minor
 
 
@@ -228,15 +200,11 @@ def bar_style(key, color: str) -> dict:
         strong.
     """
     if key == FADED_LABEL:
-<<<<<<< HEAD
         return {
             "facecolor": tint(color, FADED_TINT),
             "edgecolor": tint(color, 0.85),
             "linewidth": 0.8,
         }
-=======
-        return {"facecolor": tint(color, FADED_TINT), "edgecolor": tint(color, 0.85), "linewidth": 0.8}
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     return {"facecolor": tint(color, STRONG_TINT), "edgecolor": color, "linewidth": 1.2}
 
 
@@ -250,13 +218,9 @@ def draw_order(heights: np.ndarray) -> np.ndarray:
         Integer array shaped like heights; in each bin 0 is the tallest bar (drawn first,
         at the back) and the highest rank is the smallest (drawn last, in front).
     """
-<<<<<<< HEAD
     return np.argsort(
         np.argsort(-heights, axis=0, kind="stable"), axis=0, kind="stable"
     )
-=======
-    return np.argsort(np.argsort(-heights, axis=0, kind="stable"), axis=0, kind="stable")
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
 
 def foreground_stats(per_patient: list[tuple[np.ndarray, int]]) -> dict:
@@ -273,14 +237,10 @@ def foreground_stats(per_patient: list[tuple[np.ndarray, int]]) -> dict:
         std the z-score constants.
     """
     per_case = int(NNUNET_FOREGROUND_SAMPLES // len(per_patient))
-<<<<<<< HEAD
     resampled = [
         (np.rint(counts * per_case / counts.sum()).astype(np.int64), start)
         for counts, start in per_patient
     ]
-=======
-    resampled = [(np.rint(counts * per_case / counts.sum()).astype(np.int64), start) for counts, start in per_patient]
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     return hist_stats(*pool_histograms(resampled))
 
 
@@ -297,13 +257,9 @@ def load_dataset(profile_dir: Path) -> dict:
     tables = load_tables(profile_dir)
     hists = tables["histograms"]
     labels_table = tables["labels"]
-<<<<<<< HEAD
     labels = sorted(
         int(v) for v in labels_table.loc[labels_table.voxels > 0, "label"].unique()
     )
-=======
-    labels = sorted(int(v) for v in labels_table.loc[labels_table.voxels > 0, "label"].unique())
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     patients = sorted({p for p, _ in hists})
     pooled = {}
     for k in labels:
@@ -315,15 +271,11 @@ def load_dataset(profile_dir: Path) -> dict:
         parts = [hists[(p, f"label {k}")] for k in labels]
         per_patient.append(pool_histograms([part for part in parts if len(part[0])]))
     return {
-<<<<<<< HEAD
         "patients": patients,
         "labels": labels,
         "pooled": pooled,
         "stats": stats,
         "foreground": foreground_stats(per_patient),
-=======
-        "patients": patients, "labels": labels, "pooled": pooled, "stats": stats, "foreground": foreground_stats(per_patient),
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     }
 
 
@@ -342,13 +294,9 @@ def bin_values(data: dict, key: int, high: int) -> tuple[np.ndarray, np.ndarray]
     return x, counts / VOXEL_SCALE
 
 
-<<<<<<< HEAD
 def draw_half(
     ax, data: dict, colors: dict, high: int, ymax: float, upward: bool, name: str | None
 ) -> None:
-=======
-def draw_half(ax, data: dict, colors: dict, high: int, ymax: float, upward: bool, name: str | None) -> None:
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     """Draw every label of a dataset as opaque outlined bars, upwards or hanging downwards.
 
     Args:
@@ -365,7 +313,6 @@ def draw_half(ax, data: dict, colors: dict, high: int, ymax: float, upward: bool
     rank = draw_order(heights)
     for g, k in enumerate(data["labels"]):
         shown = heights[g] > 0
-<<<<<<< HEAD
         left, right = (
             warp(bins[g][0][shown] - BIN_HU / 2),
             warp(bins[g][0][shown] + BIN_HU / 2),
@@ -382,27 +329,16 @@ def draw_half(ax, data: dict, colors: dict, high: int, ymax: float, upward: bool
             if (
                 bar.get_width() < BIN_HU / 2
             ):  # squeezed bars are too thin for a full outline
-=======
-        left, right = warp(bins[g][0][shown] - BIN_HU / 2), warp(bins[g][0][shown] + BIN_HU / 2)
-        bars = ax.bar(left, heights[g][shown], width=right - left, align="edge", **bar_style(k, colors[k]))
-        for bar, r in zip(bars, rank[g][shown]):
-            bar.set_zorder(3 + r)
-            if bar.get_width() < BIN_HU / 2:  # squeezed bars are too thin for a full outline
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
                 bar.set_linewidth(THIN_OUTLINE)
     ax.set_ylim((0, ymax) if upward else (ymax, 0))
     ax.set_xlim(warp(LOW_HU), warp(high))
     ax.axvspan(
-<<<<<<< HEAD
         *warp(SQUEEZED_HU),
         facecolor=tint(JUMP_COLOR, 0.12),
         edgecolor=JUMP_COLOR,
         linestyle="--",
         linewidth=1,
         zorder=0.6,
-=======
-        *warp(SQUEEZED_HU), facecolor=tint(JUMP_COLOR, 0.12), edgecolor=JUMP_COLOR, linestyle="--", linewidth=1, zorder=0.6
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     )
     major, minor = tick_positions(high)
     ax.set_xticks(warp(major), [str(t) for t in major])
@@ -413,7 +349,6 @@ def draw_half(ax, data: dict, colors: dict, high: int, ymax: float, upward: bool
     ax.set_axisbelow(True)
     ax.tick_params(axis="x", which="major", length=6, pad=4)
     ax.tick_params(axis="x", which="minor", length=3.5)
-<<<<<<< HEAD
     ax.tick_params(
         axis="x",
         which="both",
@@ -427,10 +362,6 @@ def draw_half(ax, data: dict, colors: dict, high: int, ymax: float, upward: bool
         fontsize=12,
         path_effects=LIGHT_BOLD,
     )
-=======
-    ax.tick_params(axis="x", which="both", bottom=upward, top=not upward, labelbottom=False, labeltop=False)
-    ax.set_ylabel(f"thousand voxels, all patients\nper {BIN_HU} HU bin", fontsize=12, path_effects=LIGHT_BOLD)
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     for side in ("right", "top", "bottom"):
         ax.spines[side].set_visible(False)
     edge = "bottom" if upward else "top"  # the HU axis between the two halves
@@ -439,7 +370,6 @@ def draw_half(ax, data: dict, colors: dict, high: int, ymax: float, upward: bool
     ax.spines[edge].set_color(AXIS_COLOR)
     if name:
         ax.text(
-<<<<<<< HEAD
             warp(high),
             1.015 if upward else -0.02,
             name,
@@ -449,10 +379,6 @@ def draw_half(ax, data: dict, colors: dict, high: int, ymax: float, upward: bool
             fontsize=13,
             fontweight="bold",
             color="#444444",
-=======
-            warp(high), 1.015 if upward else -0.02, name, transform=ax.get_xaxis_transform(), ha="right",
-            va="bottom" if upward else "top", fontsize=13, fontweight="bold", color="#444444",
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
         )
 
 
@@ -467,7 +393,6 @@ def mark_jump(ax, upward: bool) -> None:
     for x0 in warp(SQUEEZED_HU):
         for offset in (-4, 4):
             ax.plot(
-<<<<<<< HEAD
                 [x0 + offset - 5, x0 + offset + 5],
                 [y0 - 0.03, y0 + 0.03],
                 transform=ax.get_xaxis_transform(),
@@ -487,21 +412,11 @@ def mark_jump(ax, upward: bool) -> None:
         fontsize=10.5,
         fontweight="bold",
         zorder=30,
-=======
-                [x0 + offset - 5, x0 + offset + 5], [y0 - 0.03, y0 + 0.03], transform=ax.get_xaxis_transform(),
-                color=JUMP_COLOR, linewidth=2.5, clip_on=False, zorder=30,
-            )
-    ax.text(
-        warp(sum(SQUEEZED_HU) / 2), 0.97 if upward else 0.03, f"shortened axis\nHU {SQUEEZED_HU[0]} to {SQUEEZED_HU[1]}",
-        transform=ax.get_xaxis_transform(), color=JUMP_COLOR, ha="center", va="top" if upward else "bottom",
-        fontsize=10.5, fontweight="bold", zorder=30,
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     )
 
 
 def main():
     """Draw the labels of one dataset upwards and of a second one hanging below the HU axis."""
-<<<<<<< HEAD
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
@@ -528,39 +443,22 @@ def main():
     names = args.names or (
         ["before", "after"] if len(args.profile_dir) == 2 else [None]
     )
-=======
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--profile-dir", type=Path, nargs="+", default=[Path("figures/profile")],
-                    help="One or two folders written by tools/dataset_profile.py; the second hangs below the axis.")
-    ap.add_argument("--names", nargs="+", help="Name of each --profile-dir; default before/after when two.")
-    ap.add_argument("--out-dir", type=Path, help="Where to write the PNG; default <profile-dir>/label_hu_distribution.")
-    args = ap.parse_args()
-    if len(args.profile_dir) > 2:
-        ap.error("--profile-dir takes one or two folders")
-    names = args.names or (["before", "after"] if len(args.profile_dir) == 2 else [None])
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     if len(names) != len(args.profile_dir):
         ap.error("--names needs one name per --profile-dir")
 
     datasets = [load_dataset(d) for d in args.profile_dir]
     labels = sorted({k for data in datasets for k in data["labels"]})
-<<<<<<< HEAD
     high = tissue_high(
         max(data["stats"][k]["p99.5"] for data in datasets for k in data["labels"])
     )
     peak = max(
         bin_values(data, k, high)[1].max() for data in datasets for k in data["labels"]
     )
-=======
-    high = tissue_high(max(data["stats"][k]["p99.5"] for data in datasets for k in data["labels"]))
-    peak = max(bin_values(data, k, high)[1].max() for data in datasets for k in data["labels"])
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     ymax = Y_STEP * np.ceil(HEADROOM * peak / Y_STEP)
 
     apply_ticks_style()
     height = HALF_IN * len(datasets) + 2.75
     fig, axes = plt.subplots(
-<<<<<<< HEAD
         len(datasets),
         1,
         sharex=True,
@@ -592,27 +490,11 @@ def main():
     fg = datasets[-1][
         "foreground"
     ]  # the last dataset is the one nnU-Net would train on
-=======
-        len(datasets), 1, sharex=True, squeeze=False, figsize=(WIDTH_IN, height), gridspec_kw={"hspace": 0.11}
-    )
-    axes = axes[:, 0]
-    for d, (ax, data) in enumerate(zip(axes, datasets)):
-        draw_half(ax, data, EARTH_LABEL_COLORS, high, ymax, upward=d == 0, name=names[d])
-    axes[0].tick_params(axis="x", labelbottom=True)  # one row of numbers, between the two axes
-    axes[0].annotate(
-        "intensity (HU)", xy=(0, 0), xycoords="axes fraction", xytext=(-12, -16), textcoords="offset points",
-        ha="right", va="center", fontsize=13, path_effects=LIGHT_BOLD,
-    )
-    for d, ax in enumerate(axes):
-        mark_jump(ax, upward=d == 0)
-    fg = datasets[-1]["foreground"]  # the last dataset is the one nnU-Net would train on
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     for name, key, style, side, height_in_axis in NNUNET_LINES:
         x = warp(fg[key])
         for ax in axes:
             ax.axvline(x, color=NNUNET_COLOR, linestyle=style, linewidth=1.3, zorder=22)
         axes[0].text(
-<<<<<<< HEAD
             x + 4 * side,
             height_in_axis,
             f"{name}\n{fg[key]:.0f}",
@@ -650,28 +532,12 @@ def main():
         if len(counts) == 2 and counts[0] == counts[1]
         else " and ".join(map(str, counts))
     )
-=======
-            x + 4 * side, height_in_axis, f"{name}\n{fg[key]:.0f}", transform=axes[0].get_xaxis_transform(),
-            ha="left" if side > 0 else "right", va="top", multialignment="left" if side > 0 else "right",
-            fontsize=10.5, fontweight="bold", color=NNUNET_COLOR, linespacing=1.2, zorder=30,
-        )
-    handles = [Patch(label=CLASSES[k], **bar_style(k, EARTH_LABEL_COLORS[k])) for k in labels]
-    fig.legend(handles=handles, loc="upper right", ncol=len(handles), frameon=False, fontsize=12, bbox_to_anchor=(0.985, 0.985))
-    outside = {}
-    for data in datasets:
-        for k in data["labels"]:
-            outside[k] = max(outside.get(k, 0), share_outside(*data["pooled"][k], [(LOW_HU, high)]))
-    hidden = ", ".join(f"{CLASSES[k]} {v:.0f}%" for k, v in outside.items() if v >= 1)
-    counts = [len(data["patients"]) for data in datasets]
-    n_patients = f"{counts[0]} per dataset" if len(counts) == 2 and counts[0] == counts[1] else " and ".join(map(str, counts))
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     caption = [
         f"CT intensity (HU) inside each annotated organ, pooled over all patients (n={n_patients}); "
         f"bars = labeled voxels per {BIN_HU} HU bin.",
     ]
     title_block(fig, "HU Intensity of Each Label", "\n".join(caption))
     if hidden:
-<<<<<<< HEAD
         fig.text(
             0.12,
             0.012,
@@ -682,10 +548,6 @@ def main():
     fig.subplots_adjust(
         left=0.12, right=0.985, top=1 - 1.3 / height, bottom=0.4 / height
     )
-=======
-        fig.text(0.12, 0.012, f"HU above {high} is not shown (share of the organ's voxels there: {hidden}).", fontsize=10.5, color="#666666")
-    fig.subplots_adjust(left=0.12, right=0.985, top=1 - 1.3 / height, bottom=0.4 / height)
->>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     out_dir = args.out_dir or out_subdir(args.profile_dir[0], "label_hu_distribution")
     out_dir.mkdir(parents=True, exist_ok=True)
     out = out_dir / "label_hu_distribution.png"
