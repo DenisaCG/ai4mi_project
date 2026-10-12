@@ -26,7 +26,6 @@ MODELS = [
     ("ENet · CE, no preprocessing", "full_cv4_enet_ce_50ep", "#5B8FC4"),
     ("ENet · Dice+CE, preprocessed", "full_cv4_enet_dice_ce_50ep", "#2F5D8C"),
     ("ResEnc DS + strong geom.\ncontrol", BASE + "strong_geometric_50ep", "#1F5C4F"),
-    ("+ cosine LR", BASE + "strong_geometric_50ep_cosine", "#3E8F6E"),
     ("+ ramped boundary", BASE + "strong_geometric_50ep_boundary", "#A8452A"),
     ("+ fixed boundary 0.08", BASE + "strong_geometric_50ep_boundary_w008", "#C8702A"),
     ("+ 2.5D ±1, ramped boundary", BASE + "boundary_25d_c1_strong_geometric_50ep", "#D2574B"),
@@ -34,7 +33,7 @@ MODELS = [
 ]
 KEYS = [e for _, e, _ in MODELS]
 COLOR_OF = {e: c for _, e, c in MODELS}
-FAMILY_STARTS = {KEYS[2], KEYS[4]}
+FAMILY_STARTS = {KEYS[2], KEYS[3]}
 CONTROL = KEYS[2]
 FOLD_MARKERS = "osD^"
 PANELS = [  # column, title, axis label, digits, (lo, hi)
