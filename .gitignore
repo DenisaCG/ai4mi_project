@@ -36,3 +36,6 @@ metrics/**/*.nii.gz
 figures/comparison/connected_components_predictions_cache/
 
 metrics/**/smoketest/
+
+# generated figures (code in dataset_analysis/ and tools/)
+figures/
