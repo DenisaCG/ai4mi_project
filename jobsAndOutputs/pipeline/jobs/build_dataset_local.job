@@ -14,7 +14,7 @@
 #   4. link data/<sliced_hash> -> that copy, so ensure_sliced sees an existing dataset and skips building
 # Memory is the genoa default for 24 CPUs (~1.8 GB per CPU). If scratch is ever wiped, the link dangles and the
 # next run rebuilds the dataset (about 5 minutes with this script).
-# Usage: sbatch --export=ALL,CONFIG=configs/segthor_enet_ce_corrected_control_512.yaml,REF=data/sliced_029bf0bc \
+# Usage: sbatch --export=ALL,CONFIG=configs/<experiment>.yaml,REF=data/sliced_<hash> \
 #               jobsAndOutputs/pipeline/jobs/build_dataset_local.job
 #   REF (optional): an existing dataset made with the same split settings (only the shape differs); the slice file
 #                   names must be identical to it.  PROCS (optional, default 15): slicing workers.
