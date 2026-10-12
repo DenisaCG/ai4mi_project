@@ -17,7 +17,9 @@ CFG = (
     / "configs"
     / "segthor_enet_dice_ce_all_corrected_ct_window_zscore_median_spacing_roi_crop.yaml"
 )
-BASELINE_HASH = "738be6904c56"  # this config's hash before data.context existed (the older manifest hash predates later config keys)
+# this config's hash before data.context existed; updated from 738be6904c56 when the unused null key
+# data.registration was removed from base.yaml (same settings, new hash)
+BASELINE_HASH = "0609cbb293f6"
 PATIENTS, SLICES = (1, 2), 4
 
 
