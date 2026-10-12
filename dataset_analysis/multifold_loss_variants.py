@@ -402,10 +402,10 @@ def main(argv=None):
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--groups', nargs='+', type=group_spec, metavar='LABEL=DIR_PREFIX',
                         default=[
-                            group_spec('Dice + CE=/home/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce'),
-                            group_spec('Weighted CE + Dice=/home/scur0049/ai4mi_project/metrics/full_cv4_enet_weighted_dice_ce_preprocessing'),
-                            group_spec('CE + Dice + Constant Boundary=/home/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_preprocessing'),
-                            group_spec('CE + Dice + Increasing Boundary=/home/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_v2'),
+                            group_spec(f'Dice + CE={REPO}/metrics/full_cv4_enet_dice_ce'),
+                            group_spec(f'Weighted CE + Dice={REPO}/metrics/full_cv4_enet_weighted_dice_ce_preprocessing'),
+                            group_spec(f'CE + Dice + Constant Boundary={REPO}/metrics/full_cv4_enet_dice_ce_boundary_preprocessing'),
+                            group_spec(f'CE + Dice + Increasing Boundary={REPO}/metrics/full_cv4_enet_dice_ce_boundary_v2'),
                         ])
     parser.add_argument('--folds', type=int, nargs='+', default=[0, 1, 2, 3])
     parser.add_argument('--out', type=Path, default=REPO / 'figures/multifold_loss_variants_v2')
