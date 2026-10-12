@@ -11,7 +11,7 @@ Each DIR is a prefix: for fold F, the script looks for DIR_foldF/seed*/summary.j
 It also supports DIR/foldF/seed*/summary.json. Each point is one (fold, seed)
 run. The large marker is the pooled mean, with whiskers for sample SD across
 all available runs. Each run is equally weighted (unequal seed counts matter).
-Writes PNG + PDF for Dice, HD95, ASSD and validation curves, plus per-run CSV.
+Writes PNG + PDF for Dice, HD95, ASSD, validation curves, and paired Dice/ASSD gain plots, plus per-run CSV.
 """
 
 import argparse
@@ -23,6 +23,7 @@ import textwrap
 from pathlib import Path
 
 import numpy as np
+from matplotlib.lines import Line2D
 from matplotlib.patheffects import withStroke
 
 from utils import CLASSES, INK, REPO, clean_axis, decorate, pyplot, write_csv
@@ -181,12 +182,233 @@ def curves_figure(plt, groups, out, folds, note):
     save(plt, fig, out, 'multifold_loss_variants_curves')
 
 
+def gain_figures(plt, groups, organs, out, folds):
+    """
+    Plots paired changes relative to the first group (baseline = Dice + CE).
+
+    For Dice:
+        delta = variant - baseline
+        positive = improvement
+
+    For ASSD:
+        delta = baseline - variant
+        positive = improvement (lower ASSD is better)
+    """
+    baseline_label, baseline_runs = groups[0]
+    comparisons = groups[1:]
+
+    metrics = [
+        ("dice", "Dice gain vs Dice + CE", 3),
+        ("assd", "ASSD reduction (mm) vs Dice + CE", 2),
+    ]
+
+    organ_labels = {
+        "esophagus": "Es",
+        "heart": "He",
+        "trachea": "Tr",
+        "aorta": "Ao",
+    }
+
+    for key, ylabel, digits in metrics:
+        # -----------------------------
+        # Collect paired deltas first
+        # -----------------------------
+        panel_data = []
+        all_values = []
+
+        for comp_label, comp_runs in comparisons:
+            matched = sorted(set(baseline_runs) & set(comp_runs))
+            organ_to_vals = {}
+            avg_vals = []
+
+            for organ in organs:
+                vals = []
+                for pair in matched:
+                    b = baseline_runs[pair]["eval"].get(f"val_{key}_{organ}", np.nan)
+                    c = comp_runs[pair]["eval"].get(f"val_{key}_{organ}", np.nan)
+
+                    if not (np.isfinite(b) and np.isfinite(c)):
+                        continue
+
+                    delta = (c - b) if key == "dice" else (b - c)
+                    vals.append(float(delta))
+
+                organ_to_vals[organ] = np.array(vals, dtype=float)
+                all_values.extend(vals)
+
+            # average across organs for each matched run
+            for pair in matched:
+                per_organ = []
+                for organ in organs:
+                    b = baseline_runs[pair]["eval"].get(f"val_{key}_{organ}", np.nan)
+                    c = comp_runs[pair]["eval"].get(f"val_{key}_{organ}", np.nan)
+
+                    if not (np.isfinite(b) and np.isfinite(c)):
+                        continue
+
+                    delta = (c - b) if key == "dice" else (b - c)
+                    per_organ.append(float(delta))
+
+                if per_organ:
+                    avg_vals.append(float(np.mean(per_organ)))
+
+            avg_vals = np.array(avg_vals, dtype=float)
+            all_values.extend(avg_vals.tolist())
+
+            panel_data.append((comp_label, organ_to_vals, avg_vals, len(matched)))
+
+        if not all_values:
+            continue
+
+        ymin = min(all_values)
+        ymax = max(all_values)
+        span = ymax - ymin
+        if span == 0:
+            span = 0.01 if key == "dice" else 0.1
+        margin = 0.18 * span
+        ymin -= margin
+        ymax += margin
+
+        # make sure both sides of zero are visible
+        ymin = min(ymin, -0.001 if key == "dice" else -0.05)
+        ymax = max(ymax,  0.001 if key == "dice" else  0.05)
+
+        # -----------------------------
+        # Plot
+        # -----------------------------
+        fig, axes = plt.subplots(
+            1, len(panel_data),
+            figsize=(max(10, 3.8 * len(panel_data)), 5.8),
+            squeeze=False,
+            sharey=True
+        )
+        axes = axes[0]
+
+        for ax, (comp_label, organ_to_vals, avg_vals, n_runs) in zip(axes, panel_data):
+            # Improvement / worse shading
+            ax.axhspan(0, ymax, alpha=0.12, zorder=0)
+            ax.axhspan(ymin, 0, alpha=0.08, zorder=0)
+            ax.axhline(0, color=INK, lw=1.6, zorder=1)
+
+            x_positions = np.arange(len(organs) + 1)
+            labels = [organ_labels.get(o, o[:2].title()) for o in organs] + ["Avg"]
+
+            # plot organs
+            for i, organ in enumerate(organs):
+                vals = organ_to_vals[organ]
+                if len(vals) == 0:
+                    continue
+
+                color = ORGAN_COLOR.get(organ, FG_COLOR)
+
+                if len(vals) > 1:
+                    parts = ax.violinplot([vals], positions=[i], widths=0.72,
+                                          showmeans=False, showmedians=False, showextrema=False)
+                    for body in parts["bodies"]:
+                        body.set_facecolor(color)
+                        body.set_alpha(0.18)
+                        body.set_edgecolor(color)
+                        body.set_linewidth(1.0)
+
+                jitter = np.linspace(-0.10, 0.10, len(vals)) if len(vals) > 1 else np.array([0.0])
+                ax.scatter(np.full(len(vals), i) + jitter, vals, s=22,
+                           color=color, alpha=0.7, edgecolors="none", zorder=3)
+
+                mean = float(np.mean(vals))
+                ax.plot(i, mean, "D", color=color, ms=7, mec="white", mew=1.0, zorder=4)
+                ax.annotate(
+                    f"{mean:+.{digits}f}",
+                    (i, mean),
+                    xytext=(0, 10 if mean >= 0 else -14),
+                    textcoords="offset points",
+                    ha="center",
+                    fontsize=8.5,
+                    fontweight="bold",
+                    color=INK,
+                    path_effects=[withStroke(linewidth=2.5, foreground="white")],
+                    zorder=5,
+                )
+
+            # plot average across organs
+            if len(avg_vals):
+                avg_x = len(organs)
+
+                if len(avg_vals) > 1:
+                    parts = ax.violinplot([avg_vals], positions=[avg_x], widths=0.72,
+                                          showmeans=False, showmedians=False, showextrema=False)
+                    for body in parts["bodies"]:
+                        body.set_facecolor(INK)
+                        body.set_alpha(0.15)
+                        body.set_edgecolor(INK)
+                        body.set_linewidth(1.0)
+
+                jitter = np.linspace(-0.10, 0.10, len(avg_vals)) if len(avg_vals) > 1 else np.array([0.0])
+                ax.scatter(np.full(len(avg_vals), avg_x) + jitter, avg_vals, s=24,
+                           color=INK, alpha=0.7, edgecolors="none", zorder=3)
+
+                mean_avg = float(np.mean(avg_vals))
+                ax.plot(avg_x, mean_avg, "*", color=INK, ms=12, mec="white", mew=1.0, zorder=4)
+                ax.annotate(
+                    f"{mean_avg:+.{digits}f}",
+                    (avg_x, mean_avg),
+                    xytext=(0, 10 if mean_avg >= 0 else -14),
+                    textcoords="offset points",
+                    ha="center",
+                    fontsize=9,
+                    fontweight="bold",
+                    color=INK,
+                    path_effects=[withStroke(linewidth=2.6, foreground="white")],
+                    zorder=5,
+                )
+
+            ax.set_xticks(x_positions, labels, fontsize=10)
+            ax.set_ylim(ymin, ymax)
+            ax.set_ylabel(ylabel)
+            ax.set_title(f"{comp_label}\n(n={n_runs} matched runs)", fontsize=10.5, loc="left", fontweight="bold")
+            clean_axis(ax)
+
+            # Improvement / worse labels
+            ax.text(0.98, 0.98, "Improvement", ha="right", va="top",
+                    transform=ax.transAxes, fontsize=9, fontweight="bold")
+            ax.text(0.98, 0.02, "Worse", ha="right", va="bottom",
+                    transform=ax.transAxes, fontsize=9, fontweight="bold")
+
+        title_metric = "Dice" if key == "dice" else "ASSD"
+        decorate(
+            fig,
+            f"Upgraded ENet: change from Dice + CE ({title_metric})",
+            subtitle=(
+                "Each point = one matched fold–seed run. "
+                "Above 0 = improvement, below 0 = worse."
+            ),
+            footnote_text=(
+            "Changes relative to Dice + CE. Positive = improvement "
+            "(higher Dice or lower ASSD). "
+            "Avg = mean change across four organs per run."
+        ),
+        )
+        tighten(fig, 0.5, 0.35)
+
+        fig.subplots_adjust(
+            bottom=0.10,
+            top=0.78,
+            wspace=0.28
+        )
+
+        save(plt, fig, out, f"multifold_loss_variants_gain_{key}")
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('--groups', nargs='+', type=group_spec, required=True, metavar='LABEL=DIR_PREFIX')
+    parser.add_argument('--groups', nargs='+', type=group_spec, metavar='LABEL=DIR_PREFIX',
+                        default=[
+                            group_spec('Dice + CE=/home/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce'),
+                            group_spec('Weighted CE + Dice=/home/scur0049/ai4mi_project/metrics/full_cv4_enet_weighted_dice_ce_preprocessing'),
+                            group_spec('CE + Dice + Constant Boundary=/home/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_preprocessing'),
+                            group_spec('CE + Dice + Increasing Boundary=/home/scur0049/ai4mi_project/metrics/full_cv4_enet_dice_ce_boundary_v2'),
+                        ])
     parser.add_argument('--folds', type=int, nargs='+', default=[0, 1, 2, 3])
-    parser.add_argument('--out', type=Path, default=REPO / 'figures/multifold_loss_variants')
+    parser.add_argument('--out', type=Path, default=REPO / 'figures/multifold_loss_variants_v2')
     parser.add_argument('--title', default='{metric} per organ across CV folds and loss variants')
     parser.add_argument('--note', default='')
     args = parser.parse_args(argv)
@@ -209,8 +431,9 @@ def main(argv=None):
                         'value': run['eval'].get(f'val_{key}_{organ}', float('nan')),
                     })
     curves_figure(plt, groups, args.out, args.folds, args.note)
+    gain_figures(plt, groups, organs, args.out, args.folds)
     write_csv(args.out / 'multifold_loss_variants.csv', table)
-    print(f'{len(groups)} variants; {sum(len(r) for _, r in groups)} runs -> {args.out}')
+    print(f'{len(groups)} variants; {sum(len(r) for _, r in groups)} runs -> {args.out}', flush=True)
 
 
 if __name__ == '__main__':

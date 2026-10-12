@@ -21,6 +21,7 @@ import pandas as pd
 from scipy.ndimage import distance_transform_edt, generate_binary_structure, label
 
 LABELS = [1, 2, 3, 4]
+<<<<<<< HEAD
 INTENSITY_GROUPS = {
     "background": [0],
     "label 1": [1],
@@ -35,6 +36,11 @@ HU_OFFSET = (
 NNUNET_SAMPLES_PER_CASE = (
     5_000_000  # fingerprint_extractor.py: 10e7 // 20 training cases
 )
+=======
+INTENSITY_GROUPS = {"background": [0], "label 1": [1], "label 2": [2], "label 3": [3], "label 4": [4], "all labels": [1, 2, 3, 4]}
+HU_OFFSET = 4096  # added before np.bincount so every stored CT value maps to a non-negative bin
+NNUNET_SAMPLES_PER_CASE = 5_000_000  # fingerprint_extractor.py: 10e7 // 20 training cases
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 NNUNET_SEED = 1234  # fingerprint_extractor.py: analyze_case(..., seed=1234)
 FACE = generate_binary_structure(3, 1)
 FACE_EDGE_CORNER = generate_binary_structure(3, 3)
@@ -98,9 +104,13 @@ def binned_pcts(counts: np.ndarray, start: int, edges: np.ndarray) -> np.ndarray
     if n == 0:
         return np.full(len(edges) + 1, np.nan)
     values = start + np.arange(len(counts))
+<<<<<<< HEAD
     bin_idx = np.digitize(
         values, edges
     )  # 0 = below edges[0], len(edges) = at/above edges[-1]
+=======
+    bin_idx = np.digitize(values, edges)  # 0 = below edges[0], len(edges) = at/above edges[-1]
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     out = np.zeros(len(edges) + 1)
     for i in range(len(edges) + 1):
         out[i] = counts[bin_idx == i].sum()
@@ -118,9 +128,13 @@ def _trimmed_hist(vals: np.ndarray) -> tuple[np.ndarray, int]:
 def _bbox(mask: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     lo, hi = [], []
     for axis in range(mask.ndim):
+<<<<<<< HEAD
         hits = np.flatnonzero(
             mask.any(axis=tuple(a for a in range(mask.ndim) if a != axis))
         )
+=======
+        hits = np.flatnonzero(mask.any(axis=tuple(a for a in range(mask.ndim) if a != axis)))
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
         lo.append(hits[0])
         hi.append(hits[-1])
     return np.array(lo), np.array(hi)
@@ -139,11 +153,15 @@ def label_row(mask: np.ndarray, zooms: np.ndarray) -> dict:
         Flat dict of measurements; only voxel counts are filled for an empty mask.
     """
     n = int(mask.sum())
+<<<<<<< HEAD
     row = {
         "voxels": n,
         "volume_ml": n * float(np.prod(zooms)) / 1000,
         "pct_of_scan": 100 * n / mask.size,
     }
+=======
+    row = {"voxels": n, "volume_ml": n * float(np.prod(zooms)) / 1000, "pct_of_scan": 100 * n / mask.size}
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     if n == 0:
         return row
     lo, hi = _bbox(mask)
@@ -160,9 +178,13 @@ def label_row(mask: np.ndarray, zooms: np.ndarray) -> dict:
     sub = mask[lo[0] : hi[0] + 1, lo[1] : hi[1] + 1, lo[2] : hi[2] + 1]
     faces, n_faces = label(sub, structure=FACE)
     row["pieces_sharing_a_face"] = int(n_faces)
+<<<<<<< HEAD
     row["pieces_sharing_face_edge_or_corner"] = int(
         label(sub, structure=FACE_EDGE_CORNER)[1]
     )
+=======
+    row["pieces_sharing_face_edge_or_corner"] = int(label(sub, structure=FACE_EDGE_CORNER)[1])
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     row["largest_piece_pct_face"] = 100 * np.bincount(faces.ravel())[1:].max() / n
     return row
 
@@ -215,6 +237,7 @@ def pair_row(a: np.ndarray, b: np.ndarray, zooms: np.ndarray) -> dict:
         tail = [slice(None)] * 3
         head[axis], tail[axis] = slice(None, -1), slice(1, None)
         head, tail = tuple(head), tuple(tail)
+<<<<<<< HEAD
         shared += face_area[axis] * int(
             (a[head] & b[tail]).sum() + (b[head] & a[tail]).sum()
         )
@@ -225,6 +248,13 @@ def pair_row(a: np.ndarray, b: np.ndarray, zooms: np.ndarray) -> dict:
         "closest_voxel_centers_mm": float(dist_to_a[b[box]].min()),
         "shared_face_area_mm2": shared,
     }
+=======
+        shared += face_area[axis] * int((a[head] & b[tail]).sum() + (b[head] & a[tail]).sum())
+    lo, hi = _bbox(a | b)
+    box = tuple(slice(s, e + 1) for s, e in zip(lo, hi))
+    dist_to_a = distance_transform_edt(~a[box], sampling=zooms)
+    return {"closest_voxel_centers_mm": float(dist_to_a[b[box]].min()), "shared_face_area_mm2": shared}
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
 
 def occupied_box(ct: np.ndarray, zooms: np.ndarray) -> dict:
@@ -241,9 +271,13 @@ def occupied_box(ct: np.ndarray, zooms: np.ndarray) -> dict:
     above = ct > ct.min()
     row = {}
     if not above.any():
+<<<<<<< HEAD
         return {f"occupied_{axis}_size_mm": 0.0 for axis in "xyz"} | {
             "occupied_pct_of_image": 0.0
         }
+=======
+        return {f"occupied_{axis}_size_mm": 0.0 for axis in "xyz"} | {"occupied_pct_of_image": 0.0}
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     lo, hi = _bbox(above)
     for k, axis in enumerate("xyz"):
         row[f"occupied_{axis}_size_mm"] = (hi[k] - lo[k] + 1) * zooms[k]
@@ -262,11 +296,15 @@ def identical_neighbor_slices(ct: np.ndarray) -> int:
     Returns:
         Count of k where slice k equals slice k + 1.
     """
+<<<<<<< HEAD
     return int(
         sum(
             np.array_equal(ct[:, :, k], ct[:, :, k + 1]) for k in range(ct.shape[2] - 1)
         )
     )
+=======
+    return int(sum(np.array_equal(ct[:, :, k], ct[:, :, k + 1]) for k in range(ct.shape[2] - 1)))
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
 
 def split_by_patient(processed_dir: Path) -> dict:
@@ -309,9 +347,13 @@ def profile_patient(patient_dir: Path) -> dict:
         patient[f"{axis}_extent_mm"] = ct.shape[k] * zooms[k]
     patient["voxels"] = ct.size
     patient["label_grid_shape_matches"] = ct.shape == seg.shape
+<<<<<<< HEAD
     patient["label_grid_spacing_matches"] = bool(
         np.allclose(zooms, gt.header.get_zooms()[:3])
     )
+=======
+    patient["label_grid_spacing_matches"] = bool(np.allclose(zooms, gt.header.get_zooms()[:3]))
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     patient["max_affine_difference"] = float(np.abs(img.affine - gt.affine).max())
     patient["image_axis_codes"] = "".join(nib.aff2axcodes(img.affine))
     patient["label_axis_codes"] = "".join(nib.aff2axcodes(gt.affine))
@@ -325,9 +367,13 @@ def profile_patient(patient_dir: Path) -> dict:
     hists["scan"] = _trimmed_hist(ct)
     rs = np.random.RandomState(NNUNET_SEED)
     fg = ct[seg > 0]
+<<<<<<< HEAD
     hists["nnunet sample"] = _trimmed_hist(
         rs.choice(fg, NNUNET_SAMPLES_PER_CASE, replace=True)
     )
+=======
+    hists["nnunet sample"] = _trimmed_hist(rs.choice(fg, NNUNET_SAMPLES_PER_CASE, replace=True))
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
     flat = ct.reshape(-1, ct.shape[2])
     scan_slices = pd.DataFrame(
@@ -343,6 +389,7 @@ def profile_patient(patient_dir: Path) -> dict:
         other = 1 - k
         filled = above.any(axis=other)
         first = np.where(filled.any(axis=0), filled.argmax(axis=0), -1)
+<<<<<<< HEAD
         last = np.where(
             filled.any(axis=0), ct.shape[k] - 1 - filled[::-1].argmax(axis=0), -2
         )
@@ -368,6 +415,18 @@ def profile_patient(patient_dir: Path) -> dict:
             "label_b": b,
             **pair_row(masks[a], masks[b], zooms),
         }
+=======
+        last = np.where(filled.any(axis=0), ct.shape[k] - 1 - filled[::-1].argmax(axis=0), -2)
+        scan_slices[f"occupied_{axis}_size_mm"] = (last - first + 1) * zooms[k]
+    for c in LABELS:
+        scan_slices[f"label_{c}_voxels"] = (seg == c).reshape(-1, seg.shape[2]).sum(axis=0)
+
+    masks = {c: seg == c for c in LABELS}
+    labels = [{"patient": pid, "label": c, **label_row(masks[c], zooms)} for c in LABELS]
+    slices = [{"patient": pid, "label": c, **r} for c in LABELS for r in slice_rows(masks[c], zooms)]
+    pairs = [
+        {"patient": pid, "label_a": a, "label_b": b, **pair_row(masks[a], masks[b], zooms)}
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
         for i, a in enumerate(LABELS)
         for b in LABELS[i + 1 :]
     ]
@@ -393,10 +452,14 @@ def load_tables(out_dir: Path) -> dict:
     tables = {name: pd.read_csv(out_dir / f"{name}.csv") for name in TABLES}
     npz = np.load(out_dir / HIST_FILE)
     tables["histograms"] = {
+<<<<<<< HEAD
         tuple(key.split("|")[:2]): (
             npz[key],
             int(npz[key.replace("|counts", "|start")]),
         )
+=======
+        tuple(key.split("|")[:2]): (npz[key], int(npz[key.replace("|counts", "|start")]))
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
         for key in npz.files
         if key.endswith("|counts")
     }
@@ -405,9 +468,13 @@ def load_tables(out_dir: Path) -> dict:
 
 def main():
     """Profile every patient and write the tables and histograms."""
+<<<<<<< HEAD
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
+=======
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     ap.add_argument("--data-dir", type=Path, default=Path("data/segthor_part1/train"))
     ap.add_argument("--out-dir", type=Path, default=Path("figures/profile"))
     ap.add_argument("--processed-dir", type=Path, default=Path("data/SEGTHOR"))
@@ -415,18 +482,26 @@ def main():
     args = ap.parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
+<<<<<<< HEAD
     patient_dirs = sorted(
         p
         for p in args.data_dir.iterdir()
         if p.is_dir() and p.name.startswith("Patient_")
     )
+=======
+    patient_dirs = sorted(p for p in args.data_dir.iterdir() if p.is_dir() and p.name.startswith("Patient_"))
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     split = split_by_patient(args.processed_dir)
     patients, labels, slices, scan_slices, pairs, hist_arrays = [], [], [], [], [], {}
     for d in patient_dirs[: args.max_patients]:
         result = profile_patient(d)
+<<<<<<< HEAD
         patients.append(
             {**result["patient"], "split": split.get(d.name, "not in split")}
         )
+=======
+        patients.append({**result["patient"], "split": split.get(d.name, "not in split")})
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
         labels += result["labels"]
         slices += result["slices"]
         scan_slices.append(result["scan_slices"])

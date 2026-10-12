@@ -40,16 +40,21 @@ from utils import CLASSES  # noqa: E402
 
 ESOPHAGUS, AORTA = 1, 4
 FACE = generate_binary_structure(3, 1)
+<<<<<<< HEAD
 PIECE_COLORS = [
     EARTH_LABEL_COLORS[ESOPHAGUS],
     tint(EARTH_LABEL_COLORS[ESOPHAGUS], 0.5),
 ]  # largest piece first
+=======
+PIECE_COLORS = [EARTH_LABEL_COLORS[ESOPHAGUS], tint(EARTH_LABEL_COLORS[ESOPHAGUS], 0.5)]  # largest piece first
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 INK = "#333333"
 WINDOW = (-160, 240)  # CT window in HU
 CROP_HALF = (75, 55)  # half width and height of the slice crop, in pixels
 MESH_STEP = 2  # in-plane voxel step of the surface meshes
 MESH_W = 3.6  # width of the 3D axes in inches; it is wider than its column, which draws the surfaces larger
 VIEW = {"elev": 8, "azim": 155}
+<<<<<<< HEAD
 GROUP_W, FIG_H, ARROW_GAP = (
     5.05,
     2.8,
@@ -59,6 +64,10 @@ PANEL_H, PANEL_BOTTOM = (
     2.7,
     0.05,
 )  # height of the slice panel and its distance from the figure bottom, in inches
+=======
+GROUP_W, FIG_H, ARROW_GAP = 5.05, 2.8, 0.8  # inches: one before or after group, figure height, space for the arrow
+PANEL_H, PANEL_BOTTOM = 2.7, 0.05  # height of the slice panel and its distance from the figure bottom, in inches
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 LIGHT = np.array([-0.35, -0.6, 0.7]) / np.linalg.norm([-0.35, -0.6, 0.7])
 
 
@@ -71,9 +80,13 @@ def example_slice(gt: np.ndarray) -> int:
     Returns:
         Index of the slice maximizing the smaller of the two label areas.
     """
+<<<<<<< HEAD
     both = np.minimum(
         (gt == ESOPHAGUS).sum(axis=(0, 1)), (gt == AORTA).sum(axis=(0, 1))
     )
+=======
+    both = np.minimum((gt == ESOPHAGUS).sum(axis=(0, 1)), (gt == AORTA).sum(axis=(0, 1)))
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     return int(np.argmax(both))
 
 
@@ -94,11 +107,15 @@ def ranked_pieces(mask: np.ndarray) -> tuple[np.ndarray, int]:
     return rank[pieces], n
 
 
+<<<<<<< HEAD
 def surface(
     mask: np.ndarray,
     spacing: tuple[float, float, float],
     origin: tuple[float, float, float],
 ) -> np.ndarray:
+=======
+def surface(mask: np.ndarray, spacing: tuple[float, float, float], origin: tuple[float, float, float]) -> np.ndarray:
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     """Triangles of a mask's surface in millimeters.
 
     Args:
@@ -110,11 +127,15 @@ def surface(
         Array (triangles, 3 corners, 3 coordinates).
     """
     smooth = gaussian_filter(mask.astype(np.float32)[::MESH_STEP, ::MESH_STEP], 0.8)
+<<<<<<< HEAD
     verts, faces, _, _ = marching_cubes(
         smooth,
         0.5,
         spacing=(spacing[0] * MESH_STEP, spacing[1] * MESH_STEP, spacing[2]),
     )
+=======
+    verts, faces, _, _ = marching_cubes(smooth, 0.5, spacing=(spacing[0] * MESH_STEP, spacing[1] * MESH_STEP, spacing[2]))
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     return verts[faces] + np.asarray(origin)
 
 
@@ -128,9 +149,13 @@ def shaded(triangles: np.ndarray, color) -> np.ndarray:
     Returns:
         RGBA array, one row per triangle.
     """
+<<<<<<< HEAD
     normals = np.cross(
         triangles[:, 1] - triangles[:, 0], triangles[:, 2] - triangles[:, 0]
     )
+=======
+    normals = np.cross(triangles[:, 1] - triangles[:, 0], triangles[:, 2] - triangles[:, 0])
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     normals /= np.linalg.norm(normals, axis=1, keepdims=True) + 1e-9
     light = 0.5 + 0.5 * np.abs(normals @ LIGHT)
     rgb = np.array(to_rgb(color))[None] * light[:, None] + (1 - light[:, None]) * 0.12
@@ -149,6 +174,7 @@ def chip(ax, text: str, xy, xytext, color) -> None:
     """
     dark = sum(to_rgb(color)) / 3 < 0.55
     ax.annotate(
+<<<<<<< HEAD
         text,
         xy,
         xytext,
@@ -165,6 +191,14 @@ def chip(ax, text: str, xy, xytext, color) -> None:
 def draw_slice(
     ax, ct: np.ndarray, layers: list[tuple[np.ndarray, object]], aspect: float
 ) -> None:
+=======
+        text, xy, xytext, color="white" if dark else INK, fontsize=13, fontweight="bold", ha="center", va="center",
+        arrowprops={"arrowstyle": "-", "color": color, "lw": 1.6}, bbox={"boxstyle": "round,pad=0.28", "fc": color, "ec": "none"},
+    )
+
+
+def draw_slice(ax, ct: np.ndarray, layers: list[tuple[np.ndarray, object]], aspect: float) -> None:
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     """CT slice with filled, outlined label masks on top.
 
     Args:
@@ -173,15 +207,20 @@ def draw_slice(
         layers: (mask, color) pairs, drawn in order.
         aspect: Pixel height over width.
     """
+<<<<<<< HEAD
     ax.imshow(
         np.clip((ct - WINDOW[0]) / (WINDOW[1] - WINDOW[0]), 0, 1),
         cmap="gray",
         aspect=aspect,
     )
+=======
+    ax.imshow(np.clip((ct - WINDOW[0]) / (WINDOW[1] - WINDOW[0]), 0, 1), cmap="gray", aspect=aspect)
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     for mask, color in layers:
         fill = np.zeros(mask.shape + (4,))
         fill[mask] = (*to_rgb(color), 0.55)
         ax.imshow(fill, aspect=aspect, interpolation="nearest")
+<<<<<<< HEAD
         ax.contour(
             gaussian_filter(mask.astype(float), 0.7),
             levels=[0.5],
@@ -194,6 +233,13 @@ def draw_slice(
 def load_patient(
     data_dir: Path, patient: str
 ) -> tuple[np.ndarray, np.ndarray, tuple[float, float, float]]:
+=======
+        ax.contour(gaussian_filter(mask.astype(float), 0.7), levels=[0.5], colors=[color], linewidths=1.8)
+    ax.set_axis_off()
+
+
+def load_patient(data_dir: Path, patient: str) -> tuple[np.ndarray, np.ndarray, tuple[float, float, float]]:
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     """Labels, CT and voxel size of one patient.
 
     Args:
@@ -205,11 +251,15 @@ def load_patient(
     """
     gt = nib.load(str(data_dir / patient / "GT.nii.gz"))
     ct = nib.load(str(data_dir / patient / f"{patient}.nii.gz"))
+<<<<<<< HEAD
     return (
         np.asarray(gt.dataobj),
         np.asarray(ct.dataobj).astype(np.float32),
         tuple(float(v) for v in gt.header.get_zooms()[:3]),
     )
+=======
+    return np.asarray(gt.dataobj), np.asarray(ct.dataobj).astype(np.float32), tuple(float(v) for v in gt.header.get_zooms()[:3])
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
 
 class Scene(NamedTuple):
@@ -226,12 +276,17 @@ class Group(NamedTuple):
     """One side of the comparison: what is drawn on the slice and as surfaces, and its text."""
 
     info: str  # patient and slice, written in the corner of the slice
+<<<<<<< HEAD
     layers: list[
         tuple[np.ndarray, object]
     ]  # slice masks with their color, in drawing order
     chips: list[
         tuple[str, tuple[float, float], tuple[float, float], object]
     ]  # text, point, box center, color
+=======
+    layers: list[tuple[np.ndarray, object]]  # slice masks with their color, in drawing order
+    chips: list[tuple[str, tuple[float, float], tuple[float, float], object]]  # text, point, box center, color
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     meshes: list[tuple[np.ndarray, object]]  # 3D masks with their color
 
 
@@ -246,13 +301,18 @@ def draw_group(fig, left: float, group: Group, scene: Scene) -> None:
     """
     width, height = fig.get_size_inches()
     slice_w = PANEL_H * 2 * CROP_HALF[0] / (2 * CROP_HALF[1] * scene.aspect)
+<<<<<<< HEAD
     slice_ax = fig.add_axes(
         [left / width, PANEL_BOTTOM / height, slice_w / width, PANEL_H / height]
     )
+=======
+    slice_ax = fig.add_axes([left / width, PANEL_BOTTOM / height, slice_w / width, PANEL_H / height])
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     draw_slice(slice_ax, scene.ct, group.layers, scene.aspect)
     for text, xy, xytext, color in group.chips:
         chip(slice_ax, text, xy, xytext, color)
     slice_ax.text(
+<<<<<<< HEAD
         0.02,
         0.03,
         group.info,
@@ -275,6 +335,16 @@ def draw_group(fig, left: float, group: Group, scene: Scene) -> None:
                 triangles, facecolors=shaded(triangles, color), edgecolors="none"
             )
         )
+=======
+        0.02, 0.03, group.info, transform=slice_ax.transAxes, color="white", fontsize=11, ha="left", va="bottom", linespacing=1.3,
+        bbox={"boxstyle": "round,pad=0.3", "fc": "black", "ec": "none", "alpha": 0.55},
+    )
+    center = left + slice_w + (GROUP_W - slice_w) / 2
+    mesh_ax = fig.add_axes([(center - MESH_W / 2) / width, 0, MESH_W / width, 1], projection="3d")
+    for mask, color in group.meshes:
+        triangles = surface(mask, scene.spacing, scene.origin)
+        mesh_ax.add_collection3d(Poly3DCollection(triangles, facecolors=shaded(triangles, color), edgecolors="none"))
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     mesh_ax.set_xlim(scene.origin[0], scene.end[0])
     mesh_ax.set_ylim(scene.origin[1], scene.end[1])
     mesh_ax.set_zlim(scene.origin[2], scene.end[2])
@@ -295,6 +365,7 @@ def arrow(fig, x: float, y: float) -> None:
     half = 0.36
     fig.add_artist(
         FancyArrowPatch(
+<<<<<<< HEAD
             ((x - half) / width, y / height),
             ((x + half) / width, y / height),
             transform=fig.transFigure,
@@ -302,12 +373,17 @@ def arrow(fig, x: float, y: float) -> None:
             mutation_scale=30,
             color=INK,
             linewidth=0,
+=======
+            ((x - half) / width, y / height), ((x + half) / width, y / height), transform=fig.transFigure,
+            arrowstyle="simple,head_width=1.5,head_length=1.1,tail_width=0.6", mutation_scale=30, color=INK, linewidth=0,
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
         )
     )
 
 
 def main():
     """Draw the slice and the surfaces of one patient under both label sets."""
+<<<<<<< HEAD
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
@@ -322,6 +398,12 @@ def main():
         default="Patient_02",
         help="A patient whose esophagus label has two pieces before the correction.",
     )
+=======
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--data-dir", type=Path, default=Path("data/segthor_part1_corrected/train"))
+    ap.add_argument("--before-data-dir", type=Path, default=Path("data/segthor_part1/train"))
+    ap.add_argument("--patient", default="Patient_02", help="A patient whose esophagus label has two pieces before the correction.")
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     ap.add_argument("--out-dir", type=Path, default=Path("figures/comparison"))
     args = ap.parse_args()
 
@@ -331,6 +413,7 @@ def main():
     z = example_slice(gt_after)
     rows, cols = np.nonzero(((gt_after == ESOPHAGUS) | (gt_after == AORTA))[:, :, z].T)
     cy, cx = int(rows.mean()) - 6, int(cols.mean()) + 4
+<<<<<<< HEAD
     crop = (
         slice(cy - CROP_HALF[1], cy + CROP_HALF[1]),
         slice(cx - CROP_HALF[0], cx + CROP_HALF[0]),
@@ -338,6 +421,10 @@ def main():
     box = tuple(
         slice(max(i.min() - 4, 0), i.max() + 5) for i in np.nonzero(gt_before > 0)
     )
+=======
+    crop = (slice(cy - CROP_HALF[1], cy + CROP_HALF[1]), slice(cx - CROP_HALF[0], cx + CROP_HALF[0]))
+    box = tuple(slice(max(i.min() - 4, 0), i.max() + 5) for i in np.nonzero(gt_before > 0))
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     origin = tuple(b.start * s for b, s in zip(box, spacing))
     end = tuple(o + n * s for o, n, s in zip(origin, gt_before[box].shape, spacing))
     scene = Scene(ct[:, :, z].T[crop], spacing[0] / spacing[1], spacing, origin, end)
@@ -349,12 +436,16 @@ def main():
         info,
         [(piece_slice == r, PIECE_COLORS[r - 1]) for r in range(n_pieces, 0, -1)],
         [
+<<<<<<< HEAD
             (
                 f"{CLASSES[ESOPHAGUS]} piece {r}",
                 (cc.mean(), rr.mean()),
                 (cc.mean() + (22 if r == 1 else -12), 100 if r == 1 else 12),
                 PIECE_COLORS[r - 1],
             )
+=======
+            (f"{CLASSES[ESOPHAGUS]} piece {r}", (cc.mean(), rr.mean()), (cc.mean() + (22 if r == 1 else -12), 100 if r == 1 else 12), PIECE_COLORS[r - 1])
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
             for r, (rr, cc) in where.items()
         ],
         [(pieces[box] == r, PIECE_COLORS[r - 1]) for r in range(1, n_pieces + 1)],
@@ -364,12 +455,16 @@ def main():
         info,
         [(labels_slice == k, EARTH_LABEL_COLORS[k]) for k in (ESOPHAGUS, AORTA)],
         [
+<<<<<<< HEAD
             (
                 CLASSES[k],
                 (cc.mean(), rr.mean()),
                 (cc.mean() + dx, dy),
                 EARTH_LABEL_COLORS[k],
             )
+=======
+            (CLASSES[k], (cc.mean(), rr.mean()), (cc.mean() + dx, dy), EARTH_LABEL_COLORS[k])
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
             for (k, (rr, cc)), dx, dy in zip(centers.items(), (-12, 22), (12, 100))
         ],
         [(gt_after[box] == k, EARTH_LABEL_COLORS[k]) for k in (ESOPHAGUS, AORTA)],

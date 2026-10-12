@@ -3,11 +3,15 @@ import json
 import math
 from pathlib import Path
 
+<<<<<<< HEAD
 import nibabel as nib
 import numpy as np
 
 from figures import select_shape_examples
 from utils import CLASSES, COLORS, FIGURES, parser, paths, read_csv
+=======
+from utils import CLASSES, parser, paths, read_csv
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
 
 def require(condition, message):
@@ -29,6 +33,7 @@ def main():
     ids = {r["patient_id"] for r in inventory}
     inv = {r["patient_id"]: r for r in inventory}
     require(len(ids) == len(inventory), "Duplicate patients")
+<<<<<<< HEAD
     if not run["subset"]:
         require(ids == {p.parent.name for p in original.glob("Patient_*/GT.nii.gz")}, "Original patient coverage mismatch")
     require(len(shapes) == len(CLASSES) * len(ids), "Incorrect shape descriptor row count")
@@ -72,12 +77,24 @@ def main():
     require(len(organs) == len(CLASSES) * len(ids), "Unexpected patient-class count")
     require(len(slices) == len(CLASSES) * sum(int(r["num_slices"]) for r in inventory), "Unexpected slice-class count")
     require(len(baseline) == len(CLASSES) * sum(int(r["num_slices"]) for r in inventory if r["split"] == "val"), "Unexpected baseline count")
+=======
+    n_classes = len(CLASSES)
+    class_ids = {str(c) for c in CLASSES}
+    require(len(organs) == n_classes * len(ids), "Unexpected patient-class count")
+    require(len(slices) == n_classes * sum(int(r["num_slices"]) for r in inventory), "Unexpected slice-class count")
+    require(len(baseline) == n_classes * sum(int(r["num_slices"]) for r in inventory if r["split"] == "val"),
+            "Unexpected baseline count")
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     for rows, keys in ((organs, ("patient_id", "class_id")),
                        (slices, ("patient_id", "slice_index", "class_id")),
                        (baseline, ("patient_id", "slice_index", "class_id")),
                        (patients, ("patient_id", "class_id"))):
         require(len({tuple(r[k] for k in keys) for r in rows}) == len(rows), "Duplicate table keys")
+<<<<<<< HEAD
         require(all(int(r["class_id"]) in CLASSES for r in rows), "Unexpected class in analysis")
+=======
+        require(all(r["class_id"] in class_ids for r in rows), "Unexpected class in analysis")
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     for r in organs:
         i = inv[r["patient_id"]]
         expected = int(r["voxel_count"]) * float(i["voxel_volume_mm3"])
@@ -100,7 +117,14 @@ def main():
         else:
             require(0 <= float(r["dice"]) <= 1 and math.isclose(float(r["dice"]), 2 * inter / (g + p)), "Invalid Dice")
     for r in patients:
+<<<<<<< HEAD
         if r["reconstruction_available"] == "True" and int(r["gt_voxels_3d"]) > 0:
+=======
+        # A class that is joint-empty in 3D too (e.g. aorta, in a release
+        # without it) has an undefined, blank dice_3d even when the
+        # reconstruction itself is available.
+        if r["reconstruction_available"] == "True" and r["dice_3d"] != "":
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
             require(0 <= float(r["dice_3d"]) <= 1, "Invalid 3D Dice")
     for stage in ("dataset", "baseline"):
         for r in read_csv(tables / f"{stage}_inputs.csv"):
@@ -111,12 +135,19 @@ def main():
         rs = [r for r in read_csv(tables / "class_frequency_original.csv") if r["split"] == split]
         if rs:
             require(math.isclose(sum(float(r["fraction_all_voxels"]) for r in rs), 1), "Frequency does not sum to one")
+<<<<<<< HEAD
     report = {"status": "passed", "patients": len(ids), "patient_class_rows": len(organs), "shape_descriptor_rows": len(shapes),
               "orientation_verified": "LPS; axial slices increase superiorly",
+=======
+    examples = read_csv(tables / "baseline_examples.csv")
+    expected_sheets = len({r["class_id"] for r in examples})
+    report = {"status": "passed", "patients": len(ids), "patient_class_rows": len(organs),
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
               "slice_class_rows": len(slices), "baseline_slice_class_rows": len(baseline),
               "baseline_patient_class_rows": len(patients),
               "figures": len(list((output / "plots").glob("*.png"))),
               "example_sheets": len(list((output / "examples").glob("*.png")))}
+<<<<<<< HEAD
     require({p.name for p in (output / "plots").iterdir() if p.is_file()} == set(FIGURES),
             "Missing curated figures or obsolete files remain")
     examples = read_csv(tables / 'shape_example_selection.csv')
@@ -139,6 +170,9 @@ def main():
             require(index == int(np.rint(float(chosen[f'centroid_{coordinate}']))), 'Incorrect centroid plane')
             require(np.take(mask, index, axis=axis).any(), 'Centroid plane misses organ')
     report['example_selection_and_alignment'] = 'passed'
+=======
+    require(report["figures"] == 11 and report["example_sheets"] == expected_sheets, "Missing expected figures")
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     (output / "validation.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))
 
