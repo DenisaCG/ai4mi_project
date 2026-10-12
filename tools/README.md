@@ -13,9 +13,6 @@ training scripts is modified.
   Needs no training run and no `results/`.
 - `dataset_profile.py` — writes the tables and intensity histograms that
   `dataset_analysis/profile_figures/*.py` read; not a standalone figure script.
-- `nnunet_planner_checks.py` — nnU-Net planner/fingerprint checks (anisotropy,
-  cropping, connected components, organ adjacency, etc.) not already covered
-  by `explore_data.py`.
 - `plot_style.py` — shared matplotlib style (titles, subtitles, footnotes,
   palette). `LABEL_COLORS` (keys 1-4: esophagus, heart, trachea, aorta) is the
   single source of organ colors reused by every figure script in this repo,
@@ -33,7 +30,7 @@ conda activate ai4mi
 
 ## Regenerating every figure at once
 
-`run_all_figures.py` runs the dataset-profile figures, `nnunet_planner_checks.py`
+`run_all_figures.py` runs the dataset-profile figures
 and `explore_data.py` against one raw NIfTI dataset directory, in order. It runs
 the same on a laptop and on Snellius (`jobsAndOutputs/baseline/jobs/all_figures.job`).
 
