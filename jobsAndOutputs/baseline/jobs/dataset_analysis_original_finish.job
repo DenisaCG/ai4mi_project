@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
 #SBATCH --time=00:20:00
-#SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/dataset_analysis_original_finish_%j.out
+#SBATCH --output=jobsAndOutputs/baseline/outputs/dataset_analysis_original_finish_%j.out
 
 # Finishes the "before" variant of dataset_analysis_before_after.job: its dataset stage and stitching
 # already completed; only the baseline figures and validation failed (aorta has no GT in the original data).

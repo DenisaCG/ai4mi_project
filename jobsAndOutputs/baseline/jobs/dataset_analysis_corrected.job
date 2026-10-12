@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
 #SBATCH --time=00:15:00
-#SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/dataset_analysis_corrected_%j.out
+#SBATCH --output=jobsAndOutputs/baseline/outputs/dataset_analysis_corrected_%j.out
 
 set -euo pipefail
 PROJECT_DIR="$HOME/ai4mi_project"

@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8G
 #SBATCH --time=00:40:00
-#SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/check_processed_gt_%j.out
+#SBATCH --output=jobsAndOutputs/baseline/outputs/check_processed_gt_%j.out
 
 # Reslices every corrected patient and compares with data/SEGTHOR_corrected (read-only check).
 # Set FIX=1 to replace mismatching gt PNGs (old ones are backed up first).

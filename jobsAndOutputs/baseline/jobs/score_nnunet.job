@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8G
 #SBATCH --time=00:30:00
-#SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/score_nnunet_%j.out
+#SBATCH --output=jobsAndOutputs/baseline/outputs/score_nnunet_%j.out
 
 # Score the nnU-Net fold-0 validation predictions (2D and 3D full-res, with and without test-time augmentation) with
 # the same 3D Dice/HD95/ASSD code as our own runs. Run this before compare_before_after.job, which reads the results.

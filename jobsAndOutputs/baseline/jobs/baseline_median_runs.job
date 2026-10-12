@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
 #SBATCH --time=00:30:00
-#SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/baseline_median_runs_%j.out
+#SBATCH --output=jobsAndOutputs/baseline/outputs/baseline_median_runs_%j.out
 
 # Rebuild the baseline stage (tables + 3 Dice figures + validation) of both analysis folders from one seeded pipeline
 # run per label version: the run with the median foreground Dice of its 9 runs (rule fixed before looking at the plots).

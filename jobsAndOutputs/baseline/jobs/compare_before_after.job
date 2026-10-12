@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8G
 #SBATCH --time=00:15:00
-#SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/compare_before_after_%j.out
+#SBATCH --output=jobsAndOutputs/baseline/outputs/compare_before_after_%j.out
 
 # Before/after label-correction figures from the two finished seed-0 analysis folders
 # (run dataset_analysis_before_after.job / dataset_analysis_original_finish.job first).

@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
 #SBATCH --time=00:40:00
-#SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/dataset_analysis_before_after_%j.out
+#SBATCH --output=jobsAndOutputs/baseline/outputs/dataset_analysis_before_after_%j.out
 
 # Before = ce_repro_original (original labels, no aorta); after = ce_repro_corrected_fixed (aorta present, retrained
 # after the stale Patient_02/Patient_15 PNGs were repaired). Both use seed 0 (run0).

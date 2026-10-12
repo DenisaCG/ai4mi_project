@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
 #SBATCH --time=03:00:00
-#SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/rebuild_env_%j.out
+#SBATCH --output=jobsAndOutputs/baseline/outputs/rebuild_env_%j.out
 
 # Rebuild the `ai4mi` conda env from requirements.txt after it was replaced by a bare `conda create -n ai4mi python=3.10`
 # (2026-09-19 17:04). Only touches the env if torch cannot be imported; fails unless every pin in requirements.txt

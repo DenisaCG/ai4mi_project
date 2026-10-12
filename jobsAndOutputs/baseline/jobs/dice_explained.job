@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=4G
 #SBATCH --time=00:10:00
-#SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/dice_explained_%j.out
+#SBATCH --output=jobsAndOutputs/baseline/outputs/dice_explained_%j.out
 
 # Slide figure comparing the legacy per-slice Dice with the patient-level Dice on the same predictions.
 # Reads a finished analysis folder (tables/baseline_slice_metrics.csv); run baseline_median_runs.job first.
