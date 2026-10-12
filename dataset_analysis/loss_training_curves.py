@@ -35,22 +35,10 @@ PANELS = [
                 INK,
             ),
             (
-                "+ boundary loss",
-                "full_cv4_resenc_ds_unet_dice_ce_boundary",
-                "loss_runs",
-                EARTH[0],
-            ),
-            (
                 "Tversky loss + CE",
                 "full_cv4_resenc_ds_unet_tversky_ce",
                 "loss_runs",
                 EARTH[1],
-            ),
-            (
-                "+ slice-presence head",
-                "full_cv4_resenc_ds_unet_dice_ce_presence",
-                "loss_runs",
-                EARTH[2],
             ),
             (
                 "AdamW optimiser",

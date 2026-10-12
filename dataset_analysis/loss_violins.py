@@ -41,7 +41,6 @@ MODELS = [
             ("Class-weighted CE", "full_cv4_enet_weighted_dice_ce_preprocessing"),
             ("Tversky + CE", "full_cv4_enet_tversky_ce"),
             ("Boundary 0.08", "full_cv4_enet_dice_ce_boundary_preprocessing"),
-            ("Boundary 1.0", "full_cv4_enet_dice_ce_boundary_w1"),
             ("Boundary, rising", "full_cv4_enet_dice_ce_boundary_v2"),
         ],
     ),
