@@ -9,19 +9,38 @@ figures/profile/.
 from __future__ import annotations
 
 import argparse
+<<<<<<< HEAD
+=======
+import sys
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 from pathlib import Path
 
 import seaborn as sns
 
+<<<<<<< HEAD
+=======
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools"))
+from plot_style import LABEL_COLORS  # noqa: E402, F401
+
+# Re-exported from tools/plot_style.py so every figure in the repo -- these
+# profile figures, explore_data.py, nnunet_planner_checks.py, render_figures.py --
+# draws each organ label in the same color. Keys 1-4 cover esophagus, heart,
+# trachea and aorta; a dataset missing a label simply never indexes that key.
+
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
 def apply_ticks_style() -> None:
     """Seaborn "ticks" theme (white background, axis ticks, no grid) for dot-histogram overviews."""
     sns.set_theme(style="ticks", font_scale=1.15)
 
 
+<<<<<<< HEAD
 def title_block(
     fig, title: str, subtitle: str, title_size: float = 22, subtitle_size: float = 13.5
 ) -> None:
+=======
+def title_block(fig, title: str, subtitle: str, title_size: float = 22, subtitle_size: float = 13.5) -> None:
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     """Big bold left-aligned figure title with one gray subtitle line underneath.
 
     Leave room for it with fig.subplots_adjust(top=...) or tight_layout(rect=(..., 0.92)).
@@ -34,6 +53,7 @@ def title_block(
         subtitle_size: Subtitle font size.
     """
     height = fig.get_size_inches()[1]
+<<<<<<< HEAD
     fig.suptitle(
         title,
         fontsize=title_size,
@@ -52,6 +72,10 @@ def title_block(
         ha="left",
         va="top",
     )
+=======
+    fig.suptitle(title, fontsize=title_size, fontweight="bold", x=0.02, ha="left", y=1 - 0.15 / height, va="top")
+    fig.text(0.02, 1 - 0.62 * title_size / 22 / height, subtitle, fontsize=subtitle_size, color="#444444", ha="left", va="top")
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
 
 def build_arg_parser(description: str) -> argparse.ArgumentParser:
@@ -63,9 +87,13 @@ def build_arg_parser(description: str) -> argparse.ArgumentParser:
     Returns:
         Parser with --profile-dir already added (default figures/profile).
     """
+<<<<<<< HEAD
     ap = argparse.ArgumentParser(
         description=description, formatter_class=argparse.RawDescriptionHelpFormatter
     )
+=======
+    ap = argparse.ArgumentParser(description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     ap.add_argument("--profile-dir", type=Path, default=Path("figures/profile"))
     return ap
 

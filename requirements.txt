@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Pinned to the working Snellius env (python 3.11.16, CUDA 13.0 wheels). Update deliberately.
 torch==2.14.0
 numpy==2.4.6
@@ -10,3 +11,20 @@ matplotlib==3.11.2
 scipy==1.17.1  # surface distances in src/metrics_3d.py (also a scikit-image dependency)
 PyYAML==6.0.3  # configs/
 wandb==0.30.0
+=======
+# Lower bounds only -- the course codebase is not pinned to exact versions.
+# matplotlib>=3.9 is a hard requirement for tools/explore_data.py: the boxplot
+# `labels=` kwarg was renamed to `tick_labels=` in 3.9 and the script uses the
+# new name. Versions below are the ones this project has been verified against.
+torch>=2.0
+numpy>=1.24
+nibabel>=5.0
+torchvision>=0.15
+tqdm>=4.60
+pillow>=9.0
+scikit-image>=0.20
+scipy>=1.10
+pandas>=2.0
+matplotlib>=3.9
+seaborn>=0.13
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18

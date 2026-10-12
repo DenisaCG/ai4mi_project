@@ -8,12 +8,23 @@
 #SBATCH --time=01:30:00
 #SBATCH --output=/home/scur0049/ai4mi_project/jobsAndOutputs/baseline/outputs/all_figures_%j.out
 
+<<<<<<< HEAD
 # Regenerates the dataset figures used in the slides, CPU-only: the label and scan figures
 # from the corrected 4-label data, plus the before/after figures (HU intensity, connected
+=======
+# Regenerates every dataset-analysis figure, CPU-only: every label figure from the
+# corrected 4-label data, plus the before/after figures (HU intensity, connected
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 # components, label make-up, label-correction example) against the original data.
 # Figures are written under OUT_DIR (tools/run_all_figures.py); this job's log goes to
 # jobsAndOutputs/baseline/outputs.
 #
+<<<<<<< HEAD
+=======
+# Needs the ai4mi environment built from the current requirements.txt (it adds scipy,
+# pandas and seaborn); run env.job again first if the environment predates it.
+#
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 # Usage:
 #   sbatch jobsAndOutputs/baseline/jobs/all_figures.job
 #   sbatch jobsAndOutputs/baseline/jobs/all_figures.job [DATA_DIR [OUT_DIR [BEFORE_DIR]]]
@@ -21,7 +32,13 @@
 # Args (all optional, positional):
 #   $1  DATA_DIR   raw NIfTI dataset directory (one Patient_XX/ folder per patient)
 #                  default: data/segthor_part1_corrected/train
+<<<<<<< HEAD
 #   $2  OUT_DIR    where figures/tables for this run are written
+=======
+#   $2  OUT_DIR    where figures/tables for this run are written; also names the
+#                  dataset_analysis/results/<name> subfolder, so a second run
+#                  against a different DATA_DIR can be diffed against the first
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 #                  default: figures
 #   $3  BEFORE_DIR raw NIfTI dataset drawn as "before" in the comparison figures
 #                  (written to OUT_DIR/comparison)
@@ -46,10 +63,23 @@ export MPLCONFIGDIR="$PROJECT_DIR/dataset_analysis/results/.matplotlib"
 
 DATA_DIR="${1:-data/segthor_part1_corrected/train}"
 OUT_DIR="${2:-figures}"
+<<<<<<< HEAD
+=======
+if [ "$OUT_DIR" = "figures" ]; then
+    ANALYSIS_OUT="dataset_analysis/results"
+else
+    ANALYSIS_OUT="dataset_analysis/results/$(basename "$OUT_DIR")"
+fi
+
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 BEFORE_DIR="${3:-data/segthor_part1/train}"
 
 python -B -u tools/run_all_figures.py \
     --data-dir "$DATA_DIR" \
     --out-dir "$OUT_DIR" \
+<<<<<<< HEAD
+=======
+    --dataset-analysis-out "$ANALYSIS_OUT" \
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     --before-data-dir "$BEFORE_DIR" \
     --names "3 labels (aorta merged)" "4 labels (aorta separate)"

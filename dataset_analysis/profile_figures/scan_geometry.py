@@ -37,7 +37,10 @@ from matplotlib.patches import Rectangle
 from matplotlib.ticker import MaxNLocator
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+<<<<<<< HEAD
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools"))
+=======
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 from profile_figures.common import (
     apply_ticks_style,
     build_arg_parser,

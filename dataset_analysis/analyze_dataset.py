@@ -18,7 +18,11 @@ def original_stats(patient, split, nii, data):
     spacing = nii.header.get_zooms()[:3]
     voxel_mm3 = abs(float(np.linalg.det(nii.affine[:3, :3])))
     counts = np.bincount(data.ravel(), minlength=len(CLASSES) + 1)
+<<<<<<< HEAD
     foreground = int(counts[1:len(CLASSES) + 1].sum())
+=======
+    foreground = int(counts[1:].sum())
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     inventory = {"patient_id": patient, "split": split, "source_grid": "original_nifti",
                  "shape_x": shape[0], "shape_y": shape[1], "num_slices": shape[2],
                  "spacing_x_mm": spacing[0], "spacing_y_mm": spacing[1], "spacing_z_mm": spacing[2],
@@ -136,6 +140,89 @@ def area_trends(slices):
     return per_patient, aggregate
 
 
+<<<<<<< HEAD
+=======
+def plots(output, frequency, patients, slices, trends):
+    """Generate a compact set of figures with source grid and weighting in titles."""
+    plt = pyplot(output)
+    def save(fig, name):
+        fig.savefig(output / "plots" / name, bbox_inches="tight")
+        plt.close(fig)
+
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4), layout="constrained")
+    for ax, ks, field, title in zip(axes, ([0, *CLASSES], list(CLASSES)),
+            ("fraction_all_voxels", "fraction_foreground_voxels"),
+            ("All labeled voxels (including background)", "Annotated foreground only")):
+        for j, split in enumerate(("train", "val", "all")):
+            rows = [r for r in frequency if r["split"] == split and r["class_id"] in ks]
+            ax.bar(np.arange(len(ks)) + (j - 1) * .25,
+                   [100 * r[field] for r in rows], width=.25, label=split)
+        ax.set_xticks(range(len(ks)), [{0: "background", **CLASSES}[k] for k in ks], rotation=15)
+        ax.set(ylabel="Pooled voxel fraction (%)", title=title)
+        ax.legend()
+    fig.suptitle("Original NIfTI: class frequency")
+    save(fig, "original_class_frequency.png")
+
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4), layout="constrained")
+    for ax, field, title in zip(axes, ("volume_ml", "occupied_slice_count"),
+                               ("Annotated volume (mL)", "Occupied slices")):
+        for k in CLASSES:
+            rs = [r for r in patients if r["class_id"] == k]
+            ax.boxplot([[r[field] for r in rs]], positions=[k], widths=.5, showfliers=False)
+            for j, r in enumerate(rs):
+                ax.scatter(k + .3 * (j / max(len(rs) - 1, 1) - .5), r[field],
+                           marker="^" if r["split"] == "val" else "o", s=23,
+                           c=COLORS[k], alpha=.7)
+        ax.set_xticks(list(CLASSES), list(CLASSES.values()))
+        ax.set(ylabel=title, title=title)
+    axes[0].set_yscale("log")
+    fig.suptitle("Original NIfTI: patient variation (triangles = validation)")
+    save(fig, "original_patient_volume_extent.png")
+
+    fig, axes = plt.subplots(1, len(CLASSES), figsize=(12, 5), sharey=True, layout="constrained")
+    ids = sorted({r["patient_id"] for r in patients})
+    for ax, k in zip(axes, CLASSES):
+        for r in patients:
+            if r["class_id"] == k and r["present"]:
+                y = ids.index(r["patient_id"])
+                ax.plot([r["normalized_first_z"], r["normalized_last_z"]], [y, y],
+                        color=COLORS[k], marker="|", linewidth=2)
+        ax.set(title=CLASSES[k], xlabel="Scan-relative z", xlim=(0, 1))
+    axes[0].set_yticks(range(len(ids)), ids, fontsize=8)
+    fig.suptitle("Original NIfTI: first–last labeled slice (gaps, if any, are not shown)")
+    save(fig, "original_normalized_extent.png")
+
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4), layout="constrained")
+    for ax, field, label in zip(axes, ("pixel_area", "relative_area"),
+                               ("Positive target area (pixels, log scale)", "Positive target fraction (log scale)")):
+        for j, split in enumerate(("train", "val")):
+            values = [[r[field] for r in slices if r["class_id"] == k and r["present"]
+                       and r["split"] == split] for k in CLASSES]
+            boxes = ax.boxplot(values, positions=np.arange(1, len(CLASSES) + 1) + (j - .5) * .3,
+                               widths=.25, showfliers=False, patch_artist=True)
+            for patch in boxes["boxes"]:
+                patch.set_facecolor(("#9ecae1", "#fdae6b")[j])
+            ax.plot([], [], color=("#9ecae1", "#fdae6b")[j], linewidth=8, label=split)
+        ax.set_xticks(list(CLASSES), list(CLASSES.values()))
+        ax.set(yscale="log", ylabel=label)
+        ax.legend()
+    fig.suptitle("Processed PNG: GT-positive slices; zeros excluded; whiskers = 1.5 IQR")
+    save(fig, "processed_positive_area_distribution.png")
+
+    fig, axes = plt.subplots(1, len(CLASSES), figsize=(12, 4), layout="constrained")
+    for ax, k in zip(axes, CLASSES):
+        for split, style in (("train", "-"), ("val", "--")):
+            rs = [r for r in trends if r["class_id"] == k and r["split"] == split]
+            x = [r["z_midpoint"] for r in rs]
+            ax.plot(x, [r["median"] for r in rs], style, label=split)
+            ax.fill_between(x, [r["p25"] for r in rs], [r["p75"] for r in rs], alpha=.15)
+        ax.set(title=CLASSES[k], xlabel="Scan-relative z", ylabel="Relative area (zeros included)")
+        ax.legend()
+    fig.suptitle("Processed PNG: median/IQR of patient-bin mean area; patients equally weighted")
+    save(fig, "processed_area_vs_z.png")
+
+
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 def main():
     p = parser(__doc__)
     p.add_argument("--max-patients", type=int, help="Deterministic smoke-test subset; use a separate output directory")

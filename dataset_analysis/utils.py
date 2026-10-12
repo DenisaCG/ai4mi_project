@@ -13,13 +13,17 @@ import re
 import statistics
 import subprocess
 import sys
+<<<<<<< HEAD
 from collections import defaultdict
+=======
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 from datetime import datetime, timezone
 
 import nibabel as nib
 import numpy as np
 from PIL import Image
 
+<<<<<<< HEAD
 CLASSES = {1: "esophagus", 2: "heart", 3: "trachea", 4: "aorta"}
 NAMES = {k: name.capitalize() for k, name in CLASSES.items()}
 REPO = Path(__file__).resolve().parents[1]
@@ -108,6 +112,19 @@ def remove_superseded(output: Path):
     ):
         (output / "examples" / name).unlink(missing_ok=True)
     (output / "tables/baseline_examples.csv").unlink(missing_ok=True)
+=======
+REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO / "tools"))
+from plot_style import LABEL_COLORS  # noqa: E402
+
+# Canonical label mapping for SegTHOR: some data-dirs (the original course
+# release) have zero aorta voxels, some (a full release) don't -- CLASSES lists
+# all four either way, and callers report an absent class as blank/NaN rather
+# than assuming which case they're in. COLORS is re-exported from
+# tools/plot_style.py so every figure in the repo colors organs the same way.
+CLASSES = {1: "esophagus", 2: "heart", 3: "trachea", 4: "aorta"}
+COLORS = LABEL_COLORS
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
 
 
 def parser(description: str) -> argparse.ArgumentParser:
@@ -320,12 +337,23 @@ def discover(processed: Path) -> dict:
     return dict(sorted(patients.items()))
 
 
+<<<<<<< HEAD
 def load_png(path: Path) -> np.ndarray:
     """Decode exact 63-spaced labels, one per class in CLASSES plus background."""
     with Image.open(path) as img:
         a = np.asarray(img)
     allowed = np.array([0] + [63 * k for k in CLASSES])
     if a.ndim != 2 or a.dtype != np.uint8 or not np.isin(a, allowed).all():
+=======
+PNG_LABEL_VALUES = np.array([0, 63, 126, 189, 252])  # background, then classes 1-4
+
+
+def load_png(path: Path) -> np.ndarray:
+    """Decode exact 63-spaced labels, 0-4; whether 252 (aorta) occurs depends on the dataset."""
+    with Image.open(path) as img:
+        a = np.asarray(img)
+    if a.ndim != 2 or a.dtype != np.uint8 or not np.isin(a, PNG_LABEL_VALUES).all():
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
         raise ValueError(f"Invalid PNG label encoding: {path}")
     return a // 63
 
@@ -348,6 +376,7 @@ def load_original(folder: Path, patient: str):
     ):
         raise ValueError(f"Unusable physical geometry for {patient}")
     data = np.asanyarray(gt.dataobj)
+<<<<<<< HEAD
     if (
         not np.issubdtype(data.dtype, np.integer)
         or data.min() < 0
@@ -356,6 +385,11 @@ def load_original(folder: Path, patient: str):
         raise ValueError(
             f"Expected supplied annotations 0–{max(CLASSES)} for {patient}"
         )
+=======
+    # 0-4: whether label 4 (aorta) actually occurs depends on the dataset.
+    if not np.issubdtype(data.dtype, np.integer) or data.min() < 0 or data.max() > 4:
+        raise ValueError(f"Expected supplied annotations 0–4 for {patient}")
+>>>>>>> 35c00e72cc8eb216ef8f05d638d790bad9933a18
     return gt, data
 
 
