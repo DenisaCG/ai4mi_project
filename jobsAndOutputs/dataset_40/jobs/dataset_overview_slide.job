@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH --job-name=dataset_overview_slide
+#SBATCH --partition=rome
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=16G
+#SBATCH --time=00:20:00
+#SBATCH --output=jobsAndOutputs/dataset_40/outputs/%x_%j.out
+
+# One-slide overview of the 40-patient dataset (population, label cleanup, evaluation protocol).
+# Usage: sbatch jobsAndOutputs/dataset_40/jobs/dataset_overview_slide.job   (from the repo root)
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+python -B dataset_analysis/dataset_40_slide_figure.py
+echo "[$(date -Is)] done"
