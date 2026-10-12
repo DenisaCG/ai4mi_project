@@ -54,7 +54,6 @@ Order: CV first (needs no code changes, can be submitted now) while the no-valid
    | LCC heart+trachea on a single model | +0.0003 | -1.8 |
    | LCC on all organs / esophagus | -0.012 / -0.010 | +4.5 / +5.4 |
    | CRF (best variant) | -0.005 | -1.3 |
-   | slice gating with GT (`gate`) | +0.015 | -5.2, **uses the ground truth, not usable on test** |
 
    Use: **average the softmax of the 3 seeds, argmax, then largest connected component for heart and trachea only.** The gain is almost all from the seed ensemble; the LCC adds ~0.000-0.001 Dice but cuts HD95 by 1 mm. Never LCC the esophagus (it is often legitimately split) or aorta, no CRF, no size/z filters (all ~0 or negative). The vote variant is 0.0008 Dice better but within noise, so take the simpler average. Caveat: measured on ResEnc DS without augmentation; re-check `avg_lcc_heart_trachea` on the chosen best model's CV runs (ENet and the augmented models) before the final submission. Tools: `~/ai4mi_postprocess/tools/` (`prob_postprocess.py`, `seed_ensemble.py`); they need saved softmax files per seed, so the final predict step must save probabilities, not just labels. Apply the same rule to both models.
 
