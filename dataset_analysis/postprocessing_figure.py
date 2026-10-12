@@ -5,8 +5,7 @@
 One row per method; the base model (ResEnc deep-supervision U-Net, Dice + CE, no augmentation, 4 folds x 3 seeds) is the
 dashed reference line with its seed and fold spread as shaded bands. The line runs from the base mean to the mean of the method, teal where the metric improves and brick
 where it worsens. Small dots are the 40 patients (mean over the seeds and over the 4 organs); dots beyond the axis are drawn at
-its edge as triangles. Rows are tinted by the type of method. The oracle gates organs per slice with the ground truth, so it
-is an upper bound (hatched row, open marker), not a method.
+its edge as triangles. Rows are tinted by the type of method.
 Writes postprocessing.{png,pdf} and postprocessing.csv.
 """
 
@@ -33,31 +32,27 @@ from plot_style import EARTH, GRID_COLOR, PALETTE, tint  # noqa: E402
 
 BASE_EXPERIMENT = "full_cv4_resenc_ds_unet_dice_ce"
 PP_DIR = REPO / "deck/snellius_inventory/igardner1_pp"
-# (variant in the inventory, label on the slide, group, is the ground truth used)
+# (variant in the inventory, label on the slide, group)
 METHODS = [
-    ("gating_oracle:lcc", "Largest component,\nall organs", "filter", False),
+    ("postprocess:lcc", "Largest component,\nall organs", "filter"),
     (
-        "gating_oracle:lcc_heart_trachea",
+        "postprocess:lcc_heart_trachea",
         "Largest component,\nheart and trachea",
         "filter",
-        False,
     ),
-    ("gating_oracle:heart_hull", "Heart convex hull", "shape", False),
-    ("seed_ensemble:seed_vote", "3-seed majority\nvote", "vote", False),
+    ("postprocess:heart_hull", "Heart convex hull", "shape"),
+    ("seed_ensemble:seed_vote", "3-seed majority\nvote", "vote"),
     (
         "seed_ensemble:seed_vote_lcc_heart_trachea",
         "Vote + largest comp.,\nheart and trachea",
         "vote",
-        False,
     ),
-    ("gating_oracle:gate", "Oracle gating\n(upper bound)", "oracle", True),
 ]
 # Group name on the slide and background colour of its rows.
 GROUPS = {
     "filter": ("Filter", tint(PALETTE[0], 0.22)),
     "shape": ("Shape", tint(PALETTE[3], 0.3)),
     "vote": ("Vote", tint(PALETTE[1], 0.25)),
-    "oracle": ("Oracle", "none"),
 }
 TEXT = "#1A1A1A"
 VALUE = "#0A0A0A"
@@ -99,7 +94,7 @@ def collect(metrics_dir: Path, pp_dir: Path = PP_DIR) -> dict:
 
     Returns:
         The base summary (dice, hd95, seed and fold stds, per-patient values) and one dict per method with its
-        label, oracle flag, run count, means and per-patient values.
+        label, run count, means and per-patient values.
     """
     runs = load_cv_runs(metrics_dir, BASE_EXPERIMENT, METRICS)
     base = summarise(runs)
@@ -114,7 +109,7 @@ def collect(metrics_dir: Path, pp_dir: Path = PP_DIR) -> dict:
         if r["method"] in wanted:
             cells[r["method"]].append(r)
     methods = []
-    for key, label, group, oracle in METHODS:
+    for key, label, group in METHODS:
         row = summary[key]
         rows = cells[key]
         methods.append(
@@ -122,7 +117,6 @@ def collect(metrics_dir: Path, pp_dir: Path = PP_DIR) -> dict:
                 "key": key,
                 "label": label,
                 "group": group,
-                "oracle": oracle,
                 "n_runs": int(row["n_runs"]),
                 "dice": float(row["dice"]),
                 "hd95": float(row["hd95"]),
@@ -172,24 +166,15 @@ def panel(ax, data: dict, metric: str, limits, higher_is_better: bool, fmt) -> N
         background = GROUPS[m["group"]][1]
         if background != "none":
             ax.axhspan(y - 0.5, y + 0.5, color=background, lw=0, zorder=-1)
-        if m["oracle"]:
-            ax.axhspan(
-                y - 0.5,
-                y + 0.5,
-                facecolor="none",
-                hatch="///",
-                edgecolor=GRID_COLOR,
-                lw=0,
-            )
         improved = (m[metric] > base[metric]) == higher_is_better
         color = BETTER if improved else WORSE
         draw_cloud(ax, m[f"patient_{metric}"], y, limits, color)
         ax.plot(
             [base[metric], m[metric]], [y, y], color=color, lw=3,
-            ls="--" if m["oracle"] else "-", solid_capstyle="butt", zorder=4,
+            ls="-", solid_capstyle="butt", zorder=4,
         )  # fmt: skip
         ax.scatter(
-            m[metric], y, s=60, zorder=5, color="white" if m["oracle"] else color,
+            m[metric], y, s=60, zorder=5, color=color,
             edgecolor=color, lw=2,
         )  # fmt: skip
         right = m[metric] >= base[metric]
@@ -243,8 +228,6 @@ def figure(data: dict, plt):
     handles = [
         plt.Line2D([], [], color=BETTER, lw=2.2, label="improves"),
         plt.Line2D([], [], color=WORSE, lw=2.2, label="worsens"),
-        plt.Line2D([], [], marker="o", mfc="white", mec=BETTER, mew=2, ls="--",
-                   color=BETTER, label="oracle"),
         plt.Line2D([], [], marker="o", color="#777777", alpha=0.6, ls="", ms=4, label="patient"),
         plt.Rectangle((0, 0), 1, 1, fc=FOLD_BAND, alpha=0.34, label="seed \u00b11 SD"),
         plt.Rectangle((0, 0), 1, 1, fc=FOLD_BAND, alpha=0.18, label="fold \u00b11 SD"),
@@ -302,7 +285,6 @@ def table(data: dict) -> list[dict]:
             "hd95": round(base["hd95"], 2),
             "delta_dice": 0.0,
             "delta_hd95": 0.0,
-            "uses_ground_truth": False,
         }
     ]
     for m in data["methods"]:
@@ -314,7 +296,6 @@ def table(data: dict) -> list[dict]:
                 "hd95": round(m["hd95"], 2),
                 "delta_dice": round(m["dice"] - base["dice"], 4),
                 "delta_hd95": round(m["hd95"] - base["hd95"], 2),
-                "uses_ground_truth": m["oracle"],
             }
         )
     return rows

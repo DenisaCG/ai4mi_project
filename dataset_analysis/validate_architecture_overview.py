@@ -4,7 +4,7 @@
 
 Checks that every architecture has all 12 runs, appears once, has a parameter count (except the frozen-encoder model) and
 metrics in physical bounds; that the plotted Dice values equal the "all runs" row of metrics/cv_summary.md to its three
-decimals; that the experiments also in the Snellius inventory agree with it to numerical precision; and that the baseline's
+decimals; and that the baseline's
 seed and fold spread are the values quoted on the cross-validation slide.
 """
 
@@ -13,15 +13,7 @@ import math
 from pathlib import Path
 
 from architecture_overview import ARCHITECTURES, DINO, collect
-from utils import (
-    INVENTORY,
-    N_FOLDS,
-    PER_PATIENT,
-    N_SEEDS,
-    REPO,
-    inventory_row,
-    read_csv,
-)
+from utils import N_FOLDS, N_SEEDS, REPO
 
 
 def require(condition, message):
@@ -60,7 +52,6 @@ def main():
         "Rows differ from the architecture list",
     )
     require(len(set(experiments)) == len(experiments), "Duplicate experiment")
-    inventory = {r["experiment"] for r in read_csv(INVENTORY)}
     for row in table:
         name = row["experiment"]
         require(
@@ -90,31 +81,6 @@ def main():
                 round(row["esophagus_dice"], 3) == esophagus,
                 f"{name}: esophagus Dice differs from cv_summary.md",
             )
-        if name in inventory:
-            other = inventory_row(name)
-            if other["n_runs"] == N_FOLDS * N_SEEDS:
-                for key in (
-                    "dice",
-                    "hd95",
-                    "assd",
-                    "esophagus_dice",
-                    "dice_seed_std",
-                    "dice_fold_std",
-                ):
-                    require(
-                        math.isclose(row[key], other[key], rel_tol=1e-9),
-                        f"{name}: {key} differs from the Snellius inventory",
-                    )
-    scur = {
-        r["experiment"]: float(r["dice"])
-        for r in read_csv(PER_PATIENT.parent / "arch_summary.csv")
-        if r["organ"] == "mean_of_4" and r["root"].startswith("/scratch")
-    }
-    for row in table:
-        require(
-            math.isclose(row["dice"], scur[row["experiment"]], rel_tol=1e-9),
-            f"{row['experiment']}: Dice differs from the scur0049 inventory",
-        )
     base = table[0]
     require(
         round(base["dice_seed_std"], 3) == 0.002

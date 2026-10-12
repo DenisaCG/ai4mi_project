@@ -5,8 +5,7 @@
 Validation Dice of the ResEnc deep-supervision U-Net with Dice + CE (the reference) and with a boundary loss, a Tversky loss, a
 slice-presence head and AdamW, logged after every epoch of training: per patient from counts summed over its slices, on the
 256 x 256 model grid (not the original CT grid of the evaluation), seed 0, mean over the 4 folds. Lines are the 3-epoch moving
-average of the fold mean from epoch 3. The reference runs are read from metrics/, the
-variants from the folders pulled from Snellius (deck/snellius_inventory/loss_runs).
+average of the fold mean from epoch 3. Every run, reference and variants alike, is read from metrics/.
 Writes loss_training_curves.{png,pdf} and loss_training_curves.csv (one row per variant and epoch).
 """
 
@@ -26,20 +25,20 @@ VARIANTS = [
     (
         "+ boundary loss",
         "full_cv4_resenc_ds_unet_dice_ce_boundary",
-        "loss_runs",
+        "metrics",
         EARTH[0],
     ),
-    ("Tversky loss + CE", "full_cv4_resenc_ds_unet_tversky_ce", "loss_runs", EARTH[1]),
+    ("Tversky loss + CE", "full_cv4_resenc_ds_unet_tversky_ce", "metrics", EARTH[1]),
     (
         "+ slice-presence head",
         "full_cv4_resenc_ds_unet_dice_ce_presence",
-        "loss_runs",
+        "metrics",
         EARTH[2],
     ),
     (
         "AdamW optimiser",
         "full_cv4_resenc_ds_unet_dice_ce_adamw",
-        "loss_runs",
+        "metrics",
         EARTH[3],
     ),
 ]
@@ -108,7 +107,7 @@ def main(argv: list[str] | None = None) -> None:
     )
     parser.add_argument("--metrics-dir", type=Path, default=REPO / "metrics")
     parser.add_argument(
-        "--runs-dir", type=Path, default=REPO / "deck/snellius_inventory/loss_runs"
+        "--runs-dir", type=Path, default=REPO / "metrics"
     )
     parser.add_argument("--out", type=Path, default=REPO / "figures")
     args = parser.parse_args(argv)

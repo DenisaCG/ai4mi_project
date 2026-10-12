@@ -7,7 +7,6 @@ Per fold and patient, the label volumes of the seeds (runs/<experiment>_fold<k>/
 combined by tools.postprocess_filters.majority_vote and scored against the source GT with src.metrics_3d.
 Variants (single-seed rows are scored per run, ensemble rows once per fold, as run <fold>/vote):
   baseline                      each seed as is (must reproduce its eval/metrics_3d.csv)
-  gate                          oracle: organ set to background on slices where the GT has none
   lcc_heart_trachea             largest component for heart and trachea
   seed_vote                     the majority vote
   seed_vote_lcc_heart_trachea   the vote, then largest component for heart and trachea
@@ -26,14 +25,12 @@ import nibabel as nib
 import numpy as np
 
 from src.config import REPO, read_yaml
-from tools.gating_oracle import (
+from tools.postprocess_eval import (
     HD95_DICE_TOLERANCE,
     aggregate,
     check_baseline,
-    gate,
     largest_component,
     means_rows,
-    recovery_table,
     run_dirs,
     table,
     variants_of,
@@ -97,7 +94,6 @@ def score_patient(
             scored: dict = {}
             for variant, vol in (
                 ("baseline", pred),
-                ("gate", gate(pred, gt, classes)),
                 ("lcc_heart_trachea", lcc_ht(pred)),
             ):
                 rows += volume_rows(Path(run), patient, variant, vol, gt, spacing, names, classes, scored)
@@ -180,7 +176,7 @@ def main(argv: list[str] | None = None) -> None:
         f"# Seed majority vote: {args.experiment}, {len(args.seeds)} seeds, {args.folds} folds, {len(tasks)} patients",
         "",
         f"Baseline rows vs the runs' own metrics_3d.csv: max |difference| {worst:.2e} (must be ~0).",
-        "Single-seed variants: mean over the seeds of each fold; seed_vote*: the fold's one ensemble. fg and fold columns are comparable; gate is the oracle.",
+        "Single-seed variants: mean over the seeds of each fold; seed_vote*: the fold's one ensemble. fg and fold columns are comparable.",
         "Ties between three different labels go to seed 0's label.",
         "",
         table("fg Dice and per-organ Dice", "dice", rows, classes, names, ".4f"),
@@ -188,8 +184,6 @@ def main(argv: list[str] | None = None) -> None:
         table("fg HD95 and per-organ HD95 (mm)", "hd95", rows, classes, names, ".2f"),
         "",
         table("fg ASSD and per-organ ASSD (mm)", "assd", rows, classes, names, ".3f"),
-        "",
-        recovery_table(rows, classes),
         "",
         "### Vote threshold chosen per organ (seeds needed to keep a voxel; picked on the scored folds)",
         "",

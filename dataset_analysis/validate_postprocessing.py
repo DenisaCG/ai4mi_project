@@ -6,7 +6,7 @@ Checks that the base model has 12 runs x 40 validation patients x 4 organs and t
 row of metrics/cv_summary.md to its three decimals and the base column of the inventory to numerical precision; that
 every method appears once with 12 runs (4 fold-level ensembles for the votes), one row per fold, seed, patient and organ,
 and 40 patients; that the plotted means equal the mean over the patients behind the dots; that a method repeated in
-several result folders of the inventory has identical numbers; that only the gating oracle uses the ground truth; and that
+several result folders of the inventory has identical numbers; and that
 the metrics are in physical bounds.
 """
 
@@ -20,7 +20,6 @@ from utils import CLASSES, N_FOLDS, N_SEEDS, REPO, read_csv
 from validate_architecture_overview import require, summary_dice
 
 N_PATIENTS = 40
-ORACLE = "gating_oracle:gate"
 
 
 def main():
@@ -42,10 +41,6 @@ def main():
     )
     keys = [m["key"] for m in data["methods"]]
     require(len(set(keys)) == len(keys), "Duplicate method")
-    require(
-        [m["key"] for m in data["methods"] if m["oracle"]] == [ORACLE],
-        "Only the gating oracle may be marked as using the ground truth",
-    )
     for m in data["methods"]:
         name = m["key"]
         ensemble = "seed_ensemble" in name

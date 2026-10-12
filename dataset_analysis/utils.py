@@ -24,8 +24,6 @@ NAMES = {k: name.capitalize() for k, name in CLASSES.items()}
 REPO = Path(__file__).resolve().parents[1]
 N_FOLDS, N_SEEDS = 4, 3  # cross-validation protocol, as in src.aggregate
 METRICS = ("dice", "hd95", "assd")
-INVENTORY = REPO / "deck/snellius_inventory/igardner1/arch_summary.csv"
-PER_PATIENT = REPO / "deck/snellius_inventory/scur0049/arch_per_patient.csv"
 
 # Figures share the repo-wide theme in tools/plot_style.py, with its earthy organ colors.
 os.environ.setdefault("MPLCONFIGDIR", str(REPO / "dataset_analysis/results/.matplotlib"))
@@ -150,23 +148,18 @@ def read_csv(path: Path) -> list[dict]:
 
 
 def load_arch_runs(metrics_dir: Path, experiment: str) -> tuple[list[dict], str]:
-    """Read the validation metrics of every run of an experiment, from the local metrics or else the Snellius inventory.
+    """Read the validation metrics of every run of an experiment from the local metrics folder.
 
     Args:
-        metrics_dir: Folder holding the local runs, as for load_cv_runs.
+        metrics_dir: Folder holding one `<experiment>_fold<k>/seed<s>/metrics_3d.csv` per run, as for load_cv_runs.
         experiment: Experiment name without the fold suffix.
 
     Returns:
         The rows of load_cv_runs (all of METRICS) and the name of the source they came from.
     """
-    if (metrics_dir / f"{experiment}_fold0").exists():
-        return load_cv_runs(metrics_dir, experiment, METRICS), "metrics"
-    rows = [
-        {"fold": int(r["fold"]), "seed": int(r["seed"]), "patient": r["patient"], "organ": r["organ"],
-         **{k: float(r[k]) for k in METRICS}}
-        for r in read_csv(PER_PATIENT) if r["experiment"] == experiment
-    ]
-    return rows, "snellius inventory"
+    if not (metrics_dir / f"{experiment}_fold0").exists():
+        raise FileNotFoundError(f"{experiment}: no runs in {metrics_dir}")
+    return load_cv_runs(metrics_dir, experiment, METRICS), "metrics"
 
 
 def spreads(runs: dict[tuple[int, int], float]) -> tuple[float, float]:
@@ -212,24 +205,6 @@ def summarise(rows: list[dict]) -> dict:
     out["hd95_seed_std"], out["hd95_fold_std"] = spreads(mean_runs["hd95"])
     out["esophagus_seed_std"], out["esophagus_fold_std"] = spreads(esophagus_runs)
     return out
-
-
-def inventory_row(experiment: str) -> dict:
-    """Mean metrics of one experiment from the Snellius inventory, in the layout of summarise()."""
-    rows = [r for r in read_csv(INVENTORY) if r["experiment"] == experiment]
-    mean = next(r for r in rows if r["organ"] == "mean")
-    esophagus = next(r for r in rows if r["organ"] == "esophagus")
-    return {
-        **{key: float(mean[key]) for key in METRICS},
-        "n_runs": int(mean["n_runs"]),
-        "esophagus_dice": float(esophagus["dice"]),
-        "dice_seed_std": float(mean["seed_std"] or "nan"),
-        "dice_fold_std": float(mean["fold_std"] or "nan"),
-        "hd95_seed_std": None,
-        "hd95_fold_std": None,
-        "esophagus_seed_std": None,
-        "esophagus_fold_std": None,
-    }
 
 
 def identity(path: Path) -> tuple[str, int]:

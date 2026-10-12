@@ -5,9 +5,7 @@
 Left panel: Dice averaged over the four organs. Right panel: Dice of the esophagus. Both are the mean over the 12 runs
 (4 folds x 3 seeds; per run, the mean over the 10 validation patients, 3D Dice on the original CT grid). The shaded
 bands around the upgraded baseline are its standard deviation over seeds (dark) and over folds (light), computed as in
-the cross-validation summary; the first column gives the trainable parameters. The runs of the frozen-encoder U-Net
-and the 2.5D ResEnc U-Net are not stored locally, so their runs are read from the Snellius inventory
-(deck/snellius_inventory).
+the cross-validation summary; the first column gives the trainable parameters. Every run is read from metrics/.
 Writes architecture_overview.{png,pdf} and architecture_overview.csv (also HD95 and ASSD).
 """
 
