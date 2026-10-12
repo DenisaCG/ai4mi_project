@@ -6,11 +6,12 @@ across the whole project:
 - **hard Dice, no smoothing**: `2|G∩P| / (|G|+|P|)`
 - **both empty → NaN** (undefined, excluded from means). An empty/empty case is not a success, and
   counting it as 1.0 (as the course `dice_coef` with `smooth=1e-8` does) inflates scores for small organs.
-- **one empty → Dice 0**, surface distances NaN
+- **one empty → Dice 0**, HD95 and ASSD = the diagonal of the volume in mm (the worst possible distance, as
+  Metrics Reloaded recommends), so a missed organ is penalised instead of being dropped from the means as NaN
 - foreground (`*_fg`) = mean over `eval.classes`, which depends on the label version:
   - **original labels** (`segthor_part1`, `configs/base.yaml`): `[1, 2, 3]` (esophagus, heart, trachea). The aorta (4)
     has no voxels in any ground truth (it is merged into label 1), so it is excluded from `*_fg`. It still gets
-    per-class rows in the 3D evaluation: Dice 0 if the model predicts it anywhere, NaN otherwise.
+    per-class rows in the 3D evaluation: Dice 0 (and the diagonal as HD95/ASSD) if the model predicts it anywhere, NaN otherwise.
   - **corrected labels** (`segthor_part1_corrected`, `configs/segthor_enet_ce_corrected.yaml`): `[1, 2, 3, 4]`, since all
     20 patients have aorta voxels. `*_fg` therefore averages four organs and is not comparable with an original-label `*_fg`,
     and the esophagus differs too (the original label 1 also contained the aorta).
@@ -38,8 +39,8 @@ compared with the original `GT.nii.gz`, using the voxel spacing from the NIfTI h
 | metric | definition | empty handling |
 |---|---|---|
 | Dice | overlap, as above | both empty → NaN |
-| HD95 (mm) | max of the two directed 95th-percentile surface distances | either empty → NaN |
-| ASSD (mm) | mean of all symmetric surface-to-surface distances | either empty → NaN |
+| HD95 (mm) | max of the two directed 95th-percentile surface distances | both empty → NaN; one empty → volume diagonal |
+| ASSD (mm) | mean of all symmetric surface-to-surface distances | both empty → NaN; one empty → volume diagonal |
 
 Surfaces are voxels of the mask with a 6-connected background neighbour. These are the "3D metrics"
 the course asks for (see metrics-reloaded: an overlap measure plus a boundary measure).

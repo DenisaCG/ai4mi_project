@@ -58,9 +58,21 @@ class VolumeMetricTests(unittest.TestCase):
         empty = np.zeros_like(self.cube())
         both = volume_metrics(empty, empty, (1, 1, 1))
         self.assertTrue(all(np.isnan(v) for v in both.values()))
+        diagonal = float(np.sqrt(3) * 40)  # 40 voxels of 1 mm per axis
         missed = volume_metrics(self.cube(), empty, (1, 1, 1))
         self.assertEqual(missed["dice"], 0.0)
-        self.assertTrue(np.isnan(missed["hd95"]))
+        self.assertAlmostEqual(missed["hd95"], diagonal)
+        self.assertAlmostEqual(missed["assd"], diagonal)
+        hallucinated = volume_metrics(empty, self.cube(), (1, 1, 1))
+        self.assertEqual(hallucinated["dice"], 0.0)
+        self.assertAlmostEqual(hallucinated["hd95"], diagonal)
+
+    def test_missed_organ_uses_physical_diagonal(self):
+        empty = np.zeros_like(self.cube())
+        missed = volume_metrics(self.cube(), empty, (2.5, 1, 1))
+        self.assertAlmostEqual(missed["hd95"], float(np.sqrt(100**2 + 40**2 + 40**2)))
+        worst_real = volume_metrics(self.cube(), self.cube((20, 20, 20)), (2.5, 1, 1))["hd95"]
+        self.assertGreater(missed["hd95"], worst_real)  # a miss never scores better than a bad overlap
 
     def test_shift_uses_physical_spacing(self):
         a, b = self.cube(), self.cube((3, 0, 0))

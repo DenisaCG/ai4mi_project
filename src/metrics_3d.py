@@ -2,8 +2,9 @@
 
 Conventions (same as dataset_analysis, stated so tables are unambiguous):
   dice  : 2|G∩P| / (|G|+|P|); both empty -> NaN; one empty -> 0
-  hd95  : max of the two directed 95th-percentile surface distances (mm); NaN if either is empty
-  assd  : mean of all symmetric surface distances (mm); NaN if either is empty
+  hd95  : max of the two directed 95th-percentile surface distances (mm); both empty -> NaN;
+          one empty -> the diagonal of the volume (worst possible distance, as Metrics Reloaded recommends)
+  assd  : mean of all symmetric surface distances (mm); empty cases as hd95
 """
 import numpy as np
 from scipy import ndimage
@@ -34,14 +35,14 @@ def surface_distances(gt: np.ndarray, pred: np.ndarray, spacing) -> tuple[np.nda
 
 
 def volume_metrics(gt: np.ndarray, pred: np.ndarray, spacing) -> dict:
-    # NOTE: hd95/assd stay NaN when either mask is empty, and evaluate.mean() then drops them, so a model
-    # that misses an organ entirely is not penalised. Preliminary literature review suggests a better way:
-    # BraTS scores a region that exists but is not predicted as Dice 0 with a fixed worst-case HD95 (374),
-    # and Metrics Reloaded recommends setting undefined values to the worst possible value (e.g. the image
-    # diagonal) rather than ignoring them. Not adopted here yet; reported numbers would change.
     out = {"dice": dice(gt, pred), "hd95": np.nan, "assd": np.nan}
     if gt.any() and pred.any():
         a, b = surface_distances(gt, pred, spacing)
         out["hd95"] = float(max(np.percentile(a, 95), np.percentile(b, 95)))
         out["assd"] = float(np.concatenate([a, b]).mean())
+    elif gt.any() or pred.any():
+        # A missed (or hallucinated) organ has no surface to measure against. NaN would be dropped by the
+        # NaN-aware means downstream and reward the miss, so it gets the worst possible distance instead:
+        # the diagonal of the volume in mm (Metrics Reloaded, Maier-Hein et al. 2024).
+        out["hd95"] = out["assd"] = float(np.linalg.norm(np.multiply(gt.shape, spacing)))
     return out
