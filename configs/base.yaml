@@ -41,7 +41,7 @@ optim:
   kwargs: {lr: 0.0005, betas: [0.9, 0.999]}
 
 scheduler:
-  name: none              # none | cosine | step | plateau (halves the LR when the select metric stalls)
+  name: none              # none | cosine | plateau (halves the LR when the select metric stalls)
   kwargs: {}
 
 train:

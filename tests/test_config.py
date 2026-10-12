@@ -20,13 +20,13 @@ class ConfigTests(unittest.TestCase):
 
     def test_switching_component_drops_the_old_kwargs(self):
         base = {"optim": {"name": "adam", "kwargs": {"lr": 0.0005, "betas": [0.9, 0.999]}}}
-        switched = merge(base, {"optim": {"name": "sgd", "kwargs": {"lr": 0.01, "momentum": 0.9}}})
-        self.assertEqual(switched["optim"]["kwargs"], {"lr": 0.01, "momentum": 0.9})
+        switched = merge(base, {"optim": {"name": "adamw", "kwargs": {"lr": 0.01, "weight_decay": 0.01}}})
+        self.assertEqual(switched["optim"]["kwargs"], {"lr": 0.01, "weight_decay": 0.01})
         self.assertEqual(merge(switched, {"optim": {"kwargs": {"lr": 0.05}}})["optim"]["kwargs"],
-                         {"lr": 0.05, "momentum": 0.9})
+                         {"lr": 0.05, "weight_decay": 0.01})
         kept = merge(base, {"optim": {"kwargs": {"lr": 0.001}}})
         self.assertEqual(kept["optim"]["kwargs"], {"lr": 0.001, "betas": [0.9, 0.999]})
-        self.assertEqual(load_config(CFG, ["optim.name=sgd", "optim.kwargs.lr=0.01"])["optim"]["kwargs"],
+        self.assertEqual(load_config(CFG, ["optim.name=adamw", "optim.kwargs.lr=0.01"])["optim"]["kwargs"],
                          {"lr": 0.01})
 
     def test_cli_overrides_are_typed(self):
@@ -41,7 +41,7 @@ class ConfigTests(unittest.TestCase):
             with self.assertRaises(ValueError, msg=override) as caught:
                 load_config(CFG, [override])
             self.assertIn("available:", str(caught.exception))
-        load_config(CFG, ["optim.name=sgd", "optim.kwargs.lr=0.01", "scheduler.name=cosine"])
+        load_config(CFG, ["optim.name=adamw", "optim.kwargs.lr=0.01", "scheduler.name=cosine"])
 
     def test_smoke_layer_then_overrides(self):
         cfg = load_config(CFG, ["wandb.mode=offline"], smoke=True)

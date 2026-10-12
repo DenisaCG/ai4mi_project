@@ -174,7 +174,7 @@ Common switches:
 | dataset / preprocessing variant | `data.preprocess` (sliced on first use) or `data.root` for a prebuilt dataset (+ `num_classes`, `class_names`, `label_scale` if they differ) |
 | architecture | `model.name`, `model.kwargs` |
 | loss | `loss.name`, `loss.kwargs` |
-| optimizer / LR schedule | `optim.name/kwargs`, `scheduler.name/kwargs` (`none`, `cosine`, `step`) |
+| optimizer / LR schedule | `optim.name/kwargs`, `scheduler.name/kwargs` (`none`, `cosine`, `plateau`) |
 | length, batch size | `train.epochs`, `data.batch_size` |
 | seed | `seed` (a separate run directory per seed) |
 | selection metric | `train.select_metric` (`val_dice_fg` default; `val_dice_legacy_fg` = the course metric) |
