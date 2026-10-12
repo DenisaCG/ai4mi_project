@@ -2,7 +2,7 @@
 # with the current recipe: ENet + CE (all classes) + soft Dice (foreground) and the full preprocessing stack (median spacing,
 # HU window + z-score, ROI crop/pad). The window size T comes from each fold's 30 training patients, so it can differ per fold
 # (see <dataset>/roi_crop.json). Runs as full_cv4_enet_dice_ce_fold0..3. Needs the dice_ce loss (src/losses/diceCE.py).
-experiment: full_cv4_enet_dice_ce_boundary_v2 
+experiment: full_cv4_enet_dice_ce_boundary_v2
 notes: ENet + CE (all classes) + soft Dice (foreground), full preprocessing (median spacing + HU window + z-score + ROI crop/pad), 4-fold CV on the full 40-patient SEGTHOR train set
 seed: 0
 
