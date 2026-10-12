@@ -1,0 +1,46 @@
+#!/bin/bash
+#SBATCH --job-name=rescore_metrics
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --time=01:00:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# CPU only. After the missed-organ change in src/metrics_3d.py (HD95/ASSD = volume diagonal instead of NaN):
+#   1. the test suite,
+#   2. `src.evaluate --rescore` on every run that has a missed organ: scores the volumes saved by its first
+#      evaluation again (no network, no sliced data) and refreshes its copy in metrics/,
+#   3. src.aggregate over every run in metrics/ (rewrites cv_summary.md and cv_pooled_*.csv).
+# Only the single-split ENet runs below had an organ present in the GT but absent from the prediction; no
+# 40-patient CV run had one, so their numbers do not change.
+# Usage: sbatch jobsAndOutputs/pipeline/jobs/rescore_metrics.job
+set -euo pipefail
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+EXPERIMENTS=(
+    segthor_enet_ce_repro
+    segthor_enet_ce_repro_corrected_fixed
+    segthor_enet_ce_corrected_control
+    segthor_enet_ce_corrected_ct_window
+    segthor_enet_ce_corrected_median_spacing
+    segthor_enet_ce_corrected_ct_window_median_spacing
+    segthor_enet_ce_corrected_ct_window_zscore_median_spacing
+    segthor_enet_ce_corrected_median_spacing_roi_crop
+)
+echo "[$(date -Is)] start, commit $(git rev-parse --short HEAD), job $SLURM_JOB_ID"
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK MPLBACKEND=Agg
+
+python -m unittest discover -s tests
+
+failed=()
+for exp in "${EXPERIMENTS[@]}"; do
+    for run in runs/"$exp"/seed*; do
+        echo "[$(date -Is)] rescoring $run"
+        python -m src.evaluate --run "$run" --rescore || { echo "FAILED: $run"; failed+=("$run"); }
+    done
+done
+
+python -m src.aggregate
+echo "[$(date -Is)] done; failed runs: ${#failed[@]} ${failed[*]:-}"
+[ ${#failed[@]} -eq 0 ]
