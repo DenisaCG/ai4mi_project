@@ -1998,13 +1998,6 @@
     },
     {
       "kind": "job",
-      "source": "jobsAndOutputs/pipeline/jobs/registration.job",
-      "destination": "jobsAndOutputs/augmentation/jobs/registration/registration.job",
-      "sha256": "1d236ec85e8d38630d06ce4f242a211d4ae00f574c0d1d2d8de0ccfea6969092",
-      "content_changes_expected": true
-    },
-    {
-      "kind": "job",
       "source": "jobsAndOutputs/augmentation/jobs/build_cv_folds_mig.job",
       "destination": "jobsAndOutputs/augmentation/jobs/online/build_cv_folds_mig.job",
       "sha256": "d8ac355cf967c1d69f934cd1dfb053cdf9b941280343c0983db7c35f97a2367d",

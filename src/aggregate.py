@@ -98,7 +98,7 @@ def run_metrics_dir(metrics_dir: Path, run: dict) -> Path:
     relative = Path(run["experiment"]) / run["run"]
     candidates = [metrics_dir / relative] + [
         metrics_dir / "augmentation_metrics" / category / relative
-        for category in ("screening", "joint", "registration")
+        for category in ("screening", "joint")
     ]
     found = [path for path in candidates if (path / "summary.json").is_file()]
     if len(found) != 1:

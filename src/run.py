@@ -148,13 +148,11 @@ def metrics_dir_for(cfg: dict) -> Path:
     category = cfg["paths"].get("metrics_category")
     if category is None:
         data = cfg["data"]
-        if data.get("registration"):
-            category = "registration"
-        elif data.get("augment"):
+        if data.get("augment"):
             category = "joint" if len(data["augment"]) > 1 else "screening"
     if category is None:
         return root
-    if category not in ("screening", "joint", "registration"):
+    if category not in ("screening", "joint"):
         raise ValueError(f"unknown metrics category {category!r}")
     return root / "augmentation_metrics" / category
 

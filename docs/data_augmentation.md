@@ -45,7 +45,6 @@ perturbation at the median range. Neither sigma is a measurement of scanner nois
 
 - [He et al. (2019)](https://ceur-ws.org/Vol-2349/SegTHOR2019_paper_2.pdf) used flipping and scaling from 0.6 to 1 in a SegTHOR multi-task method. This supports studying geometric augmentation; our 0.9–1.1 scale range is deliberately milder.
 - [Vesal et al. (2019)](https://ceur-ws.org/Vol-2349/SegTHOR2019_paper_13.pdf) reported better SegTHOR performance for an augmented 2D model. Their paper does not establish our transform probabilities or parameter ranges.
-- [Wang et al. (2019), EMSN](https://ceur-ws.org/Vol-2349/SegTHOR2019_paper_8.pdf) used registration-based augmentation on SegTHOR. It motivates a separately considered deformation direction, but does not justify our `p=0.5`, ±10° rotation, or scaling range. Offline registration is implemented separately from these six online arms; see [registration_augmentation.md](registration_augmentation.md).
 
 ## Implementation and configurations
 

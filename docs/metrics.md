@@ -53,9 +53,9 @@ The orientation and spacing of each volume are logged in `eval.log`.
 
 After runs finish, control results are copied to `metrics/<experiment>/seed<seed>/`.
 Augmentation copies go to `metrics/augmentation_metrics/<category>/<experiment>/seed<seed>/`,
-where `<category>` is `screening`, `joint` or `registration` from `paths.metrics_category`.
-Older saved augmentation configs without that metadata route by their `data.augment` or
-`data.registration` setting. Commit the small result files, including the migration manifest.
+where `<category>` is `screening` or `joint` from `paths.metrics_category`.
+Older saved augmentation configs without that metadata route by their `data.augment`
+setting. Commit the small result files, including the migration manifest.
 Then, on any checkout:
 
 ```bash

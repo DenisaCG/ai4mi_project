@@ -184,7 +184,6 @@ def config_hash(cfg: dict) -> str:
         if (k != "num_workers" or cfg["data"]["augment"])
         and (k != "context" or v != 0)
         and (k != "stride" or v != 1)
-        and (k != "registration" or v is not None)
     }
     # train.presence_weight == 0 (no presence head) is left out, so runs from before the key existed keep their hash
     relevant["train"] = {k: v for k, v in cfg["train"].items() if k != "presence_weight" or v}

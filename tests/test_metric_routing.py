@@ -14,9 +14,9 @@ class MetricRoutingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             cfg = {"paths": {"metrics_dir": str(root)},
-                   "data": {"augment": [], "registration": None}}
+                   "data": {"augment": []}}
             self.assertEqual(metrics_dir_for(cfg), root)
-            for category in ("screening", "joint", "registration"):
+            for category in ("screening", "joint"):
                 cfg["paths"]["metrics_category"] = category
                 self.assertEqual(metrics_dir_for(cfg), root / "augmentation_metrics" / category)
             cfg["paths"].pop("metrics_category")
@@ -24,8 +24,6 @@ class MetricRoutingTests(unittest.TestCase):
             self.assertEqual(metrics_dir_for(cfg), root / "augmentation_metrics/screening")
             cfg["data"]["augment"].append({"name": "random_scaling"})
             self.assertEqual(metrics_dir_for(cfg), root / "augmentation_metrics/joint")
-            cfg["data"]["registration"] = {"root": "synthetic"}
-            self.assertEqual(metrics_dir_for(cfg), root / "augmentation_metrics/registration")
 
     def test_aggregate_discovers_nested_runs_without_double_counting(self):
         with tempfile.TemporaryDirectory() as directory:
