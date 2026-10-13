@@ -1,0 +1,37 @@
+#!/bin/bash
+#SBATCH --job-name=build_submission_archive
+#SBATCH --partition=genoa
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --time=01:00:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Builds the group-23 submission folder (everything except the git bundle) on CPU: the out-of-fold validation volumes of the
+# final recipe (post-processed, TTA, 3 seeds averaged) with GT and dice/hd95/assd npz, the test predictions and the model.
+# The validation part is compared with metrics/postprocessing/pp_tta_ctrl/rows.csv; a mismatch there means the code or the
+# probabilities differ from the run behind the reported numbers.
+# Usage: sbatch --export=ALL,PROBS=/scratch-shared/<user>/ai4mi_project/postprocess_probs_tta/<experiment>/all[,ARCHIVE=$HOME/group-23] \
+#               jobsAndOutputs/pipeline/jobs/build_submission_archive.job
+set -euo pipefail
+EXPERIMENT="${EXPERIMENT:-full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep}"
+PROBS="${PROBS:?set PROBS=<dir with <experiment>_fold<k>/seed<s>/<patient>.npy> via --export}"
+ARCHIVE="${ARCHIVE:-$HOME/group-23}"
+FINAL=final_best_model
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+
+export OMP_NUM_THREADS=1
+python -O -m tools.build_submission_archive --experiment "$EXPERIMENT" --probs "$PROBS" --out "$ARCHIVE" \
+    --workers "$SLURM_CPUS_PER_TASK"
+
+mkdir -p "$ARCHIVE/test/pred"
+cp predictions/${FINAL}_tta/final/Patient_*.nii.gz "$ARCHIVE/test/pred/"
+cp runs/$FINAL/seed0/checkpoints/best_model.pkl "$ARCHIVE/bestmodel-group-23.pkl"
+[ "$(ls "$ARCHIVE/test/pred" | wc -l)" = 20 ] || { echo "expected 20 test predictions"; exit 1; }
+python -c "
+import sys, torch
+net = torch.load(sys.argv[1], weights_only=False, map_location='cpu')
+print('model file loads:', type(net).__name__, sum(p.numel() for p in net.parameters()), 'parameters')
+" "$ARCHIVE/bestmodel-group-23.pkl"
+du -sh "$ARCHIVE"
+echo "[$(date -Is)] done: $ARCHIVE (the bundle is added by hand, see prepare_submission_history.sh)"
