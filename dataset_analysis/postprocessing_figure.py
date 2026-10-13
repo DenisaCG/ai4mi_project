@@ -136,9 +136,28 @@ SLIDE = {
     "postprocess_extra2:combo_hd95": "Combination, HD95-tuned",
     "seed_ensemble:seed_vote": "3-seed majority vote",
     "seed_ensemble:seed_vote_lcc_heart_trachea": "Vote + largest comp.",
+    "prob_postprocess:avg": "Softmax average",
     "prob_postprocess:avg_lcc_heart_trachea": "Softmax avg + largest comp.",
-    "prob_postprocess:avg_crf_a": "Softmax avg + CRF a",
 }
+# The steps behind each slide row (named as in postprocessing_cost.csv) and the trained models it needs.
+COST_STEPS = {
+    "gating_oracle:lcc": (["largest_component_all_organs"], 1),
+    "gating_oracle:lcc_heart": (["largest_component_heart"], 1),
+    "gating_oracle:lcc_heart_trachea": (["largest_component_heart_trachea"], 1),
+    "gating_oracle:heart_hull": (["heart_hull_after_largest_component"], 1),
+    "seed_ensemble:seed_vote": (["majority_vote_3_seeds"], 3),
+    "seed_ensemble:seed_vote_lcc_heart_trachea": (
+        ["majority_vote_3_seeds", "largest_component_heart_trachea"],
+        3,
+    ),
+    "prob_postprocess:avg": (["softmax_average_3_seeds"], 3),
+    "prob_postprocess:avg_lcc_heart_trachea": (
+        ["softmax_average_3_seeds", "largest_component_heart_trachea"],
+        3,
+    ),
+}
+FINAL_KEY = "prob_postprocess:avg_lcc_heart_trachea"  # the method the slide chooses
+COST_CSV = REPO / "figures/postprocessing_cost.csv"
 # Group name on the figure and background colour of its rows.
 GROUPS = {
     "filter": ("Filter", tint(PALETTE[0], 0.22)),
@@ -157,8 +176,8 @@ BASE_LABEL = "Unprocessed base model"
 BOX_COLORS = {
     "base": ("#AAAAAA", "#555555"),
     "filter": (PALETTE[0], "#3F6A8F"),
-    "shape": (PALETTE[3], "#5E9142"),
     "combo": (PALETTE[5], EARTH[0]),
+    "shape": (PALETTE[3], "#5E9142"),
     "vote": (PALETTE[1], "#C77A45"),
     "softmax": (PALETTE[6], "#B48A2E"),
 }
@@ -277,6 +296,12 @@ def change_text(change: float) -> str:
     return f"{change:+.1f}".replace("-", "\u2212")
 
 
+def cost_text(key: str, seconds: dict[str, float]) -> str:
+    """The extra CPU time of a slide row, in seconds per patient."""
+    steps, _ = COST_STEPS[key]
+    return f"+{sum(seconds[step] for step in steps):.1f} s"
+
+
 def box_figure(data: dict, plt):
     """The slide figure: one box plot of the run means per method, with Dice and HD95 beside it.
 
@@ -289,6 +314,7 @@ def box_figure(data: dict, plt):
         folds' ensembles for the votes and softmax rows), a star marks their mean, a black line their median.
     """
     base = data["base"]
+    seconds = {r["step"]: float(r["seconds"]) for r in read_csv(COST_CSV)}
     first = data["methods"][0]["rows"]
     rows = [
         {
@@ -304,8 +330,8 @@ def box_figure(data: dict, plt):
             runs = run_means(m["rows"], "dice")
             rows.append({**m, "label": SLIDE[m["key"]], "runs": runs})
     n = len(rows)
-    fig, ax = plt.subplots(figsize=(7.9, 4.85))
-    fig.subplots_adjust(left=0.33, right=0.74, top=0.84, bottom=0.2)
+    fig, ax = plt.subplots(figsize=(7.9, 5.3))
+    fig.subplots_adjust(left=0.345, right=0.696, top=0.85, bottom=0.27)
     for i, r in enumerate(rows):
         y = n - 1 - i
         fill, line = BOX_COLORS[r["group"]]
@@ -329,7 +355,7 @@ def box_figure(data: dict, plt):
             statistics.fmean(values), y, marker="*", s=130, color="white",
             edgecolor="#222222", lw=0.9, zorder=5,
         )  # fmt: skip
-        for x, text in ((1.09, f"{r['dice']:.3f}"), (1.27, f"{r['hd95']:.1f}")):
+        for x, text in ((1.125, f"{r['hd95']:.1f}"),):
             ax.text(
                 x, y, text, transform=ax.get_yaxis_transform(), ha="center",
                 va="center", fontsize=11, fontweight="bold", color=line,
@@ -337,13 +363,29 @@ def box_figure(data: dict, plt):
         if r["group"] != "base":
             change = r["hd95"] - base["hd95"]
             ax.text(
-                1.46, y, change_text(change), transform=ax.get_yaxis_transform(),
+                1.36, y, change_text(change), transform=ax.get_yaxis_transform(),
                 ha="center", va="center", fontsize=10.5, fontweight="bold", color="white",
                 bbox={
                     "boxstyle": "round,pad=0.25", "ec": "none",
                     "fc": BETTER if change < 0 else WORSE,
                 },
             )  # fmt: skip
+        if r["group"] != "base":
+            ax.text(
+                1.60, y, cost_text(r["key"], seconds), transform=ax.get_yaxis_transform(),
+                ha="center", va="center", fontsize=10.5, fontweight="bold", color=line,
+            )  # fmt: skip
+    chosen = next(i for i, r in enumerate(rows) if r.get("key") == FINAL_KEY)
+    for width, color, alpha in (
+        (5, "#FFD400", 0.28),
+        (1.8, "#FFC400", 1.0),
+    ):  # soft glow, then a bright gold edge
+        ax.add_patch(
+            plt.Rectangle(
+                (0.0, n - 1 - chosen - 0.44), 1.735, 0.88, transform=ax.get_yaxis_transform(),
+                fill=False, ec=color, lw=width, alpha=alpha, clip_on=False, zorder=6,
+            )
+        )  # fmt: skip
     ax.axvline(base["dice"], color="#444444", lw=1.0, ls="--", zorder=1)
     ax.set_xlim(0.82, 0.90)
     ax.set_ylim(-0.5, n - 0.5)
@@ -351,6 +393,10 @@ def box_figure(data: dict, plt):
     ax.set_yticks(
         range(n), [r["label"] for r in reversed(rows)], fontsize=11, color=TEXT
     )
+    for label, r in zip(ax.get_yticklabels(), reversed(rows)):
+        if r.get("key") == FINAL_KEY:
+            label.set_fontweight("bold")
+
     ax.grid(axis="x", color="#D0D0D0", lw=0.8)
     ax.grid(axis="y", visible=False)
     ax.spines[["top", "right", "left"]].set_visible(False)
@@ -363,7 +409,11 @@ def box_figure(data: dict, plt):
     ax.set_title(
         "Dice, mean of four organs", fontsize=11, fontweight="bold", loc="left"
     )
-    for x, name in ((1.09, "Dice"), (1.27, "HD95\n(mm)"), (1.46, "\u0394 HD95")):
+    for x, name in (
+        (1.125, "HD95\n(mm)"),
+        (1.36, "\u0394 HD95"),
+        (1.60, "Post-proc.\ntime"),
+    ):
         ax.text(
             x, n - 0.35, name, transform=ax.get_yaxis_transform(), ha="center",
             va="bottom", fontsize=11, fontweight="bold", color=TEXT,
@@ -378,6 +428,10 @@ def box_figure(data: dict, plt):
         fontsize=12,
         color=TEXT,
     )
+    fig.text(
+        0.012, 0.008, "Post-processing time per patient, CPU on a laptop. Vote and softmax rows also need three trained models.",
+        ha="left", va="bottom", fontsize=10, color=TEXT,
+    )  # fmt: skip
     handles = [
         plt.Line2D([], [], marker=m, color="#555555", ls="", ms=5, label=f"fold {k}")
         for k, m in enumerate(FOLD_MARKERS)
@@ -388,7 +442,7 @@ def box_figure(data: dict, plt):
         plt.Line2D([], [], color="#444444", ls="--", label="base mean"),
     ]  # fmt: skip
     fig.legend(
-        handles=handles, loc="lower center", ncol=len(handles), fontsize=11, frameon=False,
+        handles=handles, loc="lower center", bbox_to_anchor=(0.5, 0.05), ncol=len(handles), fontsize=11, frameon=False,
         handletextpad=0.2, columnspacing=0.6, labelcolor=TEXT,
     )  # fmt: skip
     fig.text(

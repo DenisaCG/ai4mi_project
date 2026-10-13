@@ -7,8 +7,7 @@ better on both. Every change is the mean over the (fold, seed) pairs the arm sha
 augmentation. The single transforms of the ENet (Dice + CE) cover seed 0 only, i.e. 4 pairs, and are coloured by type, geometric (they
 move the CT and the labels together) or intensity (CT only); the other arms cover 12 pairs (4 folds x 3 seeds) and are
 coloured by recipe: joint (rotation +-10 degrees, scaling
-0.9-1.1, shift up to 10%, p 0.5) or strong geometric (rotation +-15, scaling 0.8-1.2, shift 10%, p 0.7); diamonds add an elastic deformation (p 0.5). Arrows lead from the joint to the strong recipe and to the strong recipe trained for 50 instead of 25
-epochs. The grey box is the seed std of the 12 control runs. Dice and HD95 are the 3D metrics on the original CT grid, mean over
+0.9-1.1, shift up to 10%, p 0.5) or tuned (strong geometric: rotation +-15, scaling 0.8-1.2, shift 10%, p 0.7). Arrows lead from rotation, scaling and shift to the joint recipe they make up, and from the joint to the tuned recipe. The grey box is the seed std of the 12 control runs. Dice and HD95 are the 3D metrics on the original CT grid, mean over
 the 4 organs and the 10 validation patients of a fold (one row of per_run.csv per fold and seed).
 Writes augmentation_results.{png,pdf} and augmentation_results.csv (one row per point).
 """
@@ -30,7 +29,12 @@ IMPROVED, IMPROVED_TEXT = (
 RUNS = REPO / "docs/augmentation_results/per_run.csv"
 ENET, RESENC = "full_cv4_enet_dice_ce", "full_cv4_resenc_ds_unet_dice_ce"
 GEOMETRIC, INTENSITY, JOINT, STRONG = "geometric", "intensity", "joint", "strong"
-COLORS = {GEOMETRIC: EARTH[1], INTENSITY: "#B8862F", JOINT: EARTH[0], STRONG: "#6B3F7F"}
+COLORS = {
+    GEOMETRIC: EARTH[1],
+    INTENSITY: "#B8862F",
+    JOINT: "#3B7DD8",
+    STRONG: "#6B3F7F",
+}
 # label, experiment, reference, type, marker; the screening rows are seed 0 only
 POINTS = [
     ("Rotation", f"{ENET}_rotation", ENET, GEOMETRIC, "o"),
@@ -39,21 +43,18 @@ POINTS = [
     ("Shear", f"{ENET}_shear", ENET, GEOMETRIC, "o"),
     ("Gaussian noise", f"{ENET}_gaussian_noise", ENET, INTENSITY, "o"),
     ("Blur", f"{ENET}_blur", ENET, INTENSITY, "o"),
-    ("Brightness/contrast", f"{ENET}_brightness_contrast", ENET, INTENSITY, "o"),
-    ("Gamma", f"{ENET}_gamma", ENET, INTENSITY, "o"),
     ("Joint", f"{ENET}_augmented", ENET, JOINT, "o"),
-    ("Joint + elastic", f"{ENET}_rot_scale_shift_elastic", ENET, JOINT, "D"),
-    ("Strong", f"{ENET}_strong_geometric", ENET, STRONG, "o"),
-    ("Strong + elastic", f"{ENET}_strong_geometric_elastic", ENET, STRONG, "D"),
-    ("Strong, 50 epochs", f"{ENET}_strong_geometric_50ep", ENET, STRONG, "o"),
+    ("Tuned", f"{ENET}_strong_geometric", ENET, STRONG, "o"),
 ]
 ARROWS = [  # from, to (labels)
-    ("Joint", "Strong"),
-    ("Strong", "Strong, 50 epochs"),
+    ("Rotation", "Joint"),
+    ("Scaling", "Joint"),
+    ("Shift", "Joint"),
+    ("Joint", "Tuned"),
 ]
 SIZE = (7.0, 3.3)  # inches, the slot on the slide
 AXES = (0.95, 1.0, 5.7, 1.9)  # left, bottom, width and height of the plane in inches
-XLIM, YLIM = (-0.0125, 0.040), (-3.4, 4.6)
+XLIM, YLIM = (-0.004, 0.029), (-3.1, 3.5)
 # text offset in points and alignment of each label
 LABELS = {
     "Rotation": ((-8, 0), "right"),
@@ -62,13 +63,8 @@ LABELS = {
     "Shear": ((8, -10), "left"),
     "Gaussian noise": ((0, 11), "center"),
     "Blur": ((6, -14), "left"),
-    "Brightness/contrast": ((-9, -2), "right"),
-    "Gamma": ((0, 11), "center"),
-    "Joint": ((0, -14), "center"),
-    "Joint + elastic": ((9, -3), "left"),
-    "Strong": ((0, -14), "center"),
-    "Strong + elastic": ((-9, 0), "right"),
-    "Strong, 50 epochs": ((0, 12), "center"),
+    "Joint": ((0, 14), "center"),
+    "Tuned": ((0, -14), "center"),
 }
 
 
@@ -183,7 +179,7 @@ def draw(fig, runs: dict, colors: dict = COLORS, arrows: bool = True) -> None:
     for a, b in ARROWS if arrows else []:
         ax.annotate(
             "", (pts[b]["dice_change"], pts[b]["hd95_reduction"]), (pts[a]["dice_change"], pts[a]["hd95_reduction"]),
-            arrowprops={"arrowstyle": "-|>", "color": "#777777", "lw": 1.2, "shrinkA": 7, "shrinkB": 7}, zorder=3,
+            arrowprops={"arrowstyle": "-|>", "color": colors[pts[b]["kind"]], "lw": 1.4, "alpha": 0.75, "shrinkA": 7, "shrinkB": 7}, zorder=3,
         )  # fmt: skip
     for p in pts.values():
         color = colors[p["kind"]]
@@ -199,12 +195,13 @@ def draw(fig, runs: dict, colors: dict = COLORS, arrows: bool = True) -> None:
             p["label"].strip().replace("/", "/\n"), (p["dice_change"], p["hd95_reduction"]), offset, textcoords="offset points",
             color=color, fontsize=11, ha=align, va="center", fontweight="bold" if bold else "normal",
         )  # fmt: skip
-    xticks, yticks = [-0.01, 0, 0.01, 0.02, 0.03, 0.04], [-3, -2, -1, 0, 1, 2, 3, 4]
-    ax.set_xticks(xticks, minus(xticks, True, ".2f"))
-    ax.set_xticks([-0.005, 0.005, 0.015, 0.025, 0.035], minor=True)
+    xticks, yticks = [0, 0.005, 0.01, 0.015, 0.02, 0.025], [-3, -2, -1, 0, 1, 2, 3]
+    ax.set_xticks(xticks, minus(xticks, True, ".3f"))
+    ax.set_xticks([0.0025, 0.0075, 0.0125, 0.0175, 0.0225, 0.0275], minor=True)
+    ax.set_yticks([-2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5], minor=True)
     ax.set_yticks(yticks, minus(yticks, True, "d"))
     ax.grid(True, which="both", axis="x", color="#D9D9D9", lw=0.7, ls=(0, (3, 3)))
-    ax.grid(True, axis="y", color="#D9D9D9", lw=0.7, ls=(0, (3, 3)))
+    ax.grid(True, which="both", axis="y", color="#D9D9D9", lw=0.7, ls=(0, (3, 3)))
     ax.set_xlabel("Dice change (higher is better)", fontsize=11)
     ax.set_ylabel("HD95 reduction, mm", fontsize=11)
     ax.tick_params(labelsize=11, length=0)
@@ -231,8 +228,7 @@ def draw(fig, runs: dict, colors: dict = COLORS, arrows: bool = True) -> None:
         key(GEOMETRIC, "Geometric"),
         key(INTENSITY, "Intensity"),
         key(JOINT, "Joint recipe"),
-        key(STRONG, "Strong recipe"),
-        key(None, "+ elastic deformation", "D"),
+        key(STRONG, "Tuned recipe"),
     ]
     fig.legend(
         handles=handles,

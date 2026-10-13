@@ -3,9 +3,9 @@
     python dataset_analysis/augmentation_examples.py [--data-dir data/segthor_part1_corrected/train] [--out figures]
 
 The slice is the one, over all patients of the corrected release, where the smallest of the four organs is largest (every organ
-present). It is shown unchanged, under rotation, scaling and shift alone, under the three in sequence (joint recipe) and under the strong recipe, each drawn with
+present). It is shown unchanged, under rotation, scaling and shift alone, under the three in sequence (joint recipe) and under the tuned recipe, each drawn with
 the transform of src/augment.py (bilinear CT, nearest-neighbour labels, background outside the source) at probability 1 and a
-fixed seed. Ranges: rotation +-10 degrees, scaling 0.9-1.1 and shift up to 10% of the crop for the single transforms and the joint recipe; +-15, 0.8-1.2 and 10% for the strong recipe. The
+fixed seed. Ranges: rotation +-10 degrees, scaling 0.9-1.1 and shift up to 10% of the crop for the single transforms and the joint recipe; +-15, 0.8-1.2 and 10% for the tuned recipe. The
 local src/augment.py has no shift, so it is written here with the same interpolation and fill. The CT is shown in the
 -160 to 240 HU window, cropped to 288 x 288 pixels around the organs of the slice; the fill is the lower end of that window.
 Writes augmentation_examples.{png,pdf} and augmentation_examples.csv (the draws behind every panel).
@@ -157,7 +157,7 @@ def caption(name: str, draws: list[float]) -> str:
         return f"{name} {draws[0] * CROP:+.0f}, {draws[1] * CROP:+.0f} px"
     if name == "Joint":
         return "Rot. + scal. + shift"
-    return "Strong recipe"
+    return "Tuned recipe"
 
 
 def draw_slice(

@@ -1,11 +1,11 @@
-"""The final model against nnU-Net 3D and 2D on the same validation patients.
+"""The final model against nnU-Net 3D on the same validation patients.
 
     python dataset_analysis/final_model_comparison.py [--data-dir ~/results_for_figures] [--out figures]
 
-final_model_comparison.{png,pdf}, the slide: one scatter per nnU-Net model with its Dice of a patient and organ on the x
+final_model_comparison.{png,pdf}, the slide: a scatter with the nnU-Net 3D Dice of a patient and organ on the x
 axis and the final model's on the y axis, so a point above the dashed diagonal is a case the final model segments better
-(the shaded side is nnU-Net's). Points are coloured by organ, a star marks each organ's mean, and the mean Dice and HD95
-over the organs of both models are written in the panel. The final model is the full pipeline (3-seed average, test-time
+(the red shaded side is nnU-Net's, the blue side the final model's). Points are coloured by organ, a white star with the organ's outline marks each organ's mean, and the mean Dice and HD95
+over the organs of both models are written in the panel; no legend, the organ colours are those of the other figures. The final model is the full pipeline (3-seed average, test-time
 augmentation, largest component of heart and trachea) and its score uses the best epoch of every run; nnU-Net is its final
 checkpoint without test-time augmentation. All are 3D on the original CT grid, over the 40 validation patients of the 4 folds.
 Writes also final_model_comparison.csv.
@@ -27,14 +27,11 @@ ABLATION = "final_pipeline_ablation"
 FULL_PIPELINE = "seeds_tta_lcc"
 MODEL = "Final model"
 # (label, model key in all_models_per_patient_3d_metrics.csv) of the nnU-Net models on the x axes
-REFERENCES = [
-    ("nnU-Net 3D", "nnunet_3d_fullres_no_tta"),
-    ("nnU-Net 2D", "nnunet_2d_no_tta"),
-]
+REFERENCES = [("nnU-Net 3D", "nnunet_3d_fullres_no_tta")]
 ORGANS = ("esophagus", "heart", "trachea", "aorta")
 ORGAN_COLORS = dict(zip(ORGANS, [EARTH_LABEL_COLORS[k] for k in (1, 2, 3, 4)]))
-TEXT = "#1A1A1A"
-LIMITS = (0.5, 1.0)
+TEXT = "#3A3A3A"
+LIMITS = (0.55, 1.0)
 
 
 def patient_organ(rows: list[dict]) -> dict:
@@ -96,14 +93,12 @@ def figure(data: dict, plt):
     """
     model = data[MODEL]
     lo, hi = LIMITS
-    fig, axs = plt.subplots(
-        1, len(REFERENCES), figsize=(7.9, 4.45), sharex=True, sharey=True
-    )
-    fig.subplots_adjust(left=0.1, right=0.985, top=0.8, bottom=0.27, wspace=0.06)
-    for ax, (label, _) in zip(axs, REFERENCES):
+    fig, axs = plt.subplots(1, len(REFERENCES), figsize=(4.4, 4.4), squeeze=False)
+    fig.subplots_adjust(left=0.17, right=0.97, top=0.9, bottom=0.115)
+    for ax, (label, _) in zip(axs[0], REFERENCES):
         ref = data[label]
-        ax.fill_between([lo, hi], [lo, hi], lo, color="#E3ECF1", lw=0, zorder=0)
-        ax.fill_between([lo, hi], [lo, hi], hi, color="#F4E3DF", lw=0, zorder=0)
+        ax.fill_between([lo, hi], [lo, hi], lo, color="#F4E3DF", lw=0, zorder=0)
+        ax.fill_between([lo, hi], [lo, hi], hi, color="#E3ECF1", lw=0, zorder=0)
         ax.plot([lo, hi], [lo, hi], color="#444444", ls="--", lw=1)
         for organ in ORGANS:
             keys = [k for k in ref if k[1] == organ]
@@ -120,35 +115,22 @@ def figure(data: dict, plt):
             0.05, 0.95,
             f"Dice  {overall(model, 'dice'):.3f} vs {overall(ref, 'dice'):.3f}\n"
             f"HD95  {overall(model, 'hd95'):.1f} vs {overall(ref, 'hd95'):.1f} mm",
-            transform=ax.transAxes, ha="left", va="top", fontsize=10, fontweight="bold", color=TEXT,
+            transform=ax.transAxes, ha="left", va="top", fontsize=8.5, fontweight="bold", color=TEXT,
         )  # fmt: skip
         ax.set_xlim(lo, hi)
         ax.set_ylim(lo, hi)
         ax.set_aspect("equal")
-        ax.set_title(
-            f"final model vs {label}", fontsize=12, fontweight="bold", color=EARTH[1]
-        )
-        ax.set_xlabel(f"{label}, Dice per patient and organ", fontsize=10.5, color=TEXT)
+        ax.set_xlabel(f"{label}, Dice", fontsize=10, color=TEXT)
         ax.grid(color="#D9D9D9", lw=0.8)
         ax.spines[["top", "right"]].set_visible(False)
-        ax.tick_params(labelsize=9)
-        ax.set_xticks([0.6, 0.8, 1.0])
-        ax.set_yticks([0.6, 0.8, 1.0])
-    axs[0].set_ylabel(f"{MODEL}, Dice per patient and organ", fontsize=10.5, color=TEXT)
-    handles = [
-        plt.Line2D([], [], marker="o", ls="", color=ORGAN_COLORS[o], ms=7, label=o.capitalize())
-        for o in ORGANS
-    ]  # fmt: skip
-    handles.append(
-        plt.Line2D([], [], marker="*", ls="", mfc="white", mec="#444444", ms=12, label="organ mean")
-    )  # fmt: skip
-    fig.legend(
-        handles=handles, loc="lower center", ncol=len(handles), frameon=False,
-        fontsize=10, handletextpad=0.2,
-    )  # fmt: skip
+        ax.tick_params(labelsize=8)
+        ticks = [0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0]
+        ax.set_xticks(ticks)
+        ax.set_yticks(ticks)
+    axs[0][0].set_ylabel(f"{MODEL}, Dice", fontsize=10, color=TEXT)
     fig.text(
-        0.99, 0.985, "Final model against nnU-Net, same patients",
-        ha="right", va="top", fontsize=14, fontweight="bold",
+        0.99, 0.985, "Final model against nnU-Net 3D",
+        ha="right", va="top", fontsize=14, fontweight="bold", color=EARTH[1],
     )  # fmt: skip
     return fig
 

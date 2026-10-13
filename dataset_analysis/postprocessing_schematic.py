@@ -24,6 +24,9 @@ from plot_style import GRID_COLOR, tint  # noqa: E402
 from postprocessing_figure import BOX_COLORS  # noqa: E402
 
 SIZE = 40
+WIDTH_IN, HEIGHT_IN = 11.9, 3.1
+SIDE_IN = 1.0  # edge of each mask panel
+BASELINE = 0.3  # bottom of the mask panels, as a fraction of the figure height
 
 
 def disc(cy: float, cx: float, ry: float, rx: float) -> np.ndarray:
@@ -75,11 +78,9 @@ def scenes() -> dict[str, tuple]:
         )
         for m in seeds
     ]
-    both = heart | disc(6, 33, 3, 3)
     return {
         "Largest component": (organ | stray, largest_component(organ | stray)),
         "Convex hull": (heart, convex_hull(heart)),
-        "Filters combined": (both, convex_hull(largest_component(both))),
         "Majority vote": (seeds, majority(seeds)),
         "Softmax average": (probabilities, np.mean(probabilities, axis=0) > 0.5),
     }
@@ -102,20 +103,20 @@ def draw(ax, image: np.ndarray, color: str) -> None:
 
 
 def figure(plt):
-    """The five-panel schematic, one tinted panel per group of the post-processing figure."""
-    fig = plt.figure(figsize=(11.9, 3.1))
-    side = 0.82  # inches
-    w, h = side / 11.9, side / 3.1
-    groups = ["filter", "shape", "combo", "vote", "softmax"]
+    """The four-panel schematic, one tinted panel per group of the post-processing figure."""
+    fig = plt.figure(figsize=(WIDTH_IN, HEIGHT_IN))
+    w, h = SIDE_IN / WIDTH_IN, SIDE_IN / HEIGHT_IN
+    groups = ["filter", "shape", "vote", "softmax"]
     captions = [
-        ("prediction", "after"),
         ("prediction", "after"),
         ("prediction", "after"),
         ("3 seeds", "after"),
         ("mean of 3", "after"),
     ]
-    step = 2.41 / 11.9  # the pitch of the cards below the picture on the slide
-    panel_w = 2.26 / 11.9
+    panel_w = (
+        (11.9 - 3 * 0.15) / 4 / 11.9
+    )  # one of the four cards on the slide, 0.15 inch apart
+    step = panel_w + 0.15 / 11.9
     for k, ((name, (before, after)), group) in enumerate(zip(scenes().items(), groups)):
         fill, color = BOX_COLORS[group]
         px = k * step
@@ -126,11 +127,11 @@ def figure(plt):
             px + panel_w / 2, 0.78, name, ha="center", va="center", fontsize=13,
             fontweight="bold", color=color,
         )  # fmt: skip
-        draw(fig.add_axes([x0, 0.3, w, h]), before, color)
-        draw(fig.add_axes([x0 + w + 0.026, 0.3, w, h]), after, color)
+        draw(fig.add_axes([x0, BASELINE, w, h]), before, color)
+        draw(fig.add_axes([x0 + w + 0.026, BASELINE, w, h]), after, color)
         fig.text(
             px + panel_w / 2,
-            0.3 + h / 2,
+            BASELINE + h / 2,
             "\u2192",
             ha="center",
             va="center",

@@ -24,7 +24,7 @@ from augmentation_examples import best_slice, random_shift
 from augmentation_results import paired_change
 from loss_training_curves import smooth
 from loss_violins import gains, violin_profile
-from all_results_table import shade
+from all_results_table import table as all_results_table
 from final_model_comparison import MODEL, ORGANS, overall, table
 from postprocessing_figure import change_text, patient_values
 from postprocessing_schematic import convex_hull, largest_component, majority
@@ -330,10 +330,10 @@ class FinalModelComparisonTests(unittest.TestCase):
         self.assertAlmostEqual(rows["nnU-Net 3D"]["final_minus_model_dice"], 0.2)
         self.assertEqual(rows[MODEL]["final_minus_model_hd95"], 0.0)
 
-    def test_table_shade_is_one_for_the_best_value_of_a_column(self):
-        self.assertEqual(shade(0.9, 0.5, 0.9, False), 1.0)
-        self.assertEqual(shade(7.0, 7.0, 23.0, True), 1.0)
-        self.assertEqual(shade(23.0, 7.0, 23.0, True), 0.0)
+    def test_all_results_table_rows_hold_the_seven_values_of_a_row(self):
+        values = {(o, "dice"): 0.9 for o in ORGANS} | {("OVERALL", m): 1.0 for m in ("dice", "hd95", "assd")}
+        row = all_results_table([{"group": "g", "label": "m", "values": values}])[0]
+        self.assertEqual((row["group"], row["model"], row["OVERALL_hd95"], row["heart_dice"]), ("g", "m", 1.0, 0.9))
 
 
 if __name__ == "__main__":
