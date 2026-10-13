@@ -3,10 +3,12 @@
     python -m src.predict_test --runs runs/final_best_model/seed0 runs/final_best_model/seed1 \
         runs/final_best_model/seed2 --out predictions/final_best_model
 
-For every test patient and every run it does one forward pass over the patient's slices (timed), saves the
+For every test patient and every run it predicts the patient's slices (timed) with test-time augmentation (the
+geometric passes of src.eval_tta: rotations, scalings, shifts; --no-tta for the plain forward pass), saves the
 softmax probabilities, averages them over the runs, takes the argmax per slice, stitches the label slices back
 onto the CT's original grid and keeps only the largest 3D connected component of the heart and the trachea
 (never esophagus or aorta: the esophagus is often legitimately split, and LCC on them lowered Dice in CV).
+So by default the submission is: TTA, seed ensemble, largest component of heart and trachea.
 
 Writes
   <out>/final/<patient>.nii.gz             seed average + LCC(heart, trachea): the submission
@@ -15,7 +17,7 @@ Writes
   <out>/checks.csv                         shape / affine / label-set check against each test CT
   <out>/inference_time.csv                 seconds of forward pass per patient and run (after one untimed warm-up)
   <run>/probs/test/<patient>.npy           float16 softmax (Z, K, H, W) on the sliced grid, one file per run
-                                           (probs_tta/ and eval/inference_time_tta.csv with --tta)
+                                           (probs_tta/ and eval/inference_time_tta.csv with TTA, probs/ and eval/inference_time.csv with --no-tta)
 If <data.root>/test is missing (test CTs arrived after training) it is sliced first with the training
 normalisation, spacing and ROI size (slice_segthor.py --test_only).
 """
@@ -63,9 +65,9 @@ def load_net(run_dir: Path, device: torch.device):
     return cfg, net.eval()
 
 
-def slices_by_patient(cfg: dict, batch_size: int) -> dict[str, tuple[list[str], torch.Tensor]]:
-    """All test slices per patient, in z order: (stems, images (Z, C, H, W))."""
-    loader = torch.utils.data.DataLoader(build_dataset(cfg, "test"), batch_size=batch_size, shuffle=False, num_workers=0)
+def slices_by_patient(cfg: dict, batch_size: int, split: str = "test") -> dict[str, tuple[list[str], torch.Tensor]]:
+    """All slices of `split` per patient, in z order: (stems, images (Z, C, H, W))."""
+    loader = torch.utils.data.DataLoader(build_dataset(cfg, split), batch_size=batch_size, shuffle=False, num_workers=0)
     stems, images = defaultdict(list), defaultdict(list)
     for batch in loader:
         for stem, img in zip(batch["stems"], batch["images"]):
@@ -111,15 +113,21 @@ def check_volume(labels: np.ndarray, ref: nib.Nifti1Image, saved: Path) -> dict:
     }
 
 
-def main(argv: list[str] | None = None) -> None:
+def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--runs", nargs="+", type=Path, required=True, help="final run directories (one per seed)")
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--device", choices=("cuda", "cpu"), default="cuda")
     p.add_argument("--batch-size", type=int, default=16)
-    p.add_argument("--tta", action="store_true",
+    p.add_argument("--tta", action=argparse.BooleanOptionalAction, default=True,
                    help="average each run's prediction over the geometric test-time augmentations of src.eval_tta "
-                        "(rotations, scalings, shifts; +0.001 Dice in cross-validation) before the seed average")
+                        "(rotations, scalings, shifts; +0.001 Dice in cross-validation) before the seed average; "
+                        "--no-tta for the plain forward pass")
+    return p
+
+
+def main(argv: list[str] | None = None) -> None:
+    p = build_parser()
     args = p.parse_args(argv)
     device = resolve_device(args.device)
 

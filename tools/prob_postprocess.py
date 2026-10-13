@@ -174,6 +174,13 @@ def score_patient(task: tuple, probs_dir: Path) -> list[dict]:
     return rows
 
 
+def patients_of(run_dir: Path, probs_dir: Path) -> list[str]:
+    """Validation patients of a run: those of its stored volumes, else those with saved probabilities (a run copied
+    without volumes/, or TTA probabilities that never had stored volumes)."""
+    stored = sorted(p.name.removesuffix(".nii.gz") for p in (run_dir / "volumes" / "val").glob("*.nii.gz"))
+    return stored or sorted(p.stem for p in (probs_dir / run_dir.relative_to(REPO / "runs")).glob("*.npy"))
+
+
 def read_rows(path: Path, variants: tuple[str, ...]) -> list[dict]:
     """Rows of results/seed_ensemble/rows.csv for the given variants, numbers parsed."""
     ints, floats = ("class_idx", "fp_slices", "fp_voxels", "pred_voxels"), ("dice", "hd95", "assd")
@@ -194,7 +201,8 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--workers", type=int, default=1)
     parser.add_argument("--probs", type=Path, default=PROBS_DEFAULT)
     parser.add_argument("--out", type=Path, default=REPO / "results" / "prob_postprocess")
-    parser.add_argument("--reference", type=Path, default=REPO / "results" / "seed_ensemble" / "rows.csv")
+    parser.add_argument("--reference", type=Path, default=REPO / "results" / "seed_ensemble" / "rows.csv",
+                        help="rows of the unprocessed baselines; skipped if the file does not exist")
     parser.add_argument(
         "--variants", nargs="+",
         default=["repro", "avg", *(f"conf_{t}" for t in CONF_THRESHOLDS), *(f"crf_{n}" for n in CRF_CONFIGS)],
@@ -221,18 +229,23 @@ def main(argv: list[str] | None = None) -> None:
     tasks = []
     for fold in range(args.folds):
         fold_runs = [str(d) for d in dirs if d.parent.name.endswith(f"_fold{fold}")]
-        patients = sorted(p.name.removesuffix(".nii.gz") for p in (Path(fold_runs[0]) / "volumes" / "val").glob("*.nii.gz"))
+        patients = patients_of(Path(fold_runs[0]), args.probs)
         tasks += [(fold_runs, pattern, p, names, classes, tuple(args.variants)) for p in patients]
     with ProcessPoolExecutor(args.workers) as pool:
         rows = [r for part in pool.map(partial(score_patient, probs_dir=args.probs), tasks) for r in part]
 
     repro = [r for r in rows if r["class_idx"] == -1]
     rows = [r for r in rows if r["class_idx"] != -1]
-    reference = read_rows(args.reference, ("baseline", "lcc_heart_trachea", "seed_vote", "seed_vote_lcc_heart_trachea"))
-    reference += [r | {"variant": "baseline_seed0"} for r in reference if r["variant"] == "baseline" and r["run"].endswith("/seed0")]
+    reference = []
+    if args.reference.exists():
+        reference = read_rows(args.reference, ("baseline", "lcc_heart_trachea", "seed_vote", "seed_vote_lcc_heart_trachea"))
+        reference += [r | {"variant": "baseline_seed0"} for r in reference if r["variant"] == "baseline" and r["run"].endswith("/seed0")]
     rows = reference + rows
     args.out.mkdir(parents=True, exist_ok=True)
     write_csv(args.out / "rows.csv", rows)
+    if not any(r["variant"] == "baseline" for r in rows):  # the summary tables compare with the baseline rows
+        print(f"no baseline reference rows: wrote {args.out / 'rows.csv'} only")
+        return
     voxels = [(r["run"], r["patient"], r["pred_voxels"]) for r in repro]
     worst = max((v for *_, v in voxels), default=0)
     summary = [
