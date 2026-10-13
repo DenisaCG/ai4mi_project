@@ -7,8 +7,80 @@
 > metric definitions and result tables: [docs/metrics.md](docs/metrics.md).
 > The course instructions below describe the original `main.py` baseline, which is kept for reference.
 
+<a id="group-23-project"></a>
+## Group 23 project: final model and results
+
+### Final model
+
+**ResEnc U-Net with deep supervision**, Dice + cross-entropy loss, trained on the corrected SEGTHOR labels (five classes: background, esophagus, heart, trachea, aorta).
+
+- Pre-processing: resampling to the median spacing (0.98 x 0.98 x 2.5 mm), HU clip to the 0.5-99.5th percentile, z-score, crop to the region of interest.
+- Augmentation: rotation (+-15 deg), scaling (0.8-1.2) and shift (10%), each with p = 0.7.
+- Training: Adam, constant learning rate 5e-4, 50 epochs. Config: [`configs/final_best_model.yaml`](configs/final_best_model.yaml) (all 40 labelled patients); its cross-validation twin is [`configs/full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep.yaml`](configs/full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep.yaml).
+- Inference: geometric test-time augmentation (rotations, scalings, shifts), softmax averaged over 3 seeds, then the largest connected component of heart and trachea only.
+
+Held-out result (4-fold cross-validation over the 40 patients, mean of 4 folds x 3 seeds, 3D metrics, foreground = mean of the four organs; full table in [docs/final_model_results.md](docs/final_model_results.md)):
+
+| | Dice | HD95 (mm) | ASSD (mm) |
+|---|---|---|---|
+| Course baseline (ENet + CE, starter pre-processing) | 0.707 | 25.8 | 4.91 |
+| Final model, single seed, no TTA | 0.893 | 9.8 | 1.75 |
+| Final model, 3-seed average + TTA + largest component (the submitted pipeline) | 0.901 | 7.5 | 1.43 |
+
+### Experiments against the course list
+
+All rows are 4-fold CV over the 40 patients, 12 runs (4 folds x 3 seeds) unless a run count is given; Dice, HD95 and ASSD are 3D foreground means. The baseline is `full_cv4_enet_ce`. Per-run files are in [`metrics/`](metrics/); the augmentation selection is written up in [docs/augmentation_selection.md](docs/augmentation_selection.md).
+
+| Course topic | What we tried | Dice (HD95 mm), vs the row it is compared with | Outcome |
+|---|---|---|---|
+| Baseline | ENet + CE, 256x256 slices, per-volume min-max, 25 epochs | 0.707 (25.8) | reference |
+| Pre-processing and loss | median-spacing resampling, HU window + z-score, ROI crop, Dice + CE (the "improved ENet") | 0.835 (14.9), +0.128 over the baseline | kept. The two changes were made together in CV; the midterm single-split ablation went from 0.437 to 0.802 |
+| Loss functions | weighted Dice + CE; boundary loss (two schedules); Tversky + CE | 0.833 / 0.835 / 0.834 / 0.836 (4 runs) against 0.835 | no gain on ENet, so plain Dice + CE stayed. Boundary on the final model: 0.891 (9.2) against 0.893 (9.8) |
+| Augmentation | rotation, scaling, shift (together) | ENet 0.835 -> 0.851; ResEnc DS 0.867 -> 0.880 (improved in 12/12 pairs) | kept. Stronger geometric (p 0.7, +-15 deg, 0.8-1.2): ENet 0.862, ResEnc DS 0.886 at 25 epochs |
+| Augmentation, rejected | shear, Gaussian noise, blur, brightness/contrast, gamma, elastic | +0.003 to -0.005 (seed 0 only for the single transforms); elastic 0.862, same as without | dropped. HU values are calibrated, and CT geometry is rigid |
+| 2.5D input | the slice plus its two neighbours as input channels, on ENet, ResEnc DS and the final recipe with the boundary loss | 0.837 / 0.867 / 0.893 against 0.835 / 0.867 / 0.891 (2D, same boundary loss) | no real gain, so the final model is 2D |
+| Architectures | U-Net 0.852; + attention 0.849; + deep supervision 0.861; residual encoder (ResEnc) 0.858; ResEnc + deep supervision 0.867 | against ENet 0.835 | ResEnc + deep supervision is best (HD95 13.8) |
+| Non-CNN encoder | frozen pretrained DINOv2 ViT-S/14 encoder with a U-Net decoder | 0.837 (16.9) against 0.852 for the plain U-Net | worse, not used |
+| Optimizer, schedule, epochs | cosine decay (U-Net, 25 epochs); 25 -> 50 epochs | cosine 0.844 against constant LR 0.852; 50 epochs: ENet 0.862 -> 0.871, ResEnc DS 0.886 -> 0.893 | constant LR, 50 epochs |
+| Post-processing | 3-seed softmax average, largest component of heart and trachea, TTA | 0.893 (9.8) -> 0.901 (7.5) | kept. Largest component on all organs or on the esophagus lowered Dice, and CRF did not help |
+
+Caveats: the augmentation transforms were chosen on the same folds that are reported, so the augmentation gains are slightly optimistic; most differences below 0.003 Dice are within seed and fold variation, and no significance test was run. The midterm numbers (0.437 and 0.802, single split) were computed before the rule for a missed organ was changed (HD95 and ASSD are now the volume diagonal when exactly one of ground truth and prediction is empty, instead of being dropped); no cross-validation run and not the final model is affected.
+
+### Reproducing the results
+
+```
+# environment and data: see "Codebase use" below; slicing and the folds are built by jobsAndOutputs/pipeline/jobs/{build_cv_folds,final_build}.job
+
+# 1. cross-validation run of the final recipe: fold x seed array (12 tasks), trains and evaluates in 3D
+sbatch --job-name=full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep \
+       --export=ALL,CONFIG=configs/full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep.yaml \
+       jobsAndOutputs/pipeline/jobs/cv.job
+
+# 2. final model on all 40 patients, seeds 0-2
+sbatch --job-name=final_best_model --export=ALL,CONFIG=configs/final_best_model.yaml \
+       jobsAndOutputs/pipeline/jobs/final_train.job
+
+# 3. test prediction (Patient_41-60): TTA, seed average, largest component of heart and trachea
+python -m src.predict_test --runs runs/final_best_model/seed0 runs/final_best_model/seed1 runs/final_best_model/seed2 \
+       --out predictions/final_best_model_tta        # or sbatch jobsAndOutputs/pipeline/jobs/final_predict.job (TTA=1)
+
+# 4. evaluation: 3D Dice, HD95, ASSD of a run on its validation patients
+python -m src.evaluate --run runs/<experiment>/seed<k>
+python -m src.eval_tta --run runs/<experiment>/seed<k>    # the same with test-time augmentation
+python -m src.aggregate                                   # pooled tables in metrics/
+```
+
+Training and evaluation run through Slurm on a GPU (A100); see [docs/pipeline.md](docs/pipeline.md). The 3-seed average and largest-component scoring on the validation folds is `python -m tools.prob_postprocess score` ([docs/final_model_results.md](docs/final_model_results.md), "Sources").
+
+### The submission archive
+
+- **Test predictions** (`test/pred`): Patient_41-60, produced by step 3 above (3 seeds averaged, TTA, largest component).
+- **Validation set** (`val/pred`, `val/gt`, the `.npz` metrics): all 40 labelled patients, **out of fold**, with the same post-processing as the test predictions. Each patient is predicted by the three seeds of the fold model that did not train on it (`full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep`, folds 0-3 hold 10 patients each): test-time-augmented softmax averaged over the seeds, argmax, then the largest connected component of heart and trachea. The three `.npz` files (Dice, HD95, ASSD; patient to one value per class, background NaN) are computed on exactly these volumes. Ground truth is the corrected `GT.nii.gz`. Their mean (Dice 0.9011, HD95 7.45 mm, ASSD 1.43 mm) is the post-processed + TTA row above. Built by `tools/build_submission_archive.py` (`jobsAndOutputs/pipeline/jobs/build_submission_archive.job`) from the TTA softmax that `src.eval_tta --save-probs` writes.
+- **Model** (`bestmodel-group-23.pkl`): seed 0 of `final_best_model`, trained on all 40 patients. Two things follow. The submitted test predictions average seeds 0-2, so this single file alone does not reproduce them exactly. And because this model saw every labelled patient, the validation predictions do not come from it: they come from the four fold models (three seeds each), and re-predicting the validation patients with the pkl would give inflated scores.
+
 <!-- MarkdownTOC autolink="true" autoanchor="true" -->
 
+- [Group 23 project: final model and results](#group-23-project)
 - [Project overview](#project-overview)
 - [Codebase features](#codebase-features)
 - [Codebase use](#codebase-use)
