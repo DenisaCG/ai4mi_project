@@ -1,0 +1,45 @@
+#!/bin/bash
+#SBATCH --job-name=eval_tta_pp
+#SBATCH --partition=gpu_mig
+#SBATCH --gpus=1
+#SBATCH --cpus-per-task=9
+#SBATCH --time=02:30:00
+#SBATCH --output=jobsAndOutputs/pipeline/outputs/%x_%j.out
+
+# Post-processing of the TTA predictions: src.eval_tta saves the TTA-averaged softmax of every val patient (variants none and
+# all are scored, SAVE of them are kept), then tools.prob_postprocess score averages the 3 seeds' probabilities per fold,
+# takes the argmax and the largest connected component of heart and trachea (rows avg and avg_lcc_heart_trachea), written
+# to results/pp_tta_<NAME>[_none]/rows.csv. The `none` variant must reproduce the post-processing without TTA (results/pp_*).
+# Parallel use: one job per fold (FOLDS=<k> SCORE=0), then one scoring job after all of them (FOLDS="" SCORE=1, --dependency=afterok).
+# Usage: sbatch --export=ALL,EXPERIMENT=full_cv4_resenc_ds_unet_dice_ce_strong_geometric_50ep,NAME=ctrl[,SAVE="none all"] jobsAndOutputs/pipeline/jobs/eval_tta_pp.job
+set -euo pipefail
+EXPERIMENT="${EXPERIMENT:?set EXPERIMENT=<cv experiment without _fold<k>> via --export}"
+NAME="${NAME:?set NAME=<short arm name> via --export}"
+SAVE="${SAVE:-all}"
+FOLDS="${FOLDS-0 1 2 3}"
+SCORE="${SCORE:-1}"
+[ "$FOLDS" = "-" ] && FOLDS=""
+PROBS="${PROBS:-/scratch-shared/$USER/ai4mi_project/postprocess_probs_tta/$EXPERIMENT}"
+source jobsAndOutputs/pipeline/jobs/env_setup.sh
+export OMP_NUM_THREADS=1
+export PYTHONPATH="$HOME/pydensecrf_site${PYTHONPATH:+:$PYTHONPATH}"
+python -m unittest tests.test_tta tests.test_tta_probs tests.test_prob_postprocess
+
+for fold in $FOLDS; do
+  for seed in 0 1 2; do
+    # shellcheck disable=SC2086
+    python -O -m src.eval_tta --run "runs/${EXPERIMENT}_fold${fold}/seed${seed}" --variants none all \
+      --save-probs "$PROBS" --save-variants $SAVE
+    echo "[$(date -Is)] done: fold ${fold} seed ${seed}"
+  done
+done
+
+[ "$SCORE" = 1 ] || { echo "[$(date -Is)] done: folds ${FOLDS}"; exit 0; }
+for v in $SAVE; do
+  out="results/pp_tta_${NAME}"
+  [ "$v" = all ] || out="${out}_${v}"
+  python -O -m tools.prob_postprocess score --experiment "$EXPERIMENT" --workers "$SLURM_CPUS_PER_TASK" --out "$out" \
+    --probs "$PROBS/$v" --variants avg --reference /nonexistent
+  python -m src.aggregate_pp_tta "$out" avg avg_lcc_heart_trachea
+done
+echo "[$(date -Is)] done: TTA post-processing for ${EXPERIMENT}"

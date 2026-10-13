@@ -15,6 +15,11 @@ Variants (each includes the untouched pass):
   all     rot + scale + shift
   flip    + a left-right mirror (NOT a transform the model was trained with: a reference for nnU-Net-style mirroring)
 Writes <run>/eval/metrics_3d_tta.csv (variant, patient, class, dice, hd95, assd).
+
+With --save-probs ROOT the averaged softmax of the variants in --save-variants is also written, as float16 (Z, K, H, W) per
+validation patient to ROOT/<variant>/<experiment_fold>/<seed>/<patient>.npy: the layout `tools.prob_postprocess score --probs
+ROOT/<variant>` reads, so the seeds' TTA probabilities can be averaged and post-processed. --variants limits the variants
+that are predicted and scored (default: all).
 """
 
 import argparse
@@ -98,28 +103,55 @@ def average_probs(net, x: torch.Tensor, names: list[str], fill: float) -> torch.
 
 
 @torch.no_grad()
-def predict_variants(net, images: torch.Tensor, fill: float, device: torch.device, batch: int = 16) -> dict[str, np.ndarray]:
-    """Label slices (Z, H, W) per variant for one patient's slices (Z, C, H, W)."""
-    out = {v: [] for v in VARIANTS}
+def predict_variants(net, images: torch.Tensor, fill: float, device: torch.device, batch: int = 16,
+                     variants: list[str] | None = None, probs_out: dict[str, np.ndarray] | None = None) -> dict[str, np.ndarray]:
+    """Label slices (Z, H, W) per variant for one patient's slices (Z, C, H, W). `variants` limits the variants (default
+    all). If `probs_out` is a dict, it receives for each variant in it (keys given up front, values ignored) the averaged
+    softmax (Z, K, H, W) as float16."""
+    variants = list(VARIANTS) if variants is None else variants
+    out = {v: [] for v in variants}
+    kept = {v: [] for v in (probs_out or {})}
     for chunk in images.split(batch):
         x = chunk.to(device)
         plain = net(x).softmax(dim=1)
         passes = {"identity": (plain, torch.ones_like(plain[:, :1]))}
-        for name in {n for names in VARIANTS.values() for n in names}:
+        for name in {n for v in variants for n in VARIANTS[v]}:
             back, cover = unwarp(net(warp(x, TRANSFORMS[name], fill)).softmax(dim=1), TRANSFORMS[name])
             passes[name] = (back, cover)  # `back` is already scaled by the coverage (zero padding): not multiplied again
-        for v, names in VARIANTS.items():
+        for v in variants:
+            names = VARIANTS[v]
             total = sum(passes[n][0] for n in ["identity"] + names)
             weight = sum(passes[n][1] for n in ["identity"] + names)
-            out[v].append((total / weight).argmax(dim=1).cpu().numpy().astype(np.uint8))
+            averaged = total / weight
+            out[v].append(averaged.argmax(dim=1).cpu().numpy().astype(np.uint8))
+            if v in kept:
+                kept[v].append(averaged.half().cpu().numpy())
+    if probs_out is not None:
+        probs_out.update({v: np.concatenate(parts) for v, parts in kept.items()})
     return {v: np.concatenate(parts) for v, parts in out.items()}
+
+
+def save_probs(root: Path, run: Path, patient: str, probs: dict[str, np.ndarray]) -> None:
+    """probs[variant] (Z, K, H, W) float16 to root/<variant>/<experiment_fold>/<seed>/<patient>.npy, the layout
+    tools.prob_postprocess reads (z = position in the patient's sorted slice names)."""
+    for variant, p in probs.items():
+        out = root / variant / run.parent.name / run.name
+        out.mkdir(parents=True, exist_ok=True)
+        np.save(out / f"{patient}.npy", p)
 
 
 def main(argv: list[str] | None = None) -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--run", type=Path, required=True)
     p.add_argument("--device", choices=("cuda", "cpu"), default="cuda")
+    p.add_argument("--variants", nargs="+", choices=list(VARIANTS), default=list(VARIANTS))
+    p.add_argument("--save-probs", type=Path, default=None, help="root directory for the averaged softmax per variant")
+    p.add_argument("--save-variants", nargs="+", choices=list(VARIANTS), default=None,
+                   help="variants whose softmax is saved (default: all of --variants)")
     args = p.parse_args(argv)
+    save_variants = args.save_variants if args.save_variants is not None else args.variants
+    if args.save_probs is not None and not set(save_variants) <= set(args.variants):
+        p.error("--save-variants must be among --variants")
     from src.predict_test import load_net  # here, not at the top: predict_test imports this module
 
     run, device = args.run.resolve(), resolve_device(args.device)
@@ -140,7 +172,11 @@ def main(argv: list[str] | None = None) -> None:
     rows = []
     for patient in sorted(stems):
         order = sorted(range(len(stems[patient])), key=lambda i: stems[patient][i])
-        labels = predict_variants(net, torch.stack([images[patient][i] for i in order]), fill, device)
+        probs = {v: None for v in save_variants} if args.save_probs is not None else None
+        labels = predict_variants(net, torch.stack([images[patient][i] for i in order]), fill, device,
+                                  variants=args.variants, probs_out=probs)
+        if probs:
+            save_probs(args.save_probs, run, patient, probs)
         ref = nib.load(REPO / d["source_pattern"].format(patient=patient))
         spacing = tuple(float(s) for s in ref.header.get_zooms()[:3])
         gt = np.asarray(ref.dataobj)
@@ -150,7 +186,7 @@ def main(argv: list[str] | None = None) -> None:
             for k in range(1, d["num_classes"]):
                 rows.append({"variant": variant, "patient": patient, "class_idx": k, "class_name": d["class_names"][k],
                              **volume_metrics(gt == k, vol == k, spacing)})
-        print(f"{patient}: {len(slices)} slices, {len(VARIANTS)} variants scored", flush=True)
+        print(f"{patient}: {len(slices)} slices, {len(labels)} variants scored", flush=True)
 
     out = run / "eval" / "metrics_3d_tta.csv"
     with out.open("w", newline="") as f:
@@ -159,7 +195,7 @@ def main(argv: list[str] | None = None) -> None:
         w.writerows(rows)
     # the plain variant must reproduce the run's own evaluation
     ref_csv = run / "eval" / "metrics_3d.csv"
-    if ref_csv.exists():
+    if ref_csv.exists() and "none" in args.variants:
         mine = {(r["patient"], r["class_idx"]): float(r["dice"]) for r in rows if r["variant"] == "none"}
         theirs = {(r["patient"], int(r["class_idx"])): float(r["dice"]) for r in csv.DictReader(ref_csv.open()) if r["split"] == "val"}
         diff = max(abs(mine[k] - theirs[k]) for k in theirs)
